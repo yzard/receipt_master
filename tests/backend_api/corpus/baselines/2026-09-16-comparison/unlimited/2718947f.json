@@ -1,0 +1,33 @@
+{
+  "id": "2718947f",
+  "images": [
+    {
+      "path": "images/2718947f-0.jpg",
+      "sha256": "b019201ddf7a7574afea8c76f81ac13b1294afa2c11b4d350cc1bab91dd91810"
+    }
+  ],
+  "provider": "unlimited",
+  "raw": {
+    "id": "chatcmpl-50531dd2b75a46548d37692c24b89994",
+    "object": "chat.completion",
+    "created": 1789567879,
+    "model": "unlimited-ocr",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "<|det|>title [302, 66, 693, 122]<|/det|>COSTCO\n<|det|>title [424, 120, 684, 143]<|/det|>WHOLESALE\n<|det|>text [334, 155, 660, 175]<|/det|>Rego Park #1070\n<|det|>text [378, 176, 619, 195]<|/det|>61-35 Junction Blvd\n<|det|>text [378, 196, 619, 216]<|/det|>Rego Park, NY 11374\n<|det|>title [356, 234, 641, 266]<|/det|>SELF-CHECKOUT\n<|det|>text [255, 286, 538, 307]<|/det|>ZR Member 111886754734\n<|det|>text [255, 308, 705, 327]<|/det|>E 36285 KS WALNUTS 9.99\n<|det|>text [255, 328, 705, 348]<|/det|>E 27201 STEELHEAD 37.86\n<|det|>text [358, 349, 705, 368]<|/det|>SUBTOTAL 47.85\n<|det|>text [358, 369, 705, 388]<|/det|>TAX 0.00\n<|det|>text [293, 390, 718, 410]<|/det|>**** TOTAL 47.85\n<|det|>text [254, 432, 605, 452]<|/det|>XXXXXXXXXXXX9653 H\n<|det|>text [254, 454, 515, 473]<|/det|>AID: A0000000031010\n<|det|>text [254, 475, 643, 495]<|/det|>Seq# 202598 App#: 03573C\n<|det|>text [254, 497, 643, 516]<|/det|>Costco Visa Resp: APPROVED\n<|det|>text [254, 518, 502, 537]<|/det|>APPROVED - Purchase\n<|det|>text [254, 539, 439, 558]<|/det|>AMOUNT: $47.85\n<|det|>text [357, 581, 712, 600]<|/det|>Costco Visa 47.85\n<|det|>text [357, 602, 712, 622]<|/det|>CHANGE 0.00\n<|det|>text [254, 645, 690, 666]<|/det|>TOTAL NUMBER OF ITEMS SOLD - 2\n<|det|>text [254, 668, 690, 688]<|/det|>097092026 17:53 1070 202 260 702\n<|det|>image [321, 690, 688, 750]<|/det|>\n<|det|>text [368, 748, 636, 763]<|/det|>21107020202602609091753\n<|det|>text [287, 768, 532, 789]<|/det|>OP#: 702 Name: SCO\n<|det|>text [315, 811, 692, 833]<|/det|>Thank You! Please Come Again\n<|det|>text [283, 876, 586, 895]<|/det|>Items Sold: 2\n<|det|>text [283, 897, 726, 916]<|/det|>ZR 09/09/2026 17:53"
+        },
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 1517,
+      "completion_tokens": 657,
+      "total_tokens": 2174
+    }
+  },
+  "text": "<|det|>title [302, 66, 693, 122]<|/det|>COSTCO\n<|det|>title [424, 120, 684, 143]<|/det|>WHOLESALE\n<|det|>text [334, 155, 660, 175]<|/det|>Rego Park #1070\n<|det|>text [378, 176, 619, 195]<|/det|>61-35 Junction Blvd\n<|det|>text [378, 196, 619, 216]<|/det|>Rego Park, NY 11374\n<|det|>title [356, 234, 641, 266]<|/det|>SELF-CHECKOUT\n<|det|>text [255, 286, 538, 307]<|/det|>ZR Member 111886754734\n<|det|>text [255, 308, 705, 327]<|/det|>E 36285 KS WALNUTS 9.99\n<|det|>text [255, 328, 705, 348]<|/det|>E 27201 STEELHEAD 37.86\n<|det|>text [358, 349, 705, 368]<|/det|>SUBTOTAL 47.85\n<|det|>text [358, 369, 705, 388]<|/det|>TAX 0.00\n<|det|>text [293, 390, 718, 410]<|/det|>**** TOTAL 47.85\n<|det|>text [254, 432, 605, 452]<|/det|>XXXXXXXXXXXX9653 H\n<|det|>text [254, 454, 515, 473]<|/det|>AID: A0000000031010\n<|det|>text [254, 475, 643, 495]<|/det|>Seq# 202598 App#: 03573C\n<|det|>text [254, 497, 643, 516]<|/det|>Costco Visa Resp: APPROVED\n<|det|>text [254, 518, 502, 537]<|/det|>APPROVED - Purchase\n<|det|>text [254, 539, 439, 558]<|/det|>AMOUNT: $47.85\n<|det|>text [357, 581, 712, 600]<|/det|>Costco Visa 47.85\n<|det|>text [357, 602, 712, 622]<|/det|>CHANGE 0.00\n<|det|>text [254, 645, 690, 666]<|/det|>TOTAL NUMBER OF ITEMS SOLD - 2\n<|det|>text [254, 668, 690, 688]<|/det|>097092026 17:53 1070 202 260 702\n<|det|>image [321, 690, 688, 750]<|/det|>\n<|det|>text [368, 748, 636, 763]<|/det|>21107020202602609091753\n<|det|>text [287, 768, 532, 789]<|/det|>OP#: 702 Name: SCO\n<|det|>text [315, 811, 692, 833]<|/det|>Thank You! Please Come Again\n<|det|>text [283, 876, 586, 895]<|/det|>Items Sold: 2\n<|det|>text [283, 897, 726, 916]<|/det|>ZR 09/09/2026 17:53",
+  "duration_ms": 5159
+}

@@ -1,0 +1,65 @@
+{
+  "store": "H MART",
+  "branch": null,
+  "address": "46-40 Francis Lewis Blvd.\nBayside, NY. 11361",
+  "country": null,
+  "currency": "USD",
+  "local_time": "2026-09-09 17:10:00",
+  "total": "19.39",
+  "lines": [
+    {
+      "name": "FAGE TOTAL 2% GREE",
+      "standard_name": "FAGE TOTAL 2% GREE",
+      "kind": "product",
+      "weight_g": null,
+      "quantity": null,
+      "quantity_unit": null,
+      "unit_price": null,
+      "amount": "10.99",
+      "confidence": null,
+      "discount_target_index": null,
+      "box": [
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "WT ENVY APPLE",
+      "standard_name": "WT ENVY APPLE",
+      "kind": "product",
+      "weight_g": null,
+      "quantity": "2.81",
+      "quantity_unit": "lb",
+      "unit_price": "2.99",
+      "amount": "8.40",
+      "confidence": null,
+      "discount_target_index": null,
+      "box": [
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "TAX",
+      "standard_name": "TAX",
+      "kind": "tax",
+      "weight_g": null,
+      "quantity": null,
+      "quantity_unit": null,
+      "unit_price": null,
+      "amount": "0.00",
+      "confidence": null,
+      "discount_target_index": null,
+      "box": [
+        0,
+        0,
+        0,
+        0
+      ]
+    }
+  ]
+}

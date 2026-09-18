@@ -1,0 +1,1085 @@
+{
+  "model": "unlimited-ocr",
+  "evaluated_at": "2026-09-16T13:50:10.418077698+00:00",
+  "scope": "OCR + structure + backend normalization; no aliases; not raw OCR alone",
+  "cases": [
+    {
+      "id": "391b3273",
+      "prediction": {
+        "store": "Costco",
+        "branch": "Rego Park, NY 11374",
+        "address": "51-35 Junction Blvd, Rego Park, NY 11374",
+        "country": null,
+        "currency": "USD",
+        "local_time": null,
+        "total": "138.03",
+        "lines": [
+          {
+            "name": "1901859 PTOWELHOLDER",
+            "standard_name": "1901859 PTOWELHOLDER",
+            "kind": "product",
+            "weight_g": null,
+            "quantity": null,
+            "quantity_unit": null,
+            "unit_price": null,
+            "amount": "14.99",
+            "confidence": null,
+            "discount_target_index": null,
+            "box": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "review_notes": [
+              "票面日期识别存在冲突，请按原图确认交易时间"
+            ]
+          },
+          {
+            "name": "47292 SOCK SALMON",
+            "standard_name": "47292 SOCK SALMON",
+            "kind": "product",
+            "weight_g": null,
+            "quantity": null,
+            "quantity_unit": null,
+            "unit_price": null,
+            "amount": "21.29",
+            "confidence": null,
+            "discount_target_index": null,
+            "box": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "review_notes": [
+              "票面日期识别存在冲突，请按原图确认交易时间"
+            ]
+          },
+          {
+            "name": "1752618 KS UNSL PIST",
+            "standard_name": "1752618 KS UNSL PIST",
+            "kind": "product",
+            "weight_g": null,
+            "quantity": null,
+            "quantity_unit": null,
+            "unit_price": null,
+            "amount": "16.99",
+            "confidence": null,
+            "discount_target_index": null,
+            "box": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "review_notes": [
+              "票面日期识别存在冲突，请按原图确认交易时间"
+            ]
+          },
+          {
+            "name": "1001368 KS QUIÑOA",
+            "standard_name": "1001368 KS QUIÑOA",
+            "kind": "product",
+            "weight_g": null,
+            "quantity": null,
+            "quantity_unit": null,
+            "unit_price": null,
+            "amount": "11.59",
+            "confidence": null,
+            "discount_target_index": null,
+            "box": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "review_notes": [
+              "票面日期识别存在冲突，请按原图确认交易时间"
+            ]
+          },
+          {
+            "name": "36283 KS WALNUTS",
+            "standard_name": "36283 KS WALNUTS",
+            "kind": "product",
+            "weight_g": null,
+            "quantity": null,
+            "quantity_unit": null,
+            "unit_price": null,
+            "amount": "13.79",
+            "confidence": null,
+            "discount_target_index": null,
+            "box": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "review_notes": [
+              "票面日期识别存在冲突，请按原图确认交易时间"
+            ]
+          },
+          {
+            "name": "9877788 KS ORG TOFU",
+            "standard_name": "9877788 KS ORG TOFU",
+            "kind": "product",
+            "weight_g": null,
+            "quantity": null,
+            "quantity_unit": null,
+            "unit_price": null,
+            "amount": "5.89",
+            "confidence": null,
+            "discount_target_index": null,
+            "box": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "review_notes": [
+              "票面日期识别存在冲突，请按原图确认交易时间"
+            ]
+          },
+          {
+            "name": "22967 ORGNIC BS THG",
+            "standard_name": "22967 ORGNIC BS THG",
+            "kind": "product",
+            "weight_g": null,
+            "quantity": null,
+            "quantity_unit": null,
+            "unit_price": null,
+            "amount": "26.18",
+            "confidence": null,
+            "discount_target_index": null,
+            "box": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "review_notes": [
+              "票面金额 26/18 按小数点候选解析为 26.18，已核对商品小计，请确认",
+              "票面日期识别存在冲突，请按原图确认交易时间"
+            ]
+          },
+          {
+            "name": "948400 KS ICE CREAM",
+            "standard_name": "948400 KS ICE CREAM",
+            "kind": "product",
+            "weight_g": null,
+            "quantity": null,
+            "quantity_unit": null,
+            "unit_price": null,
+            "amount": "12.99",
+            "confidence": null,
+            "discount_target_index": null,
+            "box": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "review_notes": [
+              "票面日期识别存在冲突，请按原图确认交易时间"
+            ]
+          },
+          {
+            "name": "5001 WHITE PEACH",
+            "standard_name": "5001 WHITE PEACH",
+            "kind": "product",
+            "weight_g": null,
+            "quantity": null,
+            "quantity_unit": null,
+            "unit_price": null,
+            "amount": "12.99",
+            "confidence": null,
+            "discount_target_index": null,
+            "box": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "review_notes": [
+              "票面日期识别存在冲突，请按原图确认交易时间"
+            ]
+          },
+          {
+            "name": "TAX",
+            "standard_name": null,
+            "kind": "tax",
+            "weight_g": null,
+            "quantity": null,
+            "quantity_unit": null,
+            "unit_price": null,
+            "amount": "1.33",
+            "confidence": null,
+            "discount_target_index": null,
+            "box": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "review_notes": [
+              "票面日期识别存在冲突，请按原图确认交易时间"
+            ]
+          }
+        ]
+      },
+      "errors": [
+        "time: 0 != 1786058100000 (UTC milliseconds)",
+        "line[3].name: \"1001368 KS QUIÑOA\" != \"KS QUINOA\""
+      ],
+      "duration_ms": 23836,
+      "images": [
+        {
+          "path": "images/391b3273-0.jpg",
+          "sha256": "cf29d526f3e74ddea18753ab55a9f7a7a50465a95a454874ec1b21fec5012432"
+        }
+      ]
+    },
+    {
+      "id": "b92bd0ff",
+      "prediction": {
+        "store": "COSTCO",
+        "branch": "Rego Park #1070",
+        "address": "61-35 Junction Blvd, Rego Park, NY 11374",
+        "country": null,
+        "currency": "USD",
+        "local_time": "2026-08-20 15:48:00",
+        "total": "96.42",
+        "lines": [
+          {
+            "name": "E 2338 WHITE PEACH",
+            "standard_name": "E 2338 WHITE PEACH",
+            "kind": "product",
+            "weight_g": null,
+            "quantity": null,
+            "quantity_unit": null,
+            "unit_price": null,
+            "amount": "11.99",
+            "confidence": null,
+            "discount_target_index": null,
+            "box": [
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "name": "E 96493 B/S ATL SALM",
+            "standard_name": "E 96493 B/S ATL SALM",
+            "kind": "product",
+            "weight_g": null,
+            "quantity": null,
+            "quantity_unit": null,
+            "unit_price": null,
+            "amount": "41.21",
+            "confidence": null,
+            "discount_target_index": null,
+            "box": [
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "name": "E 24070 SEABASS",
+            "standard_name": "E 24070 SEABASS",
+            "kind": "product",
+            "weight_g": null,
+            "quantity": null,
+            "quantity_unit": null,
+            "unit_price": null,
+            "amount": "43.22",
+            "confidence": null,
+            "discount_target_index": null,
+            "box": [
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "name": "TAX",
+            "standard_name": null,
+            "kind": "tax",
+            "weight_g": null,
+            "quantity": null,
+            "quantity_unit": null,
+            "unit_price": null,
+            "amount": "0.00",
+            "confidence": null,
+            "discount_target_index": null,
+            "box": [
+              0,
+              0,
+              0,
+              0
+            ]
+          }
+        ]
+      },
+      "errors": [],
+      "duration_ms": 8507,
+      "images": [
+        {
+          "path": "images/b92bd0ff-0.jpg",
+          "sha256": "75f485bf0138e495bebe9c4906abaa83c906d5e451f218935266edaa692f1e82"
+        }
+      ]
+    },
+    {
+      "id": "f7cc0090",
+      "prediction": {
+        "store": "COSTCO",
+        "branch": "Rego Park #1070",
+        "address": "61-35 Junction Blvd, Rego Park, NY 11374",
+        "country": null,
+        "currency": "USD",
+        "local_time": "2026-09-02 17:45:00",
+        "total": "61.94",
+        "lines": [
+          {
+            "name": "57554 BLUEBERRIES",
+            "standard_name": null,
+            "kind": "product",
+            "weight_g": null,
+            "quantity": null,
+            "quantity_unit": null,
+            "unit_price": null,
+            "amount": "7.99",
+            "confidence": null,
+            "discount_target_index": null,
+            "box": [
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "name": "10579 SALMON",
+            "standard_name": null,
+            "kind": "product",
+            "weight_g": null,
+            "quantity": null,
+            "quantity_unit": null,
+            "unit_price": null,
+            "amount": "36.96",
+            "confidence": null,
+            "discount_target_index": null,
+            "box": [
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "name": "545345 KS PUSTACHIO",
+            "standard_name": null,
+            "kind": "product",
+            "weight_g": null,
+            "quantity": null,
+            "quantity_unit": null,
+            "unit_price": null,
+            "amount": "16.99",
+            "confidence": null,
+            "discount_target_index": null,
+            "box": [
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "name": "TAX",
+            "standard_name": null,
+            "kind": "tax",
+            "weight_g": null,
+            "quantity": null,
+            "quantity_unit": null,
+            "unit_price": null,
+            "amount": "0.00",
+            "confidence": null,
+            "discount_target_index": null,
+            "box": [
+              0,
+              0,
+              0,
+              0
+            ]
+          }
+        ]
+      },
+      "errors": [
+        "line[2].name: \"545345 KS PUSTACHIO\" != \"KS PISTACHIO\""
+      ],
+      "duration_ms": 8289,
+      "images": [
+        {
+          "path": "images/f7cc0090-0.jpg",
+          "sha256": "0bf2e9e11733babcf62890bcff46ed6f1677ab6e619f246daaef7eaba37dc0d3"
+        }
+      ]
+    },
+    {
+      "id": "efe47023",
+      "prediction": {
+        "store": "COSTCO WHOLESALE",
+        "branch": "Rego Park #1070",
+        "address": "61-35 Junction Blvd\nRego Park, NY 11374",
+        "country": null,
+        "currency": "USD",
+        "local_time": "2026-09-05 16:03:00",
+        "total": "100.77",
+        "lines": [
+          {
+            "name": "E 1068080 PASTURE E GS",
+            "standard_name": "E 1068080 PASTURE E GS",
+            "kind": "product",
+            "weight_g": null,
+            "quantity": null,
+            "quantity_unit": null,
+            "unit_price": null,
+            "amount": "8.79",
+            "confidence": null,
+            "discount_target_index": null,
+            "box": [
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "name": "E 1243880 OPTIMUM",
+            "standard_name": "E 1243880 OPTIMUM",
+            "kind": "product",
+            "weight_g": null,
+            "quantity": null,
+            "quantity_unit": null,
+            "unit_price": null,
+            "amount": "74.99",
+            "confidence": null,
+            "discount_target_index": null,
+            "box": [
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "name": "E 1792518 KS UNSL ST",
+            "standard_name": "E 1792518 KS UNSL ST",
+            "kind": "product",
+            "weight_g": null,
+            "quantity": null,
+            "quantity_unit": null,
+            "unit_price": null,
+            "amount": "16.99",
+            "confidence": null,
+            "discount_target_index": null,
+            "box": [
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "name": "TAX",
+            "standard_name": null,
+            "kind": "tax",
+            "weight_g": null,
+            "quantity": null,
+            "quantity_unit": null,
+            "unit_price": null,
+            "amount": "0.00",
+            "confidence": null,
+            "discount_target_index": null,
+            "box": [
+              0,
+              0,
+              0,
+              0
+            ]
+          }
+        ]
+      },
+      "errors": [
+        "line[1].name: \"E 1243880 OPTIMUM\" != \"OPTIMUM W\""
+      ],
+      "duration_ms": 8670,
+      "images": [
+        {
+          "path": "images/efe47023-0.jpg",
+          "sha256": "dc924bbafdf45fbd0499fcb8bfdcfe606f2535f97e553d55c759869fa981d226"
+        }
+      ]
+    },
+    {
+      "id": "bbbfe093",
+      "prediction": {
+        "store": "Costco",
+        "branch": "Rego Park #1070",
+        "address": "61-35 Junction Blvd, Rego Park, NY 11374",
+        "country": null,
+        "currency": "USD",
+        "local_time": "2026-08-20 15:33:00",
+        "total": "-55.28",
+        "lines": [
+          {
+            "name": "EXC GS OWN",
+            "standard_name": null,
+            "kind": "other_adjustment",
+            "weight_g": null,
+            "quantity": null,
+            "quantity_unit": null,
+            "unit_price": null,
+            "amount": "-50.77",
+            "confidence": null,
+            "discount_target_index": null,
+            "box": [
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "name": "TAX",
+            "standard_name": null,
+            "kind": "tax",
+            "weight_g": null,
+            "quantity": null,
+            "quantity_unit": null,
+            "unit_price": null,
+            "amount": "-4.51",
+            "confidence": null,
+            "discount_target_index": null,
+            "box": [
+              0,
+              0,
+              0,
+              0
+            ]
+          }
+        ]
+      },
+      "errors": [
+        "line[0].name: \"EXC GS OWN\" != \"EXC GS DOWN\""
+      ],
+      "duration_ms": 10288,
+      "images": [
+        {
+          "path": "images/bbbfe093-0.jpg",
+          "sha256": "682503d4af1ded857abcef9772f183f5089628fc639148b2ddcfefdcee149889"
+        }
+      ]
+    },
+    {
+      "id": "e8698610",
+      "prediction": {
+        "store": "COSTCO",
+        "branch": "Rego Park #1070",
+        "address": "61-35 Junction Blvd, Rego Park, NY 11374",
+        "country": null,
+        "currency": "USD",
+        "local_time": "2026-09-05 15:16:00",
+        "total": "-16.99",
+        "lines": [
+          {
+            "name": "E 545345 KS PISTACHIO",
+            "standard_name": "E 545345 KS PISTACHIO",
+            "kind": "product",
+            "weight_g": null,
+            "quantity": null,
+            "quantity_unit": null,
+            "unit_price": null,
+            "amount": "-16.99",
+            "confidence": null,
+            "discount_target_index": null,
+            "box": [
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "name": "TAX",
+            "standard_name": null,
+            "kind": "tax",
+            "weight_g": null,
+            "quantity": null,
+            "quantity_unit": null,
+            "unit_price": null,
+            "amount": "0.00",
+            "confidence": null,
+            "discount_target_index": null,
+            "box": [
+              0,
+              0,
+              0,
+              0
+            ]
+          }
+        ]
+      },
+      "errors": [],
+      "duration_ms": 9774,
+      "images": [
+        {
+          "path": "images/e8698610-0.jpg",
+          "sha256": "32d2bbcd77fd4a18b1d9897ca547032a0683f3e0b25a64957c767c86d9eaac3a"
+        }
+      ]
+    },
+    {
+      "id": "a730a1be",
+      "errors": [
+        "HTTP status server error (502 Bad Gateway) for url (http://127.0.0.1:5000/v1/chat/completions)"
+      ],
+      "duration_ms": 62644,
+      "images": [
+        {
+          "path": "images/a730a1be-0.jpg",
+          "sha256": "8214940462206a96d1f2a2980282c4257aec0d0a018a3f64c1770b014c9f7287"
+        }
+      ]
+    },
+    {
+      "id": "2f083787",
+      "prediction": {
+        "store": "skyFOODS",
+        "branch": "",
+        "address": "40-24 COLLEGE POINT BLVD\nFLUSHING,NY 11355",
+        "country": null,
+        "currency": "USD",
+        "local_time": "2026-09-12 18:16:25",
+        "total": "6.41",
+        "lines": [
+          {
+            "name": "BOK CHOY TIPS (1POUNDS)",
+            "standard_name": "白菜菇（1磅）",
+            "kind": "product",
+            "weight_g": null,
+            "quantity": "2.00",
+            "quantity_unit": "lb",
+            "unit_price": "2.49",
+            "amount": "4.98",
+            "confidence": null,
+            "discount_target_index": null,
+            "box": [
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "name": "LONG HOT PEPPER (1POUNDS)",
+            "standard_name": "牛角椒 (1磅)",
+            "kind": "product",
+            "weight_g": null,
+            "quantity": "0.72",
+            "quantity_unit": "lb",
+            "unit_price": "1.99",
+            "amount": "1.43",
+            "confidence": null,
+            "discount_target_index": null,
+            "box": [
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "name": "TAX",
+            "standard_name": null,
+            "kind": "tax",
+            "weight_g": null,
+            "quantity": null,
+            "quantity_unit": null,
+            "unit_price": null,
+            "amount": "0.00",
+            "confidence": null,
+            "discount_target_index": null,
+            "box": [
+              0,
+              0,
+              0,
+              0
+            ]
+          }
+        ]
+      },
+      "errors": [
+        "line[0].chinese: \"白菜菇（1磅）\" != 白菜苗（1磅）"
+      ],
+      "duration_ms": 8731,
+      "images": [
+        {
+          "path": "images/2f083787-0.jpg",
+          "sha256": "6d22710f88c2aad47594b11bc53ce323109305e9d42221689246a8f3dd704d44"
+        }
+      ]
+    },
+    {
+      "id": "5e4547ea",
+      "prediction": {
+        "store": "H MART",
+        "branch": null,
+        "address": "46-40 Francis Lewis Blvd.\nBayside, NY. 11361",
+        "country": null,
+        "currency": "USD",
+        "local_time": "2026-09-09 17:10:00",
+        "total": "19.39",
+        "lines": [
+          {
+            "name": "FAGE TOTAL 2% GREE",
+            "standard_name": null,
+            "kind": "product",
+            "weight_g": null,
+            "quantity": null,
+            "quantity_unit": null,
+            "unit_price": null,
+            "amount": "10.99",
+            "confidence": null,
+            "discount_target_index": null,
+            "box": [
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "name": "WT ENVY APPLE",
+            "standard_name": null,
+            "kind": "product",
+            "weight_g": null,
+            "quantity": "2.81",
+            "quantity_unit": "lb",
+            "unit_price": "2.99",
+            "amount": "8.40",
+            "confidence": null,
+            "discount_target_index": null,
+            "box": [
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "name": "TAX",
+            "standard_name": null,
+            "kind": "tax",
+            "weight_g": null,
+            "quantity": null,
+            "quantity_unit": null,
+            "unit_price": null,
+            "amount": "0.00",
+            "confidence": null,
+            "discount_target_index": null,
+            "box": [
+              0,
+              0,
+              0,
+              0
+            ]
+          }
+        ]
+      },
+      "errors": [],
+      "duration_ms": 9042,
+      "images": [
+        {
+          "path": "images/5e4547ea-0.jpg",
+          "sha256": "7150fc4a334348e638e8cbf8e6cfaa35f71e64e091f5724ef9e9c202d374ca01"
+        }
+      ]
+    },
+    {
+      "id": "3270f3c9",
+      "prediction": {
+        "store": "MART®",
+        "branch": null,
+        "address": "46-40 Francis Lewis Blvd.\nBayside, NY. 11361",
+        "country": null,
+        "currency": "USD",
+        "local_time": "2026-09-13 20:45:00",
+        "total": "10.17",
+        "lines": [
+          {
+            "name": "WT ENVY APPLE",
+            "standard_name": null,
+            "kind": "product",
+            "weight_g": null,
+            "quantity": "3.40",
+            "quantity_unit": "lb",
+            "unit_price": "2.99",
+            "amount": "10.17",
+            "confidence": null,
+            "discount_target_index": null,
+            "box": [
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "name": "TAX",
+            "standard_name": null,
+            "kind": "tax",
+            "weight_g": null,
+            "quantity": null,
+            "quantity_unit": null,
+            "unit_price": null,
+            "amount": "0.00",
+            "confidence": null,
+            "discount_target_index": null,
+            "box": [
+              0,
+              0,
+              0,
+              0
+            ]
+          }
+        ]
+      },
+      "errors": [
+        "store: \"MART®\" != \"HMART\""
+      ],
+      "duration_ms": 6516,
+      "images": [
+        {
+          "path": "images/3270f3c9-0.jpg",
+          "sha256": "71dcc3680df8c34328c9f32f930a3b83560e0a432a82d32f3294da51924b6d65"
+        }
+      ]
+    },
+    {
+      "id": "2718947f",
+      "prediction": {
+        "store": "COSTCO",
+        "branch": "Rego Park #1070",
+        "address": "61-35 Junction Blvd, Rego Park, NY 11374",
+        "country": null,
+        "currency": "USD",
+        "local_time": "2026-09-09 17:53:00",
+        "total": "47.85",
+        "lines": [
+          {
+            "name": "E 36285 KS WALNUTS",
+            "standard_name": null,
+            "kind": "product",
+            "weight_g": null,
+            "quantity": null,
+            "quantity_unit": null,
+            "unit_price": null,
+            "amount": "9.99",
+            "confidence": null,
+            "discount_target_index": null,
+            "box": [
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "name": "E 27201 STEELHEAD",
+            "standard_name": null,
+            "kind": "product",
+            "weight_g": null,
+            "quantity": null,
+            "quantity_unit": null,
+            "unit_price": null,
+            "amount": "37.86",
+            "confidence": null,
+            "discount_target_index": null,
+            "box": [
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "name": "TAX",
+            "standard_name": null,
+            "kind": "tax",
+            "weight_g": null,
+            "quantity": null,
+            "quantity_unit": null,
+            "unit_price": null,
+            "amount": "0.00",
+            "confidence": null,
+            "discount_target_index": null,
+            "box": [
+              0,
+              0,
+              0,
+              0
+            ]
+          }
+        ]
+      },
+      "errors": [],
+      "duration_ms": 7034,
+      "images": [
+        {
+          "path": "images/2718947f-0.jpg",
+          "sha256": "b019201ddf7a7574afea8c76f81ac13b1294afa2c11b4d350cc1bab91dd91810"
+        }
+      ]
+    },
+    {
+      "id": "f3bca374",
+      "prediction": {
+        "store": "skyFOODS",
+        "branch": "Sky Foods",
+        "address": "40-24 COLLEGE POINT BLVD\nFLUSHING,NY 11355",
+        "country": null,
+        "currency": "USD",
+        "local_time": "2026-09-15 19:27:36",
+        "total": "9.74",
+        "lines": [
+          {
+            "name": "BOK CHOY TIPS (1POUNDS)",
+            "standard_name": "白菜菇（1磅）",
+            "kind": "product",
+            "weight_g": null,
+            "quantity": "1.86",
+            "quantity_unit": "lb",
+            "unit_price": "2.49",
+            "amount": "4.63",
+            "confidence": null,
+            "discount_target_index": null,
+            "box": [
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "name": "CHIVES (1POUNDS)",
+            "standard_name": "韭菜（1磅）",
+            "kind": "product",
+            "weight_g": null,
+            "quantity": "0.76",
+            "quantity_unit": "lb",
+            "unit_price": "1.99",
+            "amount": "1.51",
+            "confidence": null,
+            "discount_target_index": null,
+            "box": [
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "name": "LONG HOT PEPPER (1POUNDS)",
+            "standard_name": "牛角椒（1磅）",
+            "kind": "product",
+            "weight_g": null,
+            "quantity": "0.81",
+            "quantity_unit": "lb",
+            "unit_price": "1.99",
+            "amount": "1.61",
+            "confidence": null,
+            "discount_target_index": null,
+            "box": [
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "name": "KL FIRM TOFU",
+            "standard_name": "康绿 老豆腐",
+            "kind": "product",
+            "weight_g": null,
+            "quantity": "1",
+            "quantity_unit": "ea",
+            "unit_price": "1.99",
+            "amount": "1.99",
+            "confidence": null,
+            "discount_target_index": null,
+            "box": [
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "name": "TAX",
+            "standard_name": null,
+            "kind": "tax",
+            "weight_g": null,
+            "quantity": null,
+            "quantity_unit": null,
+            "unit_price": null,
+            "amount": "0.00",
+            "confidence": null,
+            "discount_target_index": null,
+            "box": [
+              0,
+              0,
+              0,
+              0
+            ]
+          }
+        ]
+      },
+      "errors": [
+        "line[0].chinese: \"白菜菇（1磅）\" != 白菜苗（1磅）",
+        "line[3].chinese: \"康绿 老豆腐\" != 康綠 老豆腐"
+      ],
+      "duration_ms": 12921,
+      "images": [
+        {
+          "path": "images/f3bca374-0.jpg",
+          "sha256": "a3f1ceb235cf8f729a97a011baf74d009cb2bbbccb2898066398bf1e6fd7b154"
+        }
+      ]
+    }
+  ],
+  "scored_at": "2026-09-16T13:52:00.834227663+00:00",
+  "deployment": {
+    "backend_api": "sha256:c5c4aeb8d2e8263a6a437b50a6b3d4245c585ecceddd60759ae22b2fa6a8d8d9",
+    "backend_ocr": "sha256:ea06dfaf7c52719456b1f5fc0481c3e2683620a08c8048e7958e5492cd33ac33"
+  },
+  "config_sha256": "7c104e900981168b1ebd63ca8cfbbad440017be39d15028c27ea6d2df6194b6e",
+  "annotation_sha256": {
+    "391b3273": "8c9a76e61f44178a24841b93868b9db1fbd8c111dde8c5bf4af6b8474aac761f",
+    "b92bd0ff": "730b7593ab00a6fc31bde99bce1fdd193645edb1db0fc4a218d2af90f7400529",
+    "f7cc0090": "98bd291889af6241f32cf9a3a26c2b2ab5a1dd982ad093e9f1d80c326ff23e64",
+    "efe47023": "db5a670996987ddec91b81a53bba1de01a4be49a0bbfb791a6bf328caddb0d06",
+    "bbbfe093": "4e51c873788ccddda164e9c74a88efaae579d311ee09e29b555f7d5a413943bc",
+    "e8698610": "36896cfa62a4c59d70cd794369a9968ab8055b6163174d5613d02234e7489f0c",
+    "a730a1be": "ff45b01e00345d0568c7d08e79c6ebcaeacccb9c8dc410cba0f6c79ef058d817",
+    "2f083787": "34149a2a658308cf900b4022ea56df34d3a63489c924c198f97ef6ef2ab5f094",
+    "5e4547ea": "91e70d855a21b4990a4449a1b94b88515268be47a25431d2deb1933822acec85",
+    "3270f3c9": "308447d6824436c3039d5cc5c79d34de26d43e3d149d4365776903cb7d3a1f95",
+    "2718947f": "6bcf6164103d21ca84b1bdb33a764e5eec0654948b9d5013f004723f1f564999",
+    "f3bca374": "551baea9caf58953e2b91b76f7335970f0720e7ae74086d434e14cd62323f978"
+  }
+}

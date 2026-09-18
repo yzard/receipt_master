@@ -1,0 +1,114 @@
+{
+  "provenance": "Manually checked against the bundled original photo; not copied from model predictions.",
+  "notes": [
+    "Covers feedback originally reported on deleted receipt d3c9895c-892c-40ab-9e64-90eb976a51db. This is the retained equivalent receipt image, not the deleted original."
+  ],
+  "input": {
+    "store": null,
+    "branch": null,
+    "address": null,
+    "country": "US",
+    "currency": "USD",
+    "local_time": "2026-09-09 17:10:00",
+    "total": "19.39",
+    "lines": [
+      {
+        "name": "FAGE TOTAL 2% GREE",
+        "product_name": null,
+        "kind": "product",
+        "quantity": null,
+        "quantity_unit": null,
+        "unit_price": null,
+        "amount": "10.99",
+        "confidence": null,
+        "discount_target_index": null,
+        "sku": null,
+        "tax_code": null,
+        "is_weighed": false,
+        "review_notes": [],
+        "evidence": [],
+        "package_weight": null,
+        "package_weight_unit": null,
+        "amount_basis": "gross"
+      },
+      {
+        "name": "ENVY APPLE",
+        "product_name": null,
+        "kind": "product",
+        "quantity": "2.81",
+        "quantity_unit": "lb",
+        "unit_price": "2.99",
+        "amount": "8.40",
+        "confidence": null,
+        "discount_target_index": null,
+        "sku": null,
+        "tax_code": null,
+        "is_weighed": false,
+        "review_notes": [],
+        "evidence": [],
+        "package_weight": null,
+        "package_weight_unit": null,
+        "amount_basis": "gross"
+      },
+      {
+        "name": "TAX",
+        "product_name": null,
+        "kind": "tax",
+        "quantity": null,
+        "quantity_unit": null,
+        "unit_price": null,
+        "amount": "0.00",
+        "confidence": null,
+        "discount_target_index": null,
+        "sku": null,
+        "tax_code": null,
+        "is_weighed": false,
+        "review_notes": [],
+        "evidence": [],
+        "package_weight": null,
+        "package_weight_unit": null,
+        "amount_basis": "gross"
+      }
+    ]
+  },
+  "expected": {
+    "total_minor": 1939,
+    "local_time": "2026-09-09 17:10:00",
+    "store": "H MART",
+    "lines": [
+      {
+        "name": "FAGE TOTAL 2% GREE",
+        "product_name": null,
+        "kind": "product",
+        "amount_minor": 1099,
+        "weight_mg": null,
+        "printed_amount_minor": null,
+        "quantity_micros": null,
+        "unit_price_scaled": null,
+        "discount_target_index": null
+      },
+      {
+        "name": "ENVY APPLE",
+        "product_name": null,
+        "kind": "product",
+        "amount_minor": 840,
+        "weight_mg": 1274595,
+        "printed_amount_minor": null,
+        "quantity_micros": 2810000,
+        "unit_price_scaled": 299000000,
+        "discount_target_index": null
+      },
+      {
+        "name": "TAX",
+        "product_name": null,
+        "kind": "tax",
+        "amount_minor": 0,
+        "weight_mg": null,
+        "printed_amount_minor": null,
+        "quantity_micros": null,
+        "unit_price_scaled": null,
+        "discount_target_index": null
+      }
+    ]
+  }
+}

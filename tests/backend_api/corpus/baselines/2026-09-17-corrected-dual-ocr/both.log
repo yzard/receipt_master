@@ -1,0 +1,8 @@
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.06s
+     Running ../../tests/backend_api/corpus.rs (build/backend_api/target/debug/deps/corpus-a2b17f81720eae3b)
+
+running 1 test
+test isolated_ocr_benchmark ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 24 filtered out; finished in 54.13s
+

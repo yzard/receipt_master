@@ -1,0 +1,145 @@
+{
+  "provenance": "Manually checked against the bundled original photo; not copied from model predictions.",
+  "notes": [],
+  "input": {
+    "store": null,
+    "branch": null,
+    "address": null,
+    "country": "US",
+    "currency": "USD",
+    "local_time": "2026-09-02 17:45:00",
+    "total": "61.94",
+    "lines": [
+      {
+        "name": "BLUEBERRIES",
+        "product_name": null,
+        "kind": "product",
+        "quantity": null,
+        "quantity_unit": null,
+        "unit_price": null,
+        "amount": "7.99",
+        "confidence": null,
+        "discount_target_index": null,
+        "sku": null,
+        "tax_code": null,
+        "is_weighed": false,
+        "review_notes": [],
+        "evidence": [],
+        "package_weight": null,
+        "package_weight_unit": null,
+        "amount_basis": "gross"
+      },
+      {
+        "name": "SALMON",
+        "product_name": null,
+        "kind": "product",
+        "quantity": null,
+        "quantity_unit": null,
+        "unit_price": null,
+        "amount": "36.96",
+        "confidence": null,
+        "discount_target_index": null,
+        "sku": null,
+        "tax_code": null,
+        "is_weighed": false,
+        "review_notes": [],
+        "evidence": [],
+        "package_weight": null,
+        "package_weight_unit": null,
+        "amount_basis": "gross"
+      },
+      {
+        "name": "KS PISTACHIO",
+        "product_name": null,
+        "kind": "product",
+        "quantity": null,
+        "quantity_unit": null,
+        "unit_price": null,
+        "amount": "16.99",
+        "confidence": null,
+        "discount_target_index": null,
+        "sku": null,
+        "tax_code": null,
+        "is_weighed": false,
+        "review_notes": [],
+        "evidence": [],
+        "package_weight": null,
+        "package_weight_unit": null,
+        "amount_basis": "gross"
+      },
+      {
+        "name": "TAX",
+        "product_name": null,
+        "kind": "tax",
+        "quantity": null,
+        "quantity_unit": null,
+        "unit_price": null,
+        "amount": "0.00",
+        "confidence": null,
+        "discount_target_index": null,
+        "sku": null,
+        "tax_code": null,
+        "is_weighed": false,
+        "review_notes": [],
+        "evidence": [],
+        "package_weight": null,
+        "package_weight_unit": null,
+        "amount_basis": "gross"
+      }
+    ]
+  },
+  "expected": {
+    "total_minor": 6194,
+    "local_time": "2026-09-02 17:45:00",
+    "store": "Costco",
+    "lines": [
+      {
+        "name": "BLUEBERRIES",
+        "product_name": null,
+        "kind": "product",
+        "amount_minor": 799,
+        "weight_mg": null,
+        "printed_amount_minor": null,
+        "quantity_micros": null,
+        "unit_price_scaled": null,
+        "discount_target_index": null
+      },
+      {
+        "name": "SALMON",
+        "product_name": null,
+        "kind": "product",
+        "amount_minor": 3696,
+        "weight_mg": null,
+        "printed_amount_minor": null,
+        "quantity_micros": null,
+        "unit_price_scaled": null,
+        "discount_target_index": null
+      },
+      {
+        "name": "KS PISTACHIO",
+        "product_name": null,
+        "kind": "product",
+        "amount_minor": 1699,
+        "weight_mg": null,
+        "printed_amount_minor": null,
+        "quantity_micros": null,
+        "unit_price_scaled": null,
+        "discount_target_index": null
+      },
+      {
+        "name": "TAX",
+        "product_name": null,
+        "kind": "tax",
+        "amount_minor": 0,
+        "weight_mg": null,
+        "printed_amount_minor": null,
+        "quantity_micros": null,
+        "unit_price_scaled": null,
+        "discount_target_index": null
+      }
+    ],
+    "store_alternatives": [
+      "Costco Wholesale"
+    ]
+  }
+}

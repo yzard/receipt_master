@@ -1,0 +1,37 @@
+{
+  "version": "vision-v7",
+  "known_store_context": "All 17 cases use only the manually confirmed merchant name. No item answers are sent. v5 supplied Costco names but left the other merchants unknown. This is not an isolated prompt-only A/B comparison.",
+  "source_hashes": {
+    "src/backend_api/src/vision_prompt.txt": "5a432f3f47b9ffb2977c31c33854856ab5ae75bb418d91290f4dd5a8b7a06473",
+    "src/backend_api/src/receipt_prompt.rs": "2ecf4c1b68a86ffc93233bdbef79ad6f9f7fd7bc1510fd4b0ca257c637c01dce",
+    "src/backend_api/src/prompts/skyfoods.txt": "a4ab85a158f3ca0cfbaca6f23d9be03be11363105814fee5d01f8fb8e988a689",
+    "src/backend_api/src/prompts/hmart.txt": "35834b5f8b699178e1d8f3724d69040e81cf8805debe800707308366bfd74f39",
+    "src/backend_api/src/prompts/costco.txt": "86ca97d9f48b94aea4453eba6d5066907bda98739a75297af2fa0358d5088de6"
+  },
+  "api_image": "sha256:b91dc45fdcd48d80a5eadfdd3e44ee31e126e0c56dbd94c9ef4e72cbed12c6f9",
+  "checks": {
+    "rust_passed": 77,
+    "combined_docker_build": "passed",
+    "ocr_model": "unchanged Qwen3-VL-8B-Instruct",
+    "native_ios": "not run"
+  },
+  "smoke": {
+    "multi": "vision-v7 passed, unknown store uses generic profile",
+    "logo": "vision-v6 passed; routing code unchanged in v7; mocked job regression also covers logo-to-Costco routing"
+  },
+  "results": {
+    "historical_full_field": {
+      "passed": 8,
+      "total": 17,
+      "http_502": 2
+    },
+    "recent_critical_invariants": {
+      "passed": 0,
+      "total": 3
+    },
+    "intermediate_v6_full_field": {
+      "passed": 4,
+      "total": 17
+    }
+  }
+}

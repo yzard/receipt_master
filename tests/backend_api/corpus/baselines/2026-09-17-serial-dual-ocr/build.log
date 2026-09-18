@@ -1,0 +1,512 @@
+#0 building with "default" instance using docker driver
+
+#1 [internal] load build definition from backend_ocr.Dockerfile
+#1 transferring dockerfile: 2.33kB done
+#1 DONE 0.0s
+
+#2 [auth] docker/dockerfile:pull token for registry-1.docker.io
+#2 DONE 0.0s
+
+#3 resolve image config for docker-image://docker.io/docker/dockerfile:1
+#3 DONE 0.3s
+
+#4 docker-image://docker.io/docker/dockerfile:1@sha256:ecfaec9ed6d810b56388c508f4121597bfbba70d41a6dfeee4d8cad5f295fc32
+#4 CACHED
+
+#5 [internal] load metadata for docker.io/library/python:3.12-slim
+#5 DONE 0.0s
+
+#6 [checks 1/6] FROM docker.io/library/python:3.12-slim
+#6 DONE 0.0s
+
+#7 [internal] load build context
+#7 transferring context: 25.72kB 0.0s done
+#7 DONE 0.1s
+
+#8 [checks 2/6] WORKDIR /workspace
+#8 CACHED
+
+#9 [checks 3/6] RUN pip install --no-cache-dir fastapi==0.136.3 httpx==0.28.1 pillow==11.3.0
+#9 CACHED
+
+#10 [checks 4/6] COPY src/backend_ocr/ src/backend_ocr/
+#10 CACHED
+
+#11 [checks 5/6] COPY tests/backend_ocr/ tests/backend_ocr/
+#11 DONE 0.5s
+
+#12 [checks 6/6] RUN python -m unittest discover -s tests/backend_ocr && touch /checks-passed
+#12 0.349 .OCR upstream failure port=8002 error=HTTPStatusError status=503
+#12 0.413 .....OCR upstream failure port=8003 error=HTTPStatusError status=503
+#12 0.419 .
+#12 0.419 ----------------------------------------------------------------------
+#12 0.419 Ran 7 tests in 0.074s
+#12 0.419 
+#12 0.419 OK
+#12 DONE 0.5s
+
+#13 exporting to image
+#13 exporting layers
+#13 exporting layers 0.9s done
+#13 writing image sha256:1ee27e1643332bdffc83756696462ef1178ca6700f57ca5796ee0ff19533963f done
+#13 DONE 0.9s
+#0 building with "default" instance using docker driver
+
+#1 [internal] load build definition from backend_api.Dockerfile
+#1 transferring dockerfile: 1.46kB done
+#1 DONE 0.0s
+
+#2 resolve image config for docker-image://docker.io/docker/dockerfile:1
+#2 DONE 0.1s
+
+#3 docker-image://docker.io/docker/dockerfile:1@sha256:ecfaec9ed6d810b56388c508f4121597bfbba70d41a6dfeee4d8cad5f295fc32
+#3 CACHED
+
+#4 [auth] library/rust:pull token for registry-1.docker.io
+#4 DONE 0.0s
+
+#5 [internal] load metadata for docker.io/library/rust:1.98.0-bookworm
+#5 DONE 0.2s
+
+#6 [checks 1/7] FROM docker.io/library/rust:1.98.0-bookworm@sha256:82150a52ec202c1b14d7817e14516c392bb7f5cfebd88f1ed531cb37ebd39922
+#6 DONE 0.0s
+
+#7 [internal] load build context
+#7 transferring context: 76.85MB 0.1s
+#7 transferring context: 212.14MB 0.3s done
+#7 DONE 0.3s
+
+#8 [checks 2/7] RUN rustup component add rustfmt clippy
+#8 CACHED
+
+#9 [checks 3/7] WORKDIR /workspace
+#9 CACHED
+
+#10 [checks 4/7] COPY src/backend_api/ src/backend_api/
+#10 DONE 0.3s
+
+#11 [checks 5/7] COPY tests/backend_api/ tests/backend_api/
+#11 DONE 0.3s
+
+#12 [checks 6/7] COPY playground/backend_api/config.yaml playground/backend_api/config.yaml
+#12 DONE 0.0s
+
+#13 [checks 7/7] RUN --mount=type=cache,target=/usr/local/cargo/registry --mount=type=cache,target=/target     cargo fmt --manifest-path src/backend_api/Cargo.toml --check     && cargo test --locked --manifest-path src/backend_api/Cargo.toml     && cargo clippy --locked --manifest-path src/backend_api/Cargo.toml --all-targets -- -D warnings     && cargo build --release --locked --manifest-path src/backend_api/Cargo.toml     && cp /target/release/receipt-backend-api /receipt-backend-api
+#13 0.334    Compiling receipt-backend-api v0.1.0 (/workspace/src/backend_api)
+#13 1.472     Finished `test` profile [unoptimized + debuginfo] target(s) in 1.22s
+#13 1.479      Running unittests src/lib.rs (/target/debug/deps/receipt_backend_api-b6e2466e40dd52ce)
+#13 1.480 
+#13 1.480 running 0 tests
+#13 1.480 
+#13 1.480 test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+#13 1.480 
+#13 1.480      Running unittests src/main.rs (/target/debug/deps/receipt_backend_api-628df66a14a4ed82)
+#13 1.480 
+#13 1.480 running 0 tests
+#13 1.480 
+#13 1.480 test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+#13 1.480 
+#13 1.480      Running ../../tests/backend_api/api.rs (/target/debug/deps/api-4c8f8c8bf5e5c045)
+#13 1.481 
+#13 1.481 running 17 tests
+#13 1.482 test schema_property_order_is_preserved_for_generation ... ok
+#13 1.482 test config_validation ... ok
+#13 5.137 test public_apk_download_and_auth ... ok
+#13 5.145 test data_api_auth_idempotency_and_conflict ... ok
+#13 5.228 test invalid_requests_never_run_inference ... ok
+#13 5.231 test arithmetic_mismatch_is_flagged_without_invented_items_or_model_retries ... ok
+#13 5.249 test all_photos_reach_dual_ocr_and_incomplete_pages_fail ... ok
+#13 5.251 test update_manifest_and_immutable_download_are_public_and_scoped ... ok
+#13 5.253 test raw_ocr ... ok
+#13 5.279 test mobile_round_trip ... ok
+#13 5.307 test clients_cannot_configure_ocr_or_pricing ... ok
+#13 5.320 test inference_failures_and_readiness ... ok
+#13 5.368 test receipt_photos_and_logo_crops_are_downloadable_but_unreferenced_media_are_not ... ok
+#13 5.452 test store_alias_routes_only_its_parser ... ok
+#13 5.868 test persistent_job_auto_applies_without_client_polling_or_apply ... ok
+#13 6.158 test logo_alias_is_resolved_before_the_single_multiphoto_extraction ... ok
+#13 8.226 test two_jobs_are_queued_serially_and_receipt_queries_remain_responsive ... ok
+#13 8.226 
+#13 8.226 test result: ok. 17 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 6.74s
+#13 8.226 
+#13 8.230      Running ../../tests/backend_api/corpus.rs (/target/debug/deps/corpus-d271e1f66c72ce52)
+#13 8.231 
+#13 8.231 running 24 tests
+#13 8.231 test live_image_benchmark ... ignored, requires a running local OCR service; see corpus/README.md
+#13 8.231 test saved_predictions_benchmark ... ignored, requires a saved prediction report; see corpus/README.md
+#13 8.241 test captured_failures_are_not_promoted_to_ground_truth ... ok
+#13 9.264 test corpus_photos_are_immutable_and_annotations_are_schema_valid ... ok
+#13 9.534 test confirmed_snapshot_covers_all_24_saved_receipts_with_intact_photos ... ok
+#13 12.10 test costco_product_refund ... ok
+#13 12.14 test confirmed_receipt_scoring_uses_saved_values_not_user_aliases_or_unknown_fields ... ok
+#13 12.18 test hmart_evening_clock ... ok
+#13 12.19 test costco_walnuts_and_steelhead ... ok
+#13 12.20 test skyfoods_actual_weights_not_package_weight ... ok
+#13 12.22 test costco_membership_refund_and_negative_tax ... ok
+#13 12.25 test costco_pistachio_full_name ... ok
+#13 12.26 test hmart_fage_full_name_and_weight_annotation ... ok
+#13 12.31 test costco_pen_obscured_names_have_explicit_masks ... ok
+#13 12.33 test skyfoods_cash_payment_and_change ... ok
+#13 12.35 test costco_footer_august_date ... ok
+#13 12.47 test costco_two_ocean_mist_discounts_and_tax ... ok
+#13 12.55 test costco_prescanned_purchase_not_card_balance ... ok
+#13 13.05 test skyfoods_chinese_duplicate_tofu_and_discounts ... ok
+#13 13.19 test skyfoods_milk_soy_sauce_and_duplicate_discounted_tofu ... ok
+#13 14.51 test skyfoods_tips_is_product_name_not_tip ... ok
+#13 14.52 test skyfoods_peanut_package_discount ... ok
+#13 14.54 test skyfoods_two_bundles_not_two_pounds ... ok
+#13 30.21 test scorer_rejects_each_reported_error_even_when_total_is_correct ... ok
+#13 30.21 
+#13 30.21 test result: ok. 22 passed; 0 failed; 2 ignored; 0 measured; 0 filtered out; finished in 21.98s
+#13 30.21 
+#13 30.21      Running ../../tests/backend_api/parsing.rs (/target/debug/deps/parsing-4fe129ebf82e1451)
+#13 30.21 
+#13 30.21 running 9 tests
+#13 30.24 test unknown_store_does_not_inherit_costco_sku_rules ... ok
+#13 30.24 test chinese_names_use_paddle_even_when_price_is_on_the_same_row ... ok
+#13 30.25 test bilingual_net_discounts_and_weight_are_not_extra_products ... ok
+#13 30.26 test multiphoto_overlap_preserves_real_repetitions ... ok
+#13 30.26 test hmart_name_weight_arithmetic_and_whole_tip_label ... ok
+#13 30.27 test refund_and_footer_policy_are_distinct ... ok
+#13 30.28 test costco_tax_sku_coupons_and_reward_summary ... ok
+#13 30.32 test costco_prescanned_stars_sku_descriptive_coupon_deposit_and_damaged_subtotal ... ok
+#13 31.08 test all_saved_dual_ocr_pages_have_valid_nonempty_store_parses ... ok
+#13 31.08 
+#13 31.08 test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.87s
+#13 31.08 
+#13 31.08      Running ../../tests/backend_api/storage.rs (/target/debug/deps/storage-3b6416416f4180ea)
+#13 31.09 
+#13 31.09 running 42 tests
+#13 31.09 test arithmetic_validation_reports_mismatch_without_reclassifying_or_changing_rows ... ok
+#13 31.09 test fixed_decimal_never_uses_binary_float ... ok
+#13 31.09 test explicit_net_basis_is_converted_arithmetically_without_interpreting_discount_labels ... ok
+#13 31.32 test logo_crop_respects_camera_exif_orientation ... ok
+#13 33.24 test logo_crop_uses_layout_boxes_not_ocr_characters ... ok
+#13 33.67 test logo_crop_merges_adjacent_brand_headers_but_excludes_address_and_receipt_title ... ok
+#13 33.68 test path_traversal_is_rejected ... ok
+#13 34.99 test backend_owns_weight_display_and_edit_roundtrip ... ok
+#13 35.02 test invalid_relationship_rolls_back_entire_receipt ... ok
+#13 35.06 test duplicate_ocr_warnings_can_be_saved_repeatedly_and_confirmed ... ok
+#13 35.06 test raw_package_units_are_converted_by_backend_and_scale_weight_has_priority ... ok
+#13 35.14 test current_schema_initializes_once_and_rejects_old_versions_without_upgrade ... ok
+#13 35.15 test bundled_catalog_is_initial_data_and_never_overwrites_user_changes_on_restart ... ok
+#13 35.17 test categories_reject_cycles_and_preserve_system_nodes ... ok
+#13 35.19 test legacy_confidence_warning_is_filtered_without_losing_real_issues ... ok
+#13 35.20 test costco_discount_metadata_follows_its_product_without_duplicate_storage ... ok
+#13 35.30 test expanded_logo_crop_keeps_confirmed_alias_but_disjoint_crop_does_not ... ok
+#13 37.19 test names_weights_aliases_and_currency_reports ... ok
+#13 37.57 test permanent_delete_drafts_and_posted_receipts_with_active_jobs ... ok
+#13 37.57 test server_calendar_handles_dst_and_device_timezone ... ok
+#13 39.27 test printed_seconds_and_us_am_pm_survive_utc_conversion ... ok
+#13 39.30 test fresh_database_matches_bundled_merchant_logos_without_ocr_or_prior_receipts ... ok
+#13 39.30 test logo_samples_match_only_confirmed_images_and_survive_receipt_deletion ... ok
+#13 39.32 test queued_jobs_are_deduplicated_and_completion_never_overwrites_edits_or_deletions ... ok
+#13 39.32 test receipt_list_uses_creation_time_descending_with_stable_pagination ... ok
+#13 39.34 test recognized_mass_is_converted_and_persisted_as_grams ... ok
+#13 39.34 test receipt_sorting_pages_every_column_in_both_directions_and_keeps_unknown_amount_last ... ok
+#13 39.36 test save_does_not_interpret_names_as_sku_or_weight_markers ... ok
+#13 39.36 test receipts_persist_and_stale_edits_are_rejected ... ok
+#13 39.37 test restart_preserves_queued_jobs_and_requeues_interrupted_work ... ok
+#13 40.03 test backup_restore_keeps_database_and_original_photos ... ok
+#13 40.83 test server_budget_is_a_notice_and_yaml_prices_are_snapshotted ... ok
+#13 41.06 test server_edits_preserve_sums_and_reject_lossy_currency_changes ... ok
+#13 42.07 test unavailable_confidence_is_not_an_item_warning ... ok
+#13 42.17 test sku_catalog_is_merchant_scoped_optional_and_preserved_by_old_clients ... ok
+#13 42.21 test upload_rotation_preserves_original_and_updates_hash ... ok
+#13 42.27 test weighed_amount_check_rounds_to_cents_and_clears_stale_warnings ... ok
+#13 42.28 test weight_presentation_rounds_only_kg_and_pounds_to_two_places ... ok
+#13 42.32 test vision_contract_keeps_explicit_fields_duplicates_and_cross_photo_evidence ... ok
+#13 42.46 test entire_restore_replaces_data_and_reopens_cleanly ... ok
+#13 47.30 test running_ocr_merges_header_edits_but_protects_lines_currency_and_photos ... ok
+#13 54.43 test early_logo_store_save_preserves_edits_and_rejects_stale_jobs ... ok
+#13 54.43 
+#13 54.43 test result: ok. 42 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 23.34s
+#13 54.43 
+#13 54.43    Doc-tests receipt_backend_api
+#13 54.50 
+#13 54.50 running 0 tests
+#13 54.50 
+#13 54.50 test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+#13 54.50 
+#13 54.59     Checking receipt-backend-api v0.1.0 (/workspace/src/backend_api)
+#13 54.92     Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.40s
+#13 55.00    Compiling receipt-backend-api v0.1.0 (/workspace/src/backend_api)
+#13 59.76     Finished `release` profile [optimized] target(s) in 4.82s
+#13 DONE 60.0s
+
+#14 exporting to image
+#14 exporting layers
+#14 exporting layers 0.5s done
+#14 writing image sha256:bd2c03f15472e59feb2559c60c46a4c380eff9ed7e491ded1582cd4fb28f5372 done
+#14 DONE 0.5s
+APK backend: http://192.168.1.20:5000/ (key not displayed)
+Flutter workspace: /home/zyin/dev/receipt_master/build/flutter
+#0 building with "default" instance using docker driver
+
+#1 [internal] load build definition from android.Dockerfile
+#1 transferring dockerfile: 5.45kB done
+#1 DONE 0.0s
+
+#2 resolve image config for docker-image://docker.io/docker/dockerfile:1
+#2 DONE 0.1s
+
+#3 docker-image://docker.io/docker/dockerfile:1@sha256:ecfaec9ed6d810b56388c508f4121597bfbba70d41a6dfeee4d8cad5f295fc32
+#3 CACHED
+
+#4 [internal] load metadata for docker.io/library/eclipse-temurin:21-jdk-jammy
+#4 DONE 0.0s
+
+#5 [toolchain 1/6] FROM docker.io/library/eclipse-temurin:21-jdk-jammy
+#5 DONE 0.0s
+
+#6 [internal] load build context
+#6 transferring context: 370.60kB 0.0s done
+#6 DONE 0.0s
+
+#7 [toolchain 3/6] RUN git clone --depth 1 --branch "3.47.4" https://github.com/flutter/flutter.git /opt/flutter     && flutter config --no-analytics --android-sdk "/opt/android-sdk"     && flutter precache --android
+#7 CACHED
+
+#8 [build  6/13] COPY src/shared/resources/ ./resources/
+#8 CACHED
+
+#9 [build  9/13] COPY docker/android_release.py /workspace/docker/android_release.py
+#9 CACHED
+
+#10 [checks 7/9] COPY tests/shared/ /workspace/tests/shared/
+#10 CACHED
+
+#11 [checks 9/9] RUN --mount=type=cache,target=/root/.pub-cache,sharing=locked     dart format --output=none --set-exit-if-changed lib /workspace/tests/shared     && flutter analyze     && cd /workspace/tests/shared && flutter pub get --enforce-lockfile     && flutter analyze && flutter test domain database ui --reporter expanded
+#11 CACHED
+
+#12 [build 12/13] RUN test -n "3d399a4190655115ffc55b6104ed4929793f566f294702742f3908bfdb9d82bf" && mkdir -p /root/.android
+#12 CACHED
+
+#13 [build 13/13] RUN --mount=type=cache,target=/root/.pub-cache,sharing=locked     --mount=type=cache,target=/root/.gradle,sharing=locked     --mount=type=secret,id=android_debug_key,target=/root/.android/debug.keystore,required=true     --mount=type=secret,id=mobile_defaults,target=/run/secrets/mobile_defaults,required=true     test -n "52c52a3aa7996da892f83102e760c0297ad8ef92a8d95bb3ff60370832279a69"     && python3 /apply_mobile_defaults.py /run/secrets/mobile_defaults     && flutter pub get --enforce-lockfile     && flutter build apk --debug --no-pub --build-number="10025"     && flutter build apk --release --split-per-abi --no-pub --build-number="10025"     && mkdir /artifacts     && cp build/app/outputs/flutter-apk/app-debug.apk /artifacts/receipt-master-debug.apk     && cp build/app/outputs/flutter-apk/app-arm64-v8a-release.apk /artifacts/receipt-master-arm64.apk     && cp build/app/outputs/flutter-apk/app-x86_64-release.apk /artifacts/receipt-master-x86_64.apk     && python3 /workspace/docker/android_release.py describe --artifacts /artifacts --aapt "/opt/android-sdk/build-tools/36.0.0/aapt2" --number "10025"     && cd /artifacts     && for apk in *.apk; do          echo "$apk";          "/opt/android-sdk/build-tools/36.0.0/apksigner" verify --verbose --print-certs "$apk" || exit 1;        done > APK-VERIFICATION.txt     && sha256sum *.apk > SHA256SUMS
+#13 CACHED
+
+#14 [checks 5/9] COPY src/shared/resources/ ./resources/
+#14 CACHED
+
+#15 [checks 8/9] COPY tests/backend_api/receipt_schema.json /workspace/tests/backend_api/receipt_schema.json
+#15 CACHED
+
+#16 [build 11/13] RUN python3 -m unittest discover -s /workspace/tests/docker
+#16 CACHED
+
+#17 [toolchain 2/6] RUN apt-get update && apt-get install -y --no-install-recommends     ca-certificates curl git unzip xz-utils zip clang ninja-build pkg-config     && rm -rf /var/lib/apt/lists/*
+#17 CACHED
+
+#18 [toolchain 4/6] RUN mkdir -p "/opt/android-sdk/cmdline-tools"     && curl --fail --location --retry 3 "https://dl.google.com/android/repository/commandlinetools-linux-16111833_latest.zip" -o /tmp/android-tools.zip     && unzip -q /tmp/android-tools.zip -d "/opt/android-sdk/cmdline-tools"     && mv "/opt/android-sdk/cmdline-tools/cmdline-tools" "/opt/android-sdk/cmdline-tools/latest"     && rm /tmp/android-tools.zip
+#18 CACHED
+
+#19 [build  7/13] COPY src/android/ ./android/
+#19 CACHED
+
+#20 [checks 4/9] COPY src/shared/lib/ ./lib/
+#20 CACHED
+
+#21 [build 10/13] COPY tests/docker/ /workspace/tests/docker/
+#21 CACHED
+
+#22 [build  3/13] COPY src/shared/pubspec.yaml src/shared/pubspec.lock ./
+#22 CACHED
+
+#23 [build  2/13] WORKDIR /workspace/build/flutter
+#23 CACHED
+
+#24 [checks 2/9] COPY src/shared/pubspec.yaml src/shared/pubspec.lock ./
+#24 CACHED
+
+#25 [build  1/13] RUN apt-get update && apt-get install -y --no-install-recommends python3     && rm -rf /var/lib/apt/lists/*
+#25 CACHED
+
+#26 [toolchain 5/6] RUN yes | sdkmanager --licenses >/dev/null
+#26 CACHED
+
+#27 [build  8/13] COPY docker/apply_mobile_defaults.py /apply_mobile_defaults.py
+#27 CACHED
+
+#28 [build  5/13] COPY src/shared/lib/ ./lib/
+#28 CACHED
+
+#29 [checks 1/9] WORKDIR /workspace/src/shared
+#29 CACHED
+
+#30 [checks 6/9] COPY src/shared/analysis_options.yaml ./
+#30 CACHED
+
+#31 [checks 3/9] RUN --mount=type=cache,target=/root/.pub-cache,sharing=locked flutter pub get --enforce-lockfile
+#31 CACHED
+
+#32 [build  4/13] RUN --mount=type=cache,target=/root/.pub-cache,sharing=locked flutter pub get --enforce-lockfile
+#32 CACHED
+
+#33 [toolchain 6/6] RUN sdkmanager 'platform-tools' 'platforms;android-36' 'platforms;android-35'     'build-tools;36.0.0' 'ndk;28.2.13676358' 'cmake;3.22.1'
+#33 CACHED
+
+#34 [artifacts 1/1] COPY --from=build /artifacts/ /
+#34 CACHED
+
+#35 exporting to client directory
+#35 copying files 209.47MB 0.1s done
+#35 DONE 0.1s
+Android build 10025 published: /home/zyin/dev/receipt_master/build/mobile
+#0 building with "default" instance using docker driver
+
+#1 [internal] load build definition from backend_ocr.Dockerfile
+#1 transferring dockerfile: 2.33kB done
+#1 DONE 0.0s
+
+#2 resolve image config for docker-image://docker.io/docker/dockerfile:1
+#2 DONE 0.1s
+
+#3 docker-image://docker.io/docker/dockerfile:1@sha256:ecfaec9ed6d810b56388c508f4121597bfbba70d41a6dfeee4d8cad5f295fc32
+#3 CACHED
+
+#4 [internal] load metadata for docker.io/library/python:3.12-slim
+#4 DONE 0.0s
+
+#5 [internal] load metadata for docker.io/vllm/vllm-openai:unlimited-ocr@sha256:542961a42d9183813819a23ef3a8b50bfb4f5ef7b0fb4f8e4f56edd8445efb18
+#5 DONE 0.0s
+
+#6 [weights 1/7] FROM docker.io/library/python:3.12-slim
+#6 DONE 0.0s
+
+#7 [runtime  1/10] FROM docker.io/vllm/vllm-openai:unlimited-ocr@sha256:542961a42d9183813819a23ef3a8b50bfb4f5ef7b0fb4f8e4f56edd8445efb18
+#7 DONE 0.0s
+
+#8 [internal] load build context
+#8 transferring context: 26.91kB done
+#8 DONE 0.0s
+
+#9 [checks 2/6] WORKDIR /workspace
+#9 CACHED
+
+#10 [checks 4/6] COPY src/backend_ocr/ src/backend_ocr/
+#10 CACHED
+
+#11 [checks 3/6] RUN pip install --no-cache-dir fastapi==0.136.3 httpx==0.28.1 pillow==11.3.0
+#11 CACHED
+
+#12 [checks 5/6] COPY tests/backend_ocr/ tests/backend_ocr/
+#12 CACHED
+
+#13 [checks 6/6] RUN python -m unittest discover -s tests/backend_ocr && touch /checks-passed
+#13 CACHED
+
+#14 [runtime  8/10] COPY --from=weights /models/ppocr-rec /models/ppocr-rec
+#14 CACHED
+
+#15 [runtime  3/10] RUN python3 -m venv /opt/paddle && /opt/paddle/bin/pip install --no-cache-dir paddleocr==3.7.0 paddlepaddle==3.3.0 fastapi==0.136.3 uvicorn==0.35.0
+#15 CACHED
+
+#16 [runtime  7/10] COPY --from=weights /models/ppocr-det /models/ppocr-det
+#16 CACHED
+
+#17 [weights 2/7] RUN pip install --no-cache-dir huggingface-hub==0.34.4
+#17 CACHED
+
+#18 [runtime  5/10] COPY --from=checks /checks-passed /app/checks-passed
+#18 CACHED
+
+#19 [weights 5/7] RUN python /download_model.py --name logo-embedding --repository facebook/dinov2-small --revision ed25f3a31f01632728cabb09d1542f84ab7b0056
+#19 CACHED
+
+#20 [weights 4/7] RUN python /download_model.py --name unlimited-ocr --repository baidu/Unlimited-OCR --revision 07dea832e22aefee32ad281d4b80551282e1c168
+#20 CACHED
+
+#21 [runtime  4/10] WORKDIR /app
+#21 CACHED
+
+#22 [runtime  6/10] COPY --from=weights /models/unlimited-ocr /models/unlimited-ocr
+#22 CACHED
+
+#23 [weights 3/7] COPY docker/download_model.py /download_model.py
+#23 CACHED
+
+#24 [weights 6/7] RUN python /download_model.py --name ppocr-det --repository PaddlePaddle/PP-OCRv6_medium_det --revision 8e0f56fb2ef86b461d99cfc7ac5c137738985f61
+#24 CACHED
+
+#25 [weights 7/7] RUN python /download_model.py --name ppocr-rec --repository PaddlePaddle/PP-OCRv6_medium_rec --revision e5a92bcbc5cc1b494628e458d267778f0704fd7c
+#25 CACHED
+
+#26 [runtime  2/10] RUN apt-get update && apt-get install -y --no-install-recommends python3-venv libgl1 libglib2.0-0 && rm -rf /var/lib/apt/lists/*
+#26 CACHED
+
+#27 [runtime  9/10] COPY --from=weights /models/logo-embedding /models/logo-embedding
+#27 CACHED
+
+#28 [runtime 10/10] COPY src/backend_ocr/ /app/
+#28 DONE 0.0s
+
+#29 exporting to image
+#29 exporting layers
+#29 exporting layers 1.6s done
+#29 writing image sha256:70befe65dcc077d81b74212e1581078322068e92f6da4786e6b512b370360409 done
+#29 naming to docker.io/library/receipt-master-backend-ocr:local done
+#29 DONE 1.6s
+#0 building with "default" instance using docker driver
+
+#1 [internal] load build definition from backend_api.Dockerfile
+#1 transferring dockerfile: 1.46kB done
+#1 DONE 0.0s
+
+#2 resolve image config for docker-image://docker.io/docker/dockerfile:1
+#2 DONE 0.1s
+
+#3 docker-image://docker.io/docker/dockerfile:1@sha256:ecfaec9ed6d810b56388c508f4121597bfbba70d41a6dfeee4d8cad5f295fc32
+#3 CACHED
+
+#4 [auth] library/debian:pull token for registry-1.docker.io
+#4 DONE 0.0s
+
+#5 [internal] load metadata for docker.io/library/rust:1.98.0-bookworm
+#5 DONE 0.1s
+
+#6 [internal] load metadata for docker.io/library/debian:bookworm-slim
+#6 DONE 0.2s
+
+#7 [checks 1/7] FROM docker.io/library/rust:1.98.0-bookworm@sha256:82150a52ec202c1b14d7817e14516c392bb7f5cfebd88f1ed531cb37ebd39922
+#7 DONE 0.0s
+
+#8 [runtime 1/4] FROM docker.io/library/debian:bookworm-slim@sha256:88200866dfff7ea7f5cbcb6ec7c8a701889efe6fe859fe64d6990e4b07ea4171
+#8 DONE 0.0s
+
+#9 [internal] load build context
+#9 transferring context: 96.98MB 0.1s
+#9 transferring context: 212.14MB 0.2s done
+#9 DONE 0.2s
+
+#10 [checks 3/7] WORKDIR /workspace
+#10 CACHED
+
+#11 [checks 4/7] COPY src/backend_api/ src/backend_api/
+#11 CACHED
+
+#12 [checks 5/7] COPY tests/backend_api/ tests/backend_api/
+#12 CACHED
+
+#13 [checks 6/7] COPY playground/backend_api/config.yaml playground/backend_api/config.yaml
+#13 CACHED
+
+#14 [checks 2/7] RUN rustup component add rustfmt clippy
+#14 CACHED
+
+#15 [checks 7/7] RUN --mount=type=cache,target=/usr/local/cargo/registry --mount=type=cache,target=/target     cargo fmt --manifest-path src/backend_api/Cargo.toml --check     && cargo test --locked --manifest-path src/backend_api/Cargo.toml     && cargo clippy --locked --manifest-path src/backend_api/Cargo.toml --all-targets -- -D warnings     && cargo build --release --locked --manifest-path src/backend_api/Cargo.toml     && cp /target/release/receipt-backend-api /receipt-backend-api
+#15 CACHED
+
+#16 [runtime 2/4] RUN apt-get update && apt-get install -y --no-install-recommends ca-certificates curl && rm -rf /var/lib/apt/lists/*
+#16 CACHED
+
+#17 [runtime 3/4] WORKDIR /app
+#17 CACHED
+
+#18 [runtime 4/4] COPY --from=checks /receipt-backend-api /app/receipt-backend-api
+#18 DONE 0.1s
+
+#19 exporting to image
+#19 exporting layers
+#19 exporting layers 0.3s done
+#19 writing image sha256:089b84cf6e6c501dd16d1ea30afa238e2f1e91ad2d4e53381c1119b45f2b644c done
+#19 naming to docker.io/library/receipt-master-backend-api:local done
+#19 DONE 0.3s

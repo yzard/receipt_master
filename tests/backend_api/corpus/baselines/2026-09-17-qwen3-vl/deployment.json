@@ -1,0 +1,39 @@
+{
+  "evaluated_at_utc": "2026-09-17T02:31:08Z",
+  "model": "Qwen/Qwen3-VL-8B-Instruct",
+  "revision": "0c351dd01ed87e9c1b53cbc748cba10e6187ff3b",
+  "vllm": "0.23.1rc1.dev541+g7aaf016a1",
+  "transformers": "5.12.1",
+  "prompt_version": "vision-v5",
+  "images": {
+    "backend_api": {
+      "image_id": "sha256:5e74d6bf0fee50c975db12964bafad91cc610b2cd2b9bc1af2ce41713c973c04",
+      "health": "healthy"
+    },
+    "backend_ocr": {
+      "image_id": "sha256:ccac526e6300f958694332fb5492ea0d64a36adb09df966190a700dc9081586a",
+      "health": "healthy"
+    }
+  },
+  "apk_build": 10025,
+  "apk_sha256": "be745fb4ca3a7ac5fac34501772bdf1673e6534f09a6c4ca917f2d7219abb582",
+  "checks": {
+    "rust": 76,
+    "flutter": 26,
+    "ocr_python": 4,
+    "android_packaging": 2,
+    "ios_native": "not run on Linux"
+  },
+  "smoke": [
+    "logo alias from real photo",
+    "two overlapping photos in one job",
+    "two concurrent jobs while receipt queries remain responsive",
+    "public APK matches manifest",
+    "unauthenticated business API returns 401"
+  ],
+  "files": {
+    "src/backend_api/src/vision_prompt.txt": "19f5cd9f832f568bdc4efc77a06cb5fb1b4a0694fc2c1f314f1e03cb87fbcb5e",
+    "src/backend_api/src/receipt_schema.json": "f6dec7e7d07fc6e6da4b1c7b2c2046d15cd7cca6b5b49f94adc9cbfcd64452a8",
+    "playground/backend_ocr.toml": "50544ed797415dfa27e01450fe44661338809bbe7d38d15e1cce9233cdd6931f"
+  }
+}

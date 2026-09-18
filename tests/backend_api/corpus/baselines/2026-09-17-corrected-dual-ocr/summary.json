@@ -1,0 +1,32 @@
+[
+  {
+    "engine": "unlimited",
+    "label": "Unlimited-OCR",
+    "count": 24,
+    "valid": 24,
+    "strict": 7,
+    "total": 24,
+    "line_count": 18,
+    "time": 19
+  },
+  {
+    "engine": "paddle",
+    "label": "PP-OCRv6 medium",
+    "count": 24,
+    "valid": 24,
+    "strict": 2,
+    "total": 21,
+    "line_count": 13,
+    "time": 15
+  },
+  {
+    "engine": "both",
+    "label": "双 OCR 合并",
+    "count": 24,
+    "valid": 24,
+    "strict": 7,
+    "total": 24,
+    "line_count": 18,
+    "time": 19
+  }
+]

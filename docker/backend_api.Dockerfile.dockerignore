@@ -1,0 +1,14 @@
+**
+!src/
+!src/backend_api/
+!src/backend_api/**
+!tests/
+!tests/backend_api/
+!tests/backend_api/**
+!playground/
+!playground/backend_api/
+!playground/backend_api/config.yaml
+!docker/
+!docker/download_model.py
+**/__pycache__/
+**/target/

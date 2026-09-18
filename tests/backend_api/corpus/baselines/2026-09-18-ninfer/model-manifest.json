@@ -1,0 +1,389 @@
+{
+  "_id": "6a744198df74ece46cab38a6",
+  "id": "neroued/Qwen3.8-27B-nvfp4-NInfer",
+  "private": false,
+  "pipeline_tag": "image-text-to-text",
+  "library_name": "ninfer",
+  "tags": [
+    "ninfer",
+    "qwen3.8",
+    "nvfp4",
+    "fp8",
+    "w4a4",
+    "blackwell",
+    "multimodal",
+    "conversational",
+    "cuda",
+    "rtx-5090",
+    "image-text-to-text",
+    "base_model:Qwen/Qwen3.8-27B",
+    "base_model:quantized:Qwen/Qwen3.8-27B",
+    "license:apache-2.0",
+    "model-index",
+    "region:us"
+  ],
+  "downloads": 306587,
+  "likes": 68,
+  "modelId": "neroued/Qwen3.8-27B-nvfp4-NInfer",
+  "author": "neroued",
+  "sha": "f0b43ad436b9fa8142c6ed6647c470a6fe409484",
+  "lastModified": "2026-09-15T16:01:17.000Z",
+  "gated": false,
+  "disabled": false,
+  "widgetData": [
+    {
+      "text": "Hi, what can you help me with?"
+    },
+    {
+      "text": "What is 84 * 3 / 2?"
+    },
+    {
+      "text": "Tell me an interesting fact about the universe!"
+    },
+    {
+      "text": "Explain quantum computing in simple terms."
+    }
+  ],
+  "model-index": [
+    {
+      "name": "Qwen3.8-27B-nvfp4-NInfer",
+      "results": [
+        {
+          "task": {
+            "type": "text-generation",
+            "name": "Text Generation"
+          },
+          "dataset": {
+            "name": "IFBench",
+            "type": "ifbench"
+          },
+          "metrics": [
+            {
+              "type": "accuracy",
+              "value": 77,
+              "name": "Prompt-level strict (0-shot, rule)",
+              "verified": false
+            }
+          ],
+          "source": {
+            "url": "https://github.com/Neroued/ninfer/tree/master/eval",
+            "name": "NInfer EvalScope 1.9.0"
+          }
+        },
+        {
+          "task": {
+            "type": "text-generation",
+            "name": "Text Generation"
+          },
+          "dataset": {
+            "name": "AIME 2025",
+            "type": "aime25"
+          },
+          "metrics": [
+            {
+              "type": "accuracy",
+              "value": 96.67,
+              "name": "Accuracy (0-shot, rule)",
+              "verified": false
+            }
+          ],
+          "source": {
+            "url": "https://github.com/Neroued/ninfer/tree/master/eval",
+            "name": "NInfer EvalScope 1.9.0"
+          }
+        },
+        {
+          "task": {
+            "type": "text-generation",
+            "name": "Text Generation"
+          },
+          "dataset": {
+            "name": "AIME 2026",
+            "type": "aime26"
+          },
+          "metrics": [
+            {
+              "type": "accuracy",
+              "value": 96.67,
+              "name": "Accuracy (0-shot, rule)",
+              "verified": false
+            }
+          ],
+          "source": {
+            "url": "https://github.com/Neroued/ninfer/tree/master/eval",
+            "name": "NInfer EvalScope 1.9.0"
+          }
+        },
+        {
+          "task": {
+            "type": "text-generation",
+            "name": "Text Generation"
+          },
+          "dataset": {
+            "name": "GPQA-Diamond",
+            "type": "gpqa_diamond"
+          },
+          "metrics": [
+            {
+              "type": "accuracy",
+              "value": 90.4,
+              "name": "Accuracy (0-shot, rule)",
+              "verified": false
+            }
+          ],
+          "source": {
+            "url": "https://github.com/Neroued/ninfer/tree/master/eval",
+            "name": "NInfer EvalScope 1.9.0"
+          }
+        },
+        {
+          "task": {
+            "type": "image-text-to-text",
+            "name": "Image Text to Text"
+          },
+          "dataset": {
+            "name": "ERQA",
+            "type": "erqa"
+          },
+          "metrics": [
+            {
+              "type": "accuracy",
+              "value": 66.25,
+              "name": "Accuracy (0-shot, rule)",
+              "verified": false
+            }
+          ],
+          "source": {
+            "url": "https://github.com/Neroued/ninfer/tree/master/eval",
+            "name": "NInfer EvalScope 1.9.0"
+          }
+        },
+        {
+          "task": {
+            "type": "image-text-to-text",
+            "name": "Image Text to Text"
+          },
+          "dataset": {
+            "name": "RealWorldQA",
+            "type": "real_world_qa"
+          },
+          "metrics": [
+            {
+              "type": "accuracy",
+              "value": 83.53,
+              "name": "Accuracy (0-shot, rule)",
+              "verified": false
+            }
+          ],
+          "source": {
+            "url": "https://github.com/Neroued/ninfer/tree/master/eval",
+            "name": "NInfer EvalScope 1.9.0"
+          }
+        }
+      ]
+    }
+  ],
+  "config": {},
+  "cardData": {
+    "library_name": "ninfer",
+    "pipeline_tag": "image-text-to-text",
+    "inference": false,
+    "license": "apache-2.0",
+    "base_model": [
+      "Qwen/Qwen3.8-27B",
+      "unsloth/Qwen3.8-27B-NVFP4"
+    ],
+    "base_model_relation": "quantized",
+    "tags": [
+      "ninfer",
+      "qwen3.8",
+      "nvfp4",
+      "fp8",
+      "w4a4",
+      "blackwell",
+      "multimodal",
+      "conversational",
+      "cuda",
+      "rtx-5090"
+    ],
+    "model-index": [
+      {
+        "name": "Qwen3.8-27B-nvfp4-NInfer",
+        "results": [
+          {
+            "task": {
+              "type": "text-generation",
+              "name": "Text Generation"
+            },
+            "dataset": {
+              "name": "IFBench",
+              "type": "ifbench"
+            },
+            "metrics": [
+              {
+                "type": "accuracy",
+                "value": 77,
+                "name": "Prompt-level strict (0-shot, rule)",
+                "verified": false
+              }
+            ],
+            "source": {
+              "url": "https://github.com/Neroued/ninfer/tree/master/eval",
+              "name": "NInfer EvalScope 1.9.0"
+            }
+          },
+          {
+            "task": {
+              "type": "text-generation",
+              "name": "Text Generation"
+            },
+            "dataset": {
+              "name": "AIME 2025",
+              "type": "aime25"
+            },
+            "metrics": [
+              {
+                "type": "accuracy",
+                "value": 96.67,
+                "name": "Accuracy (0-shot, rule)",
+                "verified": false
+              }
+            ],
+            "source": {
+              "url": "https://github.com/Neroued/ninfer/tree/master/eval",
+              "name": "NInfer EvalScope 1.9.0"
+            }
+          },
+          {
+            "task": {
+              "type": "text-generation",
+              "name": "Text Generation"
+            },
+            "dataset": {
+              "name": "AIME 2026",
+              "type": "aime26"
+            },
+            "metrics": [
+              {
+                "type": "accuracy",
+                "value": 96.67,
+                "name": "Accuracy (0-shot, rule)",
+                "verified": false
+              }
+            ],
+            "source": {
+              "url": "https://github.com/Neroued/ninfer/tree/master/eval",
+              "name": "NInfer EvalScope 1.9.0"
+            }
+          },
+          {
+            "task": {
+              "type": "text-generation",
+              "name": "Text Generation"
+            },
+            "dataset": {
+              "name": "GPQA-Diamond",
+              "type": "gpqa_diamond"
+            },
+            "metrics": [
+              {
+                "type": "accuracy",
+                "value": 90.4,
+                "name": "Accuracy (0-shot, rule)",
+                "verified": false
+              }
+            ],
+            "source": {
+              "url": "https://github.com/Neroued/ninfer/tree/master/eval",
+              "name": "NInfer EvalScope 1.9.0"
+            }
+          },
+          {
+            "task": {
+              "type": "image-text-to-text",
+              "name": "Image Text to Text"
+            },
+            "dataset": {
+              "name": "ERQA",
+              "type": "erqa"
+            },
+            "metrics": [
+              {
+                "type": "accuracy",
+                "value": 66.25,
+                "name": "Accuracy (0-shot, rule)",
+                "verified": false
+              }
+            ],
+            "source": {
+              "url": "https://github.com/Neroued/ninfer/tree/master/eval",
+              "name": "NInfer EvalScope 1.9.0"
+            }
+          },
+          {
+            "task": {
+              "type": "image-text-to-text",
+              "name": "Image Text to Text"
+            },
+            "dataset": {
+              "name": "RealWorldQA",
+              "type": "real_world_qa"
+            },
+            "metrics": [
+              {
+                "type": "accuracy",
+                "value": 83.53,
+                "name": "Accuracy (0-shot, rule)",
+                "verified": false
+              }
+            ],
+            "source": {
+              "url": "https://github.com/Neroued/ninfer/tree/master/eval",
+              "name": "NInfer EvalScope 1.9.0"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "siblings": [
+    {
+      "rfilename": ".gitattributes",
+      "blobId": "7e513d6891df990524f4828daa214d0f04aa5368",
+      "size": 1580
+    },
+    {
+      "rfilename": "LICENSE",
+      "blobId": "261eeb9e9f8b2b4b0d119366dda99c6fd7d35c64",
+      "size": 11357
+    },
+    {
+      "rfilename": "README.md",
+      "blobId": "8ffae8a272c8baf7cff5da50b6af62c230aafcd3",
+      "size": 14990
+    },
+    {
+      "rfilename": "SHA256SUMS",
+      "blobId": "a2fc23602bcb2e82fa903cbb9fa2cbffc4d03278",
+      "size": 91
+    },
+    {
+      "rfilename": "artifact-manifest.json",
+      "blobId": "7b720e6e44c9d0db6ac8b4d9bc077e6d38f9ceaf",
+      "size": 2351
+    },
+    {
+      "rfilename": "qwen3_8_27b_nvfp4.ninfer",
+      "blobId": "fd9da05dee9d260a625d1a4f19779627103249ee",
+      "size": 23719715844,
+      "lfs": {
+        "sha256": "74d2c57145e6ff11d1d2faa79594477f9bc903a611af1fb20218189fbbb77d82",
+        "size": 23719715844,
+        "pointerSize": 136
+      }
+    }
+  ],
+  "spaces": [],
+  "createdAt": "2026-08-06T08:11:04.000Z",
+  "usedStorage": 92651622152
+}

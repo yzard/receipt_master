@@ -1,0 +1,45 @@
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.08s
+     Running ../../tests/backend_api/corpus.rs (build/backend_api/target/debug/deps/corpus-a2b17f81720eae3b)
+
+running 1 test
+"72a635b2-4b7e-4612-98ab-0f74d47fca59": 7 mismatches
+test live_image_benchmark has been running for over 60 seconds
+"e3843baa-904a-4bbf-bc21-278a1693d5c7": 1 mismatches
+"2f97fc50-4cf3-47e1-bd44-ea6de95c774c": 29 mismatches
+"6d9da1ec-c0fc-4905-82b4-4ebd11716b1c": 1 mismatches
+"4e491343-7593-42b4-b5b5-01e5648557ee": 0 mismatches
+"73953603-31f5-496a-9dd4-76fc845c8398": 1 mismatches
+"e6c62f11-3b8d-4ac0-a860-1756df0efa55": 9 mismatches
+"a31f7e6b-8bb1-49c8-a292-504d76d1a59c": 1 mismatches
+"d7f8ff6d-6502-4eeb-8850-2f15b131988f": 4 mismatches
+"3a8e3c19-e8d0-4ea8-8fa3-06e3cd5fcfd4": 1 mismatches
+"8572dcef-7f7f-4d77-80c6-0ede75d45fa3": 5 mismatches
+"924e246e-c811-497a-a61b-6b5724f7bacd": 1 mismatches
+"e9ee06e0-f4aa-4c3c-812a-4e8abc21e3f0": 12 mismatches
+"a6618e05-1d59-453f-90e9-4bbf87a3830c": 1 mismatches
+"e297a3d3-f9f1-4ba7-8e5e-a18e56fdecdd": 0 mismatches
+"5331c892-9fb6-42b5-bdb3-5a205b1a0767": 1 mismatches
+"ebf82f5b-c4e7-4a49-8ce7-927233bfde95": 12 mismatches
+"c5fdc978-8f74-43bf-a5c5-e22d28f5aea9": 1 mismatches
+"20267232-d4d0-4540-9c14-b0e051b06445": 2 mismatches
+"4fc6a91b-faba-4d3e-82a3-be4c78270e99": 1 mismatches
+"ca76c352-9601-498c-8324-0ef9bcf5ea3b": 2 mismatches
+"1b072114-24ee-4bb5-80a5-018ce442a512": 1 mismatches
+"6dd0be7d-4b6e-4b97-8a3d-c76de14f434c": 0 mismatches
+"b69bb2c5-7c75-4870-803e-25e321e086dd": 3 mismatches
+
+thread 'live_image_benchmark' (1250058) panicked at ../../tests/backend_api/corpus.rs:565:5:
+assertion `left == right` failed: 21/24 receipts differ from manual annotations; report: /home/zyin/dev/receipt_master/tests/backend_api/corpus/baselines/2026-09-17-confirmed-dual-ocr/report.json
+  left: 21
+ right: 0
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test live_image_benchmark ... FAILED
+
+failures:
+
+failures:
+    live_image_benchmark
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 23 filtered out; finished in 415.16s
+
+error: test failed, to rerun pass `--test corpus`

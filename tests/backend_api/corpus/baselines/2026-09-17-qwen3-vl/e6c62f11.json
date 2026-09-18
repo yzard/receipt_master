@@ -1,0 +1,55 @@
+{
+  "id": "e6c62f11",
+  "sha256": "d001c14c9e8a5399f2e87521c5cd1090a32b2ba34b8acc86d3c1b10f45b95408",
+  "duration_seconds": 72.19,
+  "response": {
+    "id": "chatcmpl-9c14ec190ff7b8af",
+    "object": "chat.completion",
+    "created": 1789612011,
+    "model": "qwen3-vl-8b-instruct",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "{\n  \"store\": null,\n  \"branch\": \"Port Chester #326\",\n  \"address\": \"1 Westchester Ave Port Chester, NY 10573\",\n  \"country\": \"US\",\n  \"currency\": \"USD\",\n  \"local_time\": \"2025-07-30T13:21:32\",\n  \"total\": \"154.92\",\n  \"lines\": [\n    {\n      \"name\": \"*BOUNTYADV*\",\n      \"standard_name\": null,\n      \"kind\": \"product\",\n      \"quantity\": null,\n      \"quantity_unit\": null,\n      \"unit_price\": null,\n      \"amount\": \"28.49\",\n      \"confidence\": null,\n      \"discount_target_index\": null,\n      \"review_notes\": [],\n      \"sku\": \"1919329\",\n      \"tax_code\": \"A\",\n      \"is_weighed\": false,\n      \"evidence\": [\n        {\n          \"image_index\": 0,\n          \"box\": [\n            0.327,\n            0.292,\n            0.708,\n            0.315\n          ]\n        }\n      ],\n      \"package_weight\": null,\n      \"package_weight_unit\": null,\n      \"amount_basis\": \"gross\"\n    },\n    {\n      \"name\": \"**CHARMIN**\",\n      \"standard_name\": null,\n      \"kind\": \"product\",\n      \"quantity\": null,\n      \"quantity_unit\": null,\n      \"unit_price\": null,\n      \"amount\": \"29.99\",\n      \"confidence\": null,\n      \"discount_target_index\": null,\n      \"review_notes\": [],\n      \"sku\": \"2048748\",\n      \"tax_code\": \"A\",\n      \"is_weighed\": false,\n      \"evidence\": [\n        {\n          \"image_index\": 0,\n          \"box\": [\n            0.327,\n            0.315,\n            0.708,\n            0.338\n          ]\n        }\n      ],\n      \"package_weight\": null,\n      \"package_weight_unit\": null,\n      \"amount_basis\": \"gross\"\n    },\n    {\n      \"name\": \"KLXTRUSTCHRE\",\n      \"standard_name\": null,\n      \"kind\": \"product\",\n      \"quantity\": null,\n      \"quantity_unit\": null,\n      \"unit_price\": null,\n      \"amount\": \"19.99\",\n      \"confidence\": null,\n      \"discount_target_index\": null,\n      \"review_notes\": [],\n      \"sku\": \"723675\",\n      \"tax_code\": \"A\",\n      \"is_weighed\": false,\n      \"evidence\": [\n        {\n          \"image_index\": 0,\n          \"box\": [\n            0.327,\n            0.338,\n            0.708,\n            0.361\n          ]\n        }\n      ],\n      \"package_weight\": null,\n      \"package_weight_unit\": null,\n      \"amount_basis\": \"gross\"\n    },\n    {\n      \"name\": \"SIITEMAIZ SS\",\n      \"standard_name\": null,\n      \"kind\": \"product\",\n      \"quantity\": null,\n      \"quantity_unit\": null,\n      \"unit_price\": null,\n      \"amount\": \"6.99\",\n      \"confidence\": null,\n      \"discount_target_index\": null,\n      \"review_notes\": [],\n      \"sku\": \"1959977\",\n      \"tax_code\": \"E\",\n      \"is_weighed\": false,\n      \"evidence\": [\n        {\n          \"image_index\": 0,\n          \"box\": [\n            0.327,\n            0.361,\n            0.708,\n            0.384\n          ]\n        }\n      ],\n      \"package_weight\": null,\n      \"package_weight_unit\": null,\n      \"amount_basis\": \"gross\"\n    },\n    {\n      \"name\": \"KS KETTLE\",\n      \"standard_name\": null,\n      \"kind\": \"product\",\n      \"quantity\": null,\n      \"quantity_unit\": null,\n      \"unit_price\": null,\n      \"amount\": \"6.29\",\n      \"confidence\": null,\n      \"discount_target_index\": null,\n      \"review_notes\": [],\n      \"sku\": \"938492\",\n      \"tax_code\": \"E\",\n      \"is_weighed\": false,\n      \"evidence\": [\n        {\n          \"image_index\": 0,\n          \"box\": [\n            0.327,\n            0.384,\n            0.708,\n            0.407\n          ]\n        }\n      ],\n      \"package_weight\": null,\n      \"package_weight_unit\": null,\n      \"amount_basis\": \"gross\"\n    },\n    {\n      \"name\": \"ORAL-B X-FIL\",\n      \"standard_name\": null,\n      \"kind\": \"product\",\n      \"quantity\": null,\n      \"quantity_unit\": null,\n      \"unit_price\": null,\n      \"amount\": \"54.99\",\n      \"confidence\": null,\n      \"discount_target_index\": null,\n      \"review_notes\": [],\n      \"sku\": \"3610583\",\n      \"tax_code\": \"A\",\n      \"is_weighed\": false,\n      \"evidence\": [\n        {\n          \"image_index\": 0,\n          \"box\": [\n            0.327,\n            0.407,\n            0.708,\n            0.43\n          ]\n        }\n      ],\n      \"package_weight\": null,\n      \"package_weight_unit\": null,\n      \"amount_basis\": \"gross\"\n    },\n    {\n      \"name\": \"/BRSH HD\",\n      \"standard_name\": null,\n      \"kind\": \"product\",\n      \"quantity\": null,\n      \"quantity_unit\": null,\n      \"unit_price\": null,\n      \"amount\": \"11.00\",\n      \"confidence\": null,\n      \"discount_target_index\": null,\n      \"review_notes\": [],\n      \"sku\": \"0000385472\",\n      \"tax_code\": \"E\",\n      \"is_weighed\": false,\n      \"evidence\": [\n        {\n          \"image_index\": 0,\n          \"box\": [\n            0.327,\n            0.43,\n            0.708,\n            0.453\n          ]\n        }\n      ],\n      \"package_weight\": null,\n      \"package_weight_unit\": null,\n      \"amount_basis\": \"gross\"\n    },\n    {\n      \"name\": \"ORG STACY28Z\",\n      \"standard_name\": null,\n      \"kind\": \"product\",\n      \"quantity\": null,\n      \"quantity_unit\": null,\n      \"unit_price\": null,\n      \"amount\": \"7.99\",\n      \"confidence\": null,\n      \"discount_target_index\": null,\n      \"review_notes\": [],\n      \"sku\": \"867221\",\n      \"tax_code\": \"E\",\n      \"is_weighed\": false,\n      \"evidence\": [\n        {\n          \"image_index\": 0,\n          \"box\": [\n            0.327,\n            0.453,\n            0.708,\n            0.476\n          ]\n        }\n      ],\n      \"package_weight\": null,\n      \"package_weight_unit\": null,\n      \"amount_basis\": \"gross\"\n    },\n    {\n      \"name\": \"*40/.5WATER*\",\n      \"standard_name\": null,\n      \"kind\": \"product\",\n      \"quantity\": null,\n      \"quantity_unit\": null,\n      \"unit_price\": null,\n      \"amount\": \"7.39\",\n      \"confidence\": null,\n      \"discount_target_index\": null,\n      \"review_notes\": [],\n      \"sku\": \"1009982\",\n      \"tax_code\": \"A\",\n      \"is_weighed\": false,\n      \"evidence\": [\n        {\n          \"image_index\": 0,\n          \"box\": [\n            0.327,\n            0.476,\n            0.708,\n            0.5\n          ]\n        }\n      ],\n      \"package_weight\": null,\n      \"package_weight_unit\": null,\n      \"amount_basis\": \"gross\"\n    },\n    {\n      \"name\": \"NY BOTTLE DE\",\n      \"standard_name\": null,\n      \"kind\": \"product\",\n      \"quantity\": null,\n      \"quantity_unit\": null,\n      \"unit_price\": null,\n      \"amount\": \"2.00\",\n      \"confidence\": null,\n      \"discount_target_index\": null,\n      \"review_notes\": [],\n      \"sku\": \"0000385472\",\n      \"tax_code\": \"E\",\n      \"is_weighed\": false,\n      \"evidence\": [\n        {\n          \"image_index\": 0,\n          \"box\": [\n            0.327,\n            0.5,\n            0.708,\n            0.523\n          ]\n        }\n      ],\n      \"package_weight\": null,\n      \"package_weight_unit\": null,\n      \"amount_basis\": \"gross\"\n    },\n    {\n      \"name\": \"TAX\",\n      \"standard_name\": null,\n      \"kind\": \"tax\",\n      \"quantity\": null,\n      \"quantity_unit\": null,\n      \"unit_price\": null,\n      \"amount\": \"11.80\",\n      \"confidence\": null,\n      \"discount_target_index\": null,\n      \"review_notes\": [],\n      \"sku\": null,\n      \"tax_code\": null,\n      \"is_weighed\": false,\n      \"evidence\": [\n        {\n          \"image_index\": 0,\n          \"box\": [\n            0.327,\n            0.632,\n            0.708,\n            0.655\n          ]\n        }\n      ],\n      \"package_weight\": null,\n      \"package_weight_unit\": null,\n      \"amount_basis\": \"gross\"\n    }\n  ]\n}",
+          "refusal": null,
+          "annotations": null,
+          "audio": null,
+          "function_call": null,
+          "reasoning": null
+        },
+        "logprobs": null,
+        "finish_reason": "stop",
+        "stop_reason": null,
+        "token_ids": null,
+        "routed_experts": null
+      }
+    ],
+    "service_tier": null,
+    "system_fingerprint": "vllm-0.23.1rc1.dev541+g7aaf016a1-d9f86fd0",
+    "usage": {
+      "prompt_tokens": 18199,
+      "completion_tokens": 4388,
+      "total_tokens": 22587
+    },
+    "prompt_logprobs": null,
+    "prompt_token_ids": null,
+    "prompt_text": null,
+    "kv_transfer_params": null,
+    "receipt_vision": {
+      "model": "qwen3-vl-8b-instruct",
+      "prompt_version": "vision-v5",
+      "prompt_sha256": "19f5cd9f832f568bdc4efc77a06cb5fb1b4a0694fc2c1f314f1e03cb87fbcb5e",
+      "image_count": 1,
+      "attempts": 2,
+      "arithmetic_mismatch": true
+    }
+  },
+  "errors": [
+    "sum of charges",
+    "product count",
+    "individual discounts",
+    "product SKUs"
+  ]
+}

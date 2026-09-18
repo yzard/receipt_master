@@ -1,0 +1,2802 @@
+{
+  "model": "qwen3-vl-8b-instruct",
+  "evaluated_at": "2026-09-17T02:46:16.654468207+00:00",
+  "scope": "Qwen3-VL image to JSON + validation; no text reconstruction",
+  "cases": [
+    {
+      "id": "b92bd0ff",
+      "prediction": {
+        "store": null,
+        "branch": "Rego Park #1070",
+        "address": "61-35 Junction Blvd, Rego Park, NY 11374",
+        "country": "US",
+        "currency": "USD",
+        "local_time": "2026-08-20T15:48:00",
+        "total": "96.42",
+        "lines": [
+          {
+            "name": "WHITE PEACH",
+            "standard_name": null,
+            "kind": "product",
+            "quantity": "1",
+            "quantity_unit": null,
+            "unit_price": "11.99",
+            "amount": "11.99",
+            "confidence": 1.0,
+            "discount_target_index": null,
+            "review_notes": [],
+            "sku": "2338",
+            "tax_code": "E",
+            "is_weighed": false,
+            "evidence": [
+              {
+                "image_index": 0,
+                "box": [
+                  0.27,
+                  0.34,
+                  0.65,
+                  0.37
+                ]
+              }
+            ],
+            "package_weight": null,
+            "package_weight_unit": null,
+            "amount_basis": "gross"
+          },
+          {
+            "name": "B/S ATL SALM",
+            "standard_name": null,
+            "kind": "product",
+            "quantity": "1",
+            "quantity_unit": null,
+            "unit_price": "41.21",
+            "amount": "41.21",
+            "confidence": 1.0,
+            "discount_target_index": null,
+            "review_notes": [],
+            "sku": "96493",
+            "tax_code": "E",
+            "is_weighed": false,
+            "evidence": [
+              {
+                "image_index": 0,
+                "box": [
+                  0.27,
+                  0.36,
+                  0.65,
+                  0.39
+                ]
+              }
+            ],
+            "package_weight": null,
+            "package_weight_unit": null,
+            "amount_basis": "gross"
+          },
+          {
+            "name": "SEABASS",
+            "standard_name": null,
+            "kind": "product",
+            "quantity": "1",
+            "quantity_unit": null,
+            "unit_price": "43.22",
+            "amount": "43.22",
+            "confidence": 1.0,
+            "discount_target_index": null,
+            "review_notes": [],
+            "sku": "24070",
+            "tax_code": "E",
+            "is_weighed": false,
+            "evidence": [
+              {
+                "image_index": 0,
+                "box": [
+                  0.27,
+                  0.38,
+                  0.65,
+                  0.41
+                ]
+              }
+            ],
+            "package_weight": null,
+            "package_weight_unit": null,
+            "amount_basis": "gross"
+          }
+        ]
+      },
+      "errors": [
+        "line_count: 3 != 4",
+        "line[3]: missing \"TAX\""
+      ],
+      "vision": {
+        "model": "qwen3-vl-8b-instruct",
+        "prompt_version": "vision-v6",
+        "prompt_profile": "costco",
+        "prompt_sha256": "181270fb24af9588f43db399c53579073cb7dc550f89d96e58fec7a5f24df7ca",
+        "image_count": 1,
+        "attempts": 1,
+        "arithmetic_mismatch": false
+      },
+      "usage": {
+        "prompt_tokens": 7851,
+        "completion_tokens": 686,
+        "total_tokens": 8537
+      },
+      "duration_ms": 10964,
+      "images": [
+        {
+          "path": "images/b92bd0ff-0.jpg",
+          "sha256": "75f485bf0138e495bebe9c4906abaa83c906d5e451f218935266edaa692f1e82"
+        }
+      ]
+    },
+    {
+      "id": "391b3273",
+      "prediction": {
+        "store": null,
+        "branch": "Rego Park #1070",
+        "address": "51-35 Junction Blvd, Rego Park, NY 11374",
+        "country": "US",
+        "currency": "USD",
+        "local_time": "2026-08-06T19:15:50",
+        "total": "123.80",
+        "lines": [
+          {
+            "name": "PTOWELHOLDER",
+            "standard_name": null,
+            "kind": "product",
+            "quantity": "1",
+            "quantity_unit": null,
+            "unit_price": "14.99",
+            "amount": "14.99",
+            "confidence": 1.0,
+            "discount_target_index": null,
+            "review_notes": [],
+            "sku": "1901859",
+            "tax_code": "A",
+            "is_weighed": false,
+            "evidence": [
+              {
+                "image_index": 0,
+                "box": [
+                  0.333333,
+                  0.222222,
+                  0.666667,
+                  0.244444
+                ]
+              }
+            ],
+            "package_weight": null,
+            "package_weight_unit": null,
+            "amount_basis": "gross"
+          },
+          {
+            "name": "SOCK SALMON",
+            "standard_name": null,
+            "kind": "product",
+            "quantity": "1",
+            "quantity_unit": null,
+            "unit_price": "21.29",
+            "amount": "21.29",
+            "confidence": 1.0,
+            "discount_target_index": null,
+            "review_notes": [],
+            "sku": "47292",
+            "tax_code": "E",
+            "is_weighed": false,
+            "evidence": [
+              {
+                "image_index": 0,
+                "box": [
+                  0.333333,
+                  0.244444,
+                  0.666667,
+                  0.266667
+                ]
+              }
+            ],
+            "package_weight": null,
+            "package_weight_unit": null,
+            "amount_basis": "gross"
+          },
+          {
+            "name": "KS UNSL PIST",
+            "standard_name": null,
+            "kind": "product",
+            "quantity": "1",
+            "quantity_unit": null,
+            "unit_price": "16.99",
+            "amount": "16.99",
+            "confidence": 1.0,
+            "discount_target_index": null,
+            "review_notes": [],
+            "sku": "1792518",
+            "tax_code": "E",
+            "is_weighed": false,
+            "evidence": [
+              {
+                "image_index": 0,
+                "box": [
+                  0.333333,
+                  0.266667,
+                  0.666667,
+                  0.288889
+                ]
+              }
+            ],
+            "package_weight": null,
+            "package_weight_unit": null,
+            "amount_basis": "gross"
+          },
+          {
+            "name": "KS QUINOA",
+            "standard_name": null,
+            "kind": "product",
+            "quantity": "1",
+            "quantity_unit": null,
+            "unit_price": "11.59",
+            "amount": "11.59",
+            "confidence": 1.0,
+            "discount_target_index": null,
+            "review_notes": [],
+            "sku": "1001368",
+            "tax_code": "E",
+            "is_weighed": false,
+            "evidence": [
+              {
+                "image_index": 0,
+                "box": [
+                  0.333333,
+                  0.288889,
+                  0.666667,
+                  0.311111
+                ]
+              }
+            ],
+            "package_weight": null,
+            "package_weight_unit": null,
+            "amount_basis": "gross"
+          },
+          {
+            "name": "KS WALNUTS",
+            "standard_name": null,
+            "kind": "product",
+            "quantity": "1",
+            "quantity_unit": null,
+            "unit_price": "13.79",
+            "amount": "13.79",
+            "confidence": 1.0,
+            "discount_target_index": null,
+            "review_notes": [],
+            "sku": "36285",
+            "tax_code": "E",
+            "is_weighed": false,
+            "evidence": [
+              {
+                "image_index": 0,
+                "box": [
+                  0.333333,
+                  0.311111,
+                  0.666667,
+                  0.333333
+                ]
+              }
+            ],
+            "package_weight": null,
+            "package_weight_unit": null,
+            "amount_basis": "gross"
+          },
+          {
+            "name": "KS ORG TOFU",
+            "standard_name": null,
+            "kind": "product",
+            "quantity": "1",
+            "quantity_unit": null,
+            "unit_price": "5.89",
+            "amount": "5.89",
+            "confidence": 1.0,
+            "discount_target_index": null,
+            "review_notes": [],
+            "sku": "9877789",
+            "tax_code": "E",
+            "is_weighed": false,
+            "evidence": [
+              {
+                "image_index": 0,
+                "box": [
+                  0.333333,
+                  0.333333,
+                  0.666667,
+                  0.355556
+                ]
+              }
+            ],
+            "package_weight": null,
+            "package_weight_unit": null,
+            "amount_basis": "gross"
+          },
+          {
+            "name": "DRGNC BS THG",
+            "standard_name": null,
+            "kind": "product",
+            "quantity": "1",
+            "quantity_unit": null,
+            "unit_price": "26.18",
+            "amount": "26.18",
+            "confidence": 1.0,
+            "discount_target_index": null,
+            "review_notes": [],
+            "sku": "22967",
+            "tax_code": "E",
+            "is_weighed": false,
+            "evidence": [
+              {
+                "image_index": 0,
+                "box": [
+                  0.333333,
+                  0.355556,
+                  0.666667,
+                  0.377778
+                ]
+              }
+            ],
+            "package_weight": null,
+            "package_weight_unit": null,
+            "amount_basis": "gross"
+          },
+          {
+            "name": "KS ICE CREAM",
+            "standard_name": null,
+            "kind": "product",
+            "quantity": "1",
+            "quantity_unit": null,
+            "unit_price": "12.99",
+            "amount": "12.99",
+            "confidence": 1.0,
+            "discount_target_index": null,
+            "review_notes": [],
+            "sku": "948400",
+            "tax_code": "E",
+            "is_weighed": false,
+            "evidence": [
+              {
+                "image_index": 0,
+                "box": [
+                  0.333333,
+                  0.377778,
+                  0.666667,
+                  0.399999
+                ]
+              }
+            ],
+            "package_weight": null,
+            "package_weight_unit": null,
+            "amount_basis": "gross"
+          },
+          {
+            "name": "WHITE PEACH",
+            "standard_name": null,
+            "kind": "product",
+            "quantity": "1",
+            "quantity_unit": null,
+            "unit_price": "12.99",
+            "amount": "12.99",
+            "confidence": 1.0,
+            "discount_target_index": null,
+            "review_notes": [],
+            "sku": "5001",
+            "tax_code": "E",
+            "is_weighed": false,
+            "evidence": [
+              {
+                "image_index": 0,
+                "box": [
+                  0.333333,
+                  0.399999,
+                  0.666667,
+                  0.422222
+                ]
+              }
+            ],
+            "package_weight": null,
+            "package_weight_unit": null,
+            "amount_basis": "gross"
+          },
+          {
+            "name": "Executive Reward",
+            "standard_name": null,
+            "kind": "other_adjustment",
+            "quantity": null,
+            "quantity_unit": null,
+            "unit_price": "14.23",
+            "amount": "-14.23",
+            "confidence": 1.0,
+            "discount_target_index": null,
+            "review_notes": [],
+            "sku": null,
+            "tax_code": null,
+            "is_weighed": false,
+            "evidence": [
+              {
+                "image_index": 0,
+                "box": [
+                  0.333333,
+                  0.505556,
+                  0.666667,
+                  0.527778
+                ]
+              }
+            ],
+            "package_weight": null,
+            "package_weight_unit": null,
+            "amount_basis": "gross"
+          },
+          {
+            "name": "TAX",
+            "standard_name": null,
+            "kind": "tax",
+            "quantity": null,
+            "quantity_unit": null,
+            "unit_price": "1.33",
+            "amount": "1.33",
+            "confidence": 1.0,
+            "discount_target_index": null,
+            "review_notes": [],
+            "sku": null,
+            "tax_code": null,
+            "is_weighed": false,
+            "evidence": [
+              {
+                "image_index": 0,
+                "box": [
+                  0.333333,
+                  0.527778,
+                  0.666667,
+                  0.555556
+                ]
+              }
+            ],
+            "package_weight": null,
+            "package_weight_unit": null,
+            "amount_basis": "gross"
+          }
+        ]
+      },
+      "errors": [
+        "total: 12380 != 13803",
+        "time: 1786058150000 != 1786058100000 (UTC milliseconds)",
+        "line_count: 11 != 10",
+        "line[6].name: \"DRGNC BS THG\" != \"ORGNIC BS THG\""
+      ],
+      "vision": {
+        "model": "qwen3-vl-8b-instruct",
+        "prompt_version": "vision-v6",
+        "prompt_profile": "costco",
+        "prompt_sha256": "181270fb24af9588f43db399c53579073cb7dc550f89d96e58fec7a5f24df7ca",
+        "image_count": 1,
+        "attempts": 1,
+        "arithmetic_mismatch": false
+      },
+      "usage": {
+        "prompt_tokens": 7851,
+        "completion_tokens": 2409,
+        "total_tokens": 10260
+      },
+      "duration_ms": 34367,
+      "images": [
+        {
+          "path": "images/391b3273-0.jpg",
+          "sha256": "cf29d526f3e74ddea18753ab55a9f7a7a50465a95a454874ec1b21fec5012432"
+        }
+      ]
+    },
+    {
+      "id": "f7cc0090",
+      "prediction": {
+        "store": null,
+        "branch": "Rego Park #1070",
+        "address": "61-35 Junction Blvd, Rego Park, NY 11374",
+        "country": "US",
+        "currency": "USD",
+        "local_time": "2026-09-02T17:45:00",
+        "total": "61.94",
+        "lines": [
+          {
+            "name": "BLUEBERRIES",
+            "standard_name": null,
+            "kind": "product",
+            "quantity": "1",
+            "quantity_unit": null,
+            "unit_price": "7.99",
+            "amount": "7.99",
+            "confidence": 1.0,
+            "discount_target_index": null,
+            "review_notes": [],
+            "sku": "57554",
+            "tax_code": null,
+            "is_weighed": false,
+            "evidence": [
+              {
+                "image_index": 0,
+                "box": [
+                  0.23,
+                  0.31,
+                  0.57,
+                  0.34
+                ]
+              }
+            ],
+            "package_weight": null,
+            "package_weight_unit": null,
+            "amount_basis": "gross"
+          },
+          {
+            "name": "SALMON",
+            "standard_name": null,
+            "kind": "product",
+            "quantity": "1",
+            "quantity_unit": null,
+            "unit_price": "36.96",
+            "amount": "36.96",
+            "confidence": 1.0,
+            "discount_target_index": null,
+            "review_notes": [],
+            "sku": "10579",
+            "tax_code": null,
+            "is_weighed": false,
+            "evidence": [
+              {
+                "image_index": 0,
+                "box": [
+                  0.23,
+                  0.34,
+                  0.57,
+                  0.37
+                ]
+              }
+            ],
+            "package_weight": null,
+            "package_weight_unit": null,
+            "amount_basis": "gross"
+          },
+          {
+            "name": "KS PISTACHIO",
+            "standard_name": null,
+            "kind": "product",
+            "quantity": "1",
+            "quantity_unit": null,
+            "unit_price": "16.99",
+            "amount": "16.99",
+            "confidence": 1.0,
+            "discount_target_index": null,
+            "review_notes": [],
+            "sku": "545345",
+            "tax_code": null,
+            "is_weighed": false,
+            "evidence": [
+              {
+                "image_index": 0,
+                "box": [
+                  0.23,
+                  0.37,
+                  0.57,
+                  0.4
+                ]
+              }
+            ],
+            "package_weight": null,
+            "package_weight_unit": null,
+            "amount_basis": "gross"
+          },
+          {
+            "name": "TAX",
+            "standard_name": null,
+            "kind": "tax",
+            "quantity": null,
+            "quantity_unit": null,
+            "unit_price": null,
+            "amount": "0.00",
+            "confidence": 1.0,
+            "discount_target_index": null,
+            "review_notes": [],
+            "sku": null,
+            "tax_code": null,
+            "is_weighed": false,
+            "evidence": [
+              {
+                "image_index": 0,
+                "box": [
+                  0.23,
+                  0.4,
+                  0.57,
+                  0.43
+                ]
+              }
+            ],
+            "package_weight": null,
+            "package_weight_unit": null,
+            "amount_basis": "gross"
+          }
+        ]
+      },
+      "errors": [],
+      "vision": {
+        "model": "qwen3-vl-8b-instruct",
+        "prompt_version": "vision-v6",
+        "prompt_profile": "costco",
+        "prompt_sha256": "181270fb24af9588f43db399c53579073cb7dc550f89d96e58fec7a5f24df7ca",
+        "image_count": 1,
+        "attempts": 1,
+        "arithmetic_mismatch": false
+      },
+      "usage": {
+        "prompt_tokens": 7851,
+        "completion_tokens": 861,
+        "total_tokens": 8712
+      },
+      "duration_ms": 63015,
+      "images": [
+        {
+          "path": "images/f7cc0090-0.jpg",
+          "sha256": "0bf2e9e11733babcf62890bcff46ed6f1677ab6e619f246daaef7eaba37dc0d3"
+        }
+      ]
+    },
+    {
+      "id": "efe47023",
+      "prediction": {
+        "store": null,
+        "branch": "Rego Park #1070",
+        "address": "61-35 Junction Blvd\nRego Park, NY 11374",
+        "country": "US",
+        "currency": "USD",
+        "local_time": "2026-09-05T16:03:00",
+        "total": "100.77",
+        "lines": [
+          {
+            "name": "PASTURE EGGS",
+            "standard_name": null,
+            "kind": "product",
+            "quantity": null,
+            "quantity_unit": null,
+            "unit_price": null,
+            "amount": "8.79",
+            "confidence": 1.0,
+            "discount_target_index": null,
+            "review_notes": [],
+            "sku": "1068080",
+            "tax_code": "E",
+            "is_weighed": false,
+            "evidence": [
+              {
+                "image_index": 0,
+                "box": [
+                  0.23,
+                  0.33,
+                  0.61,
+                  0.36
+                ]
+              }
+            ],
+            "package_weight": null,
+            "package_weight_unit": null,
+            "amount_basis": "gross"
+          },
+          {
+            "name": "OPTIMUM",
+            "standard_name": null,
+            "kind": "product",
+            "quantity": null,
+            "quantity_unit": null,
+            "unit_price": null,
+            "amount": "74.99",
+            "confidence": 1.0,
+            "discount_target_index": null,
+            "review_notes": [],
+            "sku": "1243880",
+            "tax_code": "E",
+            "is_weighed": false,
+            "evidence": [
+              {
+                "image_index": 0,
+                "box": [
+                  0.23,
+                  0.35,
+                  0.61,
+                  0.38
+                ]
+              }
+            ],
+            "package_weight": null,
+            "package_weight_unit": null,
+            "amount_basis": "gross"
+          },
+          {
+            "name": "KS UNSL LIST",
+            "standard_name": null,
+            "kind": "product",
+            "quantity": null,
+            "quantity_unit": null,
+            "unit_price": null,
+            "amount": "16.99",
+            "confidence": 1.0,
+            "discount_target_index": null,
+            "review_notes": [],
+            "sku": "1792518",
+            "tax_code": "E",
+            "is_weighed": false,
+            "evidence": [
+              {
+                "image_index": 0,
+                "box": [
+                  0.23,
+                  0.37,
+                  0.61,
+                  0.4
+                ]
+              }
+            ],
+            "package_weight": null,
+            "package_weight_unit": null,
+            "amount_basis": "gross"
+          }
+        ]
+      },
+      "errors": [
+        "line_count: 3 != 4",
+        "line[1].name: \"OPTIMUM\" != \"OPTIMUM W\"",
+        "line[3]: missing \"TAX\""
+      ],
+      "vision": {
+        "model": "qwen3-vl-8b-instruct",
+        "prompt_version": "vision-v6",
+        "prompt_profile": "costco",
+        "prompt_sha256": "181270fb24af9588f43db399c53579073cb7dc550f89d96e58fec7a5f24df7ca",
+        "image_count": 1,
+        "attempts": 1,
+        "arithmetic_mismatch": false
+      },
+      "usage": {
+        "prompt_tokens": 7851,
+        "completion_tokens": 674,
+        "total_tokens": 8525
+      },
+      "duration_ms": 50082,
+      "images": [
+        {
+          "path": "images/efe47023-0.jpg",
+          "sha256": "dc924bbafdf45fbd0499fcb8bfdcfe606f2535f97e553d55c759869fa981d226"
+        }
+      ]
+    },
+    {
+      "id": "bbbfe093",
+      "prediction": {
+        "store": null,
+        "branch": "Rego Park #1070",
+        "address": "61-35 Junction Blvd, Rego Park, NY 11374",
+        "country": "US",
+        "currency": "USD",
+        "local_time": "2026-08-20T15:33:00",
+        "total": "55.28",
+        "lines": [
+          {
+            "name": "MEMBERSHIP / REFUND",
+            "standard_name": null,
+            "kind": "other_adjustment",
+            "quantity": null,
+            "quantity_unit": null,
+            "unit_price": null,
+            "amount": "-55.28",
+            "confidence": 1.0,
+            "discount_target_index": null,
+            "review_notes": [
+              "The transaction is a membership refund. The printed total is 55.28, and the line amount is -55.28. The sum of all line amounts equals the printed total, so no arithmetic error exists. The receipt is consistent."
+            ],
+            "sku": null,
+            "tax_code": null,
+            "is_weighed": false,
+            "evidence": [],
+            "package_weight": null,
+            "package_weight_unit": null,
+            "amount_basis": "gross"
+          }
+        ]
+      },
+      "errors": [
+        "total: 5528 != -5528",
+        "line_count: 1 != 2",
+        "line[0].name: \"MEMBERSHIP / REFUND\" != \"EXC GS DOWN\"",
+        "line[0].amount_minor: -5528 != -5077",
+        "line[1]: missing \"TAX\""
+      ],
+      "vision": {
+        "model": "qwen3-vl-8b-instruct",
+        "prompt_version": "vision-v6",
+        "prompt_profile": "costco",
+        "prompt_sha256": "181270fb24af9588f43db399c53579073cb7dc550f89d96e58fec7a5f24df7ca",
+        "image_count": 1,
+        "attempts": 2,
+        "arithmetic_mismatch": true
+      },
+      "usage": {
+        "prompt_tokens": 16074,
+        "completion_tokens": 542,
+        "total_tokens": 16616
+      },
+      "duration_ms": 67309,
+      "images": [
+        {
+          "path": "images/bbbfe093-0.jpg",
+          "sha256": "682503d4af1ded857abcef9772f183f5089628fc639148b2ddcfefdcee149889"
+        }
+      ]
+    },
+    {
+      "id": "e8698610",
+      "prediction": {
+        "store": null,
+        "branch": "Rego Park #1070",
+        "address": "61-35 Junction Blvd, Rego Park, NY 11374",
+        "country": "US",
+        "currency": "USD",
+        "local_time": "2026-09-05T15:16:00",
+        "total": "16.99",
+        "lines": [
+          {
+            "name": "545345 KS PISTACHIO",
+            "standard_name": null,
+            "kind": "product",
+            "quantity": "1",
+            "quantity_unit": null,
+            "unit_price": "16.99",
+            "amount": "16.99",
+            "confidence": 1.0,
+            "discount_target_index": null,
+            "review_notes": [],
+            "sku": "545345",
+            "tax_code": null,
+            "is_weighed": false,
+            "evidence": [
+              {
+                "image_index": 0,
+                "box": [
+                  0,
+                  0,
+                  1,
+                  1
+                ]
+              }
+            ],
+            "package_weight": null,
+            "package_weight_unit": null,
+            "amount_basis": "gross"
+          }
+        ]
+      },
+      "errors": [
+        "total: 1699 != -1699",
+        "line_count: 1 != 2",
+        "line[0].amount_minor: 1699 != -1699",
+        "line[1]: missing \"TAX\""
+      ],
+      "vision": {
+        "model": "qwen3-vl-8b-instruct",
+        "prompt_version": "vision-v6",
+        "prompt_profile": "costco",
+        "prompt_sha256": "181270fb24af9588f43db399c53579073cb7dc550f89d96e58fec7a5f24df7ca",
+        "image_count": 1,
+        "attempts": 2,
+        "arithmetic_mismatch": false
+      },
+      "usage": {
+        "prompt_tokens": 16046,
+        "completion_tokens": 590,
+        "total_tokens": 16636
+      },
+      "duration_ms": 67034,
+      "images": [
+        {
+          "path": "images/e8698610-0.jpg",
+          "sha256": "32d2bbcd77fd4a18b1d9897ca547032a0683f3e0b25a64957c767c86d9eaac3a"
+        }
+      ]
+    },
+    {
+      "id": "2f083787",
+      "prediction": {
+        "store": null,
+        "branch": "Sky Foods",
+        "address": "40-24 COLLEGE POINT BLVD FLUSHING,NY 11355",
+        "country": "US",
+        "currency": "USD",
+        "local_time": "2026-09-12T18:16:25",
+        "total": "6.41",
+        "lines": [
+          {
+            "name": "BOK CHOY TIPS (1POUNDS)",
+            "standard_name": "白菜苗 (1磅)",
+            "kind": "product",
+            "quantity": "2.00",
+            "quantity_unit": "lb",
+            "unit_price": "2.49",
+            "amount": "4.98",
+            "confidence": 1.0,
+            "discount_target_index": null,
+            "review_notes": [],
+            "sku": null,
+            "tax_code": null,
+            "is_weighed": true,
+            "evidence": [
+              {
+                "image_index": 0,
+                "box": [
+                  0.28,
+                  0.3,
+                  0.52,
+                  0.34
+                ]
+              }
+            ],
+            "package_weight": null,
+            "package_weight_unit": null,
+            "amount_basis": "gross"
+          },
+          {
+            "name": "LONG HOT PEPPER (1POUNDS)",
+            "standard_name": "牛角椒 (1磅)",
+            "kind": "product",
+            "quantity": "0.72",
+            "quantity_unit": "lb",
+            "unit_price": "1.99",
+            "amount": "1.43",
+            "confidence": 1.0,
+            "discount_target_index": null,
+            "review_notes": [],
+            "sku": null,
+            "tax_code": null,
+            "is_weighed": true,
+            "evidence": [
+              {
+                "image_index": 0,
+                "box": [
+                  0.28,
+                  0.34,
+                  0.52,
+                  0.38
+                ]
+              }
+            ],
+            "package_weight": null,
+            "package_weight_unit": null,
+            "amount_basis": "gross"
+          },
+          {
+            "name": "Tax",
+            "standard_name": null,
+            "kind": "tax",
+            "quantity": null,
+            "quantity_unit": null,
+            "unit_price": null,
+            "amount": "0.00",
+            "confidence": 1.0,
+            "discount_target_index": null,
+            "review_notes": [],
+            "sku": null,
+            "tax_code": null,
+            "is_weighed": false,
+            "evidence": [
+              {
+                "image_index": 0,
+                "box": [
+                  0.44,
+                  0.46,
+                  0.55,
+                  0.48
+                ]
+              }
+            ],
+            "package_weight": null,
+            "package_weight_unit": null,
+            "amount_basis": "gross"
+          }
+        ]
+      },
+      "errors": [],
+      "vision": {
+        "model": "qwen3-vl-8b-instruct",
+        "prompt_version": "vision-v6",
+        "prompt_profile": "skyfoods",
+        "prompt_sha256": "0d56063ddddb43efddc34f9b1aa55b0cf6d296df7f9256e98a7ae6943158ab74",
+        "image_count": 1,
+        "attempts": 1,
+        "arithmetic_mismatch": false
+      },
+      "usage": {
+        "prompt_tokens": 7793,
+        "completion_tokens": 683,
+        "total_tokens": 8476
+      },
+      "duration_ms": 10180,
+      "images": [
+        {
+          "path": "images/2f083787-0.jpg",
+          "sha256": "6d22710f88c2aad47594b11bc53ce323109305e9d42221689246a8f3dd704d44"
+        }
+      ]
+    },
+    {
+      "id": "5e4547ea",
+      "prediction": {
+        "store": null,
+        "branch": "46-40 Francis Lewis Blvd.",
+        "address": "Bayside, NY. 11361",
+        "country": "US",
+        "currency": "USD",
+        "local_time": "2026-09-09T17:10:00",
+        "total": "19.39",
+        "lines": [
+          {
+            "name": "FAGE TOTAL 2% GREE",
+            "standard_name": null,
+            "kind": "product",
+            "quantity": "2.81",
+            "quantity_unit": "lb",
+            "unit_price": "2.99",
+            "amount": "10.99",
+            "confidence": 1.0,
+            "discount_target_index": null,
+            "review_notes": [],
+            "sku": null,
+            "tax_code": null,
+            "is_weighed": false,
+            "evidence": [
+              {
+                "image_index": 0,
+                "box": [
+                  0.28,
+                  0.24,
+                  0.62,
+                  0.26
+                ]
+              }
+            ],
+            "package_weight": null,
+            "package_weight_unit": null,
+            "amount_basis": "gross"
+          },
+          {
+            "name": "ENVY APPLE",
+            "standard_name": null,
+            "kind": "product",
+            "quantity": null,
+            "quantity_unit": null,
+            "unit_price": null,
+            "amount": "8.40",
+            "confidence": 1.0,
+            "discount_target_index": null,
+            "review_notes": [],
+            "sku": null,
+            "tax_code": null,
+            "is_weighed": false,
+            "evidence": [
+              {
+                "image_index": 0,
+                "box": [
+                  0.28,
+                  0.27,
+                  0.62,
+                  0.29
+                ]
+              }
+            ],
+            "package_weight": null,
+            "package_weight_unit": null,
+            "amount_basis": "gross"
+          },
+          {
+            "name": "TAX",
+            "standard_name": null,
+            "kind": "tax",
+            "quantity": null,
+            "quantity_unit": null,
+            "unit_price": null,
+            "amount": "0.00",
+            "confidence": 1.0,
+            "discount_target_index": null,
+            "review_notes": [],
+            "sku": null,
+            "tax_code": null,
+            "is_weighed": false,
+            "evidence": [
+              {
+                "image_index": 0,
+                "box": [
+                  0.28,
+                  0.29,
+                  0.62,
+                  0.31
+                ]
+              }
+            ],
+            "package_weight": null,
+            "package_weight_unit": null,
+            "amount_basis": "gross"
+          }
+        ]
+      },
+      "errors": [
+        "line[0].weight_mg: 1274595 != null",
+        "line[1].weight_mg: null != 1274595",
+        "line[1].quantity_micros: null != 2810000",
+        "line[1].unit_price_scaled: null != 299000000"
+      ],
+      "vision": {
+        "model": "qwen3-vl-8b-instruct",
+        "prompt_version": "vision-v6",
+        "prompt_profile": "hmart",
+        "prompt_sha256": "2fabe46a5df9f88c92ff20b27055b15e768c9e1ea09447c8cdd23898afa865e7",
+        "image_count": 1,
+        "attempts": 1,
+        "arithmetic_mismatch": false
+      },
+      "usage": {
+        "prompt_tokens": 7618,
+        "completion_tokens": 653,
+        "total_tokens": 8271
+      },
+      "duration_ms": 10106,
+      "images": [
+        {
+          "path": "images/5e4547ea-0.jpg",
+          "sha256": "7150fc4a334348e638e8cbf8e6cfaa35f71e64e091f5724ef9e9c202d374ca01"
+        }
+      ]
+    },
+    {
+      "id": "3270f3c9",
+      "prediction": {
+        "store": null,
+        "branch": "46-40 Francis Lewis Blvd.",
+        "address": "Bayside, NY. 11361",
+        "country": "US",
+        "currency": "USD",
+        "local_time": "2026-09-13T20:45:00",
+        "total": "10.17",
+        "lines": [
+          {
+            "name": "ENVY APPLE",
+            "standard_name": null,
+            "kind": "product",
+            "quantity": "3.40",
+            "quantity_unit": "lb",
+            "unit_price": "2.99",
+            "amount": "10.17",
+            "confidence": 1.0,
+            "discount_target_index": null,
+            "review_notes": [],
+            "sku": null,
+            "tax_code": null,
+            "is_weighed": true,
+            "evidence": [
+              {
+                "image_index": 0,
+                "box": [
+                  0.29,
+                  0.25,
+                  0.67,
+                  0.31
+                ]
+              }
+            ],
+            "package_weight": null,
+            "package_weight_unit": null,
+            "amount_basis": "gross"
+          },
+          {
+            "name": "TAX",
+            "standard_name": null,
+            "kind": "tax",
+            "quantity": null,
+            "quantity_unit": null,
+            "unit_price": null,
+            "amount": "0.00",
+            "confidence": 1.0,
+            "discount_target_index": null,
+            "review_notes": [],
+            "sku": null,
+            "tax_code": null,
+            "is_weighed": false,
+            "evidence": [
+              {
+                "image_index": 0,
+                "box": [
+                  0.37,
+                  0.29,
+                  0.67,
+                  0.31
+                ]
+              }
+            ],
+            "package_weight": null,
+            "package_weight_unit": null,
+            "amount_basis": "gross"
+          }
+        ]
+      },
+      "errors": [],
+      "vision": {
+        "model": "qwen3-vl-8b-instruct",
+        "prompt_version": "vision-v6",
+        "prompt_profile": "hmart",
+        "prompt_sha256": "2fabe46a5df9f88c92ff20b27055b15e768c9e1ea09447c8cdd23898afa865e7",
+        "image_count": 1,
+        "attempts": 1,
+        "arithmetic_mismatch": false
+      },
+      "usage": {
+        "prompt_tokens": 7618,
+        "completion_tokens": 468,
+        "total_tokens": 8086
+      },
+      "duration_ms": 7453,
+      "images": [
+        {
+          "path": "images/3270f3c9-0.jpg",
+          "sha256": "71dcc3680df8c34328c9f32f930a3b83560e0a432a82d32f3294da51924b6d65"
+        }
+      ]
+    },
+    {
+      "id": "2718947f",
+      "prediction": {
+        "store": null,
+        "branch": "Rego Park #1070",
+        "address": "61-35 Junction Blvd Rego Park, NY 11374",
+        "country": "US",
+        "currency": "USD",
+        "local_time": "2026-09-09T17:53:00",
+        "total": "47.85",
+        "lines": [
+          {
+            "name": "KS WALNUTS",
+            "standard_name": null,
+            "kind": "product",
+            "quantity": "1",
+            "quantity_unit": null,
+            "unit_price": "9.99",
+            "amount": "9.99",
+            "confidence": 1.0,
+            "discount_target_index": null,
+            "review_notes": [],
+            "sku": "36285",
+            "tax_code": null,
+            "is_weighed": false,
+            "evidence": [
+              {
+                "image_index": 0,
+                "box": [
+                  0.25,
+                  0.305,
+                  0.75,
+                  0.33
+                ]
+              }
+            ],
+            "package_weight": null,
+            "package_weight_unit": null,
+            "amount_basis": "gross"
+          },
+          {
+            "name": "STEELHEAD",
+            "standard_name": null,
+            "kind": "product",
+            "quantity": "1",
+            "quantity_unit": null,
+            "unit_price": "37.86",
+            "amount": "37.86",
+            "confidence": 1.0,
+            "discount_target_index": null,
+            "review_notes": [],
+            "sku": "27201",
+            "tax_code": null,
+            "is_weighed": false,
+            "evidence": [
+              {
+                "image_index": 0,
+                "box": [
+                  0.25,
+                  0.33,
+                  0.75,
+                  0.355
+                ]
+              }
+            ],
+            "package_weight": null,
+            "package_weight_unit": null,
+            "amount_basis": "gross"
+          }
+        ]
+      },
+      "errors": [
+        "line_count: 2 != 3",
+        "line[2]: missing \"TAX\""
+      ],
+      "vision": {
+        "model": "qwen3-vl-8b-instruct",
+        "prompt_version": "vision-v6",
+        "prompt_profile": "costco",
+        "prompt_sha256": "181270fb24af9588f43db399c53579073cb7dc550f89d96e58fec7a5f24df7ca",
+        "image_count": 1,
+        "attempts": 1,
+        "arithmetic_mismatch": false
+      },
+      "usage": {
+        "prompt_tokens": 7851,
+        "completion_tokens": 491,
+        "total_tokens": 8342
+      },
+      "duration_ms": 7826,
+      "images": [
+        {
+          "path": "images/2718947f-0.jpg",
+          "sha256": "b019201ddf7a7574afea8c76f81ac13b1294afa2c11b4d350cc1bab91dd91810"
+        }
+      ]
+    },
+    {
+      "id": "f3bca374",
+      "prediction": {
+        "store": null,
+        "branch": "Sky Foods",
+        "address": "40-24 COLLEGE POINT BLVD FLUSHING,NY 11355",
+        "country": "US",
+        "currency": "USD",
+        "local_time": "2026-09-15 19:27:36",
+        "total": "9.74",
+        "lines": [
+          {
+            "name": "BOK CHOY TIPS (1POUNDS)",
+            "standard_name": "白菜苗 (1磅)",
+            "kind": "product",
+            "quantity": "1",
+            "quantity_unit": "lb",
+            "unit_price": "2.49",
+            "amount": "4.63",
+            "confidence": 1.0,
+            "discount_target_index": null,
+            "review_notes": [],
+            "sku": null,
+            "tax_code": null,
+            "is_weighed": true,
+            "evidence": [
+              {
+                "image_index": 0,
+                "box": [
+                  0.305,
+                  0.315,
+                  0.555,
+                  0.345
+                ]
+              }
+            ],
+            "package_weight": null,
+            "package_weight_unit": null,
+            "amount_basis": "gross"
+          },
+          {
+            "name": "CHIVES (1POUNDS)",
+            "standard_name": "韭菜 (1磅)",
+            "kind": "product",
+            "quantity": "1",
+            "quantity_unit": "lb",
+            "unit_price": "1.99",
+            "amount": "1.51",
+            "confidence": 1.0,
+            "discount_target_index": null,
+            "review_notes": [],
+            "sku": null,
+            "tax_code": null,
+            "is_weighed": true,
+            "evidence": [
+              {
+                "image_index": 0,
+                "box": [
+                  0.305,
+                  0.365,
+                  0.555,
+                  0.395
+                ]
+              }
+            ],
+            "package_weight": null,
+            "package_weight_unit": null,
+            "amount_basis": "gross"
+          },
+          {
+            "name": "LONG HOT PEPPER (1POUNDS)",
+            "standard_name": "牛角椒 (1磅)",
+            "kind": "product",
+            "quantity": "1",
+            "quantity_unit": "lb",
+            "unit_price": "1.99",
+            "amount": "1.61",
+            "confidence": 1.0,
+            "discount_target_index": null,
+            "review_notes": [],
+            "sku": null,
+            "tax_code": null,
+            "is_weighed": true,
+            "evidence": [
+              {
+                "image_index": 0,
+                "box": [
+                  0.305,
+                  0.415,
+                  0.555,
+                  0.445
+                ]
+              }
+            ],
+            "package_weight": null,
+            "package_weight_unit": null,
+            "amount_basis": "gross"
+          },
+          {
+            "name": "KL FIRM TOFU",
+            "standard_name": "康綠 老豆腐",
+            "kind": "product",
+            "quantity": "1",
+            "quantity_unit": null,
+            "unit_price": "1.99",
+            "amount": "1.99",
+            "confidence": 1.0,
+            "discount_target_index": null,
+            "review_notes": [],
+            "sku": null,
+            "tax_code": null,
+            "is_weighed": false,
+            "evidence": [
+              {
+                "image_index": 0,
+                "box": [
+                  0.305,
+                  0.465,
+                  0.555,
+                  0.495
+                ]
+              }
+            ],
+            "package_weight": null,
+            "package_weight_unit": null,
+            "amount_basis": "gross"
+          },
+          {
+            "name": "Tax",
+            "standard_name": null,
+            "kind": "tax",
+            "quantity": null,
+            "quantity_unit": null,
+            "unit_price": null,
+            "amount": "0.00",
+            "confidence": 1.0,
+            "discount_target_index": null,
+            "review_notes": [],
+            "sku": null,
+            "tax_code": null,
+            "is_weighed": false,
+            "evidence": [
+              {
+                "image_index": 0,
+                "box": [
+                  0.465,
+                  0.555,
+                  0.585,
+                  0.575
+                ]
+              }
+            ],
+            "package_weight": null,
+            "package_weight_unit": null,
+            "amount_basis": "gross"
+          }
+        ]
+      },
+      "errors": [
+        "line[0].weight_mg: 453592 != 843682",
+        "line[0].quantity_micros: 1000000 != 1860000",
+        "line[1].weight_mg: 453592 != 344730",
+        "line[1].quantity_micros: 1000000 != 760000",
+        "line[2].weight_mg: 453592 != 367410",
+        "line[2].quantity_micros: 1000000 != 810000"
+      ],
+      "vision": {
+        "model": "qwen3-vl-8b-instruct",
+        "prompt_version": "vision-v6",
+        "prompt_profile": "skyfoods",
+        "prompt_sha256": "0d56063ddddb43efddc34f9b1aa55b0cf6d296df7f9256e98a7ae6943158ab74",
+        "image_count": 1,
+        "attempts": 1,
+        "arithmetic_mismatch": false
+      },
+      "usage": {
+        "prompt_tokens": 7793,
+        "completion_tokens": 1085,
+        "total_tokens": 8878
+      },
+      "duration_ms": 15617,
+      "images": [
+        {
+          "path": "images/f3bca374-0.jpg",
+          "sha256": "a3f1ceb235cf8f729a97a011baf74d009cb2bbbccb2898066398bf1e6fd7b154"
+        }
+      ]
+    },
+    {
+      "id": "a730a1be",
+      "prediction": {
+        "store": null,
+        "branch": "Sky Foods",
+        "address": "40-24 COLLEGE POINT BLVD FLUSHING,NY 11355",
+        "country": "US",
+        "currency": "USD",
+        "local_time": "2026-08-11 18:33:26",
+        "total": "48.23",
+        "lines": [
+          {
+            "name": "TTX CHOPPED CHILI PASTE",
+            "standard_name": "壇壇鄉 豇香朝天椒",
+            "kind": "product",
+            "quantity": "1",
+            "quantity_unit": null,
+            "unit_price": null,
+            "amount": "4.99",
+            "confidence": 1.0,
+            "discount_target_index": null,
+            "review_notes": [],
+            "sku": null,
+            "tax_code": null,
+            "is_weighed": false,
+            "evidence": [
+              {
+                "image_index": 0,
+                "box": [
+                  0.29,
+                  0.29,
+                  0.57,
+                  0.32
+                ]
+              }
+            ],
+            "package_weight": null,
+            "package_weight_unit": null,
+            "amount_basis": "gross"
+          },
+          {
+            "name": "CHINESE LEEK (1POUNDS)",
+            "standard_name": "中國蒜苗 (1磅)",
+            "kind": "product",
+            "quantity": "0.57",
+            "quantity_unit": "lb",
+            "unit_price": "3.99",
+            "amount": "2.27",
+            "confidence": 1.0,
+            "discount_target_index": null,
+            "review_notes": [],
+            "sku": null,
+            "tax_code": null,
+            "is_weighed": true,
+            "evidence": [
+              {
+                "image_index": 0,
+                "box": [
+                  0.29,
+                  0.32,
+                  0.57,
+                  0.35
+                ]
+              }
+            ],
+            "package_weight": null,
+            "package_weight_unit": null,
+            "amount_basis": "gross"
+          },
+          {
+            "name": "H.D.L SPICY SAUCE",
+            "standard_name": "海南 黃燈籠辣椒醬",
+            "kind": "product",
+            "quantity": "1",
+            "quantity_unit": null,
+            "unit_price": null,
+            "amount": "6.99",
+            "confidence": 1.0,
+            "discount_target_index": null,
+            "review_notes": [],
+            "sku": null,
+            "tax_code": null,
+            "is_weighed": false,
+            "evidence": [
+              {
+                "image_index": 0,
+                "box": [
+                  0.29,
+                  0.35,
+                  0.57,
+                  0.38
+                ]
+              }
+            ],
+            "package_weight": null,
+            "package_weight_unit": null,
+            "amount_basis": "gross"
+          },
+          {
+            "name": "KANGLV JUMBO DRIED TOFU",
+            "standard_name": "康綠 大豆腐乾",
+            "kind": "product",
+            "quantity": "1",
+            "quantity_unit": null,
+            "unit_price": null,
+            "amount": "3.00",
+            "confidence": 1.0,
+            "discount_target_index": null,
+            "review_notes": [],
+            "sku": null,
+            "tax_code": null,
+            "is_weighed": false,
+            "evidence": [
+              {
+                "image_index": 0,
+                "box": [
+                  0.29,
+                  0.38,
+                  0.57,
+                  0.41
+                ]
+              }
+            ],
+            "package_weight": null,
+            "package_weight_unit": null,
+            "amount_basis": "gross"
+          },
+          {
+            "name": "KANGLV JUMBO DRIED TOFU",
+            "standard_name": "康綠 大豆腐乾",
+            "kind": "item_discount",
+            "quantity": null,
+            "quantity_unit": null,
+            "unit_price": null,
+            "amount": "-0.99",
+            "confidence": 1.0,
+            "discount_target_index": 3,
+            "review_notes": [],
+            "sku": null,
+            "tax_code": null,
+            "is_weighed": false,
+            "evidence": [
+              {
+                "image_index": 0,
+                "box": [
+                  0.29,
+                  0.41,
+                  0.57,
+                  0.44
+                ]
+              }
+            ],
+            "package_weight": null,
+            "package_weight_unit": null,
+            "amount_basis": "gross"
+          },
+          {
+            "name": "KANGLV JUMBO DRIED TOFU",
+            "standard_name": "康綠 大豆腐乾",
+            "kind": "product",
+            "quantity": "1",
+            "quantity_unit": null,
+            "unit_price": null,
+            "amount": "2.99",
+            "confidence": 1.0,
+            "discount_target_index": null,
+            "review_notes": [],
+            "sku": null,
+            "tax_code": null,
+            "is_weighed": false,
+            "evidence": [
+              {
+                "image_index": 0,
+                "box": [
+                  0.29,
+                  0.44,
+                  0.57,
+                  0.47
+                ]
+              }
+            ],
+            "package_weight": null,
+            "package_weight_unit": null,
+            "amount_basis": "gross"
+          },
+          {
+            "name": "KANGLV JUMBO DRIED TOFU",
+            "standard_name": "康綠 大豆腐乾",
+            "kind": "item_discount",
+            "quantity": null,
+            "quantity_unit": null,
+            "unit_price": null,
+            "amount": "-1.00",
+            "confidence": 1.0,
+            "discount_target_index": 5,
+            "review_notes": [],
+            "sku": null,
+            "tax_code": null,
+            "is_weighed": false,
+            "evidence": [
+              {
+                "image_index": 0,
+                "box": [
+                  0.29,
+                  0.47,
+                  0.57,
+                  0.5
+                ]
+              }
+            ],
+            "package_weight": null,
+            "package_weight_unit": null,
+            "amount_basis": "gross"
+          },
+          {
+            "name": "LUHUA WUCHANG RICE",
+            "standard_name": "魯花 五常大米",
+            "kind": "product",
+            "quantity": "1",
+            "quantity_unit": null,
+            "unit_price": null,
+            "amount": "27.99",
+            "confidence": 1.0,
+            "discount_target_index": null,
+            "review_notes": [],
+            "sku": null,
+            "tax_code": null,
+            "is_weighed": false,
+            "evidence": [
+              {
+                "image_index": 0,
+                "box": [
+                  0.29,
+                  0.5,
+                  0.57,
+                  0.53
+                ]
+              }
+            ],
+            "package_weight": null,
+            "package_weight_unit": null,
+            "amount_basis": "gross"
+          },
+          {
+            "name": "Tax",
+            "standard_name": null,
+            "kind": "tax",
+            "quantity": null,
+            "quantity_unit": null,
+            "unit_price": null,
+            "amount": "0.00",
+            "confidence": 1.0,
+            "discount_target_index": null,
+            "review_notes": [],
+            "sku": null,
+            "tax_code": null,
+            "is_weighed": false,
+            "evidence": [
+              {
+                "image_index": 0,
+                "box": [
+                  0.29,
+                  0.53,
+                  0.57,
+                  0.56
+                ]
+              }
+            ],
+            "package_weight": null,
+            "package_weight_unit": null,
+            "amount_basis": "gross"
+          }
+        ]
+      },
+      "errors": [
+        "line[0].chinese: \"壇壇鄉 豇香朝天椒\" != 壇壇鄉 豉香朝天椒",
+        "line[3].amount_minor: 299 != 399",
+        "line[3].printed_amount_minor: null != 300",
+        "line[4].amount_minor: 300 != 399",
+        "line[4].printed_amount_minor: null != 299",
+        "line[6].discount_target: wrong product",
+        "line[7].discount_target: wrong product"
+      ],
+      "vision": {
+        "model": "qwen3-vl-8b-instruct",
+        "prompt_version": "vision-v6",
+        "prompt_profile": "skyfoods",
+        "prompt_sha256": "0d56063ddddb43efddc34f9b1aa55b0cf6d296df7f9256e98a7ae6943158ab74",
+        "image_count": 1,
+        "attempts": 2,
+        "arithmetic_mismatch": true
+      },
+      "usage": {
+        "prompt_tokens": 17490,
+        "completion_tokens": 3706,
+        "total_tokens": 21196
+      },
+      "duration_ms": 64600,
+      "images": [
+        {
+          "path": "images/a730a1be-0.jpg",
+          "sha256": "8214940462206a96d1f2a2980282c4257aec0d0a018a3f64c1770b014c9f7287"
+        }
+      ]
+    },
+    {
+      "id": "00710190",
+      "errors": [
+        "HTTP status server error (502 Bad Gateway) for url (http://127.0.0.1:5000/v1/chat/completions)"
+      ],
+      "duration_ms": 35660,
+      "images": [
+        {
+          "path": "images/00710190-0.jpg",
+          "sha256": "3f0c97d5bbbf3741f888f15755dfd97a4af52b2d460263ea68a18beb61b6abd7"
+        }
+      ]
+    },
+    {
+      "id": "6fe7d01a",
+      "prediction": {
+        "store": null,
+        "branch": "Sky Foods",
+        "address": "40-24 COLLEGE POINT BLVD FLUSHING,NY 11355",
+        "country": "US",
+        "currency": "USD",
+        "local_time": "2026-08-21 10:52:29",
+        "total": "9.71",
+        "lines": [
+          {
+            "name": "TAIWAN CABBAGE (1POUNDS)",
+            "standard_name": "台灣高麗菜 (1磅)",
+            "kind": "product",
+            "quantity": "1",
+            "quantity_unit": "1POUNDS",
+            "unit_price": "1.49",
+            "amount": "1.49",
+            "confidence": 1.0,
+            "discount_target_index": null,
+            "review_notes": [],
+            "sku": null,
+            "tax_code": null,
+            "is_weighed": true,
+            "evidence": [
+              {
+                "image_index": 0,
+                "box": [
+                  0.23,
+                  0.37,
+                  0.53,
+                  0.41
+                ]
+              }
+            ],
+            "package_weight": null,
+            "package_weight_unit": null,
+            "amount_basis": "gross"
+          },
+          {
+            "name": "BOK CHOY TIPS (1POUNDS)",
+            "standard_name": "白菜苗 (1磅)",
+            "kind": "product",
+            "quantity": "1",
+            "quantity_unit": "1POUNDS",
+            "unit_price": "4.41",
+            "amount": "4.41",
+            "confidence": 1.0,
+            "discount_target_index": null,
+            "review_notes": [],
+            "sku": null,
+            "tax_code": null,
+            "is_weighed": true,
+            "evidence": [
+              {
+                "image_index": 0,
+                "box": [
+                  0.23,
+                  0.42,
+                  0.53,
+                  0.46
+                ]
+              }
+            ],
+            "package_weight": null,
+            "package_weight_unit": null,
+            "amount_basis": "gross"
+          },
+          {
+            "name": "CHIVES FLOWERS (1BUNDLE)",
+            "standard_name": "韭菜花 (1捆)",
+            "kind": "product",
+            "quantity": "2",
+            "quantity_unit": "1BUNDLE",
+            "unit_price": "1.29",
+            "amount": "2.58",
+            "confidence": 1.0,
+            "discount_target_index": null,
+            "review_notes": [],
+            "sku": null,
+            "tax_code": null,
+            "is_weighed": false,
+            "evidence": [
+              {
+                "image_index": 0,
+                "box": [
+                  0.23,
+                  0.47,
+                  0.53,
+                  0.51
+                ]
+              }
+            ],
+            "package_weight": null,
+            "package_weight_unit": null,
+            "amount_basis": "gross"
+          },
+          {
+            "name": "LONG HOT PEPPER (1POUNDS)",
+            "standard_name": "牛角椒 (1磅)",
+            "kind": "product",
+            "quantity": "1",
+            "quantity_unit": "1POUNDS",
+            "unit_price": "1.23",
+            "amount": "1.23",
+            "confidence": 1.0,
+            "discount_target_index": null,
+            "review_notes": [],
+            "sku": null,
+            "tax_code": null,
+            "is_weighed": true,
+            "evidence": [
+              {
+                "image_index": 0,
+                "box": [
+                  0.23,
+                  0.52,
+                  0.53,
+                  0.56
+                ]
+              }
+            ],
+            "package_weight": null,
+            "package_weight_unit": null,
+            "amount_basis": "gross"
+          },
+          {
+            "name": "TAX",
+            "standard_name": null,
+            "kind": "tax",
+            "quantity": null,
+            "quantity_unit": null,
+            "unit_price": null,
+            "amount": "0.00",
+            "confidence": 1.0,
+            "discount_target_index": null,
+            "review_notes": [],
+            "sku": null,
+            "tax_code": null,
+            "is_weighed": false,
+            "evidence": [
+              {
+                "image_index": 0,
+                "box": [
+                  0.23,
+                  0.65,
+                  0.53,
+                  0.67
+                ]
+              }
+            ],
+            "package_weight": null,
+            "package_weight_unit": null,
+            "amount_basis": "gross"
+          }
+        ]
+      },
+      "errors": [
+        "line[0].weight_mg: null != 993367",
+        "line[0].quantity_micros: 1000000 != 2190000",
+        "line[0].unit_price_scaled: 149000000 != 68000000",
+        "line[1].weight_mg: null != 802858",
+        "line[1].quantity_micros: 1000000 != 1770000",
+        "line[1].unit_price_scaled: 441000000 != 249000000",
+        "line[3].weight_mg: null != 281227",
+        "line[3].quantity_micros: 1000000 != 620000",
+        "line[3].unit_price_scaled: 123000000 != 199000000"
+      ],
+      "vision": {
+        "model": "qwen3-vl-8b-instruct",
+        "prompt_version": "vision-v6",
+        "prompt_profile": "skyfoods",
+        "prompt_sha256": "0d56063ddddb43efddc34f9b1aa55b0cf6d296df7f9256e98a7ae6943158ab74",
+        "image_count": 1,
+        "attempts": 1,
+        "arithmetic_mismatch": false
+      },
+      "usage": {
+        "prompt_tokens": 7793,
+        "completion_tokens": 1087,
+        "total_tokens": 8880
+      },
+      "duration_ms": 15671,
+      "images": [
+        {
+          "path": "images/6fe7d01a-0.jpg",
+          "sha256": "49e216653ccdcff89d5d26b4fb450c88f0d1fa31f46557995b7649e0bbbcca94"
+        }
+      ]
+    },
+    {
+      "id": "00c86447",
+      "prediction": {
+        "store": null,
+        "branch": "Rego Park #1070",
+        "address": "61-35 Junction Blvd, Rego Park, NY 11374",
+        "country": "US",
+        "currency": "USD",
+        "local_time": "2026-08-10T16:13:00",
+        "total": "256.70",
+        "lines": [
+          {
+            "name": "OMGA3 FSHOIL",
+            "standard_name": null,
+            "kind": "product",
+            "quantity": null,
+            "quantity_unit": null,
+            "unit_price": null,
+            "amount": "29.99",
+            "confidence": 1.0,
+            "discount_target_index": null,
+            "review_notes": [],
+            "sku": "1683859",
+            "tax_code": null,
+            "is_weighed": false,
+            "evidence": [
+              {
+                "image_index": 0,
+                "box": [
+                  0.29,
+                  0.22,
+                  0.61,
+                  0.25
+                ]
+              }
+            ],
+            "package_weight": null,
+            "package_weight_unit": null,
+            "amount_basis": "gross"
+          },
+          {
+            "name": "KS B12 SUBL.",
+            "standard_name": null,
+            "kind": "product",
+            "quantity": null,
+            "quantity_unit": null,
+            "unit_price": null,
+            "amount": "18.99",
+            "confidence": 1.0,
+            "discount_target_index": null,
+            "review_notes": [],
+            "sku": "690843",
+            "tax_code": null,
+            "is_weighed": false,
+            "evidence": [
+              {
+                "image_index": 0,
+                "box": [
+                  0.29,
+                  0.25,
+                  0.61,
+                  0.27
+                ]
+              }
+            ],
+            "package_weight": null,
+            "package_weight_unit": null,
+            "amount_basis": "gross"
+          },
+          {
+            "name": "NINJA CRISPI",
+            "standard_name": null,
+            "kind": "product",
+            "quantity": null,
+            "quantity_unit": null,
+            "unit_price": null,
+            "amount": "159.99",
+            "confidence": 1.0,
+            "discount_target_index": null,
+            "review_notes": [],
+            "sku": "1898552",
+            "tax_code": "A",
+            "is_weighed": false,
+            "evidence": [
+              {
+                "image_index": 0,
+                "box": [
+                  0.29,
+                  0.27,
+                  0.61,
+                  0.29
+                ]
+              }
+            ],
+            "package_weight": null,
+            "package_weight_unit": null,
+            "amount_basis": "gross"
+          },
+          {
+            "name": "OCEAN MIST",
+            "standard_name": null,
+            "kind": "product",
+            "quantity": null,
+            "quantity_unit": null,
+            "unit_price": null,
+            "amount": "19.99",
+            "confidence": 1.0,
+            "discount_target_index": null,
+            "review_notes": [],
+            "sku": "1121864",
+            "tax_code": "A",
+            "is_weighed": false,
+            "evidence": [
+              {
+                "image_index": 0,
+                "box": [
+                  0.29,
+                  0.29,
+                  0.61,
+                  0.31
+                ]
+              }
+            ],
+            "package_weight": null,
+            "package_weight_unit": null,
+            "amount_basis": "gross"
+          },
+          {
+            "name": "OCEAN MIST",
+            "standard_name": null,
+            "kind": "product",
+            "quantity": null,
+            "quantity_unit": null,
+            "unit_price": null,
+            "amount": "19.99",
+            "confidence": 1.0,
+            "discount_target_index": null,
+            "review_notes": [],
+            "sku": "1121864",
+            "tax_code": "A",
+            "is_weighed": false,
+            "evidence": [
+              {
+                "image_index": 0,
+                "box": [
+                  0.29,
+                  0.31,
+                  0.61,
+                  0.33
+                ]
+              }
+            ],
+            "package_weight": null,
+            "package_weight_unit": null,
+            "amount_basis": "gross"
+          },
+          {
+            "name": "OCEAN MIST",
+            "standard_name": null,
+            "kind": "product",
+            "quantity": null,
+            "quantity_unit": null,
+            "unit_price": null,
+            "amount": "5.00",
+            "confidence": 1.0,
+            "discount_target_index": null,
+            "review_notes": [],
+            "sku": "0000385338",
+            "tax_code": null,
+            "is_weighed": false,
+            "evidence": [
+              {
+                "image_index": 0,
+                "box": [
+                  0.29,
+                  0.33,
+                  0.61,
+                  0.35
+                ]
+              }
+            ],
+            "package_weight": null,
+            "package_weight_unit": null,
+            "amount_basis": "gross"
+          },
+          {
+            "name": "OCEAN MIST",
+            "standard_name": null,
+            "kind": "product",
+            "quantity": null,
+            "quantity_unit": null,
+            "unit_price": null,
+            "amount": "5.00",
+            "confidence": 1.0,
+            "discount_target_index": null,
+            "review_notes": [],
+            "sku": "0000385338",
+            "tax_code": null,
+            "is_weighed": false,
+            "evidence": [
+              {
+                "image_index": 0,
+                "box": [
+                  0.29,
+                  0.35,
+                  0.61,
+                  0.37
+                ]
+              }
+            ],
+            "package_weight": null,
+            "package_weight_unit": null,
+            "amount_basis": "gross"
+          },
+          {
+            "name": "TAX",
+            "standard_name": null,
+            "kind": "tax",
+            "quantity": null,
+            "quantity_unit": null,
+            "unit_price": null,
+            "amount": "17.75",
+            "confidence": 1.0,
+            "discount_target_index": null,
+            "review_notes": [],
+            "sku": null,
+            "tax_code": null,
+            "is_weighed": false,
+            "evidence": [
+              {
+                "image_index": 0,
+                "box": [
+                  0.29,
+                  0.37,
+                  0.61,
+                  0.39
+                ]
+              }
+            ],
+            "package_weight": null,
+            "package_weight_unit": null,
+            "amount_basis": "gross"
+          },
+          {
+            "name": "INSTANT SAVINGS",
+            "standard_name": null,
+            "kind": "other_adjustment",
+            "quantity": null,
+            "quantity_unit": null,
+            "unit_price": null,
+            "amount": "-10.00",
+            "confidence": 1.0,
+            "discount_target_index": null,
+            "review_notes": [],
+            "sku": null,
+            "tax_code": null,
+            "is_weighed": false,
+            "evidence": [
+              {
+                "image_index": 0,
+                "box": [
+                  0.29,
+                  0.6,
+                  0.61,
+                  0.62
+                ]
+              }
+            ],
+            "package_weight": null,
+            "package_weight_unit": null,
+            "amount_basis": "gross"
+          }
+        ]
+      },
+      "errors": [
+        "line_count: 9 != 8",
+        "line[4].kind: \"product\" != \"item_discount\"",
+        "line[4].amount_minor: 500 != -500",
+        "line[6].kind: \"product\" != \"item_discount\"",
+        "line[6].amount_minor: 500 != -500",
+        "line[4].discount_target: wrong product",
+        "line[6].discount_target: wrong product"
+      ],
+      "vision": {
+        "model": "qwen3-vl-8b-instruct",
+        "prompt_version": "vision-v6",
+        "prompt_profile": "costco",
+        "prompt_sha256": "181270fb24af9588f43db399c53579073cb7dc550f89d96e58fec7a5f24df7ca",
+        "image_count": 1,
+        "attempts": 2,
+        "arithmetic_mismatch": true
+      },
+      "usage": {
+        "prompt_tokens": 17646,
+        "completion_tokens": 3626,
+        "total_tokens": 21272
+      },
+      "duration_ms": 50970,
+      "images": [
+        {
+          "path": "images/00c86447-0.jpg",
+          "sha256": "24def2952834bec7ca958875d1e4b5a15416083401335216d432e59876e24393"
+        }
+      ]
+    },
+    {
+      "id": "b38d62dd",
+      "prediction": {
+        "store": null,
+        "branch": "Sky Foods",
+        "address": "40-24 COLLEGE POINT BLVD FLUSHING,NY 11355",
+        "country": "US",
+        "currency": "USD",
+        "local_time": "2026-09-03 20:00:14",
+        "total": "4.21",
+        "lines": [
+          {
+            "name": "TAIWAN CABBAGE (1POUNDS)",
+            "standard_name": "台灣高麗菜 (1磅)",
+            "kind": "product",
+            "quantity": "3.02",
+            "quantity_unit": "lb",
+            "unit_price": "0.58",
+            "amount": "1.75",
+            "confidence": 1.0,
+            "discount_target_index": null,
+            "review_notes": [],
+            "sku": null,
+            "tax_code": null,
+            "is_weighed": true,
+            "evidence": [],
+            "package_weight": null,
+            "package_weight_unit": null,
+            "amount_basis": "gross"
+          },
+          {
+            "name": "ONION (1POUNDS)",
+            "standard_name": "紫洋蔥 (1磅)",
+            "kind": "product",
+            "quantity": "0.64",
+            "quantity_unit": "lb",
+            "unit_price": "1.99",
+            "amount": "1.27",
+            "confidence": 1.0,
+            "discount_target_index": null,
+            "review_notes": [],
+            "sku": null,
+            "tax_code": null,
+            "is_weighed": true,
+            "evidence": [],
+            "package_weight": null,
+            "package_weight_unit": null,
+            "amount_basis": "gross"
+          },
+          {
+            "name": "LONG HOT PEPPER (1POUNDS)",
+            "standard_name": "牛角椒 (1磅)",
+            "kind": "product",
+            "quantity": "0.60",
+            "quantity_unit": "lb",
+            "unit_price": "1.99",
+            "amount": "1.19",
+            "confidence": 1.0,
+            "discount_target_index": null,
+            "review_notes": [],
+            "sku": null,
+            "tax_code": null,
+            "is_weighed": true,
+            "evidence": [],
+            "package_weight": null,
+            "package_weight_unit": null,
+            "amount_basis": "gross"
+          },
+          {
+            "name": "Tax",
+            "standard_name": null,
+            "kind": "tax",
+            "quantity": null,
+            "quantity_unit": null,
+            "unit_price": null,
+            "amount": "0.00",
+            "confidence": 1.0,
+            "discount_target_index": null,
+            "review_notes": [],
+            "sku": null,
+            "tax_code": null,
+            "is_weighed": false,
+            "evidence": [],
+            "package_weight": null,
+            "package_weight_unit": null,
+            "amount_basis": "gross"
+          }
+        ]
+      },
+      "errors": [],
+      "vision": {
+        "model": "qwen3-vl-8b-instruct",
+        "prompt_version": "vision-v6",
+        "prompt_profile": "skyfoods",
+        "prompt_sha256": "0d56063ddddb43efddc34f9b1aa55b0cf6d296df7f9256e98a7ae6943158ab74",
+        "image_count": 1,
+        "attempts": 2,
+        "arithmetic_mismatch": false
+      },
+      "usage": {
+        "prompt_tokens": 16472,
+        "completion_tokens": 1526,
+        "total_tokens": 17998
+      },
+      "duration_ms": 22386,
+      "images": [
+        {
+          "path": "images/b38d62dd-0.jpg",
+          "sha256": "f6f8f5cc7396738e9c3a62b1fb8ad04724f6c6e2669f4b13bf8e99f716fe0b8e"
+        }
+      ]
+    },
+    {
+      "id": "e1be8ec6",
+      "prediction": {
+        "store": null,
+        "branch": "Sky Foods",
+        "address": "40-24 COLLEGE POINT BLVD FLUSHING,NY 11355",
+        "country": "US",
+        "currency": "USD",
+        "local_time": "2026-08-27 15:19:46",
+        "total": "30.32",
+        "lines": [
+          {
+            "name": "LONG HOT PEPPER (1POUNDS)",
+            "standard_name": "牛角椒 (1磅)",
+            "kind": "product",
+            "quantity": "1",
+            "quantity_unit": "1POUNDS",
+            "unit_price": "1.99",
+            "amount": "1.29",
+            "confidence": 1.0,
+            "discount_target_index": null,
+            "review_notes": [],
+            "sku": null,
+            "tax_code": null,
+            "is_weighed": true,
+            "evidence": [
+              {
+                "image_index": 0,
+                "box": [
+                  0.29,
+                  0.3,
+                  0.65,
+                  0.34
+                ]
+              }
+            ],
+            "package_weight": null,
+            "package_weight_unit": null,
+            "amount_basis": "gross"
+          },
+          {
+            "name": "CHIVES (1POUNDS)",
+            "standard_name": "韭菜 (1磅)",
+            "kind": "product",
+            "quantity": "1",
+            "quantity_unit": "1POUNDS",
+            "unit_price": "3.99",
+            "amount": "2.15",
+            "confidence": 1.0,
+            "discount_target_index": null,
+            "review_notes": [],
+            "sku": null,
+            "tax_code": null,
+            "is_weighed": true,
+            "evidence": [
+              {
+                "image_index": 0,
+                "box": [
+                  0.29,
+                  0.34,
+                  0.65,
+                  0.38
+                ]
+              }
+            ],
+            "package_weight": null,
+            "package_weight_unit": null,
+            "amount_basis": "gross"
+          },
+          {
+            "name": "BOK CHOY TIPS (1POUNDS)",
+            "standard_name": "白菜苗 (1磅)",
+            "kind": "product",
+            "quantity": "1",
+            "quantity_unit": "1POUNDS",
+            "unit_price": "2.49",
+            "amount": "4.91",
+            "confidence": 1.0,
+            "discount_target_index": null,
+            "review_notes": [],
+            "sku": null,
+            "tax_code": null,
+            "is_weighed": true,
+            "evidence": [
+              {
+                "image_index": 0,
+                "box": [
+                  0.29,
+                  0.38,
+                  0.65,
+                  0.42
+                ]
+              }
+            ],
+            "package_weight": null,
+            "package_weight_unit": null,
+            "amount_basis": "gross"
+          },
+          {
+            "name": "MAPLEHILL WHOLE MILK",
+            "standard_name": "MAPLEHILL 全脂牛奶",
+            "kind": "product",
+            "quantity": "1",
+            "quantity_unit": null,
+            "unit_price": null,
+            "amount": "9.99",
+            "confidence": 1.0,
+            "discount_target_index": null,
+            "review_notes": [],
+            "sku": null,
+            "tax_code": null,
+            "is_weighed": false,
+            "evidence": [
+              {
+                "image_index": 0,
+                "box": [
+                  0.29,
+                  0.42,
+                  0.65,
+                  0.46
+                ]
+              }
+            ],
+            "package_weight": null,
+            "package_weight_unit": null,
+            "amount_basis": "gross"
+          },
+          {
+            "name": "KANGLV JUMBO DRIED TOFU",
+            "standard_name": "康綠 大豆腐乾",
+            "kind": "product",
+            "quantity": "1",
+            "quantity_unit": null,
+            "unit_price": "5.99",
+            "amount": "3.00",
+            "confidence": 1.0,
+            "discount_target_index": null,
+            "review_notes": [],
+            "sku": null,
+            "tax_code": null,
+            "is_weighed": false,
+            "evidence": [
+              {
+                "image_index": 0,
+                "box": [
+                  0.29,
+                  0.46,
+                  0.65,
+                  0.5
+                ]
+              }
+            ],
+            "package_weight": null,
+            "package_weight_unit": null,
+            "amount_basis": "gross"
+          },
+          {
+            "name": "KANGLV JUMBO DRIED TOFU",
+            "standard_name": "康綠 大豆腐乾",
+            "kind": "item_discount",
+            "quantity": null,
+            "quantity_unit": null,
+            "unit_price": null,
+            "amount": "-0.99",
+            "confidence": 1.0,
+            "discount_target_index": 4,
+            "review_notes": [],
+            "sku": null,
+            "tax_code": null,
+            "is_weighed": false,
+            "evidence": [
+              {
+                "image_index": 0,
+                "box": [
+                  0.29,
+                  0.5,
+                  0.65,
+                  0.54
+                ]
+              }
+            ],
+            "package_weight": null,
+            "package_weight_unit": null,
+            "amount_basis": "gross"
+          },
+          {
+            "name": "KANGLV JUMBO DRIED TOFU",
+            "standard_name": "康綠 大豆腐乾",
+            "kind": "product",
+            "quantity": "1",
+            "quantity_unit": null,
+            "unit_price": "5.99",
+            "amount": "2.99",
+            "confidence": 1.0,
+            "discount_target_index": null,
+            "review_notes": [],
+            "sku": null,
+            "tax_code": null,
+            "is_weighed": false,
+            "evidence": [
+              {
+                "image_index": 0,
+                "box": [
+                  0.29,
+                  0.54,
+                  0.65,
+                  0.58
+                ]
+              }
+            ],
+            "package_weight": null,
+            "package_weight_unit": null,
+            "amount_basis": "gross"
+          },
+          {
+            "name": "KANGLV JUMBO DRIED TOFU",
+            "standard_name": "康綠 大豆腐乾",
+            "kind": "item_discount",
+            "quantity": null,
+            "quantity_unit": null,
+            "unit_price": null,
+            "amount": "-1.00",
+            "confidence": 1.0,
+            "discount_target_index": 6,
+            "review_notes": [],
+            "sku": null,
+            "tax_code": null,
+            "is_weighed": false,
+            "evidence": [
+              {
+                "image_index": 0,
+                "box": [
+                  0.29,
+                  0.58,
+                  0.65,
+                  0.62
+                ]
+              }
+            ],
+            "package_weight": null,
+            "package_weight_unit": null,
+            "amount_basis": "gross"
+          },
+          {
+            "name": "L.K.K SUPEREME FIRST DRAW S",
+            "standard_name": "李錦記 頭道 原醬抽",
+            "kind": "product",
+            "quantity": "1",
+            "quantity_unit": null,
+            "unit_price": "5.99",
+            "amount": "5.99",
+            "confidence": 1.0,
+            "discount_target_index": null,
+            "review_notes": [],
+            "sku": null,
+            "tax_code": null,
+            "is_weighed": false,
+            "evidence": [
+              {
+                "image_index": 0,
+                "box": [
+                  0.29,
+                  0.62,
+                  0.65,
+                  0.66
+                ]
+              }
+            ],
+            "package_weight": null,
+            "package_weight_unit": null,
+            "amount_basis": "gross"
+          },
+          {
+            "name": "TAX",
+            "standard_name": null,
+            "kind": "tax",
+            "quantity": null,
+            "quantity_unit": null,
+            "unit_price": null,
+            "amount": "0.00",
+            "confidence": 1.0,
+            "discount_target_index": null,
+            "review_notes": [],
+            "sku": null,
+            "tax_code": null,
+            "is_weighed": false,
+            "evidence": [
+              {
+                "image_index": 0,
+                "box": [
+                  0.29,
+                  0.7,
+                  0.65,
+                  0.74
+                ]
+              }
+            ],
+            "package_weight": null,
+            "package_weight_unit": null,
+            "amount_basis": "gross"
+          }
+        ]
+      },
+      "errors": [
+        "time: 1787858386000 != 1787858385000 (UTC milliseconds)",
+        "line[0].weight_mg: null != 294835",
+        "line[0].quantity_micros: 1000000 != 650000",
+        "line[1].weight_mg: null != 244940",
+        "line[1].quantity_micros: 1000000 != 540000",
+        "line[2].weight_mg: null != 893577",
+        "line[2].quantity_micros: 1000000 != 1970000",
+        "line[4].amount_minor: 299 != 399",
+        "line[4].printed_amount_minor: null != 300",
+        "line[5].amount_minor: 300 != 399",
+        "line[5].printed_amount_minor: null != 299",
+        "line[6].chinese: \"李錦記 頭道 原醬抽\" != 李錦記 頭道 原釀醬油",
+        "line[7].discount_target: wrong product",
+        "line[8].discount_target: wrong product"
+      ],
+      "vision": {
+        "model": "qwen3-vl-8b-instruct",
+        "prompt_version": "vision-v6",
+        "prompt_profile": "skyfoods",
+        "prompt_sha256": "0d56063ddddb43efddc34f9b1aa55b0cf6d296df7f9256e98a7ae6943158ab74",
+        "image_count": 1,
+        "attempts": 2,
+        "arithmetic_mismatch": true
+      },
+      "usage": {
+        "prompt_tokens": 17722,
+        "completion_tokens": 4161,
+        "total_tokens": 21883
+      },
+      "duration_ms": 52107,
+      "images": [
+        {
+          "path": "images/e1be8ec6-0.jpg",
+          "sha256": "301696f85b698535845fa9f0b31dc31822297d33677d66d74d0b4e44b4209aca"
+        }
+      ]
+    }
+  ]
+}

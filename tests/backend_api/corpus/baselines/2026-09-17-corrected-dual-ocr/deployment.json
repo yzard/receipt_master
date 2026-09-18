@@ -1,0 +1,33 @@
+{
+  "started_at": 1789659480.009602,
+  "sha256": {
+    "tests/backend_api/corpus.rs": "15ab6e49dab1674d0564a68dd9231fb55a4addd522ab12166dd4d316598ad714",
+    "tests/backend_api/corpus/confirmed/2026-09-17-corrected/snapshot.json": "c3adf58a08eb8d5e45c2e3020c73572b94836abb8810947414cd14f3c9268d39",
+    "src/backend_api/src/parsing/costco.rs": "1429f4239ff2db0863ffb163cf8869088eb9617858efa689b3a0ba647ad51bf4",
+    "src/backend_api/src/parsing/generic.rs": "d456e5082cfea93ffb8c47fac5eea637ff61da63115b54911454907d4b0dd257",
+    "src/backend_api/src/parsing/hmart.rs": "6f756f9544e1b8232397d4fb9f9330dd6915f2950010f5ee4b96824266381514",
+    "src/backend_api/src/parsing/layout.rs": "f1d183dc060b99c7f479d47288bae27065a002df78cc56eb63f683e1e8d323b2",
+    "src/backend_api/src/parsing/mod.rs": "659ee123f8e9948dc9796a07d4a888e162e261b354e7c6f70dd38155754ccb78",
+    "src/backend_api/src/parsing/skyfoods.rs": "116fda3a87c58ad7db7f97ae89c3b5d130f079902be2e19b47680765eadd34c9",
+    "src/backend_ocr/config.py": "205108b2c90d9ea3d4cfb2daa76d6faa9ebae6a85336d6b68974e279478e9b25",
+    "src/backend_ocr/logo_embedding.py": "a58161ee4cce872d41a92706ffd276743c2831b56a48ac76486a9bbd8f3c609a",
+    "src/backend_ocr/main.py": "1d0f612ad60a85b48e45a16e9551abd5bf3c6237426935c18abdb28d6cc66683",
+    "src/backend_ocr/paddle_worker.py": "3084be1bd29c2f2a1b997665cad55b3d8fb60c95c61c748d4330175ca5793ab5",
+    "src/backend_ocr/recipe.py": "6cab6715054e2ec13c54c340c72b04e72f90ff1c4ce206c4c0cb45cfe3115378",
+    "playground/backend_api/config.yaml": "63f747187efd5cdee6c4ea346f08a16d733b1eb93e9928446d837a58db32599c",
+    "playground/backend_ocr.toml": "f6d5f8a7e601e18f53714428aa46a4299817547aa86c50f1522e53341259bb02"
+  },
+  "containers": [
+    {
+      "name": "/receipt-master-ocr-backend_api-1",
+      "image": "sha256:089b84cf6e6c501dd16d1ea30afa238e2f1e91ad2d4e53381c1119b45f2b644c"
+    },
+    {
+      "name": "/receipt-master-ocr-backend_ocr-1",
+      "image": "sha256:70befe65dcc077d81b74212e1581078322068e92f6da4786e6b512b370360409"
+    }
+  ],
+  "batch_wall_seconds": 990.77,
+  "exit_code": 101,
+  "finished_at": 1789660470.797683
+}

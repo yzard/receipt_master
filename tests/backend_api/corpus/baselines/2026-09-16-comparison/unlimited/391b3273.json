@@ -1,0 +1,33 @@
+{
+  "id": "391b3273",
+  "images": [
+    {
+      "path": "images/391b3273-0.jpg",
+      "sha256": "cf29d526f3e74ddea18753ab55a9f7a7a50465a95a454874ec1b21fec5012432"
+    }
+  ],
+  "provider": "unlimited",
+  "raw": {
+    "id": "chatcmpl-d7c2877c9882485d9592f92b7c1925ea",
+    "object": "chat.completion",
+    "created": 1789567806,
+    "model": "unlimited-ocr",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "<|det|>header [320, 8, 642, 78]<|/det|>CRESTCO\n<|det|>header [321, 80, 634, 75]<|/det|>[Unreadable due to extreme blurriness]\n<|det|>text [348, 87, 612, 105]<|/det|>Re: 40 Park #1070\n<|det|>text [383, 107, 577, 124]<|/det|>51-35 Junction Blvd\n<|det|>text [384, 125, 576, 142]<|/det|>Rego Park, NY 11374\n<|det|>text [287, 155, 512, 175]<|/det|>FM Member 111886754734\n<|det|>text [287, 189, 671, 209]<|/det|>***START OFF PRE-SCANNED ITEMS*****\n<|det|>table [284, 226, 668, 371]<|/det|><table><tr><td>1901859</td><td>PTOWELHOLDER</td><td>14.99 A</td></tr><tr><td>47292</td><td>SOCK SALMON</td><td>21.29</td></tr><tr><td>1752618</td><td>KS UNSL PIST</td><td>16.99</td></tr><tr><td>1001368</td><td>KS QUIÑOA</td><td>11.59</td></tr><tr><td>36283</td><td>KS WALNUTS</td><td>13.79</td></tr><tr><td>9877788</td><td>KS ORG TOFU</td><td>5.89</td></tr><tr><td>22967</td><td>ORGNIC BS THG</td><td>26/18</td></tr><tr><td>948400</td><td>KS ICE CREAM</td><td>12.99</td></tr><tr><td>5001</td><td>WHITE PEACH</td><td>12.99</td></tr></table>\n<|det|>text [285, 384, 667, 404]<|/det|>***END OF PRE-SCANNED ITEMS*****\n<|det|>text [285, 416, 648, 435]<|/det|>TOTAL NUMBER OF PRE-SCANNED EMS=9\n<|det|>table [281, 450, 648, 567]<|/det|><table><tr><td colspan=\"2\">SUB TOTAL</td><td>136.70</td></tr><tr><td colspan=\"2\">TAX</td><td>1.33</td></tr><tr><td colspan=\"2\">**** TOTAL</td><td>138.03</td></tr><tr><td colspan=\"2\">Executive Reward</td><td>14.23</td></tr><tr><td colspan=\"2\">SUB TOTAL</td><td>122.47</td></tr><tr><td colspan=\"2\">TAX</td><td>1.33</td></tr><tr><td colspan=\"2\">**** TOTAL</td><td>123.80</td></tr></table>\n<|det|>text [281, 580, 558, 596]<|/det|>XXXXXXX XXXX9553 H\n<|det|>text [281, 598, 486, 613]<|/det|>AID: A000000031010\n<|det|>text [281, 614, 567, 630]<|/det|>Saga 54 24 App#: 91889C\n<|det|>text [281, 631, 588, 647]<|/det|>Costco Visa Resc: APPROVED\n<|det|>text [281, 648, 487, 663]<|/det|>APPROVEI purchase\n<|det|>text [281, 664, 435, 680]<|/det|>AMOUNT: $123.80\n<|det|>text [361, 696, 638, 712]<|/det|>Costco Visa 123.80\n<|det|>text [362, 713, 638, 730]<|/det|>CHANGE 0.00\n<|det|>text [288, 746, 638, 763]<|/det|>A 3.87% TX 1.33\n<|det|>text [288, 764, 638, 780]<|/det|>TOTAL TAX 1.33\n<|det|>text [281, 781, 588, 797]<|/det|>08/05/2021 19:15 1070 5 112 50\n<|det|>text [369, 840, 576, 853]<|/det|>21107000501122608061915\n<|det|>text [310, 856, 566, 872]<|/det|>OP#: ECI Name: MarJorie C.\n<|det|>text [310, 873, 549, 890]<|/det|>PS#: 123 Name: Marlin E\n<|det|>text [330, 891, 620, 908]<|/det|>Thank You! Please Come Again\n<|det|>text [277, 925, 600, 941]<|/det|>Frescano CIF#:123 Name: Marilyn E\n<|det|>text [305, 942, 537, 955]<|/det|>I t e w i t s S o l d : 9\n<|det|>text [304, 956, 643, 970]<|/det|>FM CIB/06/2026 19:15"
+        },
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 1517,
+      "completion_tokens": 994,
+      "total_tokens": 2511
+    }
+  },
+  "text": "<|det|>header [320, 8, 642, 78]<|/det|>CRESTCO\n<|det|>header [321, 80, 634, 75]<|/det|>[Unreadable due to extreme blurriness]\n<|det|>text [348, 87, 612, 105]<|/det|>Re: 40 Park #1070\n<|det|>text [383, 107, 577, 124]<|/det|>51-35 Junction Blvd\n<|det|>text [384, 125, 576, 142]<|/det|>Rego Park, NY 11374\n<|det|>text [287, 155, 512, 175]<|/det|>FM Member 111886754734\n<|det|>text [287, 189, 671, 209]<|/det|>***START OFF PRE-SCANNED ITEMS*****\n<|det|>table [284, 226, 668, 371]<|/det|><table><tr><td>1901859</td><td>PTOWELHOLDER</td><td>14.99 A</td></tr><tr><td>47292</td><td>SOCK SALMON</td><td>21.29</td></tr><tr><td>1752618</td><td>KS UNSL PIST</td><td>16.99</td></tr><tr><td>1001368</td><td>KS QUIÑOA</td><td>11.59</td></tr><tr><td>36283</td><td>KS WALNUTS</td><td>13.79</td></tr><tr><td>9877788</td><td>KS ORG TOFU</td><td>5.89</td></tr><tr><td>22967</td><td>ORGNIC BS THG</td><td>26/18</td></tr><tr><td>948400</td><td>KS ICE CREAM</td><td>12.99</td></tr><tr><td>5001</td><td>WHITE PEACH</td><td>12.99</td></tr></table>\n<|det|>text [285, 384, 667, 404]<|/det|>***END OF PRE-SCANNED ITEMS*****\n<|det|>text [285, 416, 648, 435]<|/det|>TOTAL NUMBER OF PRE-SCANNED EMS=9\n<|det|>table [281, 450, 648, 567]<|/det|><table><tr><td colspan=\"2\">SUB TOTAL</td><td>136.70</td></tr><tr><td colspan=\"2\">TAX</td><td>1.33</td></tr><tr><td colspan=\"2\">**** TOTAL</td><td>138.03</td></tr><tr><td colspan=\"2\">Executive Reward</td><td>14.23</td></tr><tr><td colspan=\"2\">SUB TOTAL</td><td>122.47</td></tr><tr><td colspan=\"2\">TAX</td><td>1.33</td></tr><tr><td colspan=\"2\">**** TOTAL</td><td>123.80</td></tr></table>\n<|det|>text [281, 580, 558, 596]<|/det|>XXXXXXX XXXX9553 H\n<|det|>text [281, 598, 486, 613]<|/det|>AID: A000000031010\n<|det|>text [281, 614, 567, 630]<|/det|>Saga 54 24 App#: 91889C\n<|det|>text [281, 631, 588, 647]<|/det|>Costco Visa Resc: APPROVED\n<|det|>text [281, 648, 487, 663]<|/det|>APPROVEI purchase\n<|det|>text [281, 664, 435, 680]<|/det|>AMOUNT: $123.80\n<|det|>text [361, 696, 638, 712]<|/det|>Costco Visa 123.80\n<|det|>text [362, 713, 638, 730]<|/det|>CHANGE 0.00\n<|det|>text [288, 746, 638, 763]<|/det|>A 3.87% TX 1.33\n<|det|>text [288, 764, 638, 780]<|/det|>TOTAL TAX 1.33\n<|det|>text [281, 781, 588, 797]<|/det|>08/05/2021 19:15 1070 5 112 50\n<|det|>text [369, 840, 576, 853]<|/det|>21107000501122608061915\n<|det|>text [310, 856, 566, 872]<|/det|>OP#: ECI Name: MarJorie C.\n<|det|>text [310, 873, 549, 890]<|/det|>PS#: 123 Name: Marlin E\n<|det|>text [330, 891, 620, 908]<|/det|>Thank You! Please Come Again\n<|det|>text [277, 925, 600, 941]<|/det|>Frescano CIF#:123 Name: Marilyn E\n<|det|>text [305, 942, 537, 955]<|/det|>I t e w i t s S o l d : 9\n<|det|>text [304, 956, 643, 970]<|/det|>FM CIB/06/2026 19:15",
+  "duration_ms": 10826
+}

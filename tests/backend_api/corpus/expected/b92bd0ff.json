@@ -1,0 +1,145 @@
+{
+  "provenance": "Manually checked against the bundled original photo; not copied from model predictions.",
+  "notes": [],
+  "input": {
+    "store": null,
+    "branch": null,
+    "address": null,
+    "country": "US",
+    "currency": "USD",
+    "local_time": "2026-08-20 15:48:00",
+    "total": "96.42",
+    "lines": [
+      {
+        "name": "WHITE PEACH",
+        "product_name": null,
+        "kind": "product",
+        "quantity": null,
+        "quantity_unit": null,
+        "unit_price": null,
+        "amount": "11.99",
+        "confidence": null,
+        "discount_target_index": null,
+        "sku": null,
+        "tax_code": null,
+        "is_weighed": false,
+        "review_notes": [],
+        "evidence": [],
+        "package_weight": null,
+        "package_weight_unit": null,
+        "amount_basis": "gross"
+      },
+      {
+        "name": "B/S ATL SALM",
+        "product_name": null,
+        "kind": "product",
+        "quantity": null,
+        "quantity_unit": null,
+        "unit_price": null,
+        "amount": "41.21",
+        "confidence": null,
+        "discount_target_index": null,
+        "sku": null,
+        "tax_code": null,
+        "is_weighed": false,
+        "review_notes": [],
+        "evidence": [],
+        "package_weight": null,
+        "package_weight_unit": null,
+        "amount_basis": "gross"
+      },
+      {
+        "name": "SEABASS",
+        "product_name": null,
+        "kind": "product",
+        "quantity": null,
+        "quantity_unit": null,
+        "unit_price": null,
+        "amount": "43.22",
+        "confidence": null,
+        "discount_target_index": null,
+        "sku": null,
+        "tax_code": null,
+        "is_weighed": false,
+        "review_notes": [],
+        "evidence": [],
+        "package_weight": null,
+        "package_weight_unit": null,
+        "amount_basis": "gross"
+      },
+      {
+        "name": "TAX",
+        "product_name": null,
+        "kind": "tax",
+        "quantity": null,
+        "quantity_unit": null,
+        "unit_price": null,
+        "amount": "0.00",
+        "confidence": null,
+        "discount_target_index": null,
+        "sku": null,
+        "tax_code": null,
+        "is_weighed": false,
+        "review_notes": [],
+        "evidence": [],
+        "package_weight": null,
+        "package_weight_unit": null,
+        "amount_basis": "gross"
+      }
+    ]
+  },
+  "expected": {
+    "total_minor": 9642,
+    "local_time": "2026-08-20 15:48:00",
+    "store": "Costco",
+    "lines": [
+      {
+        "name": "WHITE PEACH",
+        "product_name": null,
+        "kind": "product",
+        "amount_minor": 1199,
+        "weight_mg": null,
+        "printed_amount_minor": null,
+        "quantity_micros": null,
+        "unit_price_scaled": null,
+        "discount_target_index": null
+      },
+      {
+        "name": "B/S ATL SALM",
+        "product_name": null,
+        "kind": "product",
+        "amount_minor": 4121,
+        "weight_mg": null,
+        "printed_amount_minor": null,
+        "quantity_micros": null,
+        "unit_price_scaled": null,
+        "discount_target_index": null
+      },
+      {
+        "name": "SEABASS",
+        "product_name": null,
+        "kind": "product",
+        "amount_minor": 4322,
+        "weight_mg": null,
+        "printed_amount_minor": null,
+        "quantity_micros": null,
+        "unit_price_scaled": null,
+        "discount_target_index": null
+      },
+      {
+        "name": "TAX",
+        "product_name": null,
+        "kind": "tax",
+        "amount_minor": 0,
+        "weight_mg": null,
+        "printed_amount_minor": null,
+        "quantity_micros": null,
+        "unit_price_scaled": null,
+        "discount_target_index": null
+      }
+    ],
+    "store_alternatives": [
+      "Costco Wholesale"
+    ]
+  }
+}

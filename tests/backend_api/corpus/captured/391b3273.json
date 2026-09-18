@@ -1,0 +1,173 @@
+{
+  "store": "CRESTCO",
+  "branch": "Rego Park, NY 11374",
+  "address": "51-35 Junction Blvd",
+  "country": null,
+  "currency": "USD",
+  "local_time": "2021-08-05 19:15:00",
+  "total": null,
+  "lines": [
+    {
+      "name": "PTOWELHOLDER",
+      "standard_name": "PTOWELHOLDER",
+      "kind": "product",
+      "weight_g": null,
+      "quantity": null,
+      "quantity_unit": null,
+      "unit_price": null,
+      "amount": "14.99",
+      "confidence": null,
+      "discount_target_index": null,
+      "box": [
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "SOCK SALMON",
+      "standard_name": "SOCK SALMON",
+      "kind": "product",
+      "weight_g": null,
+      "quantity": null,
+      "quantity_unit": null,
+      "unit_price": null,
+      "amount": "21.29",
+      "confidence": null,
+      "discount_target_index": null,
+      "box": [
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "KS UNSL PIST",
+      "standard_name": "KS UNSL PIST",
+      "kind": "product",
+      "weight_g": null,
+      "quantity": null,
+      "quantity_unit": null,
+      "unit_price": null,
+      "amount": "16.99",
+      "confidence": null,
+      "discount_target_index": null,
+      "box": [
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "KS QUIÑOA",
+      "standard_name": "KS QUIÑOA",
+      "kind": "product",
+      "weight_g": null,
+      "quantity": null,
+      "quantity_unit": null,
+      "unit_price": null,
+      "amount": "11.59",
+      "confidence": null,
+      "discount_target_index": null,
+      "box": [
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "KS WALNUTS",
+      "standard_name": "KS WALNUTS",
+      "kind": "product",
+      "weight_g": null,
+      "quantity": null,
+      "quantity_unit": null,
+      "unit_price": null,
+      "amount": "13.79",
+      "confidence": null,
+      "discount_target_index": null,
+      "box": [
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "KS ORG TOFU",
+      "standard_name": "KS ORG TOFU",
+      "kind": "product",
+      "weight_g": null,
+      "quantity": null,
+      "quantity_unit": null,
+      "unit_price": null,
+      "amount": "5.89",
+      "confidence": null,
+      "discount_target_index": null,
+      "box": [
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "ORGNIC BS THG",
+      "standard_name": "ORGNIC BS THG",
+      "kind": "product",
+      "weight_g": null,
+      "quantity": null,
+      "quantity_unit": null,
+      "unit_price": null,
+      "amount": "26/18",
+      "confidence": null,
+      "discount_target_index": null,
+      "box": [
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "KS ICE CREAM",
+      "standard_name": "KS ICE CREAM",
+      "kind": "product",
+      "weight_g": null,
+      "quantity": null,
+      "quantity_unit": null,
+      "unit_price": null,
+      "amount": "12.99",
+      "confidence": null,
+      "discount_target_index": null,
+      "box": [
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "WHITE PEACH",
+      "standard_name": "WHITE PEACH",
+      "kind": "product",
+      "weight_g": null,
+      "quantity": null,
+      "quantity_unit": null,
+      "unit_price": null,
+      "amount": "12.99",
+      "confidence": null,
+      "discount_target_index": null,
+      "box": [
+        0,
+        0,
+        0,
+        0
+      ]
+    }
+  ]
+}

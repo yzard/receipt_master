@@ -1,0 +1,115 @@
+{
+  "provenance": "Manually checked against the bundled original photo; not copied from model predictions.",
+  "notes": [],
+  "input": {
+    "store": null,
+    "branch": null,
+    "address": null,
+    "country": "US",
+    "currency": "USD",
+    "local_time": "2026-09-09 17:53:00",
+    "total": "47.85",
+    "lines": [
+      {
+        "name": "KS WALNUTS",
+        "product_name": null,
+        "kind": "product",
+        "quantity": null,
+        "quantity_unit": null,
+        "unit_price": null,
+        "amount": "9.99",
+        "confidence": null,
+        "discount_target_index": null,
+        "sku": null,
+        "tax_code": null,
+        "is_weighed": false,
+        "review_notes": [],
+        "evidence": [],
+        "package_weight": null,
+        "package_weight_unit": null,
+        "amount_basis": "gross"
+      },
+      {
+        "name": "STEELHEAD",
+        "product_name": null,
+        "kind": "product",
+        "quantity": null,
+        "quantity_unit": null,
+        "unit_price": null,
+        "amount": "37.86",
+        "confidence": null,
+        "discount_target_index": null,
+        "sku": null,
+        "tax_code": null,
+        "is_weighed": false,
+        "review_notes": [],
+        "evidence": [],
+        "package_weight": null,
+        "package_weight_unit": null,
+        "amount_basis": "gross"
+      },
+      {
+        "name": "TAX",
+        "product_name": null,
+        "kind": "tax",
+        "quantity": null,
+        "quantity_unit": null,
+        "unit_price": null,
+        "amount": "0.00",
+        "confidence": null,
+        "discount_target_index": null,
+        "sku": null,
+        "tax_code": null,
+        "is_weighed": false,
+        "review_notes": [],
+        "evidence": [],
+        "package_weight": null,
+        "package_weight_unit": null,
+        "amount_basis": "gross"
+      }
+    ]
+  },
+  "expected": {
+    "total_minor": 4785,
+    "local_time": "2026-09-09 17:53:00",
+    "store": "Costco",
+    "lines": [
+      {
+        "name": "KS WALNUTS",
+        "product_name": null,
+        "kind": "product",
+        "amount_minor": 999,
+        "weight_mg": null,
+        "printed_amount_minor": null,
+        "quantity_micros": null,
+        "unit_price_scaled": null,
+        "discount_target_index": null
+      },
+      {
+        "name": "STEELHEAD",
+        "product_name": null,
+        "kind": "product",
+        "amount_minor": 3786,
+        "weight_mg": null,
+        "printed_amount_minor": null,
+        "quantity_micros": null,
+        "unit_price_scaled": null,
+        "discount_target_index": null
+      },
+      {
+        "name": "TAX",
+        "product_name": null,
+        "kind": "tax",
+        "amount_minor": 0,
+        "weight_mg": null,
+        "printed_amount_minor": null,
+        "quantity_micros": null,
+        "unit_price_scaled": null,
+        "discount_target_index": null
+      }
+    ],
+    "store_alternatives": [
+      "Costco Wholesale"
+    ]
+  }
+}

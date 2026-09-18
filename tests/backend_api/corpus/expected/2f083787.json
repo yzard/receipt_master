@@ -1,0 +1,112 @@
+{
+  "provenance": "Manually checked against the bundled original photo; not copied from model predictions.",
+  "notes": [],
+  "input": {
+    "store": null,
+    "branch": null,
+    "address": null,
+    "country": "US",
+    "currency": "USD",
+    "local_time": "2026-09-12 18:16:25",
+    "total": "6.41",
+    "lines": [
+      {
+        "name": "BOK CHOY TIPS (1POUNDS)",
+        "product_name": "白菜苗（1磅）",
+        "kind": "product",
+        "quantity": "2.00",
+        "quantity_unit": "lb",
+        "unit_price": "2.49",
+        "amount": "4.98",
+        "confidence": null,
+        "discount_target_index": null,
+        "sku": null,
+        "tax_code": null,
+        "is_weighed": false,
+        "review_notes": [],
+        "evidence": [],
+        "package_weight": null,
+        "package_weight_unit": null,
+        "amount_basis": "gross"
+      },
+      {
+        "name": "LONG HOT PEPPER (1POUNDS)",
+        "product_name": "牛角椒（1磅）",
+        "kind": "product",
+        "quantity": "0.72",
+        "quantity_unit": "lb",
+        "unit_price": "1.99",
+        "amount": "1.43",
+        "confidence": null,
+        "discount_target_index": null,
+        "sku": null,
+        "tax_code": null,
+        "is_weighed": false,
+        "review_notes": [],
+        "evidence": [],
+        "package_weight": null,
+        "package_weight_unit": null,
+        "amount_basis": "gross"
+      },
+      {
+        "name": "TAX",
+        "product_name": null,
+        "kind": "tax",
+        "quantity": null,
+        "quantity_unit": null,
+        "unit_price": null,
+        "amount": "0.00",
+        "confidence": null,
+        "discount_target_index": null,
+        "sku": null,
+        "tax_code": null,
+        "is_weighed": false,
+        "review_notes": [],
+        "evidence": [],
+        "package_weight": null,
+        "package_weight_unit": null,
+        "amount_basis": "gross"
+      }
+    ]
+  },
+  "expected": {
+    "total_minor": 641,
+    "local_time": "2026-09-12 18:16:25",
+    "store": "Sky Foods",
+    "lines": [
+      {
+        "name": "BOK CHOY TIPS (1POUNDS)",
+        "product_name": "白菜苗（1磅）",
+        "kind": "product",
+        "amount_minor": 498,
+        "weight_mg": 907185,
+        "printed_amount_minor": null,
+        "quantity_micros": 2000000,
+        "unit_price_scaled": 249000000,
+        "discount_target_index": null
+      },
+      {
+        "name": "LONG HOT PEPPER (1POUNDS)",
+        "product_name": "牛角椒（1磅）",
+        "kind": "product",
+        "amount_minor": 143,
+        "weight_mg": 326587,
+        "printed_amount_minor": null,
+        "quantity_micros": 720000,
+        "unit_price_scaled": 199000000,
+        "discount_target_index": null
+      },
+      {
+        "name": "TAX",
+        "product_name": null,
+        "kind": "tax",
+        "amount_minor": 0,
+        "weight_mg": null,
+        "printed_amount_minor": null,
+        "quantity_micros": null,
+        "unit_price_scaled": null,
+        "discount_target_index": null
+      }
+    ]
+  }
+}

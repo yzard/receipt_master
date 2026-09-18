@@ -1,0 +1,33 @@
+{
+  "id": "5e4547ea",
+  "images": [
+    {
+      "path": "images/5e4547ea-0.jpg",
+      "sha256": "7150fc4a334348e638e8cbf8e6cfaa35f71e64e091f5724ef9e9c202d374ca01"
+    }
+  ],
+  "provider": "unlimited",
+  "raw": {
+    "id": "chatcmpl-69cb2cafb20d46db86977ec3f5f08565",
+    "object": "chat.completion",
+    "created": 1789567869,
+    "model": "unlimited-ocr",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "<|det|>header [423, 22, 519, 90]<|/det|>H\n<|det|>header [410, 93, 538, 117]<|/det|>MART\n<|det|>text [365, 132, 556, 147]<|/det|>http://www.hmart.com\n<|det|>text [339, 150, 570, 164]<|/det|>46-40 Francis Lewis Blvd.\n<|det|>text [375, 168, 543, 182]<|/det|>Bayside, NY. 11361\n<|det|>text [376, 186, 546, 200]<|/det|>TEL (718) 229-7400\n<|det|>text [292, 204, 574, 220]<|/det|>Your Cashier was YOUNG HO SHON\n<|det|>text [356, 240, 638, 255]<|/det|>FAGE TOTAL 2% GREE 10.99 F\n<|det|>text [291, 257, 461, 272]<|/det|>2.81 lb @ 2.99 /lb\n<|det|>text [281, 275, 638, 290]<|/det|>WT ENVY APPLE 8.40 F\n<|det|>text [357, 293, 620, 308]<|/det|>TAX 0.00\n<|det|>text [308, 328, 620, 344]<|/det|>**** BALANCE 19.39\n<|det|>text [279, 380, 480, 395]<|/det|>MasterCard Credit - C\n<|det|>text [279, 398, 582, 412]<|/det|>ACCOUNT NUMBER: *****\n<|det|>text [279, 415, 479, 430]<|/det|>APPROVAL CODE: 964862\n<|det|>text [279, 433, 479, 447]<|/det|>SEQUENCE NUMBER: 4083\n<|det|>text [279, 450, 470, 465]<|/det|>TOTAL AMOUNT: $19.39\n<|det|>text [278, 468, 498, 482]<|/det|>RESPONSE CODE: APPROVED\n<|det|>text [278, 485, 490, 499]<|/det|>09/09/26 05:10pm 115 4\n<|det|>text [354, 503, 622, 517]<|/det|>MasterCard 19.39\n<|det|>text [355, 520, 621, 534]<|/det|>CHANGE 0.00\n<|det|>text [279, 537, 592, 551]<|/det|>TOTAL NUMBER OF ITEMS SOLD = 2\n<|det|>text [279, 554, 554, 568]<|/det|>09/09/26 05:10pm 51 4 356 115\n<|det|>text [279, 589, 406, 604]<|/det|>RETURN POLICY\n<|det|>text [279, 607, 636, 658]<|/det|>unused product can be exchanged or refunded with receipt within 7 days of purchase unless otherwise noted below\n<|det|>text [279, 678, 631, 694]<|/det|>Meat, fish, produce, and refrigerated\n<|det|>text [279, 696, 584, 711]<|/det|>food items must be returned with\n<|det|>text [279, 715, 500, 730]<|/det|>receipt within 24 hours\n<|det|>text [279, 733, 602, 748]<|/det|>electronics and houseware: Must be\n<|det|>text [279, 751, 621, 766]<|/det|>returned with receipt within 14 days\n<|det|>text [279, 769, 566, 784]<|/det|>of purchase and must be unused\n<|det|>text [279, 787, 575, 802]<|/det|>If your unable to bring item to\n<|det|>text [279, 805, 613, 820]<|/det|>store, please call customer service\n<|det|>image [342, 838, 586, 930]<|/det|>\n<|det|>text [350, 930, 570, 943]<|/det|>00005100403562609091710\n<|det|>footer [281, 964, 635, 982]<|/det|>** Thank You and please come again **"
+        },
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 1517,
+      "completion_tokens": 862,
+      "total_tokens": 2379
+    }
+  },
+  "text": "<|det|>header [423, 22, 519, 90]<|/det|>H\n<|det|>header [410, 93, 538, 117]<|/det|>MART\n<|det|>text [365, 132, 556, 147]<|/det|>http://www.hmart.com\n<|det|>text [339, 150, 570, 164]<|/det|>46-40 Francis Lewis Blvd.\n<|det|>text [375, 168, 543, 182]<|/det|>Bayside, NY. 11361\n<|det|>text [376, 186, 546, 200]<|/det|>TEL (718) 229-7400\n<|det|>text [292, 204, 574, 220]<|/det|>Your Cashier was YOUNG HO SHON\n<|det|>text [356, 240, 638, 255]<|/det|>FAGE TOTAL 2% GREE 10.99 F\n<|det|>text [291, 257, 461, 272]<|/det|>2.81 lb @ 2.99 /lb\n<|det|>text [281, 275, 638, 290]<|/det|>WT ENVY APPLE 8.40 F\n<|det|>text [357, 293, 620, 308]<|/det|>TAX 0.00\n<|det|>text [308, 328, 620, 344]<|/det|>**** BALANCE 19.39\n<|det|>text [279, 380, 480, 395]<|/det|>MasterCard Credit - C\n<|det|>text [279, 398, 582, 412]<|/det|>ACCOUNT NUMBER: *****\n<|det|>text [279, 415, 479, 430]<|/det|>APPROVAL CODE: 964862\n<|det|>text [279, 433, 479, 447]<|/det|>SEQUENCE NUMBER: 4083\n<|det|>text [279, 450, 470, 465]<|/det|>TOTAL AMOUNT: $19.39\n<|det|>text [278, 468, 498, 482]<|/det|>RESPONSE CODE: APPROVED\n<|det|>text [278, 485, 490, 499]<|/det|>09/09/26 05:10pm 115 4\n<|det|>text [354, 503, 622, 517]<|/det|>MasterCard 19.39\n<|det|>text [355, 520, 621, 534]<|/det|>CHANGE 0.00\n<|det|>text [279, 537, 592, 551]<|/det|>TOTAL NUMBER OF ITEMS SOLD = 2\n<|det|>text [279, 554, 554, 568]<|/det|>09/09/26 05:10pm 51 4 356 115\n<|det|>text [279, 589, 406, 604]<|/det|>RETURN POLICY\n<|det|>text [279, 607, 636, 658]<|/det|>unused product can be exchanged or refunded with receipt within 7 days of purchase unless otherwise noted below\n<|det|>text [279, 678, 631, 694]<|/det|>Meat, fish, produce, and refrigerated\n<|det|>text [279, 696, 584, 711]<|/det|>food items must be returned with\n<|det|>text [279, 715, 500, 730]<|/det|>receipt within 24 hours\n<|det|>text [279, 733, 602, 748]<|/det|>electronics and houseware: Must be\n<|det|>text [279, 751, 621, 766]<|/det|>returned with receipt within 14 days\n<|det|>text [279, 769, 566, 784]<|/det|>of purchase and must be unused\n<|det|>text [279, 787, 575, 802]<|/det|>If your unable to bring item to\n<|det|>text [279, 805, 613, 820]<|/det|>store, please call customer service\n<|det|>image [342, 838, 586, 930]<|/det|>\n<|det|>text [350, 930, 570, 943]<|/det|>00005100403562609091710\n<|det|>footer [281, 964, 635, 982]<|/det|>** Thank You and please come again **",
+  "duration_ms": 8498
+}

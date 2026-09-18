@@ -1,0 +1,46 @@
+name: receipt-master-ocr
+x-gpu: &gpu
+  init: true
+  gpus: all
+  devices:
+    - /dev/nvidia-uvm:/dev/nvidia-uvm
+    - /dev/nvidia-uvm-tools:/dev/nvidia-uvm-tools
+  shm_size: 2gb
+  stop_grace_period: 40s
+  healthcheck:
+    test: [CMD, python3, -c, "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health', timeout=5)"]
+    interval: 10s
+    timeout: 6s
+    retries: 60
+    start_period: 60s
+services:
+  backend_ocr:
+    <<: *gpu
+    restart: unless-stopped
+    image: receipt-master-backend-ocr:local
+    volumes:
+      - ../playground/backend_ocr.toml:/config/backend_ocr.toml:ro
+    networks: [inference]
+  backend_api:
+    init: true
+    stop_grace_period: 40s
+    healthcheck:
+      test: [CMD, curl, --fail, --silent, http://127.0.0.1:8000/health]
+      interval: 10s
+      timeout: 6s
+      retries: 10
+    image: receipt-master-backend-api:local
+    ports: ["0.0.0.0:5000:8000"]
+    volumes:
+      - ../playground/backend_api/config.yaml:/config/config.yaml:ro
+      - ../build/mobile:/artifacts:ro
+      - ../playground/data:/data
+    secrets: [ocr_api_key]
+    networks: [inference, ingress]
+secrets:
+  ocr_api_key:
+    file: ../playground/secrets/ocr-api-key
+networks:
+  inference:
+    internal: true
+  ingress: {}

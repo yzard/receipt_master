@@ -1,0 +1,227 @@
+{
+  "type": "object",
+  "properties": {
+    "store": {
+      "type": "null"
+    },
+    "branch": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "address": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "country": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "pattern": "^[A-Z]{2}$"
+    },
+    "currency": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "pattern": "^[A-Z]{3}$"
+    },
+    "local_time": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "total": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "pattern": "^-?[0-9]+(?:\\.[0-9]+)?$"
+    },
+    "lines": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "product_name": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "product",
+              "item_discount",
+              "order_discount",
+              "tax",
+              "tip",
+              "deposit",
+              "other_adjustment"
+            ]
+          },
+          "quantity": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "pattern": "^-?[0-9]+(?:\\.[0-9]+)?$"
+          },
+          "quantity_unit": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "unit_price": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "pattern": "^-?[0-9]+(?:\\.[0-9]+)?$"
+          },
+          "amount": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "pattern": "^-?[0-9]+(?:\\.[0-9]+)?$"
+          },
+          "confidence": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "minimum": 0,
+            "maximum": 1
+          },
+          "discount_target_index": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "minimum": 0
+          },
+          "review_notes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "sku": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "tax_code": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 1
+          },
+          "is_weighed": {
+            "type": "boolean"
+          },
+          "evidence": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "image_index": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "box": {
+                  "type": "array",
+                  "items": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 1
+                  },
+                  "minItems": 4,
+                  "maxItems": 4
+                }
+              },
+              "required": [
+                "image_index",
+                "box"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "package_weight": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "pattern": "^[0-9]+(?:\\.[0-9]+)?$",
+            "description": "Explicit package mass only, raw printed number; NEVER convert it. Null for unknown."
+          },
+          "package_weight_unit": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "enum": [
+              "g",
+              "kg",
+              "lb",
+              "oz",
+              null
+            ]
+          },
+          "amount_basis": {
+            "type": "string",
+            "enum": [
+              "gross",
+              "net_including_item_discounts"
+            ],
+            "description": "gross normally. net_including_item_discounts ONLY when a product amount already includes its separately listed discounts. Keep amount as the printed number; backend computes gross."
+          }
+        },
+        "required": [
+          "name",
+          "product_name",
+          "kind",
+          "quantity",
+          "quantity_unit",
+          "unit_price",
+          "amount",
+          "confidence",
+          "discount_target_index",
+          "review_notes",
+          "sku",
+          "tax_code",
+          "is_weighed",
+          "evidence",
+          "package_weight",
+          "package_weight_unit",
+          "amount_basis"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": [
+    "store",
+    "branch",
+    "address",
+    "country",
+    "currency",
+    "local_time",
+    "total",
+    "lines"
+  ],
+  "additionalProperties": false
+}

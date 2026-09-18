@@ -1,0 +1,33 @@
+{
+  "id": "b38d62dd",
+  "images": [
+    {
+      "path": "images/b38d62dd-0.jpg",
+      "sha256": "f6f8f5cc7396738e9c3a62b1fb8ad04724f6c6e2669f4b13bf8e99f716fe0b8e"
+    }
+  ],
+  "provider": "unlimited",
+  "raw": {
+    "id": "chatcmpl-d47a9e5f65b3489ca80f61adab5c924b",
+    "object": "chat.completion",
+    "created": 1789567922,
+    "model": "unlimited-ocr",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "<|det|>header [262, 35, 606, 99]<|/det|>skyFOODS\n<|det|>header [379, 99, 603, 134]<|/det|>天天超超市\n<|det|>text [393, 174, 504, 195]<|/det|>Sky Foods\n<|det|>text [296, 195, 590, 216]<|/det|>40-24 COLLEGE POINT BLVD\n<|det|>text [346, 217, 553, 239]<|/det|>FLUSHING,NY 11355\n<|det|>text [371, 240, 530, 261]<|/det|>(718)939-6688\n<|det|>text [196, 282, 495, 304]<|/det|>Station 10 302524427742\n<|det|>text [196, 305, 434, 326]<|/det|>09/03/2026 20:00:14\n<|det|>text [196, 328, 360, 349]<|/det|>Cashier # 110\n<|det|>text [196, 370, 667, 393]<|/det|>1 TAIWAN CABBAGE (1POUNDS) $1.75 F\n<|det|>text [195, 394, 394, 415]<|/det|>台湾高麗菜（1磅）\n<|det|>text [218, 416, 446, 437]<|/det|>3.02 lb @ $0.58/lb\n<|det|>text [194, 438, 666, 460]<|/det|>1 ONION (1POUNDS) $1.27 F\n<|det|>text [194, 461, 357, 482]<|/det|>紫洋麵（1磅）\n<|det|>text [218, 483, 446, 504]<|/det|>0.64 lb @ $1.99/lb\n<|det|>text [196, 505, 666, 527]<|/det|>1 LONG HOT PEPPER (1POUNDS) $1.19 F\n<|det|>text [195, 528, 357, 550]<|/det|>牛角椒 (1磅)\n<|det|>text [218, 551, 446, 572]<|/det|>0.60 lb @ $1.99/lb\n<|det|>text [334, 596, 510, 617]<|/det|>Item Count: 3\n<|det|>text [358, 619, 558, 640]<|/det|>Subtotal: $4.21\n<|det|>text [421, 642, 560, 663]<|/det|>Tax: $0.00\n<|det|>text [394, 665, 558, 686]<|/det|>Total: $4.21\n<|det|>text [371, 687, 560, 709]<|/det|>Payment: $5.00\n<|det|>text [321, 730, 560, 753]<|/det|>Cash Change: $0.79\n<|det|>text [334, 778, 560, 799]<|/det|>~www.skyfoods.com\n<|det|>text [194, 800, 709, 999]<|/det|>No refund or exchanges on Meats, Seafood, Veges, Fruits, Mooncake, FrozenFoods, and Giftcard, Seasonal items. No refund will be issued for missing items outside of store premises. Exchanges and Store Credit within 7 days for dry goods only. Must present receipt for proof of purchase. Subject to manager approval. Thank You!"
+        },
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 1517,
+      "completion_tokens": 692,
+      "total_tokens": 2209
+    }
+  },
+  "text": "<|det|>header [262, 35, 606, 99]<|/det|>skyFOODS\n<|det|>header [379, 99, 603, 134]<|/det|>天天超超市\n<|det|>text [393, 174, 504, 195]<|/det|>Sky Foods\n<|det|>text [296, 195, 590, 216]<|/det|>40-24 COLLEGE POINT BLVD\n<|det|>text [346, 217, 553, 239]<|/det|>FLUSHING,NY 11355\n<|det|>text [371, 240, 530, 261]<|/det|>(718)939-6688\n<|det|>text [196, 282, 495, 304]<|/det|>Station 10 302524427742\n<|det|>text [196, 305, 434, 326]<|/det|>09/03/2026 20:00:14\n<|det|>text [196, 328, 360, 349]<|/det|>Cashier # 110\n<|det|>text [196, 370, 667, 393]<|/det|>1 TAIWAN CABBAGE (1POUNDS) $1.75 F\n<|det|>text [195, 394, 394, 415]<|/det|>台湾高麗菜（1磅）\n<|det|>text [218, 416, 446, 437]<|/det|>3.02 lb @ $0.58/lb\n<|det|>text [194, 438, 666, 460]<|/det|>1 ONION (1POUNDS) $1.27 F\n<|det|>text [194, 461, 357, 482]<|/det|>紫洋麵（1磅）\n<|det|>text [218, 483, 446, 504]<|/det|>0.64 lb @ $1.99/lb\n<|det|>text [196, 505, 666, 527]<|/det|>1 LONG HOT PEPPER (1POUNDS) $1.19 F\n<|det|>text [195, 528, 357, 550]<|/det|>牛角椒 (1磅)\n<|det|>text [218, 551, 446, 572]<|/det|>0.60 lb @ $1.99/lb\n<|det|>text [334, 596, 510, 617]<|/det|>Item Count: 3\n<|det|>text [358, 619, 558, 640]<|/det|>Subtotal: $4.21\n<|det|>text [421, 642, 560, 663]<|/det|>Tax: $0.00\n<|det|>text [394, 665, 558, 686]<|/det|>Total: $4.21\n<|det|>text [371, 687, 560, 709]<|/det|>Payment: $5.00\n<|det|>text [321, 730, 560, 753]<|/det|>Cash Change: $0.79\n<|det|>text [334, 778, 560, 799]<|/det|>~www.skyfoods.com\n<|det|>text [194, 800, 709, 999]<|/det|>No refund or exchanges on Meats, Seafood, Veges, Fruits, Mooncake, FrozenFoods, and Giftcard, Seasonal items. No refund will be issued for missing items outside of store premises. Exchanges and Store Credit within 7 days for dry goods only. Must present receipt for proof of purchase. Subject to manager approval. Thank You!",
+  "duration_ms": 6973
+}

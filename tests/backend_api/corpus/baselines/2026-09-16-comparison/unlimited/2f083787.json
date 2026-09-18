@@ -1,0 +1,33 @@
+{
+  "id": "2f083787",
+  "images": [
+    {
+      "path": "images/2f083787-0.jpg",
+      "sha256": "6d22710f88c2aad47594b11bc53ce323109305e9d42221689246a8f3dd704d44"
+    }
+  ],
+  "provider": "unlimited",
+  "raw": {
+    "id": "chatcmpl-75d07ba4a3284944bb53e0851a6d14e3",
+    "object": "chat.completion",
+    "created": 1789567860,
+    "model": "unlimited-ocr",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "<|det|>title [339, 48, 604, 99]<|/det|>skyFOODS\n<|det|>title [427, 99, 603, 123]<|/det|>超级市场\n<|det|>text [438, 154, 526, 171]<|/det|>Sky Foods\n<|det|>text [365, 172, 591, 188]<|/det|>40-24 COLLEGE POINT BLVD\n<|det|>text [401, 190, 563, 205]<|/det|>FLUSHING,NY 11355\n<|det|>text [420, 207, 544, 223]<|/det|>(718)939-6688\n<|det|>text [287, 241, 512, 258]<|/det|>Station 10 303424413761\n<|det|>text [287, 259, 468, 275]<|/det|>09/12/2026 18:16:25\n<|det|>text [287, 276, 411, 292]<|/det|>Cashier # 110\n<|det|>text [287, 308, 646, 327]<|/det|>1 BOK CHOY TIPS (1POUNDS) $4.98 F\n<|det|>text [287, 327, 434, 344]<|/det|>白菜菇（1磅）\n<|det|>text [304, 344, 476, 360]<|/det|>2.00 lb @ $2.49/lb\n<|det|>text [287, 360, 646, 377]<|/det|>1 LONG HOT PEPPER (1POUNDS) $1.43 F\n<|det|>text [286, 377, 409, 394]<|/det|>牛角椒 (1磅)\n<|det|>text [303, 395, 476, 412]<|/det|>0.72 lb @ $1.99/lb\n<|det|>text [388, 430, 523, 446]<|/det|>Item Count: 2\n<|det|>text [407, 447, 558, 463]<|/det|>Subtotal: $6.41\n<|det|>text [454, 464, 559, 480]<|/det|>Tax: $0.00\n<|det|>text [435, 481, 558, 497]<|/det|>Total: $6.41\n<|det|>text [415, 498, 558, 515]<|/det|>Payment: $6.41\n<|det|>text [376, 532, 560, 551]<|/det|>Cash Change: $0.00\n<|det|>text [278, 566, 388, 583]<|/det|>CREDIT SALE\n<|det|>text [278, 584, 492, 601]<|/det|>VISA **********1392\n<|det|>text [278, 602, 521, 619]<|/det|>ENTRY METHOD: CONTACTLESS\n<|det|>text [278, 620, 444, 636]<|/det|>AUTH CODE: 08679D\n<|det|>text [278, 637, 414, 654]<|/det|>AMOUNT: $6.41\n<|det|>text [393, 675, 556, 692]<|/det|>www.skyfoods.com\n<|det|>text [277, 692, 674, 833]<|/det|>No refund or exchanges on Meats, Seafood,  \nVeges, Fruits, Mooncake, FrozenFoods, and  \nGiftcard, Seasonal items. No refund will be  \nissued for missing items outside of store  \npremises. Exchanges and Store Credit  \nwithin 7 days for dry goods only. Must  \npresent receipt for proof of purchase.  \nSubject to manager approval. Thank You!\n<|det|>text [305, 833, 638, 852]<|/det|>肉類，海鮮，蔬菜瓜果，月餅，冷凍產品\n<|det|>text [315, 852, 626, 870]<|/det|>禮卡、季節性產品恕不退換，店鋪外\n<|det|>text [315, 870, 636, 888]<|/det|>遗失物品將不予退款。雜貨類產品7天\n<|det|>text [315, 888, 624, 906]<|/det|>可憑收据更換或退店內抵用券，如有\n<|det|>text [315, 906, 619, 925]<|/det|>起用，請咨詢本店經理。謝謝惠顧！\n<|det|>footer [272, 930, 675, 999]<|/det|>[Non-Text]"
+        },
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 1517,
+      "completion_tokens": 903,
+      "total_tokens": 2420
+    }
+  },
+  "text": "<|det|>title [339, 48, 604, 99]<|/det|>skyFOODS\n<|det|>title [427, 99, 603, 123]<|/det|>超级市场\n<|det|>text [438, 154, 526, 171]<|/det|>Sky Foods\n<|det|>text [365, 172, 591, 188]<|/det|>40-24 COLLEGE POINT BLVD\n<|det|>text [401, 190, 563, 205]<|/det|>FLUSHING,NY 11355\n<|det|>text [420, 207, 544, 223]<|/det|>(718)939-6688\n<|det|>text [287, 241, 512, 258]<|/det|>Station 10 303424413761\n<|det|>text [287, 259, 468, 275]<|/det|>09/12/2026 18:16:25\n<|det|>text [287, 276, 411, 292]<|/det|>Cashier # 110\n<|det|>text [287, 308, 646, 327]<|/det|>1 BOK CHOY TIPS (1POUNDS) $4.98 F\n<|det|>text [287, 327, 434, 344]<|/det|>白菜菇（1磅）\n<|det|>text [304, 344, 476, 360]<|/det|>2.00 lb @ $2.49/lb\n<|det|>text [287, 360, 646, 377]<|/det|>1 LONG HOT PEPPER (1POUNDS) $1.43 F\n<|det|>text [286, 377, 409, 394]<|/det|>牛角椒 (1磅)\n<|det|>text [303, 395, 476, 412]<|/det|>0.72 lb @ $1.99/lb\n<|det|>text [388, 430, 523, 446]<|/det|>Item Count: 2\n<|det|>text [407, 447, 558, 463]<|/det|>Subtotal: $6.41\n<|det|>text [454, 464, 559, 480]<|/det|>Tax: $0.00\n<|det|>text [435, 481, 558, 497]<|/det|>Total: $6.41\n<|det|>text [415, 498, 558, 515]<|/det|>Payment: $6.41\n<|det|>text [376, 532, 560, 551]<|/det|>Cash Change: $0.00\n<|det|>text [278, 566, 388, 583]<|/det|>CREDIT SALE\n<|det|>text [278, 584, 492, 601]<|/det|>VISA **********1392\n<|det|>text [278, 602, 521, 619]<|/det|>ENTRY METHOD: CONTACTLESS\n<|det|>text [278, 620, 444, 636]<|/det|>AUTH CODE: 08679D\n<|det|>text [278, 637, 414, 654]<|/det|>AMOUNT: $6.41\n<|det|>text [393, 675, 556, 692]<|/det|>www.skyfoods.com\n<|det|>text [277, 692, 674, 833]<|/det|>No refund or exchanges on Meats, Seafood,  \nVeges, Fruits, Mooncake, FrozenFoods, and  \nGiftcard, Seasonal items. No refund will be  \nissued for missing items outside of store  \npremises. Exchanges and Store Credit  \nwithin 7 days for dry goods only. Must  \npresent receipt for proof of purchase.  \nSubject to manager approval. Thank You!\n<|det|>text [305, 833, 638, 852]<|/det|>肉類，海鮮，蔬菜瓜果，月餅，冷凍產品\n<|det|>text [315, 852, 626, 870]<|/det|>禮卡、季節性產品恕不退換，店鋪外\n<|det|>text [315, 870, 636, 888]<|/det|>遗失物品將不予退款。雜貨類產品7天\n<|det|>text [315, 888, 624, 906]<|/det|>可憑收据更換或退店內抵用券，如有\n<|det|>text [315, 906, 619, 925]<|/det|>起用，請咨詢本店經理。謝謝惠顧！\n<|det|>footer [272, 930, 675, 999]<|/det|>[Non-Text]",
+  "duration_ms": 8835
+}

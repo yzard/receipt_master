@@ -1,0 +1,33 @@
+{
+  "id": "e8698610",
+  "images": [
+    {
+      "path": "images/e8698610-0.jpg",
+      "sha256": "32d2bbcd77fd4a18b1d9897ca547032a0683f3e0b25a64957c767c86d9eaac3a"
+    }
+  ],
+  "provider": "unlimited",
+  "raw": {
+    "id": "chatcmpl-bb32022776884428840231f59d9f2741",
+    "object": "chat.completion",
+    "created": 1789567843,
+    "model": "unlimited-ocr",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "<|det|>title [266, 82, 651, 135]<|/det|>COSTCO\n<|det|>title [382, 135, 641, 160]<|/det|>WHOLESALE\n<|det|>text [298, 172, 619, 193]<|/det|>Rego Park #1070\n<|det|>text [342, 195, 577, 214]<|/det|>61-35 Junction Blvd\n<|det|>text [342, 214, 576, 235]<|/det|>Rego Park, NY 11374\n<|det|>title [253, 251, 666, 283]<|/det|>REFUND / MEMBERSHIP\n<|det|>text [218, 306, 497, 326]<|/det|>FP Member 111886754734\n<|det|>text [218, 326, 675, 345]<|/det|>E 545345 KS PISTACHIO 16.99-\n<|det|>text [321, 346, 675, 365]<|/det|>SUBTOTAL 16.99-\n<|det|>text [321, 366, 664, 385]<|/det|>TAX 0.00\n<|det|>text [256, 387, 677, 406]<|/det|>**** TOTAL 16.99\n<|det|>text [214, 428, 614, 448]<|/det|>XXXXXXXXXXXXX9653 KEYED\n<|det|>text [214, 449, 601, 469]<|/det|>Seq#: 123143 App#: 93792C\n<|det|>text [214, 470, 641, 490]<|/det|>Return to Card Resp: APPROVED\n<|det|>text [214, 491, 437, 510]<|/det|>APPROVED - Refund\n<|det|>text [214, 512, 408, 532]<|/det|>AMOUNT: $16.99-\n<|det|>text [212, 576, 683, 598]<|/det|>RF Return to Card 16.99-\n<|det|>text [315, 599, 672, 620]<|/det|>CHANGE 0.00\n<|det|>text [209, 645, 658, 666]<|/det|>TOTAL NUMBER OF ITEMS SOLD = -1\n<|det|>text [209, 667, 631, 687]<|/det|>09/05/2026 15:16 1070 123 67 631\n<|det|>image [280, 689, 641, 748]<|/det|>\n<|det|>text [327, 746, 595, 763]<|/det|>21107012300672609051516\n<|det|>text [248, 766, 541, 788]<|/det|>OP#: 631 Name: Chad K.\n<|det|>text [273, 811, 654, 835]<|/det|>Thank You! Please Come Again\n<|det|>text [240, 881, 570, 901]<|/det|>Items Sold: 1-\n<|det|>text [240, 904, 688, 925]<|/det|>FP 09/05/2026 15:16"
+        },
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 1517,
+      "completion_tokens": 612,
+      "total_tokens": 2129
+    }
+  },
+  "text": "<|det|>title [266, 82, 651, 135]<|/det|>COSTCO\n<|det|>title [382, 135, 641, 160]<|/det|>WHOLESALE\n<|det|>text [298, 172, 619, 193]<|/det|>Rego Park #1070\n<|det|>text [342, 195, 577, 214]<|/det|>61-35 Junction Blvd\n<|det|>text [342, 214, 576, 235]<|/det|>Rego Park, NY 11374\n<|det|>title [253, 251, 666, 283]<|/det|>REFUND / MEMBERSHIP\n<|det|>text [218, 306, 497, 326]<|/det|>FP Member 111886754734\n<|det|>text [218, 326, 675, 345]<|/det|>E 545345 KS PISTACHIO 16.99-\n<|det|>text [321, 346, 675, 365]<|/det|>SUBTOTAL 16.99-\n<|det|>text [321, 366, 664, 385]<|/det|>TAX 0.00\n<|det|>text [256, 387, 677, 406]<|/det|>**** TOTAL 16.99\n<|det|>text [214, 428, 614, 448]<|/det|>XXXXXXXXXXXXX9653 KEYED\n<|det|>text [214, 449, 601, 469]<|/det|>Seq#: 123143 App#: 93792C\n<|det|>text [214, 470, 641, 490]<|/det|>Return to Card Resp: APPROVED\n<|det|>text [214, 491, 437, 510]<|/det|>APPROVED - Refund\n<|det|>text [214, 512, 408, 532]<|/det|>AMOUNT: $16.99-\n<|det|>text [212, 576, 683, 598]<|/det|>RF Return to Card 16.99-\n<|det|>text [315, 599, 672, 620]<|/det|>CHANGE 0.00\n<|det|>text [209, 645, 658, 666]<|/det|>TOTAL NUMBER OF ITEMS SOLD = -1\n<|det|>text [209, 667, 631, 687]<|/det|>09/05/2026 15:16 1070 123 67 631\n<|det|>image [280, 689, 641, 748]<|/det|>\n<|det|>text [327, 746, 595, 763]<|/det|>21107012300672609051516\n<|det|>text [248, 766, 541, 788]<|/det|>OP#: 631 Name: Chad K.\n<|det|>text [273, 811, 654, 835]<|/det|>Thank You! Please Come Again\n<|det|>text [240, 881, 570, 901]<|/det|>Items Sold: 1-\n<|det|>text [240, 904, 688, 925]<|/det|>FP 09/05/2026 15:16",
+  "duration_ms": 5749
+}

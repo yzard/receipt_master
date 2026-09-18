@@ -1,0 +1,33 @@
+{
+  "id": "bbbfe093",
+  "images": [
+    {
+      "path": "images/bbbfe093-0.jpg",
+      "sha256": "682503d4af1ded857abcef9772f183f5089628fc639148b2ddcfefdcee149889"
+    }
+  ],
+  "provider": "unlimited",
+  "raw": {
+    "id": "chatcmpl-2b758e93c4b9436e9e251380e6ba0cf1",
+    "object": "chat.completion",
+    "created": 1789567837,
+    "model": "unlimited-ocr",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "<|det|>header [259, 62, 604, 110]<|/det|>COSTCO\n<|det|>header [361, 111, 593, 133]<|/det|>WHOLESALE\n<|det|>text [288, 145, 571, 163]<|/det|>Rego Park #1070\n<|det|>text [326, 166, 534, 184]<|/det|>61-35 Junction Blvd\n<|det|>text [326, 185, 534, 202]<|/det|>Rego Park, NY 11374\n<|det|>title [248, 218, 610, 247]<|/det|>MEMBERSHIP / REFUND\n<|det|>text [220, 265, 464, 284]<|/det|>6F Member 111886754734\n<|det|>text [364, 285, 455, 300]<|/det|>EXC GS\n<|det|>text [460, 285, 485, 300]<|/det|>OWN\n<|det|>text [546, 284, 625, 300]<|/det|>50.77-A\n<|det|>text [308, 301, 398, 318]<|/det|>SUBTOTAL\n<|det|>text [547, 302, 614, 318]<|/det|>50.77-\n<|det|>text [309, 320, 345, 336]<|/det|>TAX\n<|det|>text [558, 321, 614, 336]<|/det|>4.51-\n<|det|>text [252, 338, 365, 353]<|/det|>**** TOTAL\n<|det|>text [471, 339, 615, 355]<|/det|>55.28\n<|det|>text [217, 371, 399, 389]<|/det|>XXXXXXXXXXXX9653\n<|det|>text [504, 374, 519, 389]<|/det|>H\n<|det|>text [216, 390, 442, 407]<|/det|>AID: A0000000031010\n<|det|>text [216, 408, 353, 425]<|/det|>Seq# 193459\n<|det|>text [417, 409, 551, 426]<|/det|>App#: 20210C\n<|det|>text [216, 427, 343, 443]<|/det|>Costco Visa\n<|det|>text [395, 428, 551, 444]<|/det|>Resp: APPROVED\n<|det|>text [215, 445, 409, 462]<|/det|>APPROVED - Refund\n<|det|>text [215, 463, 385, 480]<|/det|>AMOUNT: $55.28-\n<|det|>text [212, 500, 238, 517]<|/det|>RF\n<|det|>text [304, 500, 430, 517]<|/det|>Costco Visa\n<|det|>text [548, 499, 616, 516]<|/det|>55.28-\n<|det|>text [304, 518, 374, 535]<|/det|>CHANGE\n<|det|>text [560, 518, 607, 534]<|/det|>0.00\n<|det|>text [223, 553, 364, 570]<|/det|>A 8.875% TAX\n<|det|>text [560, 552, 616, 569]<|/det|>4.51-\n<|det|>text [225, 572, 331, 589]<|/det|>TOTAL TAX\n<|det|>text [560, 571, 616, 588]<|/det|>4.51-\n<|det|>text [214, 590, 560, 607]<|/det|>TOTAL NUMBER OF ITEMS SOLD -\n<|det|>text [214, 608, 563, 625]<|/det|>0137020025 15:33 1070 193 20 72\n<|det|>image [275, 627, 578, 681]<|/det|>\n<|det|>text [314, 675, 538, 688]<|/det|>21107019300202608201533\n<|det|>text [245, 691, 483, 710]<|/det|>OP#: 72 Name: Judy L.\n<|det|>text [269, 728, 586, 747]<|/det|>Thank You! Please Come Again\n<|det|>text [240, 784, 497, 801]<|/det|>Items Sold: 0\n<|det|>text [240, 803, 614, 821]<|/det|>6F 08/20/2026 15:33\n<|det|>text [208, 844, 641, 857]<|/det|>[Non-Text]\n<|det|>title [207, 879, 411, 903]<|/det|>REMINDER\n<|det|>text [204, 918, 610, 999]<|/det|>Your membership renewal fee will be added to the first purchase after expiration. To sign up for autorenewal please visit the membership"
+        },
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 1517,
+      "completion_tokens": 960,
+      "total_tokens": 2477
+    }
+  },
+  "text": "<|det|>header [259, 62, 604, 110]<|/det|>COSTCO\n<|det|>header [361, 111, 593, 133]<|/det|>WHOLESALE\n<|det|>text [288, 145, 571, 163]<|/det|>Rego Park #1070\n<|det|>text [326, 166, 534, 184]<|/det|>61-35 Junction Blvd\n<|det|>text [326, 185, 534, 202]<|/det|>Rego Park, NY 11374\n<|det|>title [248, 218, 610, 247]<|/det|>MEMBERSHIP / REFUND\n<|det|>text [220, 265, 464, 284]<|/det|>6F Member 111886754734\n<|det|>text [364, 285, 455, 300]<|/det|>EXC GS\n<|det|>text [460, 285, 485, 300]<|/det|>OWN\n<|det|>text [546, 284, 625, 300]<|/det|>50.77-A\n<|det|>text [308, 301, 398, 318]<|/det|>SUBTOTAL\n<|det|>text [547, 302, 614, 318]<|/det|>50.77-\n<|det|>text [309, 320, 345, 336]<|/det|>TAX\n<|det|>text [558, 321, 614, 336]<|/det|>4.51-\n<|det|>text [252, 338, 365, 353]<|/det|>**** TOTAL\n<|det|>text [471, 339, 615, 355]<|/det|>55.28\n<|det|>text [217, 371, 399, 389]<|/det|>XXXXXXXXXXXX9653\n<|det|>text [504, 374, 519, 389]<|/det|>H\n<|det|>text [216, 390, 442, 407]<|/det|>AID: A0000000031010\n<|det|>text [216, 408, 353, 425]<|/det|>Seq# 193459\n<|det|>text [417, 409, 551, 426]<|/det|>App#: 20210C\n<|det|>text [216, 427, 343, 443]<|/det|>Costco Visa\n<|det|>text [395, 428, 551, 444]<|/det|>Resp: APPROVED\n<|det|>text [215, 445, 409, 462]<|/det|>APPROVED - Refund\n<|det|>text [215, 463, 385, 480]<|/det|>AMOUNT: $55.28-\n<|det|>text [212, 500, 238, 517]<|/det|>RF\n<|det|>text [304, 500, 430, 517]<|/det|>Costco Visa\n<|det|>text [548, 499, 616, 516]<|/det|>55.28-\n<|det|>text [304, 518, 374, 535]<|/det|>CHANGE\n<|det|>text [560, 518, 607, 534]<|/det|>0.00\n<|det|>text [223, 553, 364, 570]<|/det|>A 8.875% TAX\n<|det|>text [560, 552, 616, 569]<|/det|>4.51-\n<|det|>text [225, 572, 331, 589]<|/det|>TOTAL TAX\n<|det|>text [560, 571, 616, 588]<|/det|>4.51-\n<|det|>text [214, 590, 560, 607]<|/det|>TOTAL NUMBER OF ITEMS SOLD -\n<|det|>text [214, 608, 563, 625]<|/det|>0137020025 15:33 1070 193 20 72\n<|det|>image [275, 627, 578, 681]<|/det|>\n<|det|>text [314, 675, 538, 688]<|/det|>21107019300202608201533\n<|det|>text [245, 691, 483, 710]<|/det|>OP#: 72 Name: Judy L.\n<|det|>text [269, 728, 586, 747]<|/det|>Thank You! Please Come Again\n<|det|>text [240, 784, 497, 801]<|/det|>Items Sold: 0\n<|det|>text [240, 803, 614, 821]<|/det|>6F 08/20/2026 15:33\n<|det|>text [208, 844, 641, 857]<|/det|>[Non-Text]\n<|det|>title [207, 879, 411, 903]<|/det|>REMINDER\n<|det|>text [204, 918, 610, 999]<|/det|>Your membership renewal fee will be added to the first purchase after expiration. To sign up for autorenewal please visit the membership",
+  "duration_ms": 10282
+}

@@ -1,0 +1,45 @@
+# Isolated local experiment; normal playground keeps its two-service deployment.
+name: receipt-ninfer-evaluation
+services:
+  backend_ocr:
+    image: receipt-ninfer-evaluation:local
+    init: true
+    gpus: all
+    devices:
+      - /dev/nvidia-uvm:/dev/nvidia-uvm
+      - /dev/nvidia-uvm-tools:/dev/nvidia-uvm-tools
+    ports: ["127.0.0.1:5002:8080"]
+    volumes:
+      - ../build/ninfer/models:/models:ro
+    command:
+      - ninfer-serve
+      - /models/qwen3_8_27b_nvfp4.ninfer
+      - --host
+      - 0.0.0.0
+      - --port
+      - "8080"
+      - --model-id
+      - qwen3.8-27b-ninfer-nvfp4
+      - --max-context
+      - "32768"
+      - --kv-capacity
+      - "32768"
+      - --max-concurrency
+      - "1"
+      - --kv-dtype
+      - fp8
+      - --device-state-slots
+      - "0"
+      - --host-state-slots
+      - "1"
+      - --host-kv-mib
+      - "512"
+      - --spec
+      - mtp
+      - --draft-tokens
+      - "3"
+      - --lm-head-draft
+      - --vision
+      - --no-thinking
+      - --media-preprocess-threads
+      - "4"

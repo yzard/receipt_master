@@ -1,0 +1,68 @@
+[
+  {
+    "model": "双 OCR · 串行 1（当前）",
+    "source": "2026-09-17-serial-dual-ocr/report.json",
+    "count": 24,
+    "validated": 24,
+    "strict_match": 7,
+    "median_seconds": 71.82,
+    "total_match": 24,
+    "line_count_match": 18,
+    "time_match": 18
+  },
+  {
+    "model": "双 OCR · 并发 2（旧版）",
+    "source": "2026-09-17-confirmed-dual-ocr/report.json",
+    "count": 24,
+    "validated": 13,
+    "strict_match": 3,
+    "median_seconds": 37.16,
+    "total_match": 13,
+    "line_count_match": 10,
+    "time_match": 9
+  },
+  {
+    "model": "Qwen3-VL 8B BF16 · 并发 2",
+    "source": "2026-09-17-confirmed-models/8b.json",
+    "count": 24,
+    "validated": 19,
+    "strict_match": 2,
+    "median_seconds": 21.48,
+    "total_match": 18,
+    "line_count_match": 12,
+    "time_match": 13
+  },
+  {
+    "model": "Qwen3-VL 32B AWQ · 并发 2",
+    "source": "2026-09-17-confirmed-models/32b.json",
+    "count": 24,
+    "validated": 12,
+    "strict_match": 1,
+    "median_seconds": 54.45,
+    "total_match": 11,
+    "line_count_match": 7,
+    "time_match": 9
+  },
+  {
+    "model": "NuExtract3 · 并发 2",
+    "source": "2026-09-17-candidates/nuextract3.json",
+    "count": 24,
+    "validated": 19,
+    "strict_match": 1,
+    "median_seconds": 10.1,
+    "total_match": 16,
+    "line_count_match": 13,
+    "time_match": 11
+  },
+  {
+    "model": "NuExtract 2.0-8B · 并发 2",
+    "source": "2026-09-17-candidates/nuextract2.json",
+    "count": 24,
+    "validated": 0,
+    "strict_match": 0,
+    "median_seconds": 14.83,
+    "total_match": 0,
+    "line_count_match": 0,
+    "time_match": 0
+  }
+]

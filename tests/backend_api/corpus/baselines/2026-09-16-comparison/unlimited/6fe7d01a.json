@@ -1,0 +1,33 @@
+{
+  "id": "6fe7d01a",
+  "images": [
+    {
+      "path": "images/6fe7d01a-0.jpg",
+      "sha256": "49e216653ccdcff89d5d26b4fb450c88f0d1fa31f46557995b7649e0bbbcca94"
+    }
+  ],
+  "provider": "unlimited",
+  "raw": {
+    "id": "chatcmpl-08124460c77340888b39e4377bdb5f53",
+    "object": "chat.completion",
+    "created": 1789567915,
+    "model": "unlimited-ocr",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "<|det|>title [294, 82, 600, 141]<|/det|>skyFOODS\n<|det|>title [394, 141, 596, 166]<|/det|>星朗超级市景\n<|det|>text [413, 202, 515, 221]<|/det|>Sky Foods\n<|det|>text [326, 222, 590, 239]<|/det|>48-24 COLLEGE POINT BLVD\n<|det|>text [369, 241, 558, 259]<|/det|>FLUSHING,NY 11355\n<|det|>text [393, 260, 537, 279]<|/det|>(718)939-6688\n<|det|>text [235, 298, 504, 316]<|/det|>Station 11 294324337273\n<|det|>text [236, 318, 450, 337]<|/det|>08/21/2026 10:52:29\n<|det|>text [236, 339, 381, 357]<|/det|>Cashier # 111\n<|det|>text [236, 375, 658, 396]<|/det|>1 TAIWAN CABBAGE (1POUNDS) $1.49 F\n<|det|>text [238, 397, 416, 416]<|/det|>台灣高麗藥（1磅）\n<|det|>text [258, 417, 461, 435]<|/det|>2.19 lb @ $0.68/lb\n<|det|>text [236, 436, 658, 455]<|/det|>1 BOK CHOY TIPS (1POUNDS) $4.41 F\n<|det|>text [236, 456, 370, 475]<|/det|>白菜苗（1磅）\n<|det|>text [258, 476, 461, 495]<|/det|>1.77 lb @ $2.49/lb\n<|det|>text [234, 496, 658, 515]<|/det|>2 CHIVES FLOWERS (1BUNDLE) $2.58 F\n<|det|>text [236, 516, 370, 535]<|/det|>韭菜花（1捆）\n<|det|>text [258, 536, 416, 554]<|/det|>2 @ $1.29 each\n<|det|>text [236, 555, 658, 574]<|/det|>1 LONG HOT PEPPER (1POUNDS) $1.23 F\n<|det|>text [236, 576, 381, 595]<|/det|>牛角椒 (1磅)\n<|det|>text [258, 596, 461, 615]<|/det|>0.62 lb @ $1.99/lb\n<|det|>text [359, 635, 518, 653]<|/det|>Item Count: 5\n<|det|>text [382, 655, 558, 673]<|/det|>Subtotal: $9.71\n<|det|>text [438, 675, 559, 692]<|/det|>Tax: $0.00\n<|det|>text [416, 694, 558, 712]<|/det|>Total: $9.71\n<|det|>text [392, 714, 558, 733]<|/det|>Payment: $9.71\n<|det|>text [346, 753, 560, 773]<|/det|>Cash Change: $0.00\n<|det|>text [234, 795, 360, 812]<|/det|>CREDIT SALE\n<|det|>text [234, 814, 471, 833]<|/det|>M/C *****8475\n<|det|>text [236, 835, 437, 853]<|/det|>ENTRY METHOD: CHIP\n<|det|>text [236, 855, 427, 873]<|/det|>AUTH CODE: 88306Z\n<|det|>text [236, 875, 391, 893]<|/det|>AMOUNT: $9.71\n<|det|>text [236, 895, 561, 913]<|/det|>APPLICATION LABEL: Mastercard\n<|det|>text [236, 915, 449, 933]<|/det|>AID: A000000041010\n<|det|>text [236, 935, 404, 953]<|/det|>TVR: 800000000\n<|det|>text [236, 954, 682, 973]<|/det|>IAD: 011000001220800000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+        },
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 1517,
+      "completion_tokens": 903,
+      "total_tokens": 2420
+    }
+  },
+  "text": "<|det|>title [294, 82, 600, 141]<|/det|>skyFOODS\n<|det|>title [394, 141, 596, 166]<|/det|>星朗超级市景\n<|det|>text [413, 202, 515, 221]<|/det|>Sky Foods\n<|det|>text [326, 222, 590, 239]<|/det|>48-24 COLLEGE POINT BLVD\n<|det|>text [369, 241, 558, 259]<|/det|>FLUSHING,NY 11355\n<|det|>text [393, 260, 537, 279]<|/det|>(718)939-6688\n<|det|>text [235, 298, 504, 316]<|/det|>Station 11 294324337273\n<|det|>text [236, 318, 450, 337]<|/det|>08/21/2026 10:52:29\n<|det|>text [236, 339, 381, 357]<|/det|>Cashier # 111\n<|det|>text [236, 375, 658, 396]<|/det|>1 TAIWAN CABBAGE (1POUNDS) $1.49 F\n<|det|>text [238, 397, 416, 416]<|/det|>台灣高麗藥（1磅）\n<|det|>text [258, 417, 461, 435]<|/det|>2.19 lb @ $0.68/lb\n<|det|>text [236, 436, 658, 455]<|/det|>1 BOK CHOY TIPS (1POUNDS) $4.41 F\n<|det|>text [236, 456, 370, 475]<|/det|>白菜苗（1磅）\n<|det|>text [258, 476, 461, 495]<|/det|>1.77 lb @ $2.49/lb\n<|det|>text [234, 496, 658, 515]<|/det|>2 CHIVES FLOWERS (1BUNDLE) $2.58 F\n<|det|>text [236, 516, 370, 535]<|/det|>韭菜花（1捆）\n<|det|>text [258, 536, 416, 554]<|/det|>2 @ $1.29 each\n<|det|>text [236, 555, 658, 574]<|/det|>1 LONG HOT PEPPER (1POUNDS) $1.23 F\n<|det|>text [236, 576, 381, 595]<|/det|>牛角椒 (1磅)\n<|det|>text [258, 596, 461, 615]<|/det|>0.62 lb @ $1.99/lb\n<|det|>text [359, 635, 518, 653]<|/det|>Item Count: 5\n<|det|>text [382, 655, 558, 673]<|/det|>Subtotal: $9.71\n<|det|>text [438, 675, 559, 692]<|/det|>Tax: $0.00\n<|det|>text [416, 694, 558, 712]<|/det|>Total: $9.71\n<|det|>text [392, 714, 558, 733]<|/det|>Payment: $9.71\n<|det|>text [346, 753, 560, 773]<|/det|>Cash Change: $0.00\n<|det|>text [234, 795, 360, 812]<|/det|>CREDIT SALE\n<|det|>text [234, 814, 471, 833]<|/det|>M/C *****8475\n<|det|>text [236, 835, 437, 853]<|/det|>ENTRY METHOD: CHIP\n<|det|>text [236, 855, 427, 873]<|/det|>AUTH CODE: 88306Z\n<|det|>text [236, 875, 391, 893]<|/det|>AMOUNT: $9.71\n<|det|>text [236, 895, 561, 913]<|/det|>APPLICATION LABEL: Mastercard\n<|det|>text [236, 915, 449, 933]<|/det|>AID: A000000041010\n<|det|>text [236, 935, 404, 953]<|/det|>TVR: 800000000\n<|det|>text [236, 954, 682, 973]<|/det|>IAD: 011000001220800000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+  "duration_ms": 8031
+}

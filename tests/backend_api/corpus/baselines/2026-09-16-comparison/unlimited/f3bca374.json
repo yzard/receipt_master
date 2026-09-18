@@ -1,0 +1,33 @@
+{
+  "id": "f3bca374",
+  "images": [
+    {
+      "path": "images/f3bca374-0.jpg",
+      "sha256": "a3f1ceb235cf8f729a97a011baf74d009cb2bbbccb2898066398bf1e6fd7b154"
+    }
+  ],
+  "provider": "unlimited",
+  "raw": {
+    "id": "chatcmpl-de4551a46c194235a21813cec3789dcf",
+    "object": "chat.completion",
+    "created": 1789567887,
+    "model": "unlimited-ocr",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "<|det|>title [354, 46, 632, 97]<|/det|>skyFOODS\n<|det|>title [445, 97, 631, 119]<|/det|>B超超级市场\n<|det|>text [459, 153, 550, 171]<|/det|>Sky Foods\n<|det|>text [380, 172, 618, 188]<|/det|>40-24 COLLEGE POINT BLVD\n<|det|>text [420, 190, 588, 207]<|/det|>FLUSHING,NY 11355\n<|det|>text [441, 209, 569, 226]<|/det|>(718)939-6688\n<|det|>text [304, 246, 540, 263]<|/det|>Station 10 303724425128\n<|det|>text [306, 265, 491, 282]<|/det|>09/15/2026 19:27:36\n<|det|>text [306, 284, 434, 300]<|/det|>Cashier # 110\n<|det|>text [308, 318, 674, 335]<|/det|>1 BOK CHOY TIPS (1POUNDS) $4.63 F\n<|det|>text [309, 336, 423, 354]<|/det|>白菜菇（1磅）\n<|det|>text [328, 355, 501, 371]<|/det|>1.86 lb @ $2.49/lb\n<|det|>text [309, 372, 673, 388]<|/det|>1 CHIVES (1POUNDS) $1.51 F\n<|det|>text [309, 390, 404, 407]<|/det|>韭菜（1磅）\n<|det|>text [326, 408, 501, 424]<|/det|>0.76 lb @ $1.99/lb\n<|det|>text [310, 425, 673, 441]<|/det|>1 LONG HOT PEPPER (1POUNDS) $1.61 F\n<|det|>text [309, 442, 433, 459]<|/det|>牛角椒（1磅）\n<|det|>text [326, 460, 501, 476]<|/det|>0.81 lb @ $1.99/lb\n<|det|>text [310, 477, 673, 493]<|/det|>1 KL FIRM TOFU $1.99 F\n<|det|>text [310, 494, 416, 511]<|/det|>康绿 老豆腐\n<|det|>text [414, 527, 550, 544]<|/det|>Item Count: 4\n<|det|>text [433, 545, 588, 561]<|/det|>Subtotal: $9.74\n<|det|>text [482, 562, 588, 578]<|/det|>Tax: $0.00\n<|det|>text [462, 579, 588, 596]<|/det|>Total: $9.74\n<|det|>text [442, 597, 588, 614]<|/det|>Payment: $9.74\n<|det|>text [402, 632, 589, 650]<|/det|>Cash Change: $0.00\n<|det|>text [306, 669, 415, 686]<|/det|>CREDIT SALE\n<|det|>text [306, 687, 512, 704]<|/det|>M/C *****8475\n<|det|>text [307, 705, 483, 722]<|/det|>ENTRY METHOD: CHIP\n<|det|>text [307, 723, 473, 739]<|/det|>AUTH CODE: 87406Z\n<|det|>text [307, 740, 445, 757]<|/det|>AMOUNT: $9.74\n<|det|>text [307, 758, 591, 775]<|/det|>APPLICATION LABEL: Mastercard\n<|det|>text [307, 776, 493, 793]<|/det|>AID: A0000000041010\n<|det|>text [307, 794, 454, 810]<|/det|>TVR: B000008000\n<|det|>text [307, 811, 697, 828]<|/det|>IAD: 0110A00001220800000000000000000000F\n<|det|>text [307, 829, 396, 846]<|/det|>TSI: 6800\n<|det|>text [307, 847, 345, 864]<|/det|>ARC:\n<|det|>text [306, 865, 396, 883]<|/det|>CVN: NONE\n<|det|>text [424, 902, 585, 920]<|/det|>-www.skyfoods.com-\n<|det|>text [304, 921, 712, 997]<|/det|>No refund or exchanges on Meats, Seafood, Vegas, Fruits, Mooncake, FrozenFoods, and Giftcard, Seasonal items. No refund will be issued for missing items outside of store"
+        },
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 1517,
+      "completion_tokens": 980,
+      "total_tokens": 2497
+    }
+  },
+  "text": "<|det|>title [354, 46, 632, 97]<|/det|>skyFOODS\n<|det|>title [445, 97, 631, 119]<|/det|>B超超级市场\n<|det|>text [459, 153, 550, 171]<|/det|>Sky Foods\n<|det|>text [380, 172, 618, 188]<|/det|>40-24 COLLEGE POINT BLVD\n<|det|>text [420, 190, 588, 207]<|/det|>FLUSHING,NY 11355\n<|det|>text [441, 209, 569, 226]<|/det|>(718)939-6688\n<|det|>text [304, 246, 540, 263]<|/det|>Station 10 303724425128\n<|det|>text [306, 265, 491, 282]<|/det|>09/15/2026 19:27:36\n<|det|>text [306, 284, 434, 300]<|/det|>Cashier # 110\n<|det|>text [308, 318, 674, 335]<|/det|>1 BOK CHOY TIPS (1POUNDS) $4.63 F\n<|det|>text [309, 336, 423, 354]<|/det|>白菜菇（1磅）\n<|det|>text [328, 355, 501, 371]<|/det|>1.86 lb @ $2.49/lb\n<|det|>text [309, 372, 673, 388]<|/det|>1 CHIVES (1POUNDS) $1.51 F\n<|det|>text [309, 390, 404, 407]<|/det|>韭菜（1磅）\n<|det|>text [326, 408, 501, 424]<|/det|>0.76 lb @ $1.99/lb\n<|det|>text [310, 425, 673, 441]<|/det|>1 LONG HOT PEPPER (1POUNDS) $1.61 F\n<|det|>text [309, 442, 433, 459]<|/det|>牛角椒（1磅）\n<|det|>text [326, 460, 501, 476]<|/det|>0.81 lb @ $1.99/lb\n<|det|>text [310, 477, 673, 493]<|/det|>1 KL FIRM TOFU $1.99 F\n<|det|>text [310, 494, 416, 511]<|/det|>康绿 老豆腐\n<|det|>text [414, 527, 550, 544]<|/det|>Item Count: 4\n<|det|>text [433, 545, 588, 561]<|/det|>Subtotal: $9.74\n<|det|>text [482, 562, 588, 578]<|/det|>Tax: $0.00\n<|det|>text [462, 579, 588, 596]<|/det|>Total: $9.74\n<|det|>text [442, 597, 588, 614]<|/det|>Payment: $9.74\n<|det|>text [402, 632, 589, 650]<|/det|>Cash Change: $0.00\n<|det|>text [306, 669, 415, 686]<|/det|>CREDIT SALE\n<|det|>text [306, 687, 512, 704]<|/det|>M/C *****8475\n<|det|>text [307, 705, 483, 722]<|/det|>ENTRY METHOD: CHIP\n<|det|>text [307, 723, 473, 739]<|/det|>AUTH CODE: 87406Z\n<|det|>text [307, 740, 445, 757]<|/det|>AMOUNT: $9.74\n<|det|>text [307, 758, 591, 775]<|/det|>APPLICATION LABEL: Mastercard\n<|det|>text [307, 776, 493, 793]<|/det|>AID: A0000000041010\n<|det|>text [307, 794, 454, 810]<|/det|>TVR: B000008000\n<|det|>text [307, 811, 697, 828]<|/det|>IAD: 0110A00001220800000000000000000000F\n<|det|>text [307, 829, 396, 846]<|/det|>TSI: 6800\n<|det|>text [307, 847, 345, 864]<|/det|>ARC:\n<|det|>text [306, 865, 396, 883]<|/det|>CVN: NONE\n<|det|>text [424, 902, 585, 920]<|/det|>-www.skyfoods.com-\n<|det|>text [304, 921, 712, 997]<|/det|>No refund or exchanges on Meats, Seafood, Vegas, Fruits, Mooncake, FrozenFoods, and Giftcard, Seasonal items. No refund will be issued for missing items outside of store",
+  "duration_ms": 8106
+}

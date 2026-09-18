@@ -1,0 +1,83 @@
+{
+  "store": "COSTCO WHOLESALE",
+  "branch": "Rego Park #1070",
+  "address": "61-35 Junction Blvd, Rego Park, NY 11374",
+  "country": null,
+  "currency": "USD",
+  "local_time": "2026-09-05 16:03:00",
+  "total": "100.77",
+  "lines": [
+    {
+      "name": "E 1068080 PASTURE E GS",
+      "standard_name": "PASTURE E GS",
+      "kind": "product",
+      "weight_g": null,
+      "quantity": null,
+      "quantity_unit": null,
+      "unit_price": null,
+      "amount": "8.79",
+      "confidence": null,
+      "discount_target_index": null,
+      "box": [
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "E 1243880 OPTIMUM",
+      "standard_name": "OPTIMUM",
+      "kind": "product",
+      "weight_g": null,
+      "quantity": null,
+      "quantity_unit": null,
+      "unit_price": null,
+      "amount": "74.99",
+      "confidence": null,
+      "discount_target_index": null,
+      "box": [
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "E 1792518 KS UNSL ST",
+      "standard_name": "KS UNSL ST",
+      "kind": "product",
+      "weight_g": null,
+      "quantity": null,
+      "quantity_unit": null,
+      "unit_price": null,
+      "amount": "16.99",
+      "confidence": null,
+      "discount_target_index": null,
+      "box": [
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "TAX",
+      "standard_name": null,
+      "kind": "tax",
+      "weight_g": null,
+      "quantity": null,
+      "quantity_unit": null,
+      "unit_price": null,
+      "amount": "0.00",
+      "confidence": null,
+      "discount_target_index": null,
+      "box": [
+        0,
+        0,
+        0,
+        0
+      ]
+    }
+  ]
+}

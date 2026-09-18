@@ -1,0 +1,65 @@
+{
+  "engine": "NInfer",
+  "source": "https://github.com/Neroued/ninfer",
+  "commit": "9e163eee4b8acec21ab0ac765107b6a3f287b217",
+  "image_id": "sha256:8f9638aa752501a6adbbc85d66547e10d2335c17999f89168d76fa33234a2a32",
+  "model_repo": "neroued/Qwen3.8-27B-nvfp4-NInfer",
+  "model_revision": "f0b43ad436b9fa8142c6ed6647c470a6fe409484",
+  "artifact": {
+    "rfilename": "qwen3_8_27b_nvfp4.ninfer",
+    "blobId": "fd9da05dee9d260a625d1a4f19779627103249ee",
+    "size": 23719715844,
+    "lfs": {
+      "sha256": "74d2c57145e6ff11d1d2faa79594477f9bc903a611af1fb20218189fbbb77d82",
+      "size": 23719715844,
+      "pointerSize": 136
+    }
+  },
+  "gpu": "RTX 5090, 32607 MiB",
+  "cuda": "13.1.2",
+  "context": 32768,
+  "kv_capacity": 32768,
+  "kv_dtype": "fp8",
+  "max_concurrency": 1,
+  "speculation": "mtp",
+  "draft_tokens": 3,
+  "lm_head_draft": true,
+  "thinking": true,
+  "temperature": 0,
+  "seed": 42,
+  "max_output_tokens": 8192,
+  "retries": 0,
+  "preprocessor": {
+    "size": {
+      "longest_edge": 16777216,
+      "shortest_edge": 65536
+    },
+    "patch_size": 16,
+    "temporal_patch_size": 2,
+    "merge_size": 2,
+    "image_mean": [
+      0.5,
+      0.5,
+      0.5
+    ],
+    "image_std": [
+      0.5,
+      0.5,
+      0.5
+    ],
+    "processor_class": "Qwen3VLProcessor",
+    "image_processor_type": "Qwen2VLImageProcessorFast"
+  },
+  "output": "Prompt-only JSON schema; NInfer supports response_format=text, not constrained JSON",
+  "snapshot": "tests/backend_api/corpus/baselines/2026-09-18-qwen38-q4/snapshot.json",
+  "annotation": "tests/backend_api/corpus/annotations/2026-09-18-printed-names.json",
+  "note": "Same frozen 32 images and NInfer deployment as 2026-09-18-ninfer. Changes: stronger common TOTAL rule, dedicated Hualian forward weight/continuation rule, thinking enabled per request. Joint intervention; no causal attribution to prompts alone. No production database writes.",
+  "observed_device_memory_mib": 26819,
+  "memory_note": "Single device-wide sample during inference, not a measured peak.",
+  "output_adapter": "Offline remove one whole-response Markdown code fence; preserve raw protocol failures separately; never alter values.",
+  "baseline": "tests/backend_api/corpus/baselines/2026-09-18-ninfer",
+  "prompts": [
+    "tests/backend_api/prompts/qwen38_receipt.txt",
+    "tests/backend_api/prompts/qwen38_hualian.txt"
+  ]
+}

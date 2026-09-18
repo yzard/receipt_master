@@ -1,0 +1,33 @@
+{
+  "id": "efe47023",
+  "images": [
+    {
+      "path": "images/efe47023-0.jpg",
+      "sha256": "dc924bbafdf45fbd0499fcb8bfdcfe606f2535f97e553d55c759869fa981d226"
+    }
+  ],
+  "provider": "unlimited",
+  "raw": {
+    "id": "chatcmpl-de589e67c614467084cf70b7f73ee1f5",
+    "object": "chat.completion",
+    "created": 1789567827,
+    "model": "unlimited-ocr",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "<|det|>title [279, 68, 616, 140]<|/det|>COSTCO WHOLESALE\n<|det|>text [307, 149, 586, 167]<|/det|>Rego Park #1070\n<|det|>text [344, 169, 550, 186]<|/det|>61-35 Junction Blvd\n<|det|>text [344, 187, 550, 204]<|/det|>Rego Park, NY 11374\n<|det|>title [325, 220, 569, 248]<|/det|>SELF-CHECKOUT\n<|det|>text [241, 265, 481, 285]<|/det|>FP Member 111886754734\n<|det|>text [241, 302, 653, 321]<|/det|>***START OF PRE-SCANNED ITEMS*****\n<|det|>text [241, 336, 621, 354]<|/det|>E 1068080 PASTURE E GS 8.79\n<|det|>text [241, 355, 621, 371]<|/det|>E 1243880 OPTIMUM 74.99\n<|det|>text [241, 372, 621, 390]<|/det|>E 1792518 KS UNSL ST 16.99\n<|det|>text [241, 407, 653, 425]<|/det|>***END OF PRE-SCANNED ITEMS*****\n<|det|>text [241, 442, 633, 461]<|/det|>TOTAL NUMBER OF PRE-SCANNED ITEMS= 3\n<|det|>text [328, 478, 621, 496]<|/det|>SUBTOTAL 100.77\n<|det|>text [328, 497, 621, 513]<|/det|>TAX 0.00\n<|det|>text [274, 515, 633, 531]<|/det|>**** TOTAL 100.77\n<|det|>text [239, 551, 538, 568]<|/det|>XXXXXXXXXXXX9653 H\n<|det|>text [239, 569, 461, 586]<|/det|>AID: A0000000031010\n<|det|>text [239, 587, 570, 604]<|/det|>Seq# 201682 App#: 32565C\n<|det|>text [239, 605, 570, 622]<|/det|>Costco Visa Resp: APPROVED\n<|det|>text [239, 623, 451, 640]<|/det|>APPROVED - Purchase\n<|det|>text [239, 641, 407, 658]<|/det|>AMOUNT: $100.77\n<|det|>text [326, 677, 625, 695]<|/det|>Costco Visa 100.77\n<|det|>text [326, 696, 625, 713]<|/det|>CHANGE 0.00\n<|det|>text [239, 732, 605, 750]<|/det|>TOTAL NUMBER OF ITEMS SOLD = 3\n<|det|>text [239, 751, 601, 770]<|/det|>09/05/2026 16:03 1070 201 187 701\n<|det|>image [299, 772, 599, 823]<|/det|>\n<|det|>text [336, 819, 560, 832]<|/det|>21107020101872609051603\n<|det|>text [270, 834, 474, 852]<|/det|>OP#: 701 Name: SCO\n<|det|>text [270, 853, 514, 871]<|/det|>PS#: 104 Name: Elena N.\n<|det|>text [295, 871, 605, 888]<|/det|>Thank You! Please Come Again\n<|det|>text [269, 923, 518, 940]<|/det|>Items Sold: 3\n<|det|>text [269, 941, 633, 960]<|/det|>FP 09/05/2026 16:03"
+        },
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 1517,
+      "completion_tokens": 782,
+      "total_tokens": 2299
+    }
+  },
+  "text": "<|det|>title [279, 68, 616, 140]<|/det|>COSTCO WHOLESALE\n<|det|>text [307, 149, 586, 167]<|/det|>Rego Park #1070\n<|det|>text [344, 169, 550, 186]<|/det|>61-35 Junction Blvd\n<|det|>text [344, 187, 550, 204]<|/det|>Rego Park, NY 11374\n<|det|>title [325, 220, 569, 248]<|/det|>SELF-CHECKOUT\n<|det|>text [241, 265, 481, 285]<|/det|>FP Member 111886754734\n<|det|>text [241, 302, 653, 321]<|/det|>***START OF PRE-SCANNED ITEMS*****\n<|det|>text [241, 336, 621, 354]<|/det|>E 1068080 PASTURE E GS 8.79\n<|det|>text [241, 355, 621, 371]<|/det|>E 1243880 OPTIMUM 74.99\n<|det|>text [241, 372, 621, 390]<|/det|>E 1792518 KS UNSL ST 16.99\n<|det|>text [241, 407, 653, 425]<|/det|>***END OF PRE-SCANNED ITEMS*****\n<|det|>text [241, 442, 633, 461]<|/det|>TOTAL NUMBER OF PRE-SCANNED ITEMS= 3\n<|det|>text [328, 478, 621, 496]<|/det|>SUBTOTAL 100.77\n<|det|>text [328, 497, 621, 513]<|/det|>TAX 0.00\n<|det|>text [274, 515, 633, 531]<|/det|>**** TOTAL 100.77\n<|det|>text [239, 551, 538, 568]<|/det|>XXXXXXXXXXXX9653 H\n<|det|>text [239, 569, 461, 586]<|/det|>AID: A0000000031010\n<|det|>text [239, 587, 570, 604]<|/det|>Seq# 201682 App#: 32565C\n<|det|>text [239, 605, 570, 622]<|/det|>Costco Visa Resp: APPROVED\n<|det|>text [239, 623, 451, 640]<|/det|>APPROVED - Purchase\n<|det|>text [239, 641, 407, 658]<|/det|>AMOUNT: $100.77\n<|det|>text [326, 677, 625, 695]<|/det|>Costco Visa 100.77\n<|det|>text [326, 696, 625, 713]<|/det|>CHANGE 0.00\n<|det|>text [239, 732, 605, 750]<|/det|>TOTAL NUMBER OF ITEMS SOLD = 3\n<|det|>text [239, 751, 601, 770]<|/det|>09/05/2026 16:03 1070 201 187 701\n<|det|>image [299, 772, 599, 823]<|/det|>\n<|det|>text [336, 819, 560, 832]<|/det|>21107020101872609051603\n<|det|>text [270, 834, 474, 852]<|/det|>OP#: 701 Name: SCO\n<|det|>text [270, 853, 514, 871]<|/det|>PS#: 104 Name: Elena N.\n<|det|>text [295, 871, 605, 888]<|/det|>Thank You! Please Come Again\n<|det|>text [269, 923, 518, 940]<|/det|>Items Sold: 3\n<|det|>text [269, 941, 633, 960]<|/det|>FP 09/05/2026 16:03",
+  "duration_ms": 8203
+}

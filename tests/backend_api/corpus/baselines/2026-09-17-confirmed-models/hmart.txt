@@ -1,0 +1,3 @@
+MERCHANT PROFILE: H MART
+
+Preserve the entire description left of the amount: FAGE TOTAL 2% GREE must not become FAGE. WT is a weighed-item marker, not part of its name. A detail such as 2.81 lb @ 2.99/lb belongs to the weighed item whose printed amount matches it (8.40 in this example), not to adjacent packaged yogurt (10.99). Examine both adjacent rows and the WT marker. The detail supplies quantity, quantity_unit and unit_price, never a separate merchandise line. Do not treat that scale quantity as the neighboring product's package weight. Retain printed amount even if multiplication differs; API will mark the difference. Preserve separately printed zero tax and the footer transaction time.

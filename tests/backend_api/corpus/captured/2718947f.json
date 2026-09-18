@@ -1,0 +1,65 @@
+{
+  "store": "COSTCO",
+  "branch": "Rego Park #1070",
+  "address": "61-35 Junction Blvd, Rego Park, NY 11374",
+  "country": null,
+  "currency": "USD",
+  "local_time": "2026-09-09 17:53:00",
+  "total": "47.85",
+  "lines": [
+    {
+      "name": "E 36285 KS WALNUTS",
+      "standard_name": "KS WALNUTS",
+      "kind": "product",
+      "weight_g": null,
+      "quantity": null,
+      "quantity_unit": null,
+      "unit_price": null,
+      "amount": "9.99",
+      "confidence": null,
+      "discount_target_index": null,
+      "box": [
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "E 27201 STEELHEAD",
+      "standard_name": "STEELHEAD",
+      "kind": "product",
+      "weight_g": null,
+      "quantity": null,
+      "quantity_unit": null,
+      "unit_price": null,
+      "amount": "37.86",
+      "confidence": null,
+      "discount_target_index": null,
+      "box": [
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "TAX",
+      "standard_name": "TAX",
+      "kind": "tax",
+      "weight_g": null,
+      "quantity": null,
+      "quantity_unit": null,
+      "unit_price": null,
+      "amount": "0.00",
+      "confidence": null,
+      "discount_target_index": null,
+      "box": [
+        0,
+        0,
+        0,
+        0
+      ]
+    }
+  ]
+}

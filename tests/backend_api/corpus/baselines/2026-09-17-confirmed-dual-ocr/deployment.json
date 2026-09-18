@@ -1,0 +1,31 @@
+{
+  "started_at": 1789648963.061347,
+  "sha256": {
+    "tests/backend_api/corpus.rs": "7fed8aefc184ab14a82a6366b8f868c8e69141d6ad11d3b80d7ef4c8a8e6e035",
+    "tests/backend_api/corpus/confirmed/2026-09-17/snapshot.json": "85df9ba9c5fb2014de9fe87afd3ee65d8c2b7fe90c80f1e4684309625ce8a843",
+    "src/backend_api/src/parsing/costco.rs": "1429f4239ff2db0863ffb163cf8869088eb9617858efa689b3a0ba647ad51bf4",
+    "src/backend_api/src/parsing/generic.rs": "d456e5082cfea93ffb8c47fac5eea637ff61da63115b54911454907d4b0dd257",
+    "src/backend_api/src/parsing/hmart.rs": "6f756f9544e1b8232397d4fb9f9330dd6915f2950010f5ee4b96824266381514",
+    "src/backend_api/src/parsing/layout.rs": "6ea73c2bc09ffee552fc24b404b0299694169fc075bc470efc61eb025a370b39",
+    "src/backend_api/src/parsing/mod.rs": "659ee123f8e9948dc9796a07d4a888e162e261b354e7c6f70dd38155754ccb78",
+    "src/backend_api/src/parsing/skyfoods.rs": "116fda3a87c58ad7db7f97ae89c3b5d130f079902be2e19b47680765eadd34c9",
+    "src/backend_ocr/main.py": "63138649041124568e9e36a1df678c5b88db0eedee311121680fba51a3d8d16f",
+    "src/backend_ocr/paddle_worker.py": "3084be1bd29c2f2a1b997665cad55b3d8fb60c95c61c748d4330175ca5793ab5",
+    "src/backend_api/src/receipt_schema.json": "f6dec7e7d07fc6e6da4b1c7b2c2046d15cd7cca6b5b49f94adc9cbfcd64452a8",
+    "playground/backend_ocr.toml": "174ce7f034b0d65ab52a979cbfac62b58345eb730faf0e461929c9cb92668a84",
+    "playground/backend_api/config.yaml": "939ace5d7b307b0ab1af5744bad9b8282f453e266217d56862e34e037afe6c7d"
+  },
+  "containers": [
+    {
+      "name": "/receipt-master-ocr-backend_api-1",
+      "image": "sha256:413893f327ce986a8502f66ab3bfe6814095afcc55e723f4155d03a3ef112870"
+    },
+    {
+      "name": "/receipt-master-ocr-backend_ocr-1",
+      "image": "sha256:d41c925e76de3104b165ddfe97207cb7dccf47fac0bc3aa2917ca6c608b210c4"
+    }
+  ],
+  "batch_wall_seconds": 415.27,
+  "exit_code": 101,
+  "finished_at": 1789649378.337597
+}

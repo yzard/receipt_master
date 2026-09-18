@@ -1,0 +1,21 @@
+port = 8000
+max_requests = 2
+timeout_seconds = 600
+logo_model_path = "/models/logo-embedding"
+
+[engine]
+path = "/models/unlimited-ocr"
+model = "unlimited-ocr"
+port = 8002
+memory_fraction = 0.60
+context_length = 32768
+max_images = 16
+max_batched_tokens = 8192
+max_sequences = 1
+
+[paddle]
+python = "/opt/paddle/bin/python"
+port = 8003
+detection_path = "/models/ppocr-det"
+recognition_path = "/models/ppocr-rec"
+threads = 8

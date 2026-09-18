@@ -1,0 +1,853 @@
+{
+  "names": {
+    "before": {
+      "receipts": 32,
+      "matched_names": 132,
+      "verified_names": 136,
+      "name_recall": 0.9705882352941176,
+      "clear_matched_names": 116,
+      "clear_predicted_names": 120,
+      "clear_precision": 0.9666666666666667,
+      "fully_correct_receipts": 25,
+      "fully_reviewable_receipts": 28,
+      "correct_row_counts": 31
+    },
+    "after": {
+      "receipts": 32,
+      "matched_names": 132,
+      "verified_names": 136,
+      "name_recall": 0.9705882352941176,
+      "clear_matched_names": 116,
+      "clear_predicted_names": 120,
+      "clear_precision": 0.9666666666666667,
+      "fully_correct_receipts": 25,
+      "fully_reviewable_receipts": 28,
+      "correct_row_counts": 32
+    }
+  },
+  "fields": {
+    "before": {
+      "valid": 32,
+      "total_correct": 31,
+      "weight_hits": 17,
+      "weight_count": 20,
+      "weight_pair_hits": 18,
+      "cases": [
+        {
+          "id": "57bb2995-1993-4ff0-863e-43764ee31526",
+          "expected_total": 18611,
+          "actual_total": 18611,
+          "known_weight_hits": 0,
+          "known_weight_count": 0,
+          "missing_name_amount_weight": [],
+          "sum_lines": 18611
+        },
+        {
+          "id": "834a4c6e-9307-40bb-acf6-c143c5f41e73",
+          "expected_total": 5648,
+          "actual_total": 5648,
+          "known_weight_hits": 3,
+          "known_weight_count": 3,
+          "missing_name_amount_weight": [],
+          "sum_lines": 5648
+        },
+        {
+          "id": "560ccf19-b7af-4ad6-a512-1dd51853f4d8",
+          "expected_total": 11170,
+          "actual_total": 11170,
+          "known_weight_hits": 0,
+          "known_weight_count": 0,
+          "missing_name_amount_weight": [],
+          "sum_lines": 11170
+        },
+        {
+          "id": "74356ee7-d2e7-42e4-aea1-8fa567dec8ea",
+          "expected_total": 1348,
+          "actual_total": 1348,
+          "known_weight_hits": 3,
+          "known_weight_count": 3,
+          "missing_name_amount_weight": [],
+          "sum_lines": 1348
+        },
+        {
+          "id": "78f63611-ad9f-4982-86aa-7b16450f46a7",
+          "expected_total": 792,
+          "actual_total": 792,
+          "known_weight_hits": 1,
+          "known_weight_count": 1,
+          "missing_name_amount_weight": [],
+          "sum_lines": 792
+        },
+        {
+          "id": "2f97fc50-4cf3-47e1-bd44-ea6de95c774c",
+          "expected_total": 1497,
+          "actual_total": 1497,
+          "known_weight_hits": 0,
+          "known_weight_count": 0,
+          "missing_name_amount_weight": [],
+          "sum_lines": 1497
+        },
+        {
+          "id": "72a635b2-4b7e-4612-98ab-0f74d47fca59",
+          "expected_total": 1477,
+          "actual_total": 1477,
+          "known_weight_hits": 0,
+          "known_weight_count": 0,
+          "missing_name_amount_weight": [],
+          "sum_lines": 1477
+        },
+        {
+          "id": "fe3a7e41-45ad-4865-8a83-427a696481db",
+          "expected_total": 2725,
+          "actual_total": 2725,
+          "known_weight_hits": 0,
+          "known_weight_count": 3,
+          "missing_name_amount_weight": [
+            [
+              "CHINESELEEK",
+              200,
+              226796
+            ],
+            [
+              "CHIVES",
+              341,
+              344730
+            ],
+            [
+              "CHINESECABBAGE",
+              186,
+              1220163
+            ]
+          ],
+          "sum_lines": 2911
+        },
+        {
+          "id": "e3843baa-904a-4bbf-bc21-278a1693d5c7",
+          "expected_total": 3396,
+          "actual_total": 3396,
+          "known_weight_hits": 0,
+          "known_weight_count": 0,
+          "missing_name_amount_weight": [],
+          "sum_lines": 3396
+        },
+        {
+          "id": "199fc34a-4857-4aac-873c-8c55f8b223a9",
+          "expected_total": 5468,
+          "actual_total": 5468,
+          "known_weight_hits": 2,
+          "known_weight_count": 2,
+          "missing_name_amount_weight": [],
+          "sum_lines": 5468
+        },
+        {
+          "id": "4e491343-7593-42b4-b5b5-01e5648557ee",
+          "expected_total": 7325,
+          "actual_total": 7325,
+          "known_weight_hits": 0,
+          "known_weight_count": 0,
+          "missing_name_amount_weight": [],
+          "sum_lines": 7325
+        },
+        {
+          "id": "c00860de-60e8-4892-8bc3-1e0b2c8314ab",
+          "expected_total": 10019,
+          "actual_total": 10019,
+          "known_weight_hits": 0,
+          "known_weight_count": 0,
+          "missing_name_amount_weight": [],
+          "sum_lines": 10019
+        },
+        {
+          "id": "6d9da1ec-c0fc-4905-82b4-4ebd11716b1c",
+          "expected_total": 3032,
+          "actual_total": 3032,
+          "known_weight_hits": 0,
+          "known_weight_count": 0,
+          "missing_name_amount_weight": [],
+          "sum_lines": 3032
+        },
+        {
+          "id": "e6c62f11-3b8d-4ac0-a860-1756df0efa55",
+          "expected_total": 15492,
+          "actual_total": 15492,
+          "known_weight_hits": 0,
+          "known_weight_count": 0,
+          "missing_name_amount_weight": [],
+          "sum_lines": 15492
+        },
+        {
+          "id": "73953603-31f5-496a-9dd4-76fc845c8398",
+          "expected_total": 971,
+          "actual_total": 971,
+          "known_weight_hits": 0,
+          "known_weight_count": 0,
+          "missing_name_amount_weight": [],
+          "sum_lines": 971
+        },
+        {
+          "id": "d7f8ff6d-6502-4eeb-8850-2f15b131988f",
+          "expected_total": 421,
+          "actual_total": 421,
+          "known_weight_hits": 1,
+          "known_weight_count": 1,
+          "missing_name_amount_weight": [],
+          "sum_lines": 421
+        },
+        {
+          "id": "a31f7e6b-8bb1-49c8-a292-504d76d1a59c",
+          "expected_total": 2061,
+          "actual_total": 2061,
+          "known_weight_hits": 0,
+          "known_weight_count": 0,
+          "missing_name_amount_weight": [],
+          "sum_lines": 2061
+        },
+        {
+          "id": "8572dcef-7f7f-4d77-80c6-0ede75d45fa3",
+          "expected_total": 13803,
+          "actual_total": 12380,
+          "known_weight_hits": 0,
+          "known_weight_count": 0,
+          "missing_name_amount_weight": [],
+          "sum_lines": 13803
+        },
+        {
+          "id": "3a8e3c19-e8d0-4ea8-8fa3-06e3cd5fcfd4",
+          "expected_total": 25670,
+          "actual_total": 25670,
+          "known_weight_hits": 0,
+          "known_weight_count": 0,
+          "missing_name_amount_weight": [],
+          "sum_lines": 25670
+        },
+        {
+          "id": "e9ee06e0-f4aa-4c3c-812a-4e8abc21e3f0",
+          "expected_total": 974,
+          "actual_total": 974,
+          "known_weight_hits": 3,
+          "known_weight_count": 3,
+          "missing_name_amount_weight": [],
+          "sum_lines": 974
+        },
+        {
+          "id": "924e246e-c811-497a-a61b-6b5724f7bacd",
+          "expected_total": 4785,
+          "actual_total": 4785,
+          "known_weight_hits": 0,
+          "known_weight_count": 0,
+          "missing_name_amount_weight": [],
+          "sum_lines": 4785
+        },
+        {
+          "id": "e297a3d3-f9f1-4ba7-8e5e-a18e56fdecdd",
+          "expected_total": 1017,
+          "actual_total": 1017,
+          "known_weight_hits": 1,
+          "known_weight_count": 1,
+          "missing_name_amount_weight": [],
+          "sum_lines": 1017
+        },
+        {
+          "id": "a6618e05-1d59-453f-90e9-4bbf87a3830c",
+          "expected_total": 1939,
+          "actual_total": 1939,
+          "known_weight_hits": 1,
+          "known_weight_count": 1,
+          "missing_name_amount_weight": [],
+          "sum_lines": 1939
+        },
+        {
+          "id": "ebf82f5b-c4e7-4a49-8ce7-927233bfde95",
+          "expected_total": 4823,
+          "actual_total": 4823,
+          "known_weight_hits": 0,
+          "known_weight_count": 0,
+          "missing_name_amount_weight": [],
+          "sum_lines": 4823
+        },
+        {
+          "id": "5331c892-9fb6-42b5-bdb3-5a205b1a0767",
+          "expected_total": 641,
+          "actual_total": 641,
+          "known_weight_hits": 2,
+          "known_weight_count": 2,
+          "missing_name_amount_weight": [],
+          "sum_lines": 641
+        },
+        {
+          "id": "20267232-d4d0-4540-9c14-b0e051b06445",
+          "expected_total": 10077,
+          "actual_total": 10077,
+          "known_weight_hits": 0,
+          "known_weight_count": 0,
+          "missing_name_amount_weight": [],
+          "sum_lines": 10077
+        },
+        {
+          "id": "c5fdc978-8f74-43bf-a5c5-e22d28f5aea9",
+          "expected_total": -1699,
+          "actual_total": -1699,
+          "known_weight_hits": 0,
+          "known_weight_count": 0,
+          "missing_name_amount_weight": [],
+          "sum_lines": -1699
+        },
+        {
+          "id": "ca76c352-9601-498c-8324-0ef9bcf5ea3b",
+          "expected_total": 6194,
+          "actual_total": 6194,
+          "known_weight_hits": 0,
+          "known_weight_count": 0,
+          "missing_name_amount_weight": [],
+          "sum_lines": 6194
+        },
+        {
+          "id": "4fc6a91b-faba-4d3e-82a3-be4c78270e99",
+          "expected_total": -5528,
+          "actual_total": -5528,
+          "known_weight_hits": 0,
+          "known_weight_count": 0,
+          "missing_name_amount_weight": [],
+          "sum_lines": -5528
+        },
+        {
+          "id": "6dd0be7d-4b6e-4b97-8a3d-c76de14f434c",
+          "expected_total": 9642,
+          "actual_total": 9642,
+          "known_weight_hits": 0,
+          "known_weight_count": 0,
+          "missing_name_amount_weight": [],
+          "sum_lines": 9642
+        },
+        {
+          "id": "1b072114-24ee-4bb5-80a5-018ce442a512",
+          "expected_total": 5383,
+          "actual_total": 5383,
+          "known_weight_hits": 0,
+          "known_weight_count": 0,
+          "missing_name_amount_weight": [],
+          "sum_lines": 5383
+        },
+        {
+          "id": "b69bb2c5-7c75-4870-803e-25e321e086dd",
+          "expected_total": 1758,
+          "actual_total": 1758,
+          "known_weight_hits": 0,
+          "known_weight_count": 0,
+          "missing_name_amount_weight": [],
+          "sum_lines": 1758
+        }
+      ]
+    },
+    "after": {
+      "valid": 30,
+      "total_correct": 30,
+      "weight_hits": 19,
+      "weight_count": 20,
+      "weight_pair_hits": 20,
+      "cases": [
+        {
+          "id": "57bb2995-1993-4ff0-863e-43764ee31526",
+          "expected_total": 18611,
+          "actual_total": 18611,
+          "known_weight_hits": 0,
+          "known_weight_count": 0,
+          "missing_name_amount_weight": [],
+          "sum_lines": 18611
+        },
+        {
+          "id": "834a4c6e-9307-40bb-acf6-c143c5f41e73",
+          "expected_total": 5648,
+          "actual_total": 5648,
+          "known_weight_hits": 3,
+          "known_weight_count": 3,
+          "missing_name_amount_weight": [],
+          "sum_lines": 5648
+        },
+        {
+          "id": "560ccf19-b7af-4ad6-a512-1dd51853f4d8",
+          "expected_total": 11170,
+          "actual_total": 11170,
+          "known_weight_hits": 0,
+          "known_weight_count": 0,
+          "missing_name_amount_weight": [],
+          "sum_lines": 11170
+        },
+        {
+          "id": "74356ee7-d2e7-42e4-aea1-8fa567dec8ea",
+          "expected_total": 1348,
+          "actual_total": 1348,
+          "known_weight_hits": 3,
+          "known_weight_count": 3,
+          "missing_name_amount_weight": [],
+          "sum_lines": 1348
+        },
+        {
+          "id": "78f63611-ad9f-4982-86aa-7b16450f46a7",
+          "expected_total": 792,
+          "actual_total": 792,
+          "known_weight_hits": 1,
+          "known_weight_count": 1,
+          "missing_name_amount_weight": [],
+          "sum_lines": 792
+        },
+        {
+          "id": "2f97fc50-4cf3-47e1-bd44-ea6de95c774c",
+          "expected_total": 1497,
+          "actual_total": 1497,
+          "known_weight_hits": 0,
+          "known_weight_count": 0,
+          "missing_name_amount_weight": [],
+          "sum_lines": 1497
+        },
+        {
+          "id": "72a635b2-4b7e-4612-98ab-0f74d47fca59",
+          "expected_total": 1477,
+          "actual_total": 1477,
+          "known_weight_hits": 0,
+          "known_weight_count": 0,
+          "missing_name_amount_weight": [],
+          "sum_lines": 1477
+        },
+        {
+          "id": "fe3a7e41-45ad-4865-8a83-427a696481db",
+          "expected_total": 2725,
+          "actual_total": 2725,
+          "known_weight_hits": 3,
+          "known_weight_count": 3,
+          "missing_name_amount_weight": [],
+          "sum_lines": 2725
+        },
+        {
+          "id": "e3843baa-904a-4bbf-bc21-278a1693d5c7",
+          "expected_total": 3396,
+          "actual_total": 3396,
+          "known_weight_hits": 0,
+          "known_weight_count": 0,
+          "missing_name_amount_weight": [],
+          "sum_lines": 3396
+        },
+        {
+          "id": "199fc34a-4857-4aac-873c-8c55f8b223a9",
+          "expected_total": 5468,
+          "actual_total": 5468,
+          "known_weight_hits": 1,
+          "known_weight_count": 2,
+          "missing_name_amount_weight": [
+            [
+              "ENVYAPPLE",
+              870,
+              1319954
+            ]
+          ],
+          "sum_lines": 5468
+        },
+        {
+          "id": "4e491343-7593-42b4-b5b5-01e5648557ee",
+          "expected_total": 7325,
+          "actual_total": null,
+          "known_weight_hits": 0,
+          "known_weight_count": 0,
+          "missing_name_amount_weight": [],
+          "sum_lines": 0
+        },
+        {
+          "id": "c00860de-60e8-4892-8bc3-1e0b2c8314ab",
+          "expected_total": 10019,
+          "actual_total": null,
+          "known_weight_hits": 0,
+          "known_weight_count": 0,
+          "missing_name_amount_weight": [],
+          "sum_lines": 0
+        },
+        {
+          "id": "6d9da1ec-c0fc-4905-82b4-4ebd11716b1c",
+          "expected_total": 3032,
+          "actual_total": 3032,
+          "known_weight_hits": 0,
+          "known_weight_count": 0,
+          "missing_name_amount_weight": [],
+          "sum_lines": 3032
+        },
+        {
+          "id": "e6c62f11-3b8d-4ac0-a860-1756df0efa55",
+          "expected_total": 15492,
+          "actual_total": 15492,
+          "known_weight_hits": 0,
+          "known_weight_count": 0,
+          "missing_name_amount_weight": [],
+          "sum_lines": 15492
+        },
+        {
+          "id": "73953603-31f5-496a-9dd4-76fc845c8398",
+          "expected_total": 971,
+          "actual_total": 971,
+          "known_weight_hits": 0,
+          "known_weight_count": 0,
+          "missing_name_amount_weight": [],
+          "sum_lines": 971
+        },
+        {
+          "id": "d7f8ff6d-6502-4eeb-8850-2f15b131988f",
+          "expected_total": 421,
+          "actual_total": 421,
+          "known_weight_hits": 1,
+          "known_weight_count": 1,
+          "missing_name_amount_weight": [],
+          "sum_lines": 421
+        },
+        {
+          "id": "a31f7e6b-8bb1-49c8-a292-504d76d1a59c",
+          "expected_total": 2061,
+          "actual_total": 2061,
+          "known_weight_hits": 0,
+          "known_weight_count": 0,
+          "missing_name_amount_weight": [],
+          "sum_lines": 2061
+        },
+        {
+          "id": "8572dcef-7f7f-4d77-80c6-0ede75d45fa3",
+          "expected_total": 13803,
+          "actual_total": 13803,
+          "known_weight_hits": 0,
+          "known_weight_count": 0,
+          "missing_name_amount_weight": [],
+          "sum_lines": 13803
+        },
+        {
+          "id": "3a8e3c19-e8d0-4ea8-8fa3-06e3cd5fcfd4",
+          "expected_total": 25670,
+          "actual_total": 25670,
+          "known_weight_hits": 0,
+          "known_weight_count": 0,
+          "missing_name_amount_weight": [],
+          "sum_lines": 25670
+        },
+        {
+          "id": "e9ee06e0-f4aa-4c3c-812a-4e8abc21e3f0",
+          "expected_total": 974,
+          "actual_total": 974,
+          "known_weight_hits": 3,
+          "known_weight_count": 3,
+          "missing_name_amount_weight": [],
+          "sum_lines": 974
+        },
+        {
+          "id": "924e246e-c811-497a-a61b-6b5724f7bacd",
+          "expected_total": 4785,
+          "actual_total": 4785,
+          "known_weight_hits": 0,
+          "known_weight_count": 0,
+          "missing_name_amount_weight": [],
+          "sum_lines": 4785
+        },
+        {
+          "id": "e297a3d3-f9f1-4ba7-8e5e-a18e56fdecdd",
+          "expected_total": 1017,
+          "actual_total": 1017,
+          "known_weight_hits": 1,
+          "known_weight_count": 1,
+          "missing_name_amount_weight": [],
+          "sum_lines": 1017
+        },
+        {
+          "id": "a6618e05-1d59-453f-90e9-4bbf87a3830c",
+          "expected_total": 1939,
+          "actual_total": 1939,
+          "known_weight_hits": 1,
+          "known_weight_count": 1,
+          "missing_name_amount_weight": [],
+          "sum_lines": 1939
+        },
+        {
+          "id": "ebf82f5b-c4e7-4a49-8ce7-927233bfde95",
+          "expected_total": 4823,
+          "actual_total": 4823,
+          "known_weight_hits": 0,
+          "known_weight_count": 0,
+          "missing_name_amount_weight": [],
+          "sum_lines": 4823
+        },
+        {
+          "id": "5331c892-9fb6-42b5-bdb3-5a205b1a0767",
+          "expected_total": 641,
+          "actual_total": 641,
+          "known_weight_hits": 2,
+          "known_weight_count": 2,
+          "missing_name_amount_weight": [],
+          "sum_lines": 641
+        },
+        {
+          "id": "20267232-d4d0-4540-9c14-b0e051b06445",
+          "expected_total": 10077,
+          "actual_total": 10077,
+          "known_weight_hits": 0,
+          "known_weight_count": 0,
+          "missing_name_amount_weight": [],
+          "sum_lines": 10077
+        },
+        {
+          "id": "c5fdc978-8f74-43bf-a5c5-e22d28f5aea9",
+          "expected_total": -1699,
+          "actual_total": -1699,
+          "known_weight_hits": 0,
+          "known_weight_count": 0,
+          "missing_name_amount_weight": [],
+          "sum_lines": -1699
+        },
+        {
+          "id": "ca76c352-9601-498c-8324-0ef9bcf5ea3b",
+          "expected_total": 6194,
+          "actual_total": 6194,
+          "known_weight_hits": 0,
+          "known_weight_count": 0,
+          "missing_name_amount_weight": [],
+          "sum_lines": 6194
+        },
+        {
+          "id": "4fc6a91b-faba-4d3e-82a3-be4c78270e99",
+          "expected_total": -5528,
+          "actual_total": -5528,
+          "known_weight_hits": 0,
+          "known_weight_count": 0,
+          "missing_name_amount_weight": [],
+          "sum_lines": -5528
+        },
+        {
+          "id": "6dd0be7d-4b6e-4b97-8a3d-c76de14f434c",
+          "expected_total": 9642,
+          "actual_total": 9642,
+          "known_weight_hits": 0,
+          "known_weight_count": 0,
+          "missing_name_amount_weight": [],
+          "sum_lines": 9642
+        },
+        {
+          "id": "1b072114-24ee-4bb5-80a5-018ce442a512",
+          "expected_total": 5383,
+          "actual_total": 5383,
+          "known_weight_hits": 0,
+          "known_weight_count": 0,
+          "missing_name_amount_weight": [],
+          "sum_lines": 5383
+        },
+        {
+          "id": "b69bb2c5-7c75-4870-803e-25e321e086dd",
+          "expected_total": 1758,
+          "actual_total": 1758,
+          "known_weight_hits": 0,
+          "known_weight_count": 0,
+          "missing_name_amount_weight": [],
+          "sum_lines": 1758
+        }
+      ]
+    }
+  },
+  "latency": {
+    "before": {
+      "batch_seconds": 418.447,
+      "median_seconds": 10.914000000000001
+    },
+    "after": {
+      "batch_seconds": 767.34,
+      "median_seconds": 18.823999999999998
+    }
+  },
+  "reasoning": [
+    {
+      "id": "e9ee06e0-f4aa-4c3c-812a-4e8abc21e3f0",
+      "reasoning_chars": 2162,
+      "reasoning_tokens": 984,
+      "finish_reason": "stop"
+    },
+    {
+      "id": "b69bb2c5-7c75-4870-803e-25e321e086dd",
+      "reasoning_chars": 3516,
+      "reasoning_tokens": 1218,
+      "finish_reason": "stop"
+    },
+    {
+      "id": "4e491343-7593-42b4-b5b5-01e5648557ee",
+      "reasoning_chars": 6493,
+      "reasoning_tokens": 2885,
+      "finish_reason": "stop"
+    },
+    {
+      "id": "72a635b2-4b7e-4612-98ab-0f74d47fca59",
+      "reasoning_chars": 5118,
+      "reasoning_tokens": 1998,
+      "finish_reason": "stop"
+    },
+    {
+      "id": "ebf82f5b-c4e7-4a49-8ce7-927233bfde95",
+      "reasoning_chars": 9453,
+      "reasoning_tokens": 3062,
+      "finish_reason": "stop"
+    },
+    {
+      "id": "834a4c6e-9307-40bb-acf6-c143c5f41e73",
+      "reasoning_chars": 14000,
+      "reasoning_tokens": 5450,
+      "finish_reason": "stop"
+    },
+    {
+      "id": "20267232-d4d0-4540-9c14-b0e051b06445",
+      "reasoning_chars": 4753,
+      "reasoning_tokens": 1898,
+      "finish_reason": "stop"
+    },
+    {
+      "id": "3a8e3c19-e8d0-4ea8-8fa3-06e3cd5fcfd4",
+      "reasoning_chars": 2464,
+      "reasoning_tokens": 1349,
+      "finish_reason": "stop"
+    },
+    {
+      "id": "a6618e05-1d59-453f-90e9-4bbf87a3830c",
+      "reasoning_chars": 2361,
+      "reasoning_tokens": 921,
+      "finish_reason": "stop"
+    },
+    {
+      "id": "d7f8ff6d-6502-4eeb-8850-2f15b131988f",
+      "reasoning_chars": 1754,
+      "reasoning_tokens": 806,
+      "finish_reason": "stop"
+    },
+    {
+      "id": "57bb2995-1993-4ff0-863e-43764ee31526",
+      "reasoning_chars": 2824,
+      "reasoning_tokens": 1231,
+      "finish_reason": "stop"
+    },
+    {
+      "id": "8572dcef-7f7f-4d77-80c6-0ede75d45fa3",
+      "reasoning_chars": 3429,
+      "reasoning_tokens": 1455,
+      "finish_reason": "stop"
+    },
+    {
+      "id": "2f97fc50-4cf3-47e1-bd44-ea6de95c774c",
+      "reasoning_chars": 12578,
+      "reasoning_tokens": 4633,
+      "finish_reason": "stop"
+    },
+    {
+      "id": "a31f7e6b-8bb1-49c8-a292-504d76d1a59c",
+      "reasoning_chars": 3236,
+      "reasoning_tokens": 1293,
+      "finish_reason": "stop"
+    },
+    {
+      "id": "1b072114-24ee-4bb5-80a5-018ce442a512",
+      "reasoning_chars": 8880,
+      "reasoning_tokens": 3294,
+      "finish_reason": "stop"
+    },
+    {
+      "id": "4fc6a91b-faba-4d3e-82a3-be4c78270e99",
+      "reasoning_chars": 3363,
+      "reasoning_tokens": 1321,
+      "finish_reason": "stop"
+    },
+    {
+      "id": "73953603-31f5-496a-9dd4-76fc845c8398",
+      "reasoning_chars": 1157,
+      "reasoning_tokens": 524,
+      "finish_reason": "stop"
+    },
+    {
+      "id": "ca76c352-9601-498c-8324-0ef9bcf5ea3b",
+      "reasoning_chars": 2237,
+      "reasoning_tokens": 853,
+      "finish_reason": "stop"
+    },
+    {
+      "id": "c00860de-60e8-4892-8bc3-1e0b2c8314ab",
+      "reasoning_chars": 2652,
+      "reasoning_tokens": 1219,
+      "finish_reason": "stop"
+    },
+    {
+      "id": "199fc34a-4857-4aac-873c-8c55f8b223a9",
+      "reasoning_chars": 5085,
+      "reasoning_tokens": 1906,
+      "finish_reason": "stop"
+    },
+    {
+      "id": "6d9da1ec-c0fc-4905-82b4-4ebd11716b1c",
+      "reasoning_chars": 9463,
+      "reasoning_tokens": 3615,
+      "finish_reason": "stop"
+    },
+    {
+      "id": "560ccf19-b7af-4ad6-a512-1dd51853f4d8",
+      "reasoning_chars": 6123,
+      "reasoning_tokens": 2778,
+      "finish_reason": "stop"
+    },
+    {
+      "id": "fe3a7e41-45ad-4865-8a83-427a696481db",
+      "reasoning_chars": 9976,
+      "reasoning_tokens": 3665,
+      "finish_reason": "stop"
+    },
+    {
+      "id": "e3843baa-904a-4bbf-bc21-278a1693d5c7",
+      "reasoning_chars": 4117,
+      "reasoning_tokens": 1597,
+      "finish_reason": "stop"
+    },
+    {
+      "id": "74356ee7-d2e7-42e4-aea1-8fa567dec8ea",
+      "reasoning_chars": 3934,
+      "reasoning_tokens": 1569,
+      "finish_reason": "stop"
+    },
+    {
+      "id": "e6c62f11-3b8d-4ac0-a860-1756df0efa55",
+      "reasoning_chars": 3563,
+      "reasoning_tokens": 1836,
+      "finish_reason": "stop"
+    },
+    {
+      "id": "5331c892-9fb6-42b5-bdb3-5a205b1a0767",
+      "reasoning_chars": 4847,
+      "reasoning_tokens": 1637,
+      "finish_reason": "stop"
+    },
+    {
+      "id": "924e246e-c811-497a-a61b-6b5724f7bacd",
+      "reasoning_chars": 1526,
+      "reasoning_tokens": 618,
+      "finish_reason": "stop"
+    },
+    {
+      "id": "6dd0be7d-4b6e-4b97-8a3d-c76de14f434c",
+      "reasoning_chars": 3351,
+      "reasoning_tokens": 1480,
+      "finish_reason": "stop"
+    },
+    {
+      "id": "e297a3d3-f9f1-4ba7-8e5e-a18e56fdecdd",
+      "reasoning_chars": 1549,
+      "reasoning_tokens": 554,
+      "finish_reason": "stop"
+    },
+    {
+      "id": "c5fdc978-8f74-43bf-a5c5-e22d28f5aea9",
+      "reasoning_chars": 1279,
+      "reasoning_tokens": 536,
+      "finish_reason": "stop"
+    },
+    {
+      "id": "78f63611-ad9f-4982-86aa-7b16450f46a7",
+      "reasoning_chars": 2472,
+      "reasoning_tokens": 875,
+      "finish_reason": "stop"
+    }
+  ],
+  "raw_total_hits": 32,
+  "raw_json_objects": 32,
+  "adapted_json_objects": 32
+}

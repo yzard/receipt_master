@@ -1,0 +1,33 @@
+{
+  "id": "3270f3c9",
+  "images": [
+    {
+      "path": "images/3270f3c9-0.jpg",
+      "sha256": "71dcc3680df8c34328c9f32f930a3b83560e0a432a82d32f3294da51924b6d65"
+    }
+  ],
+  "provider": "unlimited",
+  "raw": {
+    "id": "chatcmpl-f87d0162440f47d3b60c992e66de5404",
+    "object": "chat.completion",
+    "created": 1789567874,
+    "model": "unlimited-ocr",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "<|det|>header [437, 33, 537, 104]<|/det|>M\n<|det|>header [430, 106, 558, 140]<|/det|>MART®\n<|det|>text [384, 152, 578, 170]<|/det|>http://www.hmart.com\n<|det|>text [357, 171, 594, 187]<|/det|>46-40 Francis Lewis Blvd.\n<|det|>text [395, 189, 566, 205]<|/det|>Bayside, NY. 11361\n<|det|>text [396, 207, 570, 222]<|/det|>TEL (718) 229-7400\n<|det|>text [307, 224, 580, 240]<|/det|>Your Cashier was MYUNG B LIM\n<|det|>text [306, 259, 484, 275]<|/det|>3.40 lb @ 2.99 /lb\n<|det|>text [296, 277, 667, 293]<|/det|>WT ENVY APPLE 10.17 F\n<|det|>text [376, 296, 650, 311]<|/det|>TAX 0.00\n<|det|>text [325, 332, 651, 348]<|/det|>***** BALANCE 10.17\n<|det|>text [293, 386, 506, 403]<|/det|>MasterCard Credit - C\n<|det|>text [294, 405, 612, 421]<|/det|>ACCOUNT NUMBER: *****8475\n<|det|>text [294, 424, 506, 440]<|/det|>APPROVAL CODE: 979422\n<|det|>text [294, 443, 506, 459]<|/det|>SEQUENCE NUMBER: 5380\n<|det|>text [294, 462, 497, 478]<|/det|>TOTAL AMOUNT: $10.17\n<|det|>text [294, 481, 526, 496]<|/det|>RESPONSE CODE: APPROVED\n<|det|>text [294, 499, 516, 515]<|/det|>09/13/26 08:45pm 104 5\n<|det|>text [375, 518, 655, 533]<|/det|>MasterCard 10.17\n<|det|>text [375, 536, 655, 551]<|/det|>CHANGE 0.00\n<|det|>text [294, 555, 617, 571]<|/det|>TOTAL NUMBER OF ITEMS SOLD = 1\n<|det|>text [294, 574, 586, 590]<|/det|>09/13/26 08:45pm 51 5 569 104\n<|det|>text [290, 615, 428, 631]<|/det|>RETURN POLICY\n<|det|>text [290, 634, 680, 690]<|/det|>unused product can be exchanged or refunded with receipt within 7 days of purchase unless otherwise noted below\n<|det|>text [289, 711, 672, 871]<|/det|>Meat, fish, produce, and refrigerated food items must be returned with receipt within 24 hours electronics and houseware: Must be returned with receipt within 14 days of purchase and must be unused If your unable to bring item to store, please call customer service\n<|det|>image [321, 888, 667, 999]<|/det|>"
+        },
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 1517,
+      "completion_tokens": 674,
+      "total_tokens": 2191
+    }
+  },
+  "text": "<|det|>header [437, 33, 537, 104]<|/det|>M\n<|det|>header [430, 106, 558, 140]<|/det|>MART®\n<|det|>text [384, 152, 578, 170]<|/det|>http://www.hmart.com\n<|det|>text [357, 171, 594, 187]<|/det|>46-40 Francis Lewis Blvd.\n<|det|>text [395, 189, 566, 205]<|/det|>Bayside, NY. 11361\n<|det|>text [396, 207, 570, 222]<|/det|>TEL (718) 229-7400\n<|det|>text [307, 224, 580, 240]<|/det|>Your Cashier was MYUNG B LIM\n<|det|>text [306, 259, 484, 275]<|/det|>3.40 lb @ 2.99 /lb\n<|det|>text [296, 277, 667, 293]<|/det|>WT ENVY APPLE 10.17 F\n<|det|>text [376, 296, 650, 311]<|/det|>TAX 0.00\n<|det|>text [325, 332, 651, 348]<|/det|>***** BALANCE 10.17\n<|det|>text [293, 386, 506, 403]<|/det|>MasterCard Credit - C\n<|det|>text [294, 405, 612, 421]<|/det|>ACCOUNT NUMBER: *****8475\n<|det|>text [294, 424, 506, 440]<|/det|>APPROVAL CODE: 979422\n<|det|>text [294, 443, 506, 459]<|/det|>SEQUENCE NUMBER: 5380\n<|det|>text [294, 462, 497, 478]<|/det|>TOTAL AMOUNT: $10.17\n<|det|>text [294, 481, 526, 496]<|/det|>RESPONSE CODE: APPROVED\n<|det|>text [294, 499, 516, 515]<|/det|>09/13/26 08:45pm 104 5\n<|det|>text [375, 518, 655, 533]<|/det|>MasterCard 10.17\n<|det|>text [375, 536, 655, 551]<|/det|>CHANGE 0.00\n<|det|>text [294, 555, 617, 571]<|/det|>TOTAL NUMBER OF ITEMS SOLD = 1\n<|det|>text [294, 574, 586, 590]<|/det|>09/13/26 08:45pm 51 5 569 104\n<|det|>text [290, 615, 428, 631]<|/det|>RETURN POLICY\n<|det|>text [290, 634, 680, 690]<|/det|>unused product can be exchanged or refunded with receipt within 7 days of purchase unless otherwise noted below\n<|det|>text [289, 711, 672, 871]<|/det|>Meat, fish, produce, and refrigerated food items must be returned with receipt within 24 hours electronics and houseware: Must be returned with receipt within 14 days of purchase and must be unused If your unable to bring item to store, please call customer service\n<|det|>image [321, 888, 667, 999]<|/det|>",
+  "duration_ms": 5321
+}

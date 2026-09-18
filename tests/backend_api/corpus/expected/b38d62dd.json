@@ -1,0 +1,142 @@
+{
+  "provenance": "Manually checked against the bundled original photo; not copied from model predictions.",
+  "notes": [],
+  "input": {
+    "store": null,
+    "branch": null,
+    "address": null,
+    "country": "US",
+    "currency": "USD",
+    "local_time": "2026-09-03 20:00:14",
+    "total": "4.21",
+    "lines": [
+      {
+        "name": "TAIWAN CABBAGE (1POUNDS)",
+        "product_name": "台灣高麗菜（1磅）",
+        "kind": "product",
+        "quantity": "3.02",
+        "quantity_unit": "lb",
+        "unit_price": "0.58",
+        "amount": "1.75",
+        "confidence": null,
+        "discount_target_index": null,
+        "sku": null,
+        "tax_code": null,
+        "is_weighed": false,
+        "review_notes": [],
+        "evidence": [],
+        "package_weight": null,
+        "package_weight_unit": null,
+        "amount_basis": "gross"
+      },
+      {
+        "name": "ONION (1POUNDS)",
+        "product_name": "紫洋蔥（1磅）",
+        "kind": "product",
+        "quantity": "0.64",
+        "quantity_unit": "lb",
+        "unit_price": "1.99",
+        "amount": "1.27",
+        "confidence": null,
+        "discount_target_index": null,
+        "sku": null,
+        "tax_code": null,
+        "is_weighed": false,
+        "review_notes": [],
+        "evidence": [],
+        "package_weight": null,
+        "package_weight_unit": null,
+        "amount_basis": "gross"
+      },
+      {
+        "name": "LONG HOT PEPPER (1POUNDS)",
+        "product_name": "牛角椒（1磅）",
+        "kind": "product",
+        "quantity": "0.60",
+        "quantity_unit": "lb",
+        "unit_price": "1.99",
+        "amount": "1.19",
+        "confidence": null,
+        "discount_target_index": null,
+        "sku": null,
+        "tax_code": null,
+        "is_weighed": false,
+        "review_notes": [],
+        "evidence": [],
+        "package_weight": null,
+        "package_weight_unit": null,
+        "amount_basis": "gross"
+      },
+      {
+        "name": "TAX",
+        "product_name": null,
+        "kind": "tax",
+        "quantity": null,
+        "quantity_unit": null,
+        "unit_price": null,
+        "amount": "0.00",
+        "confidence": null,
+        "discount_target_index": null,
+        "sku": null,
+        "tax_code": null,
+        "is_weighed": false,
+        "review_notes": [],
+        "evidence": [],
+        "package_weight": null,
+        "package_weight_unit": null,
+        "amount_basis": "gross"
+      }
+    ]
+  },
+  "expected": {
+    "total_minor": 421,
+    "local_time": "2026-09-03 20:00:14",
+    "store": "Sky Foods",
+    "lines": [
+      {
+        "name": "TAIWAN CABBAGE (1POUNDS)",
+        "product_name": "台灣高麗菜（1磅）",
+        "kind": "product",
+        "amount_minor": 175,
+        "weight_mg": 1369849,
+        "printed_amount_minor": null,
+        "quantity_micros": 3020000,
+        "unit_price_scaled": 58000000,
+        "discount_target_index": null
+      },
+      {
+        "name": "ONION (1POUNDS)",
+        "product_name": "紫洋蔥（1磅）",
+        "kind": "product",
+        "amount_minor": 127,
+        "weight_mg": 290299,
+        "printed_amount_minor": null,
+        "quantity_micros": 640000,
+        "unit_price_scaled": 199000000,
+        "discount_target_index": null
+      },
+      {
+        "name": "LONG HOT PEPPER (1POUNDS)",
+        "product_name": "牛角椒（1磅）",
+        "kind": "product",
+        "amount_minor": 119,
+        "weight_mg": 272155,
+        "printed_amount_minor": null,
+        "quantity_micros": 600000,
+        "unit_price_scaled": 199000000,
+        "discount_target_index": null
+      },
+      {
+        "name": "TAX",
+        "product_name": null,
+        "kind": "tax",
+        "amount_minor": 0,
+        "weight_mg": null,
+        "printed_amount_minor": null,
+        "quantity_micros": null,
+        "unit_price_scaled": null,
+        "discount_target_index": null
+      }
+    ]
+  }
+}

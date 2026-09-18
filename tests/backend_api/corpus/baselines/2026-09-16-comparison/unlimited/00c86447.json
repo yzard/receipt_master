@@ -1,0 +1,33 @@
+{
+  "id": "00c86447",
+  "images": [
+    {
+      "path": "images/00c86447-0.jpg",
+      "sha256": "24def2952834bec7ca958875d1e4b5a15416083401335216d432e59876e24393"
+    }
+  ],
+  "provider": "unlimited",
+  "raw": {
+    "id": "chatcmpl-9bfae42203ac41fe8e3704ae4ad6adea",
+    "object": "chat.completion",
+    "created": 1789567907,
+    "model": "unlimited-ocr",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "<|det|>header [324, 24, 627, 70]<|/det|>COSTCO\n<|det|>header [424, 72, 619, 93]<|/det|>WHOLESALE\n<|det|>text [350, 100, 600, 118]<|/det|>Reso Park #1070\n<|det|>text [383, 119, 568, 136]<|/det|>61-35 Junction Blvd\n<|det|>text [383, 136, 567, 153]<|/det|>Rego Park, NY 11374\n<|det|>title [366, 165, 584, 191]<|/det|>SELF-CHECKOUT\n<|det|>text [291, 206, 506, 223]<|/det|>G3 Member 111886754734\n<|det|>text [341, 224, 630, 239]<|/det|>1683859 OMGA3 FSHOIL 29.99\n<|det|>text [348, 240, 630, 254]<|/det|>690843 KS B12 SUBL. 18.99\n<|det|>text [343, 255, 650, 269]<|/det|>1898552 NINJA CRISPI 159.99 A\n<|det|>text [343, 270, 650, 285]<|/det|>1121864 OCEAN MIST 19.99 A\n<|det|>text [313, 286, 650, 301]<|/det|>000385338 / 1121864 5.00-\n<|det|>text [343, 302, 650, 317]<|/det|>1121864 OCEAN MIST 19.99 A\n<|det|>text [313, 318, 650, 333]<|/det|>000385338 / 1121864 5.00-\n<|det|>text [375, 334, 630, 348]<|/det|>SUBTOTAL 238.95\n<|det|>text [375, 349, 630, 364]<|/det|>TAX 17.75\n<|det|>text [323, 365, 640, 380]<|/det|>**** TOTAL 256.70\n<|det|>text [293, 396, 450, 411]<|/det|>XXXXXXXXXXXXX9653\n<|det|>text [293, 412, 488, 428]<|/det|>AID: A0000000031010\n<|det|>text [293, 429, 585, 444]<|/det|>Seq# 205980 APP#: 87159C\n<|det|>text [293, 445, 585, 460]<|/det|>Costco Visa Res: P#PROVED\n<|det|>text [293, 461, 480, 476]<|/det|>APPROVED - Purchase\n<|det|>text [293, 477, 441, 491]<|/det|>AMOUNT: $256.70\n<|det|>text [370, 507, 640, 522]<|/det|>Costco Visa 256.70\n<|det|>text [370, 523, 634, 538]<|/det|>CHANGE 0.00\n<|det|>text [301, 555, 635, 571]<|/det|>A 8.875% TAX 17.75\n<|det|>text [302, 572, 635, 587]<|/det|>TOTAL TAX 17.75\n<|det|>text [293, 588, 620, 602]<|/det|>TOTAL NUMBER OF ITEMS SOLD = 5\n<|det|>text [293, 604, 625, 618]<|/det|>INSTANT SAVINGS $ 10.00\n<|det|>text [293, 620, 616, 635]<|/det|>8/10/2025 16:13 1070 205 224 705\n<|det|>image [346, 636, 612, 675]<|/det|>\n<|det|>text [379, 676, 576, 688]<|/det|>21107020502242608101613\n<|det|>text [321, 691, 501, 707]<|/det|>OP#: 705 Name: SCO\n<|det|>text [341, 723, 619, 739]<|/det|>Thank You! Please Come Again\n<|det|>text [319, 770, 541, 784]<|/det|>Items Sold: 5\n<|det|>text [319, 785, 641, 800]<|/det|>G3 08/10/2026 16:13\n<|det|>text [293, 821, 667, 833]<|/det|>[Non-Text]\n<|det|>title [291, 854, 467, 872]<|/det|>REMINDER:\n<|det|>text [290, 888, 641, 970]<|/det|>Your membership renewal fee will be added to the first purchase after expiration. To sign up for auto-renewal please visit the membership counter."
+        },
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 1517,
+      "completion_tokens": 967,
+      "total_tokens": 2484
+    }
+  },
+  "text": "<|det|>header [324, 24, 627, 70]<|/det|>COSTCO\n<|det|>header [424, 72, 619, 93]<|/det|>WHOLESALE\n<|det|>text [350, 100, 600, 118]<|/det|>Reso Park #1070\n<|det|>text [383, 119, 568, 136]<|/det|>61-35 Junction Blvd\n<|det|>text [383, 136, 567, 153]<|/det|>Rego Park, NY 11374\n<|det|>title [366, 165, 584, 191]<|/det|>SELF-CHECKOUT\n<|det|>text [291, 206, 506, 223]<|/det|>G3 Member 111886754734\n<|det|>text [341, 224, 630, 239]<|/det|>1683859 OMGA3 FSHOIL 29.99\n<|det|>text [348, 240, 630, 254]<|/det|>690843 KS B12 SUBL. 18.99\n<|det|>text [343, 255, 650, 269]<|/det|>1898552 NINJA CRISPI 159.99 A\n<|det|>text [343, 270, 650, 285]<|/det|>1121864 OCEAN MIST 19.99 A\n<|det|>text [313, 286, 650, 301]<|/det|>000385338 / 1121864 5.00-\n<|det|>text [343, 302, 650, 317]<|/det|>1121864 OCEAN MIST 19.99 A\n<|det|>text [313, 318, 650, 333]<|/det|>000385338 / 1121864 5.00-\n<|det|>text [375, 334, 630, 348]<|/det|>SUBTOTAL 238.95\n<|det|>text [375, 349, 630, 364]<|/det|>TAX 17.75\n<|det|>text [323, 365, 640, 380]<|/det|>**** TOTAL 256.70\n<|det|>text [293, 396, 450, 411]<|/det|>XXXXXXXXXXXXX9653\n<|det|>text [293, 412, 488, 428]<|/det|>AID: A0000000031010\n<|det|>text [293, 429, 585, 444]<|/det|>Seq# 205980 APP#: 87159C\n<|det|>text [293, 445, 585, 460]<|/det|>Costco Visa Res: P#PROVED\n<|det|>text [293, 461, 480, 476]<|/det|>APPROVED - Purchase\n<|det|>text [293, 477, 441, 491]<|/det|>AMOUNT: $256.70\n<|det|>text [370, 507, 640, 522]<|/det|>Costco Visa 256.70\n<|det|>text [370, 523, 634, 538]<|/det|>CHANGE 0.00\n<|det|>text [301, 555, 635, 571]<|/det|>A 8.875% TAX 17.75\n<|det|>text [302, 572, 635, 587]<|/det|>TOTAL TAX 17.75\n<|det|>text [293, 588, 620, 602]<|/det|>TOTAL NUMBER OF ITEMS SOLD = 5\n<|det|>text [293, 604, 625, 618]<|/det|>INSTANT SAVINGS $ 10.00\n<|det|>text [293, 620, 616, 635]<|/det|>8/10/2025 16:13 1070 205 224 705\n<|det|>image [346, 636, 612, 675]<|/det|>\n<|det|>text [379, 676, 576, 688]<|/det|>21107020502242608101613\n<|det|>text [321, 691, 501, 707]<|/det|>OP#: 705 Name: SCO\n<|det|>text [341, 723, 619, 739]<|/det|>Thank You! Please Come Again\n<|det|>text [319, 770, 541, 784]<|/det|>Items Sold: 5\n<|det|>text [319, 785, 641, 800]<|/det|>G3 08/10/2026 16:13\n<|det|>text [293, 821, 667, 833]<|/det|>[Non-Text]\n<|det|>title [291, 854, 467, 872]<|/det|>REMINDER:\n<|det|>text [290, 888, 641, 970]<|/det|>Your membership renewal fee will be added to the first purchase after expiration. To sign up for auto-renewal please visit the membership counter.",
+  "duration_ms": 7432
+}

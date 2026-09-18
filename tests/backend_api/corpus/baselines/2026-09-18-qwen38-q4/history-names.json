@@ -1,0 +1,3858 @@
+{
+  "qwen3-vl-8b": {
+    "normalization": "NFKC, uppercase, letters/digits only; explicitly photo-reviewed same-item continuation forms accepted; no spelling correction, translation, SKU stripping or catalogue alias lookup",
+    "matching": "One-to-one exact normalized name multiset; duplicate printed rows count separately. Uncertain rows excluded from recall; receipts containing uncertain rows excluded from precision and whole-receipt exactness.",
+    "summary": {
+      "receipts": 24,
+      "matched_names": 78,
+      "verified_names": 93,
+      "name_recall": 0.8387096774193549,
+      "clear_matched_names": 78,
+      "clear_predicted_names": 84,
+      "clear_precision": 0.9285714285714286,
+      "fully_correct_receipts": 16,
+      "fully_reviewable_receipts": 22,
+      "correct_row_counts": 17
+    },
+    "cases": [
+      {
+        "id": "2f97fc50-4cf3-47e1-bd44-ea6de95c774c",
+        "store": "99 Ranch",
+        "verified_names": 3,
+        "matched_names": 0,
+        "uncertain_names": 2,
+        "expected_rows": 5,
+        "predicted_rows": 0,
+        "row_count_correct": false,
+        "all_names_correct": null,
+        "missing_or_misread": [
+          "NONGFUSPRINGGFJASMINETEA",
+          "NONGFUSPRINGGFJASMINETEA",
+          "VITALFARMSPASTURERIASEDL"
+        ],
+        "unmatched_predictions": [],
+        "printed_names": [
+          "NONGFU SPRING GF JASMINE TEA",
+          "NONGFU SPRING GF JASMINE TEA",
+          "VITAL FARMS PASTURE RIASED L"
+        ],
+        "predicted_names": []
+      },
+      {
+        "id": "72a635b2-4b7e-4612-98ab-0f74d47fca59",
+        "store": "Feilong",
+        "verified_names": 7,
+        "matched_names": 7,
+        "uncertain_names": 0,
+        "expected_rows": 7,
+        "predicted_rows": 7,
+        "row_count_correct": true,
+        "all_names_correct": true,
+        "missing_or_misread": [],
+        "unmatched_predictions": [],
+        "printed_names": [
+          "CABBAGE",
+          "SCALLION",
+          "LONG HOT PEPPER",
+          "LIME",
+          "PURPLE ONIONS",
+          "CHIVE FLOWER",
+          "BOK CHOY TIPS"
+        ],
+        "predicted_names": [
+          "CABBAGE",
+          "SCALLION",
+          "LONG HOT PEPPER",
+          "LIME",
+          "PURPLE ONIONS",
+          "CHIVE FLOWER",
+          "BOK CHOY TIPS"
+        ]
+      },
+      {
+        "id": "e3843baa-904a-4bbf-bc21-278a1693d5c7",
+        "store": "H MART",
+        "verified_names": 4,
+        "matched_names": 4,
+        "uncertain_names": 0,
+        "expected_rows": 4,
+        "predicted_rows": 4,
+        "row_count_correct": true,
+        "all_names_correct": true,
+        "missing_or_misread": [],
+        "unmatched_predictions": [],
+        "printed_names": [
+          "FAGE TOTAL 2% GREE",
+          "FAGE TOTAL 2% GREE",
+          "SB BLUEBERRIES",
+          "SB BLUEBERRIES"
+        ],
+        "predicted_names": [
+          "FAGE TOTAL 2% GREE",
+          "FAGE TOTAL 2% GREE",
+          "SB BLUEBERRIES",
+          "SB BLUEBERRIES"
+        ]
+      },
+      {
+        "id": "4e491343-7593-42b4-b5b5-01e5648557ee",
+        "store": "Costco",
+        "verified_names": 4,
+        "matched_names": 4,
+        "uncertain_names": 0,
+        "expected_rows": 4,
+        "predicted_rows": 4,
+        "row_count_correct": true,
+        "all_names_correct": true,
+        "missing_or_misread": [],
+        "unmatched_predictions": [],
+        "printed_names": [
+          "ORG FR EGGS",
+          "SALMON",
+          "GARLIC HERB",
+          "WHITE PEACH"
+        ],
+        "predicted_names": [
+          "ORG FR EGGS",
+          "SALMON",
+          "GARLIC HERB",
+          "WHITE PEACH"
+        ]
+      },
+      {
+        "id": "6d9da1ec-c0fc-4905-82b4-4ebd11716b1c",
+        "store": "skyFOODS",
+        "verified_names": 7,
+        "matched_names": 7,
+        "uncertain_names": 0,
+        "expected_rows": 7,
+        "predicted_rows": 7,
+        "row_count_correct": true,
+        "all_names_correct": true,
+        "missing_or_misread": [],
+        "unmatched_predictions": [],
+        "printed_names": [
+          "LONG HOT PEPPER (1POUNDS)",
+          "CHIVES (1POUNDS)",
+          "BOK CHOY TIPS (1POUNDS)",
+          "MAPLEHILL WHOLE MILK",
+          "KANGLV JUMBO DRIED TOFU",
+          "KANGLV JUMBO DRIED TOFU",
+          "L.K.K SUPEREME FIRST DRAW S"
+        ],
+        "predicted_names": [
+          "LONG HOT PEPPER (1POUNDS)",
+          "CHIVES (1POUNDS)",
+          "BOK CHOY TIPS (1POUNDS)",
+          "MAPLEHILL WHOLE MILK",
+          "KANGLV JUMBO DRIED TOFU",
+          "KANGLV JUMBO DRIED TOFU",
+          "L.K.K SUPEREME FIRST DRAW S"
+        ]
+      },
+      {
+        "id": "e6c62f11-3b8d-4ac0-a860-1756df0efa55",
+        "store": "Costco",
+        "verified_names": 8,
+        "matched_names": 6,
+        "uncertain_names": 0,
+        "expected_rows": 8,
+        "predicted_rows": 10,
+        "row_count_correct": false,
+        "all_names_correct": false,
+        "missing_or_misread": [
+          "KLXTRUSTCARE",
+          "SIETEMAIZSS"
+        ],
+        "unmatched_predictions": [
+          "KLXTRUSTCHRE",
+          "SIITEMAIZSS",
+          "BRSHHD",
+          "NYBOTTLEDE"
+        ],
+        "printed_names": [
+          "*BOUNTYADV*",
+          "**CHARMIN**",
+          "KLXTRUSTCARE",
+          "SIETEMAIZ SS",
+          "KS KETTLE",
+          "ORAL-B X-FIL",
+          "ORG STACY28Z",
+          "*40/.5WATER*"
+        ],
+        "predicted_names": [
+          "*BOUNTYADV*",
+          "**CHARMIN**",
+          "KLXTRUSTCHRE",
+          "SIITEMAIZ SS",
+          "KS KETTLE",
+          "ORAL-B X-FIL",
+          "/BRSH HD",
+          "ORG STACY28Z",
+          "*40/.5WATER*",
+          "NY BOTTLE DE"
+        ]
+      },
+      {
+        "id": "73953603-31f5-496a-9dd4-76fc845c8398",
+        "store": "skyFOODS",
+        "verified_names": 4,
+        "matched_names": 0,
+        "uncertain_names": 0,
+        "expected_rows": 4,
+        "predicted_rows": 0,
+        "row_count_correct": false,
+        "all_names_correct": false,
+        "missing_or_misread": [
+          "TAIWANCABBAGE1POUNDS",
+          "BOKCHOYTIPS1POUNDS",
+          "CHIVESFLOWERS1BUNDLE",
+          "LONGHOTPEPPER1POUNDS"
+        ],
+        "unmatched_predictions": [],
+        "printed_names": [
+          "TAIWAN CABBAGE (1POUNDS)",
+          "BOK CHOY TIPS (1POUNDS)",
+          "CHIVES FLOWERS (1BUNDLE)",
+          "LONG HOT PEPPER (1POUNDS)"
+        ],
+        "predicted_names": []
+      },
+      {
+        "id": "d7f8ff6d-6502-4eeb-8850-2f15b131988f",
+        "store": "skyFOODS",
+        "verified_names": 3,
+        "matched_names": 3,
+        "uncertain_names": 0,
+        "expected_rows": 3,
+        "predicted_rows": 3,
+        "row_count_correct": true,
+        "all_names_correct": true,
+        "missing_or_misread": [],
+        "unmatched_predictions": [],
+        "printed_names": [
+          "TAIWAN CABBAGE (1POUNDS)",
+          "ONION (1POUNDS)",
+          "LONG HOT PEPPER (1POUNDS)"
+        ],
+        "predicted_names": [
+          "TAIWAN CABBAGE (1POUNDS)",
+          "ONION (1POUNDS)",
+          "LONG HOT PEPPER (1POUNDS)"
+        ]
+      },
+      {
+        "id": "a31f7e6b-8bb1-49c8-a292-504d76d1a59c",
+        "store": "skyFOODS",
+        "verified_names": 4,
+        "matched_names": 4,
+        "uncertain_names": 0,
+        "expected_rows": 4,
+        "predicted_rows": 4,
+        "row_count_correct": true,
+        "all_names_correct": true,
+        "missing_or_misread": [],
+        "unmatched_predictions": [],
+        "printed_names": [
+          "CTC SQ COOKIES ( WHEAT)",
+          "KK SMOKED TOFU",
+          "HLS FLAVOR PEANUT-SPICY",
+          "CHINESE LEEK (1POUNDS)"
+        ],
+        "predicted_names": [
+          "CTC SQ COOKIES ( WHEAT)",
+          "KK SMOKED TOFU",
+          "HLS FLAVOR PEANUT-SPICY",
+          "CHINESE LEEK (1POUNDS)"
+        ]
+      },
+      {
+        "id": "8572dcef-7f7f-4d77-80c6-0ede75d45fa3",
+        "store": "Costco",
+        "verified_names": 9,
+        "matched_names": 8,
+        "uncertain_names": 0,
+        "expected_rows": 9,
+        "predicted_rows": 10,
+        "row_count_correct": false,
+        "all_names_correct": false,
+        "missing_or_misread": [
+          "ORGNCBSTHG"
+        ],
+        "unmatched_predictions": [
+          "DRGNCBSTHG",
+          "EXECUTIVEREWARD"
+        ],
+        "printed_names": [
+          "PTOWELHOLDER",
+          "SOCK SALMON",
+          "KS UNSL PIST",
+          "KS QUINOA",
+          "KS WALNUTS",
+          "KS ORG TOFU",
+          "ORGNC BS THG",
+          "KS ICE CREAM",
+          "WHITE PEACH"
+        ],
+        "predicted_names": [
+          "PTOWELHOLDER",
+          "SOCK SALMON",
+          "KS UNSL. PIST",
+          "KS QUINOA",
+          "KS WALNUTS",
+          "KS ORG TOFU",
+          "DRGNC BS THG",
+          "KS ICE CREAM",
+          "WHITE PEACH",
+          "Executive Reward"
+        ]
+      },
+      {
+        "id": "3a8e3c19-e8d0-4ea8-8fa3-06e3cd5fcfd4",
+        "store": "Costco",
+        "verified_names": 5,
+        "matched_names": 5,
+        "uncertain_names": 0,
+        "expected_rows": 5,
+        "predicted_rows": 5,
+        "row_count_correct": true,
+        "all_names_correct": true,
+        "missing_or_misread": [],
+        "unmatched_predictions": [],
+        "printed_names": [
+          "OMGA3 FSHOIL",
+          "KS B12 SUBL.",
+          "NINJA CRISPI",
+          "OCEAN MIST",
+          "OCEAN MIST"
+        ],
+        "predicted_names": [
+          "OMGA3 FSHOIL",
+          "KS B12 SUBL.",
+          "NINJA CRISPI",
+          "OCEAN MIST",
+          "OCEAN MIST"
+        ]
+      },
+      {
+        "id": "e9ee06e0-f4aa-4c3c-812a-4e8abc21e3f0",
+        "store": "skyFOODS",
+        "verified_names": 4,
+        "matched_names": 4,
+        "uncertain_names": 0,
+        "expected_rows": 4,
+        "predicted_rows": 4,
+        "row_count_correct": true,
+        "all_names_correct": true,
+        "missing_or_misread": [],
+        "unmatched_predictions": [],
+        "printed_names": [
+          "BOK CHOY TIPS (1POUNDS)",
+          "CHIVES (1POUNDS)",
+          "LONG HOT PEPPER (1POUNDS)",
+          "KL FIRM TOFU"
+        ],
+        "predicted_names": [
+          "BOK CHOY TIPS (1POUNDS)",
+          "CHIVES (1POUNDS)",
+          "LONG HOT PEPPER (1POUNDS)",
+          "KL FIRM TOFU"
+        ]
+      },
+      {
+        "id": "924e246e-c811-497a-a61b-6b5724f7bacd",
+        "store": "Costco",
+        "verified_names": 2,
+        "matched_names": 0,
+        "uncertain_names": 0,
+        "expected_rows": 2,
+        "predicted_rows": 0,
+        "row_count_correct": false,
+        "all_names_correct": false,
+        "missing_or_misread": [
+          "KSWALNUTS",
+          "STEELHEAD"
+        ],
+        "unmatched_predictions": [],
+        "printed_names": [
+          "KS WALNUTS",
+          "STEELHEAD"
+        ],
+        "predicted_names": []
+      },
+      {
+        "id": "e297a3d3-f9f1-4ba7-8e5e-a18e56fdecdd",
+        "store": "H MART",
+        "verified_names": 1,
+        "matched_names": 0,
+        "uncertain_names": 0,
+        "expected_rows": 1,
+        "predicted_rows": 0,
+        "row_count_correct": false,
+        "all_names_correct": false,
+        "missing_or_misread": [
+          "ENVYAPPLE"
+        ],
+        "unmatched_predictions": [],
+        "printed_names": [
+          "ENVY APPLE"
+        ],
+        "predicted_names": []
+      },
+      {
+        "id": "a6618e05-1d59-453f-90e9-4bbf87a3830c",
+        "store": "H MART",
+        "verified_names": 2,
+        "matched_names": 0,
+        "uncertain_names": 0,
+        "expected_rows": 2,
+        "predicted_rows": 0,
+        "row_count_correct": false,
+        "all_names_correct": false,
+        "missing_or_misread": [
+          "FAGETOTAL2GREE",
+          "ENVYAPPLE"
+        ],
+        "unmatched_predictions": [],
+        "printed_names": [
+          "FAGE TOTAL 2% GREE",
+          "ENVY APPLE"
+        ],
+        "predicted_names": []
+      },
+      {
+        "id": "ebf82f5b-c4e7-4a49-8ce7-927233bfde95",
+        "store": "skyFOODS",
+        "verified_names": 6,
+        "matched_names": 6,
+        "uncertain_names": 0,
+        "expected_rows": 6,
+        "predicted_rows": 6,
+        "row_count_correct": true,
+        "all_names_correct": true,
+        "missing_or_misread": [],
+        "unmatched_predictions": [],
+        "printed_names": [
+          "TTX CHOPPED CHILI PASTE",
+          "CHINESE LEEK (1POUNDS)",
+          "H.D.L SPICY SAUCE",
+          "KANGLV JUMBO DRIED TOFU",
+          "KANGLV JUMBO DRIED TOFU",
+          "LUHUA WUCHANG RICE"
+        ],
+        "predicted_names": [
+          "TTX CHOPPED CHILI PASTE",
+          "CHINESE LEEK (1POUNDS)",
+          "H.D.L SPICY SAUCE",
+          "KANGLV JUMBO DRIED TOFU",
+          "KANGLV JUMBO DRIED TOFU",
+          "LUHUA WUCHANG RICE"
+        ]
+      },
+      {
+        "id": "5331c892-9fb6-42b5-bdb3-5a205b1a0767",
+        "store": "skyFOODS",
+        "verified_names": 2,
+        "matched_names": 2,
+        "uncertain_names": 0,
+        "expected_rows": 2,
+        "predicted_rows": 2,
+        "row_count_correct": true,
+        "all_names_correct": true,
+        "missing_or_misread": [],
+        "unmatched_predictions": [],
+        "printed_names": [
+          "BOK CHOY TIPS (1POUNDS)",
+          "LONG HOT PEPPER (1POUNDS)"
+        ],
+        "predicted_names": [
+          "BOK CHOY TIPS (1POUNDS)",
+          "LONG HOT PEPPER (1POUNDS)"
+        ]
+      },
+      {
+        "id": "20267232-d4d0-4540-9c14-b0e051b06445",
+        "store": "Costco",
+        "verified_names": 0,
+        "matched_names": 0,
+        "uncertain_names": 3,
+        "expected_rows": 3,
+        "predicted_rows": 3,
+        "row_count_correct": true,
+        "all_names_correct": null,
+        "missing_or_misread": [],
+        "unmatched_predictions": [
+          "PASTUREEGGS",
+          "OPTIMUM",
+          "KSUNSLLIST"
+        ],
+        "printed_names": [],
+        "predicted_names": [
+          "PASTURE EGGS",
+          "OPTIMUM",
+          "KS UNSL LIST"
+        ]
+      },
+      {
+        "id": "c5fdc978-8f74-43bf-a5c5-e22d28f5aea9",
+        "store": "Costco",
+        "verified_names": 1,
+        "matched_names": 1,
+        "uncertain_names": 0,
+        "expected_rows": 1,
+        "predicted_rows": 1,
+        "row_count_correct": true,
+        "all_names_correct": true,
+        "missing_or_misread": [],
+        "unmatched_predictions": [],
+        "printed_names": [
+          "KS PISTACHIO"
+        ],
+        "predicted_names": [
+          "KS PISTACHIO"
+        ]
+      },
+      {
+        "id": "ca76c352-9601-498c-8324-0ef9bcf5ea3b",
+        "store": "Costco",
+        "verified_names": 3,
+        "matched_names": 3,
+        "uncertain_names": 0,
+        "expected_rows": 3,
+        "predicted_rows": 3,
+        "row_count_correct": true,
+        "all_names_correct": true,
+        "missing_or_misread": [],
+        "unmatched_predictions": [],
+        "printed_names": [
+          "BLUEBERRIES",
+          "SALMON",
+          "KS PISTACHIO"
+        ],
+        "predicted_names": [
+          "BLUEBERRIES",
+          "SALMON",
+          "KS PISTACHIO"
+        ]
+      },
+      {
+        "id": "4fc6a91b-faba-4d3e-82a3-be4c78270e99",
+        "store": "Costco",
+        "verified_names": 1,
+        "matched_names": 1,
+        "uncertain_names": 0,
+        "expected_rows": 1,
+        "predicted_rows": 1,
+        "row_count_correct": true,
+        "all_names_correct": true,
+        "missing_or_misread": [],
+        "unmatched_predictions": [],
+        "printed_names": [
+          "EXC GS DOWN"
+        ],
+        "predicted_names": [
+          "EXC GS DOWN"
+        ]
+      },
+      {
+        "id": "6dd0be7d-4b6e-4b97-8a3d-c76de14f434c",
+        "store": "Costco",
+        "verified_names": 3,
+        "matched_names": 3,
+        "uncertain_names": 0,
+        "expected_rows": 3,
+        "predicted_rows": 3,
+        "row_count_correct": true,
+        "all_names_correct": true,
+        "missing_or_misread": [],
+        "unmatched_predictions": [],
+        "printed_names": [
+          "WHITE PEACH",
+          "B/S ATL SALM",
+          "SEABASS"
+        ],
+        "predicted_names": [
+          "WHITE PEACH",
+          "B/S ATL SALM",
+          "SEABASS"
+        ]
+      },
+      {
+        "id": "1b072114-24ee-4bb5-80a5-018ce442a512",
+        "store": "99 Ranch",
+        "verified_names": 9,
+        "matched_names": 9,
+        "uncertain_names": 0,
+        "expected_rows": 9,
+        "predicted_rows": 9,
+        "row_count_correct": true,
+        "all_names_correct": true,
+        "missing_or_misread": [],
+        "unmatched_predictions": [],
+        "printed_names": [
+          "MOGAMI 8-BLEND WHOLEGRAIN R",
+          "BIGEN SP CLR RFL 6 MD BROWN",
+          "BIGEN SPEEDY CLR 6 MD BROWN",
+          "ASN/TAS ORGANIC SOY BEAN PEA",
+          "ASN/TAS ORGANIC SOY BEAN PEA",
+          "RED ONION",
+          "LONG HOT PEPPER",
+          "ENVY APPLE",
+          "CHIVES"
+        ],
+        "predicted_names": [
+          "MOGAMI 8-BLEND WHOLEGRAIN R",
+          "BIGEN SP CLR RFL 6 MD BROWN",
+          "BIGEN SPEEDY CLR 6 MD BROWN",
+          "ASN/TAS ORGANIC SOY BEAN PEA",
+          "ASN/TAS ORGANIC SOY BEAN PEA",
+          "RED ONION",
+          "LONG HOT PEPPER",
+          "ENVY APPLE",
+          "CHIVES"
+        ]
+      },
+      {
+        "id": "b69bb2c5-7c75-4870-803e-25e321e086dd",
+        "store": "Target",
+        "verified_names": 1,
+        "matched_names": 1,
+        "uncertain_names": 0,
+        "expected_rows": 1,
+        "predicted_rows": 1,
+        "row_count_correct": true,
+        "all_names_correct": true,
+        "missing_or_misread": [],
+        "unmatched_predictions": [],
+        "printed_names": [
+          "FAGE"
+        ],
+        "predicted_names": [
+          "FAGE"
+        ]
+      }
+    ]
+  },
+  "qwen3-vl-32b-awq": {
+    "normalization": "NFKC, uppercase, letters/digits only; explicitly photo-reviewed same-item continuation forms accepted; no spelling correction, translation, SKU stripping or catalogue alias lookup",
+    "matching": "One-to-one exact normalized name multiset; duplicate printed rows count separately. Uncertain rows excluded from recall; receipts containing uncertain rows excluded from precision and whole-receipt exactness.",
+    "summary": {
+      "receipts": 24,
+      "matched_names": 59,
+      "verified_names": 93,
+      "name_recall": 0.6344086021505376,
+      "clear_matched_names": 59,
+      "clear_predicted_names": 62,
+      "clear_precision": 0.9516129032258065,
+      "fully_correct_receipts": 9,
+      "fully_reviewable_receipts": 22,
+      "correct_row_counts": 11
+    },
+    "cases": [
+      {
+        "id": "2f97fc50-4cf3-47e1-bd44-ea6de95c774c",
+        "store": "99 Ranch",
+        "verified_names": 3,
+        "matched_names": 0,
+        "uncertain_names": 2,
+        "expected_rows": 5,
+        "predicted_rows": 0,
+        "row_count_correct": false,
+        "all_names_correct": null,
+        "missing_or_misread": [
+          "NONGFUSPRINGGFJASMINETEA",
+          "NONGFUSPRINGGFJASMINETEA",
+          "VITALFARMSPASTURERIASEDL"
+        ],
+        "unmatched_predictions": [],
+        "printed_names": [
+          "NONGFU SPRING GF JASMINE TEA",
+          "NONGFU SPRING GF JASMINE TEA",
+          "VITAL FARMS PASTURE RIASED L"
+        ],
+        "predicted_names": []
+      },
+      {
+        "id": "72a635b2-4b7e-4612-98ab-0f74d47fca59",
+        "store": "Feilong",
+        "verified_names": 7,
+        "matched_names": 7,
+        "uncertain_names": 0,
+        "expected_rows": 7,
+        "predicted_rows": 7,
+        "row_count_correct": true,
+        "all_names_correct": true,
+        "missing_or_misread": [],
+        "unmatched_predictions": [],
+        "printed_names": [
+          "CABBAGE",
+          "SCALLION",
+          "LONG HOT PEPPER",
+          "LIME",
+          "PURPLE ONIONS",
+          "CHIVE FLOWER",
+          "BOK CHOY TIPS"
+        ],
+        "predicted_names": [
+          "CABBAGE",
+          "SCALLION",
+          "LONG HOT PEPPER",
+          "LIME",
+          "PURPLE ONIONS",
+          "CHIVE FLOWER",
+          "BOK CHOY TIPS"
+        ]
+      },
+      {
+        "id": "e3843baa-904a-4bbf-bc21-278a1693d5c7",
+        "store": "H MART",
+        "verified_names": 4,
+        "matched_names": 0,
+        "uncertain_names": 0,
+        "expected_rows": 4,
+        "predicted_rows": 0,
+        "row_count_correct": false,
+        "all_names_correct": false,
+        "missing_or_misread": [
+          "FAGETOTAL2GREE",
+          "FAGETOTAL2GREE",
+          "SBBLUEBERRIES",
+          "SBBLUEBERRIES"
+        ],
+        "unmatched_predictions": [],
+        "printed_names": [
+          "FAGE TOTAL 2% GREE",
+          "FAGE TOTAL 2% GREE",
+          "SB BLUEBERRIES",
+          "SB BLUEBERRIES"
+        ],
+        "predicted_names": []
+      },
+      {
+        "id": "4e491343-7593-42b4-b5b5-01e5648557ee",
+        "store": "Costco",
+        "verified_names": 4,
+        "matched_names": 4,
+        "uncertain_names": 0,
+        "expected_rows": 4,
+        "predicted_rows": 4,
+        "row_count_correct": true,
+        "all_names_correct": true,
+        "missing_or_misread": [],
+        "unmatched_predictions": [],
+        "printed_names": [
+          "ORG FR EGGS",
+          "SALMON",
+          "GARLIC HERB",
+          "WHITE PEACH"
+        ],
+        "predicted_names": [
+          "ORG FR EGGS",
+          "SALMON",
+          "GARLIC HERB",
+          "WHITE PEACH"
+        ]
+      },
+      {
+        "id": "6d9da1ec-c0fc-4905-82b4-4ebd11716b1c",
+        "store": "skyFOODS",
+        "verified_names": 7,
+        "matched_names": 7,
+        "uncertain_names": 0,
+        "expected_rows": 7,
+        "predicted_rows": 7,
+        "row_count_correct": true,
+        "all_names_correct": true,
+        "missing_or_misread": [],
+        "unmatched_predictions": [],
+        "printed_names": [
+          "LONG HOT PEPPER (1POUNDS)",
+          "CHIVES (1POUNDS)",
+          "BOK CHOY TIPS (1POUNDS)",
+          "MAPLEHILL WHOLE MILK",
+          "KANGLV JUMBO DRIED TOFU",
+          "KANGLV JUMBO DRIED TOFU",
+          "L.K.K SUPEREME FIRST DRAW S"
+        ],
+        "predicted_names": [
+          "LONG HOT PEPPER (1POUNDS)",
+          "CHIVES (1POUNDS)",
+          "BOK CHOY TIPS (1POUNDS)",
+          "MAPLEHILL WHOLE MILK",
+          "KANGLV JUMBO DRIED TOFU",
+          "KANGLV JUMBO DRIED TOFU",
+          "L.K.K SUPEREME FIRST DRAW S"
+        ]
+      },
+      {
+        "id": "e6c62f11-3b8d-4ac0-a860-1756df0efa55",
+        "store": "Costco",
+        "verified_names": 8,
+        "matched_names": 8,
+        "uncertain_names": 0,
+        "expected_rows": 8,
+        "predicted_rows": 8,
+        "row_count_correct": true,
+        "all_names_correct": true,
+        "missing_or_misread": [],
+        "unmatched_predictions": [],
+        "printed_names": [
+          "*BOUNTYADV*",
+          "**CHARMIN**",
+          "KLXTRUSTCARE",
+          "SIETEMAIZ SS",
+          "KS KETTLE",
+          "ORAL-B X-FIL",
+          "ORG STACY28Z",
+          "*40/.5WATER*"
+        ],
+        "predicted_names": [
+          "*BOUNTYADV*",
+          "**CHARMIN**",
+          "KLXTRUSTCARE",
+          "SIETEMAIZ SS",
+          "KS KETTLE",
+          "ORAL-B X-FIL",
+          "ORG STACY28Z",
+          "*40/.5WATER*"
+        ]
+      },
+      {
+        "id": "73953603-31f5-496a-9dd4-76fc845c8398",
+        "store": "skyFOODS",
+        "verified_names": 4,
+        "matched_names": 0,
+        "uncertain_names": 0,
+        "expected_rows": 4,
+        "predicted_rows": 0,
+        "row_count_correct": false,
+        "all_names_correct": false,
+        "missing_or_misread": [
+          "TAIWANCABBAGE1POUNDS",
+          "BOKCHOYTIPS1POUNDS",
+          "CHIVESFLOWERS1BUNDLE",
+          "LONGHOTPEPPER1POUNDS"
+        ],
+        "unmatched_predictions": [],
+        "printed_names": [
+          "TAIWAN CABBAGE (1POUNDS)",
+          "BOK CHOY TIPS (1POUNDS)",
+          "CHIVES FLOWERS (1BUNDLE)",
+          "LONG HOT PEPPER (1POUNDS)"
+        ],
+        "predicted_names": []
+      },
+      {
+        "id": "d7f8ff6d-6502-4eeb-8850-2f15b131988f",
+        "store": "skyFOODS",
+        "verified_names": 3,
+        "matched_names": 3,
+        "uncertain_names": 0,
+        "expected_rows": 3,
+        "predicted_rows": 3,
+        "row_count_correct": true,
+        "all_names_correct": true,
+        "missing_or_misread": [],
+        "unmatched_predictions": [],
+        "printed_names": [
+          "TAIWAN CABBAGE (1POUNDS)",
+          "ONION (1POUNDS)",
+          "LONG HOT PEPPER (1POUNDS)"
+        ],
+        "predicted_names": [
+          "TAIWAN CABBAGE (1POUNDS)",
+          "ONION (1POUNDS)",
+          "LONG HOT PEPPER (1POUNDS)"
+        ]
+      },
+      {
+        "id": "a31f7e6b-8bb1-49c8-a292-504d76d1a59c",
+        "store": "skyFOODS",
+        "verified_names": 4,
+        "matched_names": 4,
+        "uncertain_names": 0,
+        "expected_rows": 4,
+        "predicted_rows": 4,
+        "row_count_correct": true,
+        "all_names_correct": true,
+        "missing_or_misread": [],
+        "unmatched_predictions": [],
+        "printed_names": [
+          "CTC SQ COOKIES ( WHEAT)",
+          "KK SMOKED TOFU",
+          "HLS FLAVOR PEANUT-SPICY",
+          "CHINESE LEEK (1POUNDS)"
+        ],
+        "predicted_names": [
+          "CTC SQ COOKIES ( WHEAT)",
+          "KK SMOKED TOFU",
+          "HLS FLAVOR PEANUT-SPICY",
+          "CHINESE LEEK (1POUNDS)"
+        ]
+      },
+      {
+        "id": "8572dcef-7f7f-4d77-80c6-0ede75d45fa3",
+        "store": "Costco",
+        "verified_names": 9,
+        "matched_names": 8,
+        "uncertain_names": 0,
+        "expected_rows": 9,
+        "predicted_rows": 10,
+        "row_count_correct": false,
+        "all_names_correct": false,
+        "missing_or_misread": [
+          "ORGNCBSTHG"
+        ],
+        "unmatched_predictions": [
+          "ORGNICBSTHG",
+          "EXECUTIVEREWARD"
+        ],
+        "printed_names": [
+          "PTOWELHOLDER",
+          "SOCK SALMON",
+          "KS UNSL PIST",
+          "KS QUINOA",
+          "KS WALNUTS",
+          "KS ORG TOFU",
+          "ORGNC BS THG",
+          "KS ICE CREAM",
+          "WHITE PEACH"
+        ],
+        "predicted_names": [
+          "PTOWELHOLDER",
+          "SOCK SALMON",
+          "KS UNSL. PIST",
+          "KS QUINOA",
+          "KS WALNUTS",
+          "KS ORG TOFU",
+          "ORGNIC BS THG",
+          "KS ICE CREAM",
+          "WHITE PEACH",
+          "Executive Reward"
+        ]
+      },
+      {
+        "id": "3a8e3c19-e8d0-4ea8-8fa3-06e3cd5fcfd4",
+        "store": "Costco",
+        "verified_names": 5,
+        "matched_names": 0,
+        "uncertain_names": 0,
+        "expected_rows": 5,
+        "predicted_rows": 0,
+        "row_count_correct": false,
+        "all_names_correct": false,
+        "missing_or_misread": [
+          "OMGA3FSHOIL",
+          "KSB12SUBL",
+          "NINJACRISPI",
+          "OCEANMIST",
+          "OCEANMIST"
+        ],
+        "unmatched_predictions": [],
+        "printed_names": [
+          "OMGA3 FSHOIL",
+          "KS B12 SUBL.",
+          "NINJA CRISPI",
+          "OCEAN MIST",
+          "OCEAN MIST"
+        ],
+        "predicted_names": []
+      },
+      {
+        "id": "e9ee06e0-f4aa-4c3c-812a-4e8abc21e3f0",
+        "store": "skyFOODS",
+        "verified_names": 4,
+        "matched_names": 0,
+        "uncertain_names": 0,
+        "expected_rows": 4,
+        "predicted_rows": 0,
+        "row_count_correct": false,
+        "all_names_correct": false,
+        "missing_or_misread": [
+          "BOKCHOYTIPS1POUNDS",
+          "CHIVES1POUNDS",
+          "LONGHOTPEPPER1POUNDS",
+          "KLFIRMTOFU"
+        ],
+        "unmatched_predictions": [],
+        "printed_names": [
+          "BOK CHOY TIPS (1POUNDS)",
+          "CHIVES (1POUNDS)",
+          "LONG HOT PEPPER (1POUNDS)",
+          "KL FIRM TOFU"
+        ],
+        "predicted_names": []
+      },
+      {
+        "id": "924e246e-c811-497a-a61b-6b5724f7bacd",
+        "store": "Costco",
+        "verified_names": 2,
+        "matched_names": 0,
+        "uncertain_names": 0,
+        "expected_rows": 2,
+        "predicted_rows": 0,
+        "row_count_correct": false,
+        "all_names_correct": false,
+        "missing_or_misread": [
+          "KSWALNUTS",
+          "STEELHEAD"
+        ],
+        "unmatched_predictions": [],
+        "printed_names": [
+          "KS WALNUTS",
+          "STEELHEAD"
+        ],
+        "predicted_names": []
+      },
+      {
+        "id": "e297a3d3-f9f1-4ba7-8e5e-a18e56fdecdd",
+        "store": "H MART",
+        "verified_names": 1,
+        "matched_names": 0,
+        "uncertain_names": 0,
+        "expected_rows": 1,
+        "predicted_rows": 0,
+        "row_count_correct": false,
+        "all_names_correct": false,
+        "missing_or_misread": [
+          "ENVYAPPLE"
+        ],
+        "unmatched_predictions": [],
+        "printed_names": [
+          "ENVY APPLE"
+        ],
+        "predicted_names": []
+      },
+      {
+        "id": "a6618e05-1d59-453f-90e9-4bbf87a3830c",
+        "store": "H MART",
+        "verified_names": 2,
+        "matched_names": 0,
+        "uncertain_names": 0,
+        "expected_rows": 2,
+        "predicted_rows": 0,
+        "row_count_correct": false,
+        "all_names_correct": false,
+        "missing_or_misread": [
+          "FAGETOTAL2GREE",
+          "ENVYAPPLE"
+        ],
+        "unmatched_predictions": [],
+        "printed_names": [
+          "FAGE TOTAL 2% GREE",
+          "ENVY APPLE"
+        ],
+        "predicted_names": []
+      },
+      {
+        "id": "ebf82f5b-c4e7-4a49-8ce7-927233bfde95",
+        "store": "skyFOODS",
+        "verified_names": 6,
+        "matched_names": 6,
+        "uncertain_names": 0,
+        "expected_rows": 6,
+        "predicted_rows": 6,
+        "row_count_correct": true,
+        "all_names_correct": true,
+        "missing_or_misread": [],
+        "unmatched_predictions": [],
+        "printed_names": [
+          "TTX CHOPPED CHILI PASTE",
+          "CHINESE LEEK (1POUNDS)",
+          "H.D.L SPICY SAUCE",
+          "KANGLV JUMBO DRIED TOFU",
+          "KANGLV JUMBO DRIED TOFU",
+          "LUHUA WUCHANG RICE"
+        ],
+        "predicted_names": [
+          "TTX CHOPPED CHILI PASTE",
+          "CHINESE LEEK (1POUNDS)",
+          "H.D.L SPICY SAUCE",
+          "KANGLV JUMBO DRIED TOFU",
+          "KANGLV JUMBO DRIED TOFU",
+          "LUHUA WUCHANG RICE"
+        ]
+      },
+      {
+        "id": "5331c892-9fb6-42b5-bdb3-5a205b1a0767",
+        "store": "skyFOODS",
+        "verified_names": 2,
+        "matched_names": 0,
+        "uncertain_names": 0,
+        "expected_rows": 2,
+        "predicted_rows": 0,
+        "row_count_correct": false,
+        "all_names_correct": false,
+        "missing_or_misread": [
+          "BOKCHOYTIPS1POUNDS",
+          "LONGHOTPEPPER1POUNDS"
+        ],
+        "unmatched_predictions": [],
+        "printed_names": [
+          "BOK CHOY TIPS (1POUNDS)",
+          "LONG HOT PEPPER (1POUNDS)"
+        ],
+        "predicted_names": []
+      },
+      {
+        "id": "20267232-d4d0-4540-9c14-b0e051b06445",
+        "store": "Costco",
+        "verified_names": 0,
+        "matched_names": 0,
+        "uncertain_names": 3,
+        "expected_rows": 3,
+        "predicted_rows": 3,
+        "row_count_correct": true,
+        "all_names_correct": null,
+        "missing_or_misread": [],
+        "unmatched_predictions": [
+          "PASTUREEGGS",
+          "OPTIMUM",
+          "KSUNSLLIST"
+        ],
+        "printed_names": [],
+        "predicted_names": [
+          "PASTURE EGGS",
+          "OPTIMUM",
+          "KS UNSL LIST"
+        ]
+      },
+      {
+        "id": "c5fdc978-8f74-43bf-a5c5-e22d28f5aea9",
+        "store": "Costco",
+        "verified_names": 1,
+        "matched_names": 0,
+        "uncertain_names": 0,
+        "expected_rows": 1,
+        "predicted_rows": 0,
+        "row_count_correct": false,
+        "all_names_correct": false,
+        "missing_or_misread": [
+          "KSPISTACHIO"
+        ],
+        "unmatched_predictions": [],
+        "printed_names": [
+          "KS PISTACHIO"
+        ],
+        "predicted_names": []
+      },
+      {
+        "id": "ca76c352-9601-498c-8324-0ef9bcf5ea3b",
+        "store": "Costco",
+        "verified_names": 3,
+        "matched_names": 0,
+        "uncertain_names": 0,
+        "expected_rows": 3,
+        "predicted_rows": 0,
+        "row_count_correct": false,
+        "all_names_correct": false,
+        "missing_or_misread": [
+          "BLUEBERRIES",
+          "SALMON",
+          "KSPISTACHIO"
+        ],
+        "unmatched_predictions": [],
+        "printed_names": [
+          "BLUEBERRIES",
+          "SALMON",
+          "KS PISTACHIO"
+        ],
+        "predicted_names": []
+      },
+      {
+        "id": "4fc6a91b-faba-4d3e-82a3-be4c78270e99",
+        "store": "Costco",
+        "verified_names": 1,
+        "matched_names": 0,
+        "uncertain_names": 0,
+        "expected_rows": 1,
+        "predicted_rows": 0,
+        "row_count_correct": false,
+        "all_names_correct": false,
+        "missing_or_misread": [
+          "EXCGSDOWN"
+        ],
+        "unmatched_predictions": [],
+        "printed_names": [
+          "EXC GS DOWN"
+        ],
+        "predicted_names": []
+      },
+      {
+        "id": "6dd0be7d-4b6e-4b97-8a3d-c76de14f434c",
+        "store": "Costco",
+        "verified_names": 3,
+        "matched_names": 3,
+        "uncertain_names": 0,
+        "expected_rows": 3,
+        "predicted_rows": 3,
+        "row_count_correct": true,
+        "all_names_correct": true,
+        "missing_or_misread": [],
+        "unmatched_predictions": [],
+        "printed_names": [
+          "WHITE PEACH",
+          "B/S ATL SALM",
+          "SEABASS"
+        ],
+        "predicted_names": [
+          "WHITE PEACH",
+          "B/S ATL SALM",
+          "SEABASS"
+        ]
+      },
+      {
+        "id": "1b072114-24ee-4bb5-80a5-018ce442a512",
+        "store": "99 Ranch",
+        "verified_names": 9,
+        "matched_names": 9,
+        "uncertain_names": 0,
+        "expected_rows": 9,
+        "predicted_rows": 9,
+        "row_count_correct": true,
+        "all_names_correct": true,
+        "missing_or_misread": [],
+        "unmatched_predictions": [],
+        "printed_names": [
+          "MOGAMI 8-BLEND WHOLEGRAIN R",
+          "BIGEN SP CLR RFL 6 MD BROWN",
+          "BIGEN SPEEDY CLR 6 MD BROWN",
+          "ASN/TAS ORGANIC SOY BEAN PEA",
+          "ASN/TAS ORGANIC SOY BEAN PEA",
+          "RED ONION",
+          "LONG HOT PEPPER",
+          "ENVY APPLE",
+          "CHIVES"
+        ],
+        "predicted_names": [
+          "MOGAMI 8-BLEND WHOLEGRAIN R",
+          "BIGEN SP CLR RFL 6 MD BROWN",
+          "BIGEN SPEEDY CLR 6 MD BROWN",
+          "ASN/TAS ORGANIC SOY BEAN PEA",
+          "ASN/TAS ORGANIC SOY BEAN PEA",
+          "RED ONION",
+          "LONG HOT PEPPER",
+          "ENVY APPLE",
+          "CHIVES"
+        ]
+      },
+      {
+        "id": "b69bb2c5-7c75-4870-803e-25e321e086dd",
+        "store": "Target",
+        "verified_names": 1,
+        "matched_names": 0,
+        "uncertain_names": 0,
+        "expected_rows": 1,
+        "predicted_rows": 1,
+        "row_count_correct": true,
+        "all_names_correct": false,
+        "missing_or_misread": [
+          "FAGE"
+        ],
+        "unmatched_predictions": [
+          "GROCERY28400632FAGE"
+        ],
+        "printed_names": [
+          "FAGE"
+        ],
+        "predicted_names": [
+          "GROCERY 284'00632 FAGE"
+        ]
+      }
+    ]
+  },
+  "nuextract3": {
+    "normalization": "NFKC, uppercase, letters/digits only; explicitly photo-reviewed same-item continuation forms accepted; no spelling correction, translation, SKU stripping or catalogue alias lookup",
+    "matching": "One-to-one exact normalized name multiset; duplicate printed rows count separately. Uncertain rows excluded from recall; receipts containing uncertain rows excluded from precision and whole-receipt exactness.",
+    "summary": {
+      "receipts": 24,
+      "matched_names": 38,
+      "verified_names": 93,
+      "name_recall": 0.40860215053763443,
+      "clear_matched_names": 35,
+      "clear_predicted_names": 56,
+      "clear_precision": 0.625,
+      "fully_correct_receipts": 7,
+      "fully_reviewable_receipts": 22,
+      "correct_row_counts": 18
+    },
+    "cases": [
+      {
+        "id": "2f97fc50-4cf3-47e1-bd44-ea6de95c774c",
+        "store": "99 Ranch",
+        "verified_names": 3,
+        "matched_names": 3,
+        "uncertain_names": 2,
+        "expected_rows": 5,
+        "predicted_rows": 5,
+        "row_count_correct": true,
+        "all_names_correct": null,
+        "missing_or_misread": [],
+        "unmatched_predictions": [
+          "BEIJINGYOGURTPLAIN60Z",
+          "BEIJINGYOGURTPLAIN60Z"
+        ],
+        "printed_names": [
+          "NONGFU SPRING GF JASMINE TEA",
+          "NONGFU SPRING GF JASMINE TEA",
+          "VITAL FARMS PASTURE RIASED L"
+        ],
+        "predicted_names": [
+          "NONGFU SPRING GF JASMINE TEA",
+          "NONGFU SPRING GF JASMINE TEA",
+          "BEIJING YOGURT PLAIN 60Z",
+          "BEIJING YOGURT PLAIN 60Z",
+          "VITAL FARMS PASTURE RIASED L"
+        ]
+      },
+      {
+        "id": "72a635b2-4b7e-4612-98ab-0f74d47fca59",
+        "store": "Feilong",
+        "verified_names": 7,
+        "matched_names": 0,
+        "uncertain_names": 0,
+        "expected_rows": 7,
+        "predicted_rows": 0,
+        "row_count_correct": false,
+        "all_names_correct": false,
+        "missing_or_misread": [
+          "CABBAGE",
+          "SCALLION",
+          "LONGHOTPEPPER",
+          "LIME",
+          "PURPLEONIONS",
+          "CHIVEFLOWER",
+          "BOKCHOYTIPS"
+        ],
+        "unmatched_predictions": [],
+        "printed_names": [
+          "CABBAGE",
+          "SCALLION",
+          "LONG HOT PEPPER",
+          "LIME",
+          "PURPLE ONIONS",
+          "CHIVE FLOWER",
+          "BOK CHOY TIPS"
+        ],
+        "predicted_names": []
+      },
+      {
+        "id": "e3843baa-904a-4bbf-bc21-278a1693d5c7",
+        "store": "H MART",
+        "verified_names": 4,
+        "matched_names": 4,
+        "uncertain_names": 0,
+        "expected_rows": 4,
+        "predicted_rows": 4,
+        "row_count_correct": true,
+        "all_names_correct": true,
+        "missing_or_misread": [],
+        "unmatched_predictions": [],
+        "printed_names": [
+          "FAGE TOTAL 2% GREE",
+          "FAGE TOTAL 2% GREE",
+          "SB BLUEBERRIES",
+          "SB BLUEBERRIES"
+        ],
+        "predicted_names": [
+          "FAGE TOTAL 2% GREE",
+          "FAGE TOTAL 2% GREE",
+          "SB BLUEBERRIES",
+          "SB BLUEBERRIES"
+        ]
+      },
+      {
+        "id": "4e491343-7593-42b4-b5b5-01e5648557ee",
+        "store": "Costco",
+        "verified_names": 4,
+        "matched_names": 0,
+        "uncertain_names": 0,
+        "expected_rows": 4,
+        "predicted_rows": 4,
+        "row_count_correct": true,
+        "all_names_correct": false,
+        "missing_or_misread": [
+          "ORGFREGGS",
+          "SALMON",
+          "GARLICHERB",
+          "WHITEPEACH"
+        ],
+        "unmatched_predictions": [
+          "1068083ORGFREGGS",
+          "10579SALMON",
+          "1478988GARLICHERB",
+          "2338WHITEPEACH"
+        ],
+        "printed_names": [
+          "ORG FR EGGS",
+          "SALMON",
+          "GARLIC HERB",
+          "WHITE PEACH"
+        ],
+        "predicted_names": [
+          "1068083 ORG FR EGGS",
+          "10579 SALMON",
+          "1478988 GARLIC HERB",
+          "2338 WHITE PEACH"
+        ]
+      },
+      {
+        "id": "6d9da1ec-c0fc-4905-82b4-4ebd11716b1c",
+        "store": "skyFOODS",
+        "verified_names": 7,
+        "matched_names": 0,
+        "uncertain_names": 0,
+        "expected_rows": 7,
+        "predicted_rows": 0,
+        "row_count_correct": false,
+        "all_names_correct": false,
+        "missing_or_misread": [
+          "LONGHOTPEPPER1POUNDS",
+          "CHIVES1POUNDS",
+          "BOKCHOYTIPS1POUNDS",
+          "MAPLEHILLWHOLEMILK",
+          "KANGLVJUMBODRIEDTOFU",
+          "KANGLVJUMBODRIEDTOFU",
+          "LKKSUPEREMEFIRSTDRAWS"
+        ],
+        "unmatched_predictions": [],
+        "printed_names": [
+          "LONG HOT PEPPER (1POUNDS)",
+          "CHIVES (1POUNDS)",
+          "BOK CHOY TIPS (1POUNDS)",
+          "MAPLEHILL WHOLE MILK",
+          "KANGLV JUMBO DRIED TOFU",
+          "KANGLV JUMBO DRIED TOFU",
+          "L.K.K SUPEREME FIRST DRAW S"
+        ],
+        "predicted_names": []
+      },
+      {
+        "id": "e6c62f11-3b8d-4ac0-a860-1756df0efa55",
+        "store": "Costco",
+        "verified_names": 8,
+        "matched_names": 7,
+        "uncertain_names": 0,
+        "expected_rows": 8,
+        "predicted_rows": 8,
+        "row_count_correct": true,
+        "all_names_correct": false,
+        "missing_or_misread": [
+          "KLXTRUSTCARE"
+        ],
+        "unmatched_predictions": [
+          "KLXTRUSTCHRE"
+        ],
+        "printed_names": [
+          "*BOUNTYADV*",
+          "**CHARMIN**",
+          "KLXTRUSTCARE",
+          "SIETEMAIZ SS",
+          "KS KETTLE",
+          "ORAL-B X-FIL",
+          "ORG STACY28Z",
+          "*40/.5WATER*"
+        ],
+        "predicted_names": [
+          "BOUNTYADV",
+          "CHARMIN",
+          "KLXTRUSTCHRE",
+          "SIETEMAIZ SS",
+          "KS KETTLE",
+          "ORAL-B X-FIL",
+          "ORG STACY28Z",
+          "*40/.5WATER*"
+        ]
+      },
+      {
+        "id": "73953603-31f5-496a-9dd4-76fc845c8398",
+        "store": "skyFOODS",
+        "verified_names": 4,
+        "matched_names": 4,
+        "uncertain_names": 0,
+        "expected_rows": 4,
+        "predicted_rows": 4,
+        "row_count_correct": true,
+        "all_names_correct": true,
+        "missing_or_misread": [],
+        "unmatched_predictions": [],
+        "printed_names": [
+          "TAIWAN CABBAGE (1POUNDS)",
+          "BOK CHOY TIPS (1POUNDS)",
+          "CHIVES FLOWERS (1BUNDLE)",
+          "LONG HOT PEPPER (1POUNDS)"
+        ],
+        "predicted_names": [
+          "TAIWAN CABBAGE (1POUNDS)",
+          "BOK CHOY TIPS (1POUNDS)",
+          "CHIVES FLOWERS (1BUNDLE)",
+          "LONG HOT PEPPER (1POUNDS)"
+        ]
+      },
+      {
+        "id": "d7f8ff6d-6502-4eeb-8850-2f15b131988f",
+        "store": "skyFOODS",
+        "verified_names": 3,
+        "matched_names": 3,
+        "uncertain_names": 0,
+        "expected_rows": 3,
+        "predicted_rows": 3,
+        "row_count_correct": true,
+        "all_names_correct": true,
+        "missing_or_misread": [],
+        "unmatched_predictions": [],
+        "printed_names": [
+          "TAIWAN CABBAGE (1POUNDS)",
+          "ONION (1POUNDS)",
+          "LONG HOT PEPPER (1POUNDS)"
+        ],
+        "predicted_names": [
+          "TAIWAN CABBAGE (1POUNDS)",
+          "ONION (1POUNDS)",
+          "LONG HOT PEPPER (1POUNDS)"
+        ]
+      },
+      {
+        "id": "a31f7e6b-8bb1-49c8-a292-504d76d1a59c",
+        "store": "skyFOODS",
+        "verified_names": 4,
+        "matched_names": 0,
+        "uncertain_names": 0,
+        "expected_rows": 4,
+        "predicted_rows": 0,
+        "row_count_correct": false,
+        "all_names_correct": false,
+        "missing_or_misread": [
+          "CTCSQCOOKIESWHEAT",
+          "KKSMOKEDTOFU",
+          "HLSFLAVORPEANUTSPICY",
+          "CHINESELEEK1POUNDS"
+        ],
+        "unmatched_predictions": [],
+        "printed_names": [
+          "CTC SQ COOKIES ( WHEAT)",
+          "KK SMOKED TOFU",
+          "HLS FLAVOR PEANUT-SPICY",
+          "CHINESE LEEK (1POUNDS)"
+        ],
+        "predicted_names": []
+      },
+      {
+        "id": "8572dcef-7f7f-4d77-80c6-0ede75d45fa3",
+        "store": "Costco",
+        "verified_names": 9,
+        "matched_names": 9,
+        "uncertain_names": 0,
+        "expected_rows": 9,
+        "predicted_rows": 9,
+        "row_count_correct": true,
+        "all_names_correct": true,
+        "missing_or_misread": [],
+        "unmatched_predictions": [],
+        "printed_names": [
+          "PTOWELHOLDER",
+          "SOCK SALMON",
+          "KS UNSL PIST",
+          "KS QUINOA",
+          "KS WALNUTS",
+          "KS ORG TOFU",
+          "ORGNC BS THG",
+          "KS ICE CREAM",
+          "WHITE PEACH"
+        ],
+        "predicted_names": [
+          "PTOWELHOLDER",
+          "SOCK SALMON",
+          "KS UNSL. PIST",
+          "KS QUINOA",
+          "KS WALNUTS",
+          "KS ORG TOFU",
+          "ORGNC BS THG",
+          "KS ICE CREAM",
+          "WHITE PEACH"
+        ]
+      },
+      {
+        "id": "3a8e3c19-e8d0-4ea8-8fa3-06e3cd5fcfd4",
+        "store": "Costco",
+        "verified_names": 5,
+        "matched_names": 0,
+        "uncertain_names": 0,
+        "expected_rows": 5,
+        "predicted_rows": 5,
+        "row_count_correct": true,
+        "all_names_correct": false,
+        "missing_or_misread": [
+          "OMGA3FSHOIL",
+          "KSB12SUBL",
+          "NINJACRISPI",
+          "OCEANMIST",
+          "OCEANMIST"
+        ],
+        "unmatched_predictions": [
+          "1683859OMEGA3FSHOIL",
+          "690843KSB12SUBL",
+          "1898552NINJACRISPI",
+          "1121864OCEANMIST",
+          "1121864OCEANMIST"
+        ],
+        "printed_names": [
+          "OMGA3 FSHOIL",
+          "KS B12 SUBL.",
+          "NINJA CRISPI",
+          "OCEAN MIST",
+          "OCEAN MIST"
+        ],
+        "predicted_names": [
+          "1683859 OMEGA3 FSHOIL",
+          "690843 KS B12 SUBL.",
+          "1898552 NINJA CRISPI",
+          "1121864 OCEAN MIST",
+          "1121864 OCEAN MIST"
+        ]
+      },
+      {
+        "id": "e9ee06e0-f4aa-4c3c-812a-4e8abc21e3f0",
+        "store": "skyFOODS",
+        "verified_names": 4,
+        "matched_names": 4,
+        "uncertain_names": 0,
+        "expected_rows": 4,
+        "predicted_rows": 4,
+        "row_count_correct": true,
+        "all_names_correct": true,
+        "missing_or_misread": [],
+        "unmatched_predictions": [],
+        "printed_names": [
+          "BOK CHOY TIPS (1POUNDS)",
+          "CHIVES (1POUNDS)",
+          "LONG HOT PEPPER (1POUNDS)",
+          "KL FIRM TOFU"
+        ],
+        "predicted_names": [
+          "BOK CHOY TIPS (1POUNDS)",
+          "CHIVES (1POUNDS)",
+          "LONG HOT PEPPER (1POUNDS)",
+          "KL FIRM TOFU"
+        ]
+      },
+      {
+        "id": "924e246e-c811-497a-a61b-6b5724f7bacd",
+        "store": "Costco",
+        "verified_names": 2,
+        "matched_names": 0,
+        "uncertain_names": 0,
+        "expected_rows": 2,
+        "predicted_rows": 2,
+        "row_count_correct": true,
+        "all_names_correct": false,
+        "missing_or_misread": [
+          "KSWALNUTS",
+          "STEELHEAD"
+        ],
+        "unmatched_predictions": [
+          "36285KSWALNUTS",
+          "27201STEELHEAD"
+        ],
+        "printed_names": [
+          "KS WALNUTS",
+          "STEELHEAD"
+        ],
+        "predicted_names": [
+          "36285 KS WALNUTS",
+          "27201 STEELHEAD"
+        ]
+      },
+      {
+        "id": "e297a3d3-f9f1-4ba7-8e5e-a18e56fdecdd",
+        "store": "H MART",
+        "verified_names": 1,
+        "matched_names": 1,
+        "uncertain_names": 0,
+        "expected_rows": 1,
+        "predicted_rows": 1,
+        "row_count_correct": true,
+        "all_names_correct": true,
+        "missing_or_misread": [],
+        "unmatched_predictions": [],
+        "printed_names": [
+          "ENVY APPLE"
+        ],
+        "predicted_names": [
+          "ENVY APPLE"
+        ]
+      },
+      {
+        "id": "a6618e05-1d59-453f-90e9-4bbf87a3830c",
+        "store": "H MART",
+        "verified_names": 2,
+        "matched_names": 1,
+        "uncertain_names": 0,
+        "expected_rows": 2,
+        "predicted_rows": 2,
+        "row_count_correct": true,
+        "all_names_correct": false,
+        "missing_or_misread": [
+          "ENVYAPPLE"
+        ],
+        "unmatched_predictions": [
+          "WTENVYAPPLE"
+        ],
+        "printed_names": [
+          "FAGE TOTAL 2% GREE",
+          "ENVY APPLE"
+        ],
+        "predicted_names": [
+          "FAGE TOTAL 2% GREE",
+          "WT ENVY APPLE"
+        ]
+      },
+      {
+        "id": "ebf82f5b-c4e7-4a49-8ce7-927233bfde95",
+        "store": "skyFOODS",
+        "verified_names": 6,
+        "matched_names": 0,
+        "uncertain_names": 0,
+        "expected_rows": 6,
+        "predicted_rows": 0,
+        "row_count_correct": false,
+        "all_names_correct": false,
+        "missing_or_misread": [
+          "TTXCHOPPEDCHILIPASTE",
+          "CHINESELEEK1POUNDS",
+          "HDLSPICYSAUCE",
+          "KANGLVJUMBODRIEDTOFU",
+          "KANGLVJUMBODRIEDTOFU",
+          "LUHUAWUCHANGRICE"
+        ],
+        "unmatched_predictions": [],
+        "printed_names": [
+          "TTX CHOPPED CHILI PASTE",
+          "CHINESE LEEK (1POUNDS)",
+          "H.D.L SPICY SAUCE",
+          "KANGLV JUMBO DRIED TOFU",
+          "KANGLV JUMBO DRIED TOFU",
+          "LUHUA WUCHANG RICE"
+        ],
+        "predicted_names": []
+      },
+      {
+        "id": "5331c892-9fb6-42b5-bdb3-5a205b1a0767",
+        "store": "skyFOODS",
+        "verified_names": 2,
+        "matched_names": 2,
+        "uncertain_names": 0,
+        "expected_rows": 2,
+        "predicted_rows": 2,
+        "row_count_correct": true,
+        "all_names_correct": true,
+        "missing_or_misread": [],
+        "unmatched_predictions": [],
+        "printed_names": [
+          "BOK CHOY TIPS (1POUNDS)",
+          "LONG HOT PEPPER (1POUNDS)"
+        ],
+        "predicted_names": [
+          "BOK CHOY TIPS (1POUNDS)",
+          "LONG HOT PEPPER (1POUNDS)"
+        ]
+      },
+      {
+        "id": "20267232-d4d0-4540-9c14-b0e051b06445",
+        "store": "Costco",
+        "verified_names": 0,
+        "matched_names": 0,
+        "uncertain_names": 3,
+        "expected_rows": 3,
+        "predicted_rows": 3,
+        "row_count_correct": true,
+        "all_names_correct": null,
+        "missing_or_misread": [],
+        "unmatched_predictions": [
+          "PASTUREEGGS",
+          "OPTIMUM",
+          "KSUNSLMIST"
+        ],
+        "printed_names": [],
+        "predicted_names": [
+          "PASTURE EGGS",
+          "OPTIMUM",
+          "KS UNSL MIST"
+        ]
+      },
+      {
+        "id": "c5fdc978-8f74-43bf-a5c5-e22d28f5aea9",
+        "store": "Costco",
+        "verified_names": 1,
+        "matched_names": 0,
+        "uncertain_names": 0,
+        "expected_rows": 1,
+        "predicted_rows": 1,
+        "row_count_correct": true,
+        "all_names_correct": false,
+        "missing_or_misread": [
+          "KSPISTACHIO"
+        ],
+        "unmatched_predictions": [
+          "545345KSPISTACHIO"
+        ],
+        "printed_names": [
+          "KS PISTACHIO"
+        ],
+        "predicted_names": [
+          "545345 KS PISTACHIO"
+        ]
+      },
+      {
+        "id": "ca76c352-9601-498c-8324-0ef9bcf5ea3b",
+        "store": "Costco",
+        "verified_names": 3,
+        "matched_names": 0,
+        "uncertain_names": 0,
+        "expected_rows": 3,
+        "predicted_rows": 3,
+        "row_count_correct": true,
+        "all_names_correct": false,
+        "missing_or_misread": [
+          "BLUEBERRIES",
+          "SALMON",
+          "KSPISTACHIO"
+        ],
+        "unmatched_predictions": [
+          "57554BLUEBERRIES",
+          "10579SALMON",
+          "545345KSPISTACHIO"
+        ],
+        "printed_names": [
+          "BLUEBERRIES",
+          "SALMON",
+          "KS PISTACHIO"
+        ],
+        "predicted_names": [
+          "57554 BLUEBERRIES",
+          "10579 SALMON",
+          "545345 KS PISTACHIO"
+        ]
+      },
+      {
+        "id": "4fc6a91b-faba-4d3e-82a3-be4c78270e99",
+        "store": "Costco",
+        "verified_names": 1,
+        "matched_names": 0,
+        "uncertain_names": 0,
+        "expected_rows": 1,
+        "predicted_rows": 0,
+        "row_count_correct": false,
+        "all_names_correct": false,
+        "missing_or_misread": [
+          "EXCGSDOWN"
+        ],
+        "unmatched_predictions": [],
+        "printed_names": [
+          "EXC GS DOWN"
+        ],
+        "predicted_names": []
+      },
+      {
+        "id": "6dd0be7d-4b6e-4b97-8a3d-c76de14f434c",
+        "store": "Costco",
+        "verified_names": 3,
+        "matched_names": 0,
+        "uncertain_names": 0,
+        "expected_rows": 3,
+        "predicted_rows": 3,
+        "row_count_correct": true,
+        "all_names_correct": false,
+        "missing_or_misread": [
+          "WHITEPEACH",
+          "BSATLSALM",
+          "SEABASS"
+        ],
+        "unmatched_predictions": [
+          "2338WHITEPEACH",
+          "96493BSATLSALM",
+          "24070SEABASS"
+        ],
+        "printed_names": [
+          "WHITE PEACH",
+          "B/S ATL SALM",
+          "SEABASS"
+        ],
+        "predicted_names": [
+          "2338 WHITE PEACH",
+          "96493 B/S ATL SALM",
+          "24070 SEABASS"
+        ]
+      },
+      {
+        "id": "1b072114-24ee-4bb5-80a5-018ce442a512",
+        "store": "99 Ranch",
+        "verified_names": 9,
+        "matched_names": 0,
+        "uncertain_names": 0,
+        "expected_rows": 9,
+        "predicted_rows": 0,
+        "row_count_correct": false,
+        "all_names_correct": false,
+        "missing_or_misread": [
+          "MOGAMI8BLENDWHOLEGRAINR",
+          "BIGENSPCLRRFL6MDBROWN",
+          "BIGENSPEEDYCLR6MDBROWN",
+          "ASNTASORGANICSOYBEANPEA",
+          "ASNTASORGANICSOYBEANPEA",
+          "REDONION",
+          "LONGHOTPEPPER",
+          "ENVYAPPLE",
+          "CHIVES"
+        ],
+        "unmatched_predictions": [],
+        "printed_names": [
+          "MOGAMI 8-BLEND WHOLEGRAIN R",
+          "BIGEN SP CLR RFL 6 MD BROWN",
+          "BIGEN SPEEDY CLR 6 MD BROWN",
+          "ASN/TAS ORGANIC SOY BEAN PEA",
+          "ASN/TAS ORGANIC SOY BEAN PEA",
+          "RED ONION",
+          "LONG HOT PEPPER",
+          "ENVY APPLE",
+          "CHIVES"
+        ],
+        "predicted_names": []
+      },
+      {
+        "id": "b69bb2c5-7c75-4870-803e-25e321e086dd",
+        "store": "Target",
+        "verified_names": 1,
+        "matched_names": 0,
+        "uncertain_names": 0,
+        "expected_rows": 1,
+        "predicted_rows": 1,
+        "row_count_correct": true,
+        "all_names_correct": false,
+        "missing_or_misread": [
+          "FAGE"
+        ],
+        "unmatched_predictions": [
+          "28400632FAGE"
+        ],
+        "printed_names": [
+          "FAGE"
+        ],
+        "predicted_names": [
+          "28400632 FAGE"
+        ]
+      }
+    ]
+  },
+  "nuextract2": {
+    "normalization": "NFKC, uppercase, letters/digits only; explicitly photo-reviewed same-item continuation forms accepted; no spelling correction, translation, SKU stripping or catalogue alias lookup",
+    "matching": "One-to-one exact normalized name multiset; duplicate printed rows count separately. Uncertain rows excluded from recall; receipts containing uncertain rows excluded from precision and whole-receipt exactness.",
+    "summary": {
+      "receipts": 24,
+      "matched_names": 0,
+      "verified_names": 93,
+      "name_recall": 0.0,
+      "clear_matched_names": 0,
+      "clear_predicted_names": 0,
+      "clear_precision": 0,
+      "fully_correct_receipts": 0,
+      "fully_reviewable_receipts": 22,
+      "correct_row_counts": 0
+    },
+    "cases": [
+      {
+        "id": "2f97fc50-4cf3-47e1-bd44-ea6de95c774c",
+        "store": "99 Ranch",
+        "verified_names": 3,
+        "matched_names": 0,
+        "uncertain_names": 2,
+        "expected_rows": 5,
+        "predicted_rows": 0,
+        "row_count_correct": false,
+        "all_names_correct": null,
+        "missing_or_misread": [
+          "NONGFUSPRINGGFJASMINETEA",
+          "NONGFUSPRINGGFJASMINETEA",
+          "VITALFARMSPASTURERIASEDL"
+        ],
+        "unmatched_predictions": [],
+        "printed_names": [
+          "NONGFU SPRING GF JASMINE TEA",
+          "NONGFU SPRING GF JASMINE TEA",
+          "VITAL FARMS PASTURE RIASED L"
+        ],
+        "predicted_names": []
+      },
+      {
+        "id": "72a635b2-4b7e-4612-98ab-0f74d47fca59",
+        "store": "Feilong",
+        "verified_names": 7,
+        "matched_names": 0,
+        "uncertain_names": 0,
+        "expected_rows": 7,
+        "predicted_rows": 0,
+        "row_count_correct": false,
+        "all_names_correct": false,
+        "missing_or_misread": [
+          "CABBAGE",
+          "SCALLION",
+          "LONGHOTPEPPER",
+          "LIME",
+          "PURPLEONIONS",
+          "CHIVEFLOWER",
+          "BOKCHOYTIPS"
+        ],
+        "unmatched_predictions": [],
+        "printed_names": [
+          "CABBAGE",
+          "SCALLION",
+          "LONG HOT PEPPER",
+          "LIME",
+          "PURPLE ONIONS",
+          "CHIVE FLOWER",
+          "BOK CHOY TIPS"
+        ],
+        "predicted_names": []
+      },
+      {
+        "id": "e3843baa-904a-4bbf-bc21-278a1693d5c7",
+        "store": "H MART",
+        "verified_names": 4,
+        "matched_names": 0,
+        "uncertain_names": 0,
+        "expected_rows": 4,
+        "predicted_rows": 0,
+        "row_count_correct": false,
+        "all_names_correct": false,
+        "missing_or_misread": [
+          "FAGETOTAL2GREE",
+          "FAGETOTAL2GREE",
+          "SBBLUEBERRIES",
+          "SBBLUEBERRIES"
+        ],
+        "unmatched_predictions": [],
+        "printed_names": [
+          "FAGE TOTAL 2% GREE",
+          "FAGE TOTAL 2% GREE",
+          "SB BLUEBERRIES",
+          "SB BLUEBERRIES"
+        ],
+        "predicted_names": []
+      },
+      {
+        "id": "4e491343-7593-42b4-b5b5-01e5648557ee",
+        "store": "Costco",
+        "verified_names": 4,
+        "matched_names": 0,
+        "uncertain_names": 0,
+        "expected_rows": 4,
+        "predicted_rows": 0,
+        "row_count_correct": false,
+        "all_names_correct": false,
+        "missing_or_misread": [
+          "ORGFREGGS",
+          "SALMON",
+          "GARLICHERB",
+          "WHITEPEACH"
+        ],
+        "unmatched_predictions": [],
+        "printed_names": [
+          "ORG FR EGGS",
+          "SALMON",
+          "GARLIC HERB",
+          "WHITE PEACH"
+        ],
+        "predicted_names": []
+      },
+      {
+        "id": "6d9da1ec-c0fc-4905-82b4-4ebd11716b1c",
+        "store": "skyFOODS",
+        "verified_names": 7,
+        "matched_names": 0,
+        "uncertain_names": 0,
+        "expected_rows": 7,
+        "predicted_rows": 0,
+        "row_count_correct": false,
+        "all_names_correct": false,
+        "missing_or_misread": [
+          "LONGHOTPEPPER1POUNDS",
+          "CHIVES1POUNDS",
+          "BOKCHOYTIPS1POUNDS",
+          "MAPLEHILLWHOLEMILK",
+          "KANGLVJUMBODRIEDTOFU",
+          "KANGLVJUMBODRIEDTOFU",
+          "LKKSUPEREMEFIRSTDRAWS"
+        ],
+        "unmatched_predictions": [],
+        "printed_names": [
+          "LONG HOT PEPPER (1POUNDS)",
+          "CHIVES (1POUNDS)",
+          "BOK CHOY TIPS (1POUNDS)",
+          "MAPLEHILL WHOLE MILK",
+          "KANGLV JUMBO DRIED TOFU",
+          "KANGLV JUMBO DRIED TOFU",
+          "L.K.K SUPEREME FIRST DRAW S"
+        ],
+        "predicted_names": []
+      },
+      {
+        "id": "e6c62f11-3b8d-4ac0-a860-1756df0efa55",
+        "store": "Costco",
+        "verified_names": 8,
+        "matched_names": 0,
+        "uncertain_names": 0,
+        "expected_rows": 8,
+        "predicted_rows": 0,
+        "row_count_correct": false,
+        "all_names_correct": false,
+        "missing_or_misread": [
+          "BOUNTYADV",
+          "CHARMIN",
+          "KLXTRUSTCARE",
+          "SIETEMAIZSS",
+          "KSKETTLE",
+          "ORALBXFIL",
+          "ORGSTACY28Z",
+          "405WATER"
+        ],
+        "unmatched_predictions": [],
+        "printed_names": [
+          "*BOUNTYADV*",
+          "**CHARMIN**",
+          "KLXTRUSTCARE",
+          "SIETEMAIZ SS",
+          "KS KETTLE",
+          "ORAL-B X-FIL",
+          "ORG STACY28Z",
+          "*40/.5WATER*"
+        ],
+        "predicted_names": []
+      },
+      {
+        "id": "73953603-31f5-496a-9dd4-76fc845c8398",
+        "store": "skyFOODS",
+        "verified_names": 4,
+        "matched_names": 0,
+        "uncertain_names": 0,
+        "expected_rows": 4,
+        "predicted_rows": 0,
+        "row_count_correct": false,
+        "all_names_correct": false,
+        "missing_or_misread": [
+          "TAIWANCABBAGE1POUNDS",
+          "BOKCHOYTIPS1POUNDS",
+          "CHIVESFLOWERS1BUNDLE",
+          "LONGHOTPEPPER1POUNDS"
+        ],
+        "unmatched_predictions": [],
+        "printed_names": [
+          "TAIWAN CABBAGE (1POUNDS)",
+          "BOK CHOY TIPS (1POUNDS)",
+          "CHIVES FLOWERS (1BUNDLE)",
+          "LONG HOT PEPPER (1POUNDS)"
+        ],
+        "predicted_names": []
+      },
+      {
+        "id": "d7f8ff6d-6502-4eeb-8850-2f15b131988f",
+        "store": "skyFOODS",
+        "verified_names": 3,
+        "matched_names": 0,
+        "uncertain_names": 0,
+        "expected_rows": 3,
+        "predicted_rows": 0,
+        "row_count_correct": false,
+        "all_names_correct": false,
+        "missing_or_misread": [
+          "TAIWANCABBAGE1POUNDS",
+          "ONION1POUNDS",
+          "LONGHOTPEPPER1POUNDS"
+        ],
+        "unmatched_predictions": [],
+        "printed_names": [
+          "TAIWAN CABBAGE (1POUNDS)",
+          "ONION (1POUNDS)",
+          "LONG HOT PEPPER (1POUNDS)"
+        ],
+        "predicted_names": []
+      },
+      {
+        "id": "a31f7e6b-8bb1-49c8-a292-504d76d1a59c",
+        "store": "skyFOODS",
+        "verified_names": 4,
+        "matched_names": 0,
+        "uncertain_names": 0,
+        "expected_rows": 4,
+        "predicted_rows": 0,
+        "row_count_correct": false,
+        "all_names_correct": false,
+        "missing_or_misread": [
+          "CTCSQCOOKIESWHEAT",
+          "KKSMOKEDTOFU",
+          "HLSFLAVORPEANUTSPICY",
+          "CHINESELEEK1POUNDS"
+        ],
+        "unmatched_predictions": [],
+        "printed_names": [
+          "CTC SQ COOKIES ( WHEAT)",
+          "KK SMOKED TOFU",
+          "HLS FLAVOR PEANUT-SPICY",
+          "CHINESE LEEK (1POUNDS)"
+        ],
+        "predicted_names": []
+      },
+      {
+        "id": "8572dcef-7f7f-4d77-80c6-0ede75d45fa3",
+        "store": "Costco",
+        "verified_names": 9,
+        "matched_names": 0,
+        "uncertain_names": 0,
+        "expected_rows": 9,
+        "predicted_rows": 0,
+        "row_count_correct": false,
+        "all_names_correct": false,
+        "missing_or_misread": [
+          "PTOWELHOLDER",
+          "SOCKSALMON",
+          "KSUNSLPIST",
+          "KSQUINOA",
+          "KSWALNUTS",
+          "KSORGTOFU",
+          "ORGNCBSTHG",
+          "KSICECREAM",
+          "WHITEPEACH"
+        ],
+        "unmatched_predictions": [],
+        "printed_names": [
+          "PTOWELHOLDER",
+          "SOCK SALMON",
+          "KS UNSL PIST",
+          "KS QUINOA",
+          "KS WALNUTS",
+          "KS ORG TOFU",
+          "ORGNC BS THG",
+          "KS ICE CREAM",
+          "WHITE PEACH"
+        ],
+        "predicted_names": []
+      },
+      {
+        "id": "3a8e3c19-e8d0-4ea8-8fa3-06e3cd5fcfd4",
+        "store": "Costco",
+        "verified_names": 5,
+        "matched_names": 0,
+        "uncertain_names": 0,
+        "expected_rows": 5,
+        "predicted_rows": 0,
+        "row_count_correct": false,
+        "all_names_correct": false,
+        "missing_or_misread": [
+          "OMGA3FSHOIL",
+          "KSB12SUBL",
+          "NINJACRISPI",
+          "OCEANMIST",
+          "OCEANMIST"
+        ],
+        "unmatched_predictions": [],
+        "printed_names": [
+          "OMGA3 FSHOIL",
+          "KS B12 SUBL.",
+          "NINJA CRISPI",
+          "OCEAN MIST",
+          "OCEAN MIST"
+        ],
+        "predicted_names": []
+      },
+      {
+        "id": "e9ee06e0-f4aa-4c3c-812a-4e8abc21e3f0",
+        "store": "skyFOODS",
+        "verified_names": 4,
+        "matched_names": 0,
+        "uncertain_names": 0,
+        "expected_rows": 4,
+        "predicted_rows": 0,
+        "row_count_correct": false,
+        "all_names_correct": false,
+        "missing_or_misread": [
+          "BOKCHOYTIPS1POUNDS",
+          "CHIVES1POUNDS",
+          "LONGHOTPEPPER1POUNDS",
+          "KLFIRMTOFU"
+        ],
+        "unmatched_predictions": [],
+        "printed_names": [
+          "BOK CHOY TIPS (1POUNDS)",
+          "CHIVES (1POUNDS)",
+          "LONG HOT PEPPER (1POUNDS)",
+          "KL FIRM TOFU"
+        ],
+        "predicted_names": []
+      },
+      {
+        "id": "924e246e-c811-497a-a61b-6b5724f7bacd",
+        "store": "Costco",
+        "verified_names": 2,
+        "matched_names": 0,
+        "uncertain_names": 0,
+        "expected_rows": 2,
+        "predicted_rows": 0,
+        "row_count_correct": false,
+        "all_names_correct": false,
+        "missing_or_misread": [
+          "KSWALNUTS",
+          "STEELHEAD"
+        ],
+        "unmatched_predictions": [],
+        "printed_names": [
+          "KS WALNUTS",
+          "STEELHEAD"
+        ],
+        "predicted_names": []
+      },
+      {
+        "id": "e297a3d3-f9f1-4ba7-8e5e-a18e56fdecdd",
+        "store": "H MART",
+        "verified_names": 1,
+        "matched_names": 0,
+        "uncertain_names": 0,
+        "expected_rows": 1,
+        "predicted_rows": 0,
+        "row_count_correct": false,
+        "all_names_correct": false,
+        "missing_or_misread": [
+          "ENVYAPPLE"
+        ],
+        "unmatched_predictions": [],
+        "printed_names": [
+          "ENVY APPLE"
+        ],
+        "predicted_names": []
+      },
+      {
+        "id": "a6618e05-1d59-453f-90e9-4bbf87a3830c",
+        "store": "H MART",
+        "verified_names": 2,
+        "matched_names": 0,
+        "uncertain_names": 0,
+        "expected_rows": 2,
+        "predicted_rows": 0,
+        "row_count_correct": false,
+        "all_names_correct": false,
+        "missing_or_misread": [
+          "FAGETOTAL2GREE",
+          "ENVYAPPLE"
+        ],
+        "unmatched_predictions": [],
+        "printed_names": [
+          "FAGE TOTAL 2% GREE",
+          "ENVY APPLE"
+        ],
+        "predicted_names": []
+      },
+      {
+        "id": "ebf82f5b-c4e7-4a49-8ce7-927233bfde95",
+        "store": "skyFOODS",
+        "verified_names": 6,
+        "matched_names": 0,
+        "uncertain_names": 0,
+        "expected_rows": 6,
+        "predicted_rows": 0,
+        "row_count_correct": false,
+        "all_names_correct": false,
+        "missing_or_misread": [
+          "TTXCHOPPEDCHILIPASTE",
+          "CHINESELEEK1POUNDS",
+          "HDLSPICYSAUCE",
+          "KANGLVJUMBODRIEDTOFU",
+          "KANGLVJUMBODRIEDTOFU",
+          "LUHUAWUCHANGRICE"
+        ],
+        "unmatched_predictions": [],
+        "printed_names": [
+          "TTX CHOPPED CHILI PASTE",
+          "CHINESE LEEK (1POUNDS)",
+          "H.D.L SPICY SAUCE",
+          "KANGLV JUMBO DRIED TOFU",
+          "KANGLV JUMBO DRIED TOFU",
+          "LUHUA WUCHANG RICE"
+        ],
+        "predicted_names": []
+      },
+      {
+        "id": "5331c892-9fb6-42b5-bdb3-5a205b1a0767",
+        "store": "skyFOODS",
+        "verified_names": 2,
+        "matched_names": 0,
+        "uncertain_names": 0,
+        "expected_rows": 2,
+        "predicted_rows": 0,
+        "row_count_correct": false,
+        "all_names_correct": false,
+        "missing_or_misread": [
+          "BOKCHOYTIPS1POUNDS",
+          "LONGHOTPEPPER1POUNDS"
+        ],
+        "unmatched_predictions": [],
+        "printed_names": [
+          "BOK CHOY TIPS (1POUNDS)",
+          "LONG HOT PEPPER (1POUNDS)"
+        ],
+        "predicted_names": []
+      },
+      {
+        "id": "20267232-d4d0-4540-9c14-b0e051b06445",
+        "store": "Costco",
+        "verified_names": 0,
+        "matched_names": 0,
+        "uncertain_names": 3,
+        "expected_rows": 3,
+        "predicted_rows": 0,
+        "row_count_correct": false,
+        "all_names_correct": null,
+        "missing_or_misread": [],
+        "unmatched_predictions": [],
+        "printed_names": [],
+        "predicted_names": []
+      },
+      {
+        "id": "c5fdc978-8f74-43bf-a5c5-e22d28f5aea9",
+        "store": "Costco",
+        "verified_names": 1,
+        "matched_names": 0,
+        "uncertain_names": 0,
+        "expected_rows": 1,
+        "predicted_rows": 0,
+        "row_count_correct": false,
+        "all_names_correct": false,
+        "missing_or_misread": [
+          "KSPISTACHIO"
+        ],
+        "unmatched_predictions": [],
+        "printed_names": [
+          "KS PISTACHIO"
+        ],
+        "predicted_names": []
+      },
+      {
+        "id": "ca76c352-9601-498c-8324-0ef9bcf5ea3b",
+        "store": "Costco",
+        "verified_names": 3,
+        "matched_names": 0,
+        "uncertain_names": 0,
+        "expected_rows": 3,
+        "predicted_rows": 0,
+        "row_count_correct": false,
+        "all_names_correct": false,
+        "missing_or_misread": [
+          "BLUEBERRIES",
+          "SALMON",
+          "KSPISTACHIO"
+        ],
+        "unmatched_predictions": [],
+        "printed_names": [
+          "BLUEBERRIES",
+          "SALMON",
+          "KS PISTACHIO"
+        ],
+        "predicted_names": []
+      },
+      {
+        "id": "4fc6a91b-faba-4d3e-82a3-be4c78270e99",
+        "store": "Costco",
+        "verified_names": 1,
+        "matched_names": 0,
+        "uncertain_names": 0,
+        "expected_rows": 1,
+        "predicted_rows": 0,
+        "row_count_correct": false,
+        "all_names_correct": false,
+        "missing_or_misread": [
+          "EXCGSDOWN"
+        ],
+        "unmatched_predictions": [],
+        "printed_names": [
+          "EXC GS DOWN"
+        ],
+        "predicted_names": []
+      },
+      {
+        "id": "6dd0be7d-4b6e-4b97-8a3d-c76de14f434c",
+        "store": "Costco",
+        "verified_names": 3,
+        "matched_names": 0,
+        "uncertain_names": 0,
+        "expected_rows": 3,
+        "predicted_rows": 0,
+        "row_count_correct": false,
+        "all_names_correct": false,
+        "missing_or_misread": [
+          "WHITEPEACH",
+          "BSATLSALM",
+          "SEABASS"
+        ],
+        "unmatched_predictions": [],
+        "printed_names": [
+          "WHITE PEACH",
+          "B/S ATL SALM",
+          "SEABASS"
+        ],
+        "predicted_names": []
+      },
+      {
+        "id": "1b072114-24ee-4bb5-80a5-018ce442a512",
+        "store": "99 Ranch",
+        "verified_names": 9,
+        "matched_names": 0,
+        "uncertain_names": 0,
+        "expected_rows": 9,
+        "predicted_rows": 0,
+        "row_count_correct": false,
+        "all_names_correct": false,
+        "missing_or_misread": [
+          "MOGAMI8BLENDWHOLEGRAINR",
+          "BIGENSPCLRRFL6MDBROWN",
+          "BIGENSPEEDYCLR6MDBROWN",
+          "ASNTASORGANICSOYBEANPEA",
+          "ASNTASORGANICSOYBEANPEA",
+          "REDONION",
+          "LONGHOTPEPPER",
+          "ENVYAPPLE",
+          "CHIVES"
+        ],
+        "unmatched_predictions": [],
+        "printed_names": [
+          "MOGAMI 8-BLEND WHOLEGRAIN R",
+          "BIGEN SP CLR RFL 6 MD BROWN",
+          "BIGEN SPEEDY CLR 6 MD BROWN",
+          "ASN/TAS ORGANIC SOY BEAN PEA",
+          "ASN/TAS ORGANIC SOY BEAN PEA",
+          "RED ONION",
+          "LONG HOT PEPPER",
+          "ENVY APPLE",
+          "CHIVES"
+        ],
+        "predicted_names": []
+      },
+      {
+        "id": "b69bb2c5-7c75-4870-803e-25e321e086dd",
+        "store": "Target",
+        "verified_names": 1,
+        "matched_names": 0,
+        "uncertain_names": 0,
+        "expected_rows": 1,
+        "predicted_rows": 0,
+        "row_count_correct": false,
+        "all_names_correct": false,
+        "missing_or_misread": [
+          "FAGE"
+        ],
+        "unmatched_predictions": [],
+        "printed_names": [
+          "FAGE"
+        ],
+        "predicted_names": []
+      }
+    ]
+  },
+  "dual": {
+    "normalization": "NFKC, uppercase, letters/digits only; explicitly photo-reviewed same-item continuation forms accepted; no spelling correction, translation, SKU stripping or catalogue alias lookup",
+    "matching": "One-to-one exact normalized name multiset; duplicate printed rows count separately. Uncertain rows excluded from recall; receipts containing uncertain rows excluded from precision and whole-receipt exactness.",
+    "summary": {
+      "receipts": 24,
+      "matched_names": 82,
+      "verified_names": 93,
+      "name_recall": 0.8817204301075269,
+      "clear_matched_names": 79,
+      "clear_predicted_names": 98,
+      "clear_precision": 0.8061224489795918,
+      "fully_correct_receipts": 14,
+      "fully_reviewable_receipts": 22,
+      "correct_row_counts": 20
+    },
+    "cases": [
+      {
+        "id": "2f97fc50-4cf3-47e1-bd44-ea6de95c774c",
+        "store": "99 Ranch",
+        "verified_names": 3,
+        "matched_names": 3,
+        "uncertain_names": 2,
+        "expected_rows": 5,
+        "predicted_rows": 5,
+        "row_count_correct": true,
+        "all_names_correct": null,
+        "missing_or_misread": [],
+        "unmatched_predictions": [
+          "BEIJINGYOGURTPLAIN60Z",
+          "BEIJINGYOGURTPLAIN60Z"
+        ],
+        "printed_names": [
+          "NONGFU SPRING GF JASMINE TEA",
+          "NONGFU SPRING GF JASMINE TEA",
+          "VITAL FARMS PASTURE RIASED L"
+        ],
+        "predicted_names": [
+          "NONGFU SPRING GF JASMINE TEA",
+          "NONGFU SPRING GF JASMINE TEA",
+          "BEIJING YOGURT PLAIN 60Z",
+          "BEIJING YOGURT PLAIN 60Z",
+          "VITAL FARMS PASTURE RIASED L"
+        ]
+      },
+      {
+        "id": "72a635b2-4b7e-4612-98ab-0f74d47fca59",
+        "store": "Feilong",
+        "verified_names": 7,
+        "matched_names": 0,
+        "uncertain_names": 0,
+        "expected_rows": 7,
+        "predicted_rows": 7,
+        "row_count_correct": true,
+        "all_names_correct": false,
+        "missing_or_misread": [
+          "CABBAGE",
+          "SCALLION",
+          "LONGHOTPEPPER",
+          "LIME",
+          "PURPLEONIONS",
+          "CHIVEFLOWER",
+          "BOKCHOYTIPS"
+        ],
+        "unmatched_predictions": [
+          "1CABBAGE",
+          "2SCALLION",
+          "1LONGHOTPEPPER",
+          "3LIME",
+          "1PURPLEONIONS",
+          "2CHIVEFLOWER",
+          "1BOKCHOYTIPS"
+        ],
+        "printed_names": [
+          "CABBAGE",
+          "SCALLION",
+          "LONG HOT PEPPER",
+          "LIME",
+          "PURPLE ONIONS",
+          "CHIVE FLOWER",
+          "BOK CHOY TIPS"
+        ],
+        "predicted_names": [
+          "1 CABBAGE",
+          "2 SCALLION",
+          "1 LONG HOT PEPPER",
+          "3 LIME",
+          "1 PURPLE ONIONS",
+          "2 CHIVE FLOWER",
+          "1 BOK CHOY TIPS"
+        ]
+      },
+      {
+        "id": "e3843baa-904a-4bbf-bc21-278a1693d5c7",
+        "store": "H MART",
+        "verified_names": 4,
+        "matched_names": 4,
+        "uncertain_names": 0,
+        "expected_rows": 4,
+        "predicted_rows": 8,
+        "row_count_correct": false,
+        "all_names_correct": false,
+        "missing_or_misread": [],
+        "unmatched_predictions": [
+          "REGULARPRICE1099YOUSAVED",
+          "REGULARPRICE1099YOUSAVED",
+          "REGULARPRICE1199YOUSAVED",
+          "REGULARPRICE1199YOUSAVED"
+        ],
+        "printed_names": [
+          "FAGE TOTAL 2% GREE",
+          "FAGE TOTAL 2% GREE",
+          "SB BLUEBERRIES",
+          "SB BLUEBERRIES"
+        ],
+        "predicted_names": [
+          "FAGE TOTAL 2% GREE",
+          "Regular Price 10.99, You saved",
+          "FAGE TOTAL 2% GREE",
+          "Regular Price 10.99, You saved",
+          "SB BLUEBERRIES",
+          "Regular Price 11.99, You saved",
+          "SB BLUEBERRIES",
+          "Regular Price 11.99, You saved"
+        ]
+      },
+      {
+        "id": "4e491343-7593-42b4-b5b5-01e5648557ee",
+        "store": "Costco",
+        "verified_names": 4,
+        "matched_names": 4,
+        "uncertain_names": 0,
+        "expected_rows": 4,
+        "predicted_rows": 4,
+        "row_count_correct": true,
+        "all_names_correct": true,
+        "missing_or_misread": [],
+        "unmatched_predictions": [],
+        "printed_names": [
+          "ORG FR EGGS",
+          "SALMON",
+          "GARLIC HERB",
+          "WHITE PEACH"
+        ],
+        "predicted_names": [
+          "ORG FR EGGS",
+          "SALMON",
+          "GARLIC HERB",
+          "WHITE PEACH"
+        ]
+      },
+      {
+        "id": "6d9da1ec-c0fc-4905-82b4-4ebd11716b1c",
+        "store": "skyFOODS",
+        "verified_names": 7,
+        "matched_names": 7,
+        "uncertain_names": 0,
+        "expected_rows": 7,
+        "predicted_rows": 7,
+        "row_count_correct": true,
+        "all_names_correct": true,
+        "missing_or_misread": [],
+        "unmatched_predictions": [],
+        "printed_names": [
+          "LONG HOT PEPPER (1POUNDS)",
+          "CHIVES (1POUNDS)",
+          "BOK CHOY TIPS (1POUNDS)",
+          "MAPLEHILL WHOLE MILK",
+          "KANGLV JUMBO DRIED TOFU",
+          "KANGLV JUMBO DRIED TOFU",
+          "L.K.K SUPEREME FIRST DRAW S"
+        ],
+        "predicted_names": [
+          "LONG HOT PEPPER (1POUNDS)",
+          "CHIVES (1POUNDS)",
+          "BOK CHOY TIPS (1POUNDS)",
+          "MAPLEHILL WHOLE MILK",
+          "KANGLV JUMBO DRIED TOFU",
+          "KANGLV JUMBO DRIED TOFU",
+          "L.K.K SUPEREME FIRST DRAW S"
+        ]
+      },
+      {
+        "id": "e6c62f11-3b8d-4ac0-a860-1756df0efa55",
+        "store": "Costco",
+        "verified_names": 8,
+        "matched_names": 8,
+        "uncertain_names": 0,
+        "expected_rows": 8,
+        "predicted_rows": 8,
+        "row_count_correct": true,
+        "all_names_correct": true,
+        "missing_or_misread": [],
+        "unmatched_predictions": [],
+        "printed_names": [
+          "*BOUNTYADV*",
+          "**CHARMIN**",
+          "KLXTRUSTCARE",
+          "SIETEMAIZ SS",
+          "KS KETTLE",
+          "ORAL-B X-FIL",
+          "ORG STACY28Z",
+          "*40/.5WATER*"
+        ],
+        "predicted_names": [
+          "*BOUNTYADV*",
+          "**CHARMIN**",
+          "KLXTRUSTCARE",
+          "SIETEMAIZ SS",
+          "KS KETTLE",
+          "ORAL-B X-FIL",
+          "ORG STACY28Z",
+          "*40/.5WATER*"
+        ]
+      },
+      {
+        "id": "73953603-31f5-496a-9dd4-76fc845c8398",
+        "store": "skyFOODS",
+        "verified_names": 4,
+        "matched_names": 4,
+        "uncertain_names": 0,
+        "expected_rows": 4,
+        "predicted_rows": 4,
+        "row_count_correct": true,
+        "all_names_correct": true,
+        "missing_or_misread": [],
+        "unmatched_predictions": [],
+        "printed_names": [
+          "TAIWAN CABBAGE (1POUNDS)",
+          "BOK CHOY TIPS (1POUNDS)",
+          "CHIVES FLOWERS (1BUNDLE)",
+          "LONG HOT PEPPER (1POUNDS)"
+        ],
+        "predicted_names": [
+          "TAIWAN CABBAGE (1POUNDS)",
+          "BOK CHOY TIPS (1POUNDS)",
+          "CHIVES FLOWERS (1BUNDLE)",
+          "LONG HOT PEPPER (1POUNDS)"
+        ]
+      },
+      {
+        "id": "d7f8ff6d-6502-4eeb-8850-2f15b131988f",
+        "store": "skyFOODS",
+        "verified_names": 3,
+        "matched_names": 3,
+        "uncertain_names": 0,
+        "expected_rows": 3,
+        "predicted_rows": 3,
+        "row_count_correct": true,
+        "all_names_correct": true,
+        "missing_or_misread": [],
+        "unmatched_predictions": [],
+        "printed_names": [
+          "TAIWAN CABBAGE (1POUNDS)",
+          "ONION (1POUNDS)",
+          "LONG HOT PEPPER (1POUNDS)"
+        ],
+        "predicted_names": [
+          "TAIWAN CABBAGE (1POUNDS)",
+          "ONION (1POUNDS)",
+          "LONG HOT PEPPER (1POUNDS)"
+        ]
+      },
+      {
+        "id": "a31f7e6b-8bb1-49c8-a292-504d76d1a59c",
+        "store": "skyFOODS",
+        "verified_names": 4,
+        "matched_names": 4,
+        "uncertain_names": 0,
+        "expected_rows": 4,
+        "predicted_rows": 4,
+        "row_count_correct": true,
+        "all_names_correct": true,
+        "missing_or_misread": [],
+        "unmatched_predictions": [],
+        "printed_names": [
+          "CTC SQ COOKIES ( WHEAT)",
+          "KK SMOKED TOFU",
+          "HLS FLAVOR PEANUT-SPICY",
+          "CHINESE LEEK (1POUNDS)"
+        ],
+        "predicted_names": [
+          "CTC SQ COOKIES ( WHEAT)",
+          "KK SMOKED TOFU",
+          "HLS FLAVOR PEANUT-SPICY",
+          "CHINESE LEEK (1POUNDS)"
+        ]
+      },
+      {
+        "id": "8572dcef-7f7f-4d77-80c6-0ede75d45fa3",
+        "store": "Costco",
+        "verified_names": 9,
+        "matched_names": 8,
+        "uncertain_names": 0,
+        "expected_rows": 9,
+        "predicted_rows": 9,
+        "row_count_correct": true,
+        "all_names_correct": false,
+        "missing_or_misread": [
+          "ORGNCBSTHG"
+        ],
+        "unmatched_predictions": [
+          "ORGNICESTHG"
+        ],
+        "printed_names": [
+          "PTOWELHOLDER",
+          "SOCK SALMON",
+          "KS UNSL PIST",
+          "KS QUINOA",
+          "KS WALNUTS",
+          "KS ORG TOFU",
+          "ORGNC BS THG",
+          "KS ICE CREAM",
+          "WHITE PEACH"
+        ],
+        "predicted_names": [
+          "PTOWELHOLDER",
+          "SOCK SALMON",
+          "KS UNSL PIST",
+          "KS QUINOA",
+          "KS WALNUTS",
+          "KS ORG TOFU",
+          "ORGNIC ES THG",
+          "KS ICE CREAM",
+          "WHITE PEACH"
+        ]
+      },
+      {
+        "id": "3a8e3c19-e8d0-4ea8-8fa3-06e3cd5fcfd4",
+        "store": "Costco",
+        "verified_names": 5,
+        "matched_names": 5,
+        "uncertain_names": 0,
+        "expected_rows": 5,
+        "predicted_rows": 5,
+        "row_count_correct": true,
+        "all_names_correct": true,
+        "missing_or_misread": [],
+        "unmatched_predictions": [],
+        "printed_names": [
+          "OMGA3 FSHOIL",
+          "KS B12 SUBL.",
+          "NINJA CRISPI",
+          "OCEAN MIST",
+          "OCEAN MIST"
+        ],
+        "predicted_names": [
+          "OMGA3 FSHOIL",
+          "KS B12 SUBL.",
+          "NINJA CRISPI",
+          "OCEAN MIST",
+          "OCEAN MIST"
+        ]
+      },
+      {
+        "id": "e9ee06e0-f4aa-4c3c-812a-4e8abc21e3f0",
+        "store": "skyFOODS",
+        "verified_names": 4,
+        "matched_names": 4,
+        "uncertain_names": 0,
+        "expected_rows": 4,
+        "predicted_rows": 4,
+        "row_count_correct": true,
+        "all_names_correct": true,
+        "missing_or_misread": [],
+        "unmatched_predictions": [],
+        "printed_names": [
+          "BOK CHOY TIPS (1POUNDS)",
+          "CHIVES (1POUNDS)",
+          "LONG HOT PEPPER (1POUNDS)",
+          "KL FIRM TOFU"
+        ],
+        "predicted_names": [
+          "BOK CHOY TIPS (1POUNDS)",
+          "CHIVES (1POUNDS)",
+          "LONG HOT PEPPER (1POUNDS)",
+          "KL FIRM TOFU"
+        ]
+      },
+      {
+        "id": "924e246e-c811-497a-a61b-6b5724f7bacd",
+        "store": "Costco",
+        "verified_names": 2,
+        "matched_names": 2,
+        "uncertain_names": 0,
+        "expected_rows": 2,
+        "predicted_rows": 2,
+        "row_count_correct": true,
+        "all_names_correct": true,
+        "missing_or_misread": [],
+        "unmatched_predictions": [],
+        "printed_names": [
+          "KS WALNUTS",
+          "STEELHEAD"
+        ],
+        "predicted_names": [
+          "KS WALNUTS",
+          "STEELHEAD"
+        ]
+      },
+      {
+        "id": "e297a3d3-f9f1-4ba7-8e5e-a18e56fdecdd",
+        "store": "H MART",
+        "verified_names": 1,
+        "matched_names": 1,
+        "uncertain_names": 0,
+        "expected_rows": 1,
+        "predicted_rows": 1,
+        "row_count_correct": true,
+        "all_names_correct": true,
+        "missing_or_misread": [],
+        "unmatched_predictions": [],
+        "printed_names": [
+          "ENVY APPLE"
+        ],
+        "predicted_names": [
+          "ENVY APPLE"
+        ]
+      },
+      {
+        "id": "a6618e05-1d59-453f-90e9-4bbf87a3830c",
+        "store": "H MART",
+        "verified_names": 2,
+        "matched_names": 2,
+        "uncertain_names": 0,
+        "expected_rows": 2,
+        "predicted_rows": 2,
+        "row_count_correct": true,
+        "all_names_correct": true,
+        "missing_or_misread": [],
+        "unmatched_predictions": [],
+        "printed_names": [
+          "FAGE TOTAL 2% GREE",
+          "ENVY APPLE"
+        ],
+        "predicted_names": [
+          "FAGE TOTAL 2% GREE",
+          "ENVY APPLE"
+        ]
+      },
+      {
+        "id": "ebf82f5b-c4e7-4a49-8ce7-927233bfde95",
+        "store": "skyFOODS",
+        "verified_names": 6,
+        "matched_names": 6,
+        "uncertain_names": 0,
+        "expected_rows": 6,
+        "predicted_rows": 8,
+        "row_count_correct": false,
+        "all_names_correct": false,
+        "missing_or_misread": [],
+        "unmatched_predictions": [
+          "QTYSP1DISC",
+          "QTYSP1DISC"
+        ],
+        "printed_names": [
+          "TTX CHOPPED CHILI PASTE",
+          "CHINESE LEEK (1POUNDS)",
+          "H.D.L SPICY SAUCE",
+          "KANGLV JUMBO DRIED TOFU",
+          "KANGLV JUMBO DRIED TOFU",
+          "LUHUA WUCHANG RICE"
+        ],
+        "predicted_names": [
+          "TTX CHOPPED CHILI PASTE",
+          "CHINESE LEEK (1POUNDS)",
+          "H.D.L SPICY SAUCE",
+          "KANGLV JUMBO DRIED TOFU",
+          "Qty Sp1 Disc.",
+          "KANGLV JUMBO DRIED TOFU",
+          "Qty Sp1 Disc.",
+          "LUHUA WUCHANG RICE"
+        ]
+      },
+      {
+        "id": "5331c892-9fb6-42b5-bdb3-5a205b1a0767",
+        "store": "skyFOODS",
+        "verified_names": 2,
+        "matched_names": 2,
+        "uncertain_names": 0,
+        "expected_rows": 2,
+        "predicted_rows": 2,
+        "row_count_correct": true,
+        "all_names_correct": true,
+        "missing_or_misread": [],
+        "unmatched_predictions": [],
+        "printed_names": [
+          "BOK CHOY TIPS (1POUNDS)",
+          "LONG HOT PEPPER (1POUNDS)"
+        ],
+        "predicted_names": [
+          "BOK CHOY TIPS (1POUNDS)",
+          "LONG HOT PEPPER (1POUNDS)"
+        ]
+      },
+      {
+        "id": "20267232-d4d0-4540-9c14-b0e051b06445",
+        "store": "Costco",
+        "verified_names": 0,
+        "matched_names": 0,
+        "uncertain_names": 3,
+        "expected_rows": 3,
+        "predicted_rows": 3,
+        "row_count_correct": true,
+        "all_names_correct": null,
+        "missing_or_misread": [],
+        "unmatched_predictions": [
+          "PASTUREEGS",
+          "OPTIMUMN",
+          "KSUNSLJST"
+        ],
+        "printed_names": [],
+        "predicted_names": [
+          "PASTURE E GS",
+          "OPTIMUM N",
+          "KS UNSL JST"
+        ]
+      },
+      {
+        "id": "c5fdc978-8f74-43bf-a5c5-e22d28f5aea9",
+        "store": "Costco",
+        "verified_names": 1,
+        "matched_names": 1,
+        "uncertain_names": 0,
+        "expected_rows": 1,
+        "predicted_rows": 1,
+        "row_count_correct": true,
+        "all_names_correct": true,
+        "missing_or_misread": [],
+        "unmatched_predictions": [],
+        "printed_names": [
+          "KS PISTACHIO"
+        ],
+        "predicted_names": [
+          "KS PISTACHIO"
+        ]
+      },
+      {
+        "id": "ca76c352-9601-498c-8324-0ef9bcf5ea3b",
+        "store": "Costco",
+        "verified_names": 3,
+        "matched_names": 2,
+        "uncertain_names": 0,
+        "expected_rows": 3,
+        "predicted_rows": 3,
+        "row_count_correct": true,
+        "all_names_correct": false,
+        "missing_or_misread": [
+          "KSPISTACHIO"
+        ],
+        "unmatched_predictions": [
+          "KSPUSTACHIO"
+        ],
+        "printed_names": [
+          "BLUEBERRIES",
+          "SALMON",
+          "KS PISTACHIO"
+        ],
+        "predicted_names": [
+          "BLUEBERRIES",
+          "SALMON",
+          "KS PUSTACHIO"
+        ]
+      },
+      {
+        "id": "4fc6a91b-faba-4d3e-82a3-be4c78270e99",
+        "store": "Costco",
+        "verified_names": 1,
+        "matched_names": 1,
+        "uncertain_names": 0,
+        "expected_rows": 1,
+        "predicted_rows": 1,
+        "row_count_correct": true,
+        "all_names_correct": true,
+        "missing_or_misread": [],
+        "unmatched_predictions": [],
+        "printed_names": [
+          "EXC GS DOWN"
+        ],
+        "predicted_names": [
+          "EXC GS DOWN"
+        ]
+      },
+      {
+        "id": "6dd0be7d-4b6e-4b97-8a3d-c76de14f434c",
+        "store": "Costco",
+        "verified_names": 3,
+        "matched_names": 2,
+        "uncertain_names": 0,
+        "expected_rows": 3,
+        "predicted_rows": 3,
+        "row_count_correct": true,
+        "all_names_correct": false,
+        "missing_or_misread": [
+          "BSATLSALM"
+        ],
+        "unmatched_predictions": [
+          "BSATSSALM"
+        ],
+        "printed_names": [
+          "WHITE PEACH",
+          "B/S ATL SALM",
+          "SEABASS"
+        ],
+        "predicted_names": [
+          "WHITE PEACH",
+          "B/S AT/S SALM",
+          "SEABASS"
+        ]
+      },
+      {
+        "id": "1b072114-24ee-4bb5-80a5-018ce442a512",
+        "store": "99 Ranch",
+        "verified_names": 9,
+        "matched_names": 9,
+        "uncertain_names": 0,
+        "expected_rows": 9,
+        "predicted_rows": 10,
+        "row_count_correct": false,
+        "all_names_correct": false,
+        "missing_or_misread": [],
+        "unmatched_predictions": [
+          "TAX88751898"
+        ],
+        "printed_names": [
+          "MOGAMI 8-BLEND WHOLEGRAIN R",
+          "BIGEN SP CLR RFL 6 MD BROWN",
+          "BIGEN SPEEDY CLR 6 MD BROWN",
+          "ASN/TAS ORGANIC SOY BEAN PEA",
+          "ASN/TAS ORGANIC SOY BEAN PEA",
+          "RED ONION",
+          "LONG HOT PEPPER",
+          "ENVY APPLE",
+          "CHIVES"
+        ],
+        "predicted_names": [
+          "MOGAMI 8-BLEND WHOLEGRAIN R",
+          "BIGEN SP CLR RFL 6 MD BROWN",
+          "BIGEN SPEEDY CLR 6 MD BROWN",
+          "ASN/TAS ORGANIC SOY BEAN PEA",
+          "ASN/TAS ORGANIC SOY BEAN PEA",
+          "RED ONION",
+          "LONG HOT PEPPER",
+          "ENVY APPLE",
+          "CHIVES",
+          "TAX:$8.875% [$18.98]"
+        ]
+      },
+      {
+        "id": "b69bb2c5-7c75-4870-803e-25e321e086dd",
+        "store": "Target",
+        "verified_names": 1,
+        "matched_names": 0,
+        "uncertain_names": 0,
+        "expected_rows": 1,
+        "predicted_rows": 2,
+        "row_count_correct": false,
+        "all_names_correct": false,
+        "missing_or_misread": [
+          "FAGE"
+        ],
+        "unmatched_predictions": [
+          "28430632FAGE",
+          "NOTAX"
+        ],
+        "printed_names": [
+          "FAGE"
+        ],
+        "predicted_names": [
+          "284-30632 FAGE",
+          "NO TAX"
+        ]
+      }
+    ]
+  },
+  "qwen38-q4": {
+    "normalization": "NFKC, uppercase, letters/digits only; explicitly photo-reviewed same-item continuation forms accepted; no spelling correction, translation, SKU stripping or catalogue alias lookup",
+    "matching": "One-to-one exact normalized name multiset; duplicate printed rows count separately. Uncertain rows excluded from recall; receipts containing uncertain rows excluded from precision and whole-receipt exactness.",
+    "summary": {
+      "receipts": 24,
+      "matched_names": 92,
+      "verified_names": 93,
+      "name_recall": 0.989247311827957,
+      "clear_matched_names": 89,
+      "clear_predicted_names": 90,
+      "clear_precision": 0.9888888888888889,
+      "fully_correct_receipts": 21,
+      "fully_reviewable_receipts": 22,
+      "correct_row_counts": 24
+    },
+    "cases": [
+      {
+        "id": "2f97fc50-4cf3-47e1-bd44-ea6de95c774c",
+        "store": "99 Ranch",
+        "verified_names": 3,
+        "matched_names": 3,
+        "uncertain_names": 2,
+        "expected_rows": 5,
+        "predicted_rows": 5,
+        "row_count_correct": true,
+        "all_names_correct": null,
+        "missing_or_misread": [],
+        "unmatched_predictions": [
+          "BEIJINGYOGURTPLAIN6OZ",
+          "BEIJINGYOGURTPLAIN6OZ"
+        ],
+        "printed_names": [
+          "NONGFU SPRING GF JASMINE TEA",
+          "NONGFU SPRING GF JASMINE TEA",
+          "VITAL FARMS PASTURE RIASED L"
+        ],
+        "predicted_names": [
+          "NONGFU SPRING GF JASMINE TEA",
+          "NONGFU SPRING GF JASMINE TEA",
+          "BEIJING YOGURT PLAIN 6OZ",
+          "BEIJING YOGURT PLAIN 6OZ",
+          "VITAL FARMS PASTURE RIASED L"
+        ]
+      },
+      {
+        "id": "72a635b2-4b7e-4612-98ab-0f74d47fca59",
+        "store": "Feilong",
+        "verified_names": 7,
+        "matched_names": 7,
+        "uncertain_names": 0,
+        "expected_rows": 7,
+        "predicted_rows": 7,
+        "row_count_correct": true,
+        "all_names_correct": true,
+        "missing_or_misread": [],
+        "unmatched_predictions": [],
+        "printed_names": [
+          "CABBAGE",
+          "SCALLION",
+          "LONG HOT PEPPER",
+          "LIME",
+          "PURPLE ONIONS",
+          "CHIVE FLOWER",
+          "BOK CHOY TIPS"
+        ],
+        "predicted_names": [
+          "CABBAGE",
+          "SCALLION",
+          "LONG HOT PEPPER",
+          "LIME",
+          "PURPLE ONIONS",
+          "CHIVE FLOWER",
+          "BOK CHOY TIPS"
+        ]
+      },
+      {
+        "id": "e3843baa-904a-4bbf-bc21-278a1693d5c7",
+        "store": "H MART",
+        "verified_names": 4,
+        "matched_names": 4,
+        "uncertain_names": 0,
+        "expected_rows": 4,
+        "predicted_rows": 4,
+        "row_count_correct": true,
+        "all_names_correct": true,
+        "missing_or_misread": [],
+        "unmatched_predictions": [],
+        "printed_names": [
+          "FAGE TOTAL 2% GREE",
+          "FAGE TOTAL 2% GREE",
+          "SB BLUEBERRIES",
+          "SB BLUEBERRIES"
+        ],
+        "predicted_names": [
+          "FAGE TOTAL 2% GREE",
+          "FAGE TOTAL 2% GREE",
+          "SB BLUEBERRIES",
+          "SB BLUEBERRIES"
+        ]
+      },
+      {
+        "id": "4e491343-7593-42b4-b5b5-01e5648557ee",
+        "store": "Costco",
+        "verified_names": 4,
+        "matched_names": 4,
+        "uncertain_names": 0,
+        "expected_rows": 4,
+        "predicted_rows": 4,
+        "row_count_correct": true,
+        "all_names_correct": true,
+        "missing_or_misread": [],
+        "unmatched_predictions": [],
+        "printed_names": [
+          "ORG FR EGGS",
+          "SALMON",
+          "GARLIC HERB",
+          "WHITE PEACH"
+        ],
+        "predicted_names": [
+          "ORG FR EGGS",
+          "SALMON",
+          "GARLIC HERB",
+          "WHITE PEACH"
+        ]
+      },
+      {
+        "id": "6d9da1ec-c0fc-4905-82b4-4ebd11716b1c",
+        "store": "skyFOODS",
+        "verified_names": 7,
+        "matched_names": 7,
+        "uncertain_names": 0,
+        "expected_rows": 7,
+        "predicted_rows": 7,
+        "row_count_correct": true,
+        "all_names_correct": true,
+        "missing_or_misread": [],
+        "unmatched_predictions": [],
+        "printed_names": [
+          "LONG HOT PEPPER (1POUNDS)",
+          "CHIVES (1POUNDS)",
+          "BOK CHOY TIPS (1POUNDS)",
+          "MAPLEHILL WHOLE MILK",
+          "KANGLV JUMBO DRIED TOFU",
+          "KANGLV JUMBO DRIED TOFU",
+          "L.K.K SUPEREME FIRST DRAW S"
+        ],
+        "predicted_names": [
+          "LONG HOT PEPPER (1POUNDS)",
+          "CHIVES (1POUNDS)",
+          "BOK CHOY TIPS (1POUNDS)",
+          "MAPLEHILL WHOLE MILK",
+          "KANGLV JUMBO DRIED TOFU",
+          "KANG LV JUMBO DRIED TOFU",
+          "L.K.K SUPEREME FIRST DRAW S"
+        ]
+      },
+      {
+        "id": "e6c62f11-3b8d-4ac0-a860-1756df0efa55",
+        "store": "Costco",
+        "verified_names": 8,
+        "matched_names": 8,
+        "uncertain_names": 0,
+        "expected_rows": 8,
+        "predicted_rows": 8,
+        "row_count_correct": true,
+        "all_names_correct": true,
+        "missing_or_misread": [],
+        "unmatched_predictions": [],
+        "printed_names": [
+          "*BOUNTYADV*",
+          "**CHARMIN**",
+          "KLXTRUSTCARE",
+          "SIETEMAIZ SS",
+          "KS KETTLE",
+          "ORAL-B X-FIL",
+          "ORG STACY28Z",
+          "*40/.5WATER*"
+        ],
+        "predicted_names": [
+          "*BOUNTYADV*",
+          "**CHARMIN**",
+          "KLXTRUSTCARE",
+          "SIETEMAIZ SS",
+          "KS KETTLE",
+          "ORAL-B X-FIL",
+          "ORG STACY28Z",
+          "*40/.5WATER*"
+        ]
+      },
+      {
+        "id": "73953603-31f5-496a-9dd4-76fc845c8398",
+        "store": "skyFOODS",
+        "verified_names": 4,
+        "matched_names": 4,
+        "uncertain_names": 0,
+        "expected_rows": 4,
+        "predicted_rows": 4,
+        "row_count_correct": true,
+        "all_names_correct": true,
+        "missing_or_misread": [],
+        "unmatched_predictions": [],
+        "printed_names": [
+          "TAIWAN CABBAGE (1POUNDS)",
+          "BOK CHOY TIPS (1POUNDS)",
+          "CHIVES FLOWERS (1BUNDLE)",
+          "LONG HOT PEPPER (1POUNDS)"
+        ],
+        "predicted_names": [
+          "TAIWAN CABBAGE (1POUNDS)",
+          "BOK CHOY TIPS (1POUNDS)",
+          "CHIVES FLOWERS (1BUNDLE)",
+          "LONG HOT PEPPER (1POUNDS)"
+        ]
+      },
+      {
+        "id": "d7f8ff6d-6502-4eeb-8850-2f15b131988f",
+        "store": "skyFOODS",
+        "verified_names": 3,
+        "matched_names": 3,
+        "uncertain_names": 0,
+        "expected_rows": 3,
+        "predicted_rows": 3,
+        "row_count_correct": true,
+        "all_names_correct": true,
+        "missing_or_misread": [],
+        "unmatched_predictions": [],
+        "printed_names": [
+          "TAIWAN CABBAGE (1POUNDS)",
+          "ONION (1POUNDS)",
+          "LONG HOT PEPPER (1POUNDS)"
+        ],
+        "predicted_names": [
+          "TAIWAN CABBAGE (1POUNDS)",
+          "ONION (1POUNDS)",
+          "LONG HOT PEPPER (1POUNDS)"
+        ]
+      },
+      {
+        "id": "a31f7e6b-8bb1-49c8-a292-504d76d1a59c",
+        "store": "skyFOODS",
+        "verified_names": 4,
+        "matched_names": 4,
+        "uncertain_names": 0,
+        "expected_rows": 4,
+        "predicted_rows": 4,
+        "row_count_correct": true,
+        "all_names_correct": true,
+        "missing_or_misread": [],
+        "unmatched_predictions": [],
+        "printed_names": [
+          "CTC SQ COOKIES ( WHEAT)",
+          "KK SMOKED TOFU",
+          "HLS FLAVOR PEANUT-SPICY",
+          "CHINESE LEEK (1POUNDS)"
+        ],
+        "predicted_names": [
+          "CTC SQ COOKIES ( WHEAT)",
+          "KK SMOKED TOFU",
+          "HLS FLAVOR PEANUT-SPICY",
+          "CHINESE LEEK (1POUNDS)"
+        ]
+      },
+      {
+        "id": "8572dcef-7f7f-4d77-80c6-0ede75d45fa3",
+        "store": "Costco",
+        "verified_names": 9,
+        "matched_names": 8,
+        "uncertain_names": 0,
+        "expected_rows": 9,
+        "predicted_rows": 9,
+        "row_count_correct": true,
+        "all_names_correct": false,
+        "missing_or_misread": [
+          "ORGNCBSTHG"
+        ],
+        "unmatched_predictions": [
+          "DRGNCBSTHG"
+        ],
+        "printed_names": [
+          "PTOWELHOLDER",
+          "SOCK SALMON",
+          "KS UNSL PIST",
+          "KS QUINOA",
+          "KS WALNUTS",
+          "KS ORG TOFU",
+          "ORGNC BS THG",
+          "KS ICE CREAM",
+          "WHITE PEACH"
+        ],
+        "predicted_names": [
+          "PTOWELHOLDER",
+          "SOCK SALMON",
+          "KS UNSL. PIST",
+          "KS QUINOA",
+          "KS WALNUTS",
+          "KS ORG TOFU",
+          "DRGNC BS THG",
+          "KS ICE CREAM",
+          "WHITE PEACH"
+        ]
+      },
+      {
+        "id": "3a8e3c19-e8d0-4ea8-8fa3-06e3cd5fcfd4",
+        "store": "Costco",
+        "verified_names": 5,
+        "matched_names": 5,
+        "uncertain_names": 0,
+        "expected_rows": 5,
+        "predicted_rows": 5,
+        "row_count_correct": true,
+        "all_names_correct": true,
+        "missing_or_misread": [],
+        "unmatched_predictions": [],
+        "printed_names": [
+          "OMGA3 FSHOIL",
+          "KS B12 SUBL.",
+          "NINJA CRISPI",
+          "OCEAN MIST",
+          "OCEAN MIST"
+        ],
+        "predicted_names": [
+          "OMGA3 FSHOIL",
+          "KS B12 SUBL.",
+          "NINJA CRISPI",
+          "OCEAN MIST",
+          "OCEAN MIST"
+        ]
+      },
+      {
+        "id": "e9ee06e0-f4aa-4c3c-812a-4e8abc21e3f0",
+        "store": "skyFOODS",
+        "verified_names": 4,
+        "matched_names": 4,
+        "uncertain_names": 0,
+        "expected_rows": 4,
+        "predicted_rows": 4,
+        "row_count_correct": true,
+        "all_names_correct": true,
+        "missing_or_misread": [],
+        "unmatched_predictions": [],
+        "printed_names": [
+          "BOK CHOY TIPS (1POUNDS)",
+          "CHIVES (1POUNDS)",
+          "LONG HOT PEPPER (1POUNDS)",
+          "KL FIRM TOFU"
+        ],
+        "predicted_names": [
+          "BOK CHOY TIPS (1POUNDS)",
+          "CHIVES (1POUNDS)",
+          "LONG HOT PEPPER (1POUNDS)",
+          "KL FIRM TOFU"
+        ]
+      },
+      {
+        "id": "924e246e-c811-497a-a61b-6b5724f7bacd",
+        "store": "Costco",
+        "verified_names": 2,
+        "matched_names": 2,
+        "uncertain_names": 0,
+        "expected_rows": 2,
+        "predicted_rows": 2,
+        "row_count_correct": true,
+        "all_names_correct": true,
+        "missing_or_misread": [],
+        "unmatched_predictions": [],
+        "printed_names": [
+          "KS WALNUTS",
+          "STEELHEAD"
+        ],
+        "predicted_names": [
+          "KS WALNUTS",
+          "STEELHEAD"
+        ]
+      },
+      {
+        "id": "e297a3d3-f9f1-4ba7-8e5e-a18e56fdecdd",
+        "store": "H MART",
+        "verified_names": 1,
+        "matched_names": 1,
+        "uncertain_names": 0,
+        "expected_rows": 1,
+        "predicted_rows": 1,
+        "row_count_correct": true,
+        "all_names_correct": true,
+        "missing_or_misread": [],
+        "unmatched_predictions": [],
+        "printed_names": [
+          "ENVY APPLE"
+        ],
+        "predicted_names": [
+          "ENVY APPLE"
+        ]
+      },
+      {
+        "id": "a6618e05-1d59-453f-90e9-4bbf87a3830c",
+        "store": "H MART",
+        "verified_names": 2,
+        "matched_names": 2,
+        "uncertain_names": 0,
+        "expected_rows": 2,
+        "predicted_rows": 2,
+        "row_count_correct": true,
+        "all_names_correct": true,
+        "missing_or_misread": [],
+        "unmatched_predictions": [],
+        "printed_names": [
+          "FAGE TOTAL 2% GREE",
+          "ENVY APPLE"
+        ],
+        "predicted_names": [
+          "FAGE TOTAL 2% GREE",
+          "ENVY APPLE"
+        ]
+      },
+      {
+        "id": "ebf82f5b-c4e7-4a49-8ce7-927233bfde95",
+        "store": "skyFOODS",
+        "verified_names": 6,
+        "matched_names": 6,
+        "uncertain_names": 0,
+        "expected_rows": 6,
+        "predicted_rows": 6,
+        "row_count_correct": true,
+        "all_names_correct": true,
+        "missing_or_misread": [],
+        "unmatched_predictions": [],
+        "printed_names": [
+          "TTX CHOPPED CHILI PASTE",
+          "CHINESE LEEK (1POUNDS)",
+          "H.D.L SPICY SAUCE",
+          "KANGLV JUMBO DRIED TOFU",
+          "KANGLV JUMBO DRIED TOFU",
+          "LUHUA WUCHANG RICE"
+        ],
+        "predicted_names": [
+          "TTX CHOPPED CHILI PASTE",
+          "CHINESE LEEK (1POUNDS)",
+          "H.D.L SPICY SAUCE",
+          "KANGLV JUMBO DRIED TOFU",
+          "KANGLV JUMBO DRIED TOFU",
+          "LUHUA WUCHANG RICE"
+        ]
+      },
+      {
+        "id": "5331c892-9fb6-42b5-bdb3-5a205b1a0767",
+        "store": "skyFOODS",
+        "verified_names": 2,
+        "matched_names": 2,
+        "uncertain_names": 0,
+        "expected_rows": 2,
+        "predicted_rows": 2,
+        "row_count_correct": true,
+        "all_names_correct": true,
+        "missing_or_misread": [],
+        "unmatched_predictions": [],
+        "printed_names": [
+          "BOK CHOY TIPS (1POUNDS)",
+          "LONG HOT PEPPER (1POUNDS)"
+        ],
+        "predicted_names": [
+          "BOK CHOY TIPS (1POUNDS)",
+          "LONG HOT PEPPER (1POUNDS)"
+        ]
+      },
+      {
+        "id": "20267232-d4d0-4540-9c14-b0e051b06445",
+        "store": "Costco",
+        "verified_names": 0,
+        "matched_names": 0,
+        "uncertain_names": 3,
+        "expected_rows": 3,
+        "predicted_rows": 3,
+        "row_count_correct": true,
+        "all_names_correct": null,
+        "missing_or_misread": [],
+        "unmatched_predictions": [
+          "PASTUREEGGS",
+          "OPTIMUM",
+          "KSUNSL"
+        ],
+        "printed_names": [],
+        "predicted_names": [
+          "PASTURE EGGS",
+          "OPTIMUM",
+          "KS UNSL"
+        ]
+      },
+      {
+        "id": "c5fdc978-8f74-43bf-a5c5-e22d28f5aea9",
+        "store": "Costco",
+        "verified_names": 1,
+        "matched_names": 1,
+        "uncertain_names": 0,
+        "expected_rows": 1,
+        "predicted_rows": 1,
+        "row_count_correct": true,
+        "all_names_correct": true,
+        "missing_or_misread": [],
+        "unmatched_predictions": [],
+        "printed_names": [
+          "KS PISTACHIO"
+        ],
+        "predicted_names": [
+          "KS PISTACHIO"
+        ]
+      },
+      {
+        "id": "ca76c352-9601-498c-8324-0ef9bcf5ea3b",
+        "store": "Costco",
+        "verified_names": 3,
+        "matched_names": 3,
+        "uncertain_names": 0,
+        "expected_rows": 3,
+        "predicted_rows": 3,
+        "row_count_correct": true,
+        "all_names_correct": true,
+        "missing_or_misread": [],
+        "unmatched_predictions": [],
+        "printed_names": [
+          "BLUEBERRIES",
+          "SALMON",
+          "KS PISTACHIO"
+        ],
+        "predicted_names": [
+          "BLUEBERRIES",
+          "SALMON",
+          "KS PISTACHIO"
+        ]
+      },
+      {
+        "id": "4fc6a91b-faba-4d3e-82a3-be4c78270e99",
+        "store": "Costco",
+        "verified_names": 1,
+        "matched_names": 1,
+        "uncertain_names": 0,
+        "expected_rows": 1,
+        "predicted_rows": 1,
+        "row_count_correct": true,
+        "all_names_correct": true,
+        "missing_or_misread": [],
+        "unmatched_predictions": [],
+        "printed_names": [
+          "EXC GS DOWN"
+        ],
+        "predicted_names": [
+          "EXC GS DOWN"
+        ]
+      },
+      {
+        "id": "6dd0be7d-4b6e-4b97-8a3d-c76de14f434c",
+        "store": "Costco",
+        "verified_names": 3,
+        "matched_names": 3,
+        "uncertain_names": 0,
+        "expected_rows": 3,
+        "predicted_rows": 3,
+        "row_count_correct": true,
+        "all_names_correct": true,
+        "missing_or_misread": [],
+        "unmatched_predictions": [],
+        "printed_names": [
+          "WHITE PEACH",
+          "B/S ATL SALM",
+          "SEABASS"
+        ],
+        "predicted_names": [
+          "WHITE PEACH",
+          "B/S ATL SALM",
+          "SEABASS"
+        ]
+      },
+      {
+        "id": "1b072114-24ee-4bb5-80a5-018ce442a512",
+        "store": "99 Ranch",
+        "verified_names": 9,
+        "matched_names": 9,
+        "uncertain_names": 0,
+        "expected_rows": 9,
+        "predicted_rows": 9,
+        "row_count_correct": true,
+        "all_names_correct": true,
+        "missing_or_misread": [],
+        "unmatched_predictions": [],
+        "printed_names": [
+          "MOGAMI 8-BLEND WHOLEGRAIN R",
+          "BIGEN SP CLR RFL 6 MD BROWN",
+          "BIGEN SPEEDY CLR 6 MD BROWN",
+          "ASN/TAS ORGANIC SOY BEAN PEA",
+          "ASN/TAS ORGANIC SOY BEAN PEA",
+          "RED ONION",
+          "LONG HOT PEPPER",
+          "ENVY APPLE",
+          "CHIVES"
+        ],
+        "predicted_names": [
+          "MOGAMI 8-BLEND WHOLEGRAIN R",
+          "BIGEN SP CLR RFL 6 MD BROWN",
+          "BIGEN SPEEDY CLR 6 MD BROWN",
+          "ASN/TAS ORGANIC SOY BEAN PEA",
+          "ASN/TAS ORGANIC SOY BEAN PEA",
+          "RED ONION",
+          "LONG HOT PEPPER",
+          "ENVY APPLE",
+          "CHIVES"
+        ]
+      },
+      {
+        "id": "b69bb2c5-7c75-4870-803e-25e321e086dd",
+        "store": "Target",
+        "verified_names": 1,
+        "matched_names": 1,
+        "uncertain_names": 0,
+        "expected_rows": 1,
+        "predicted_rows": 1,
+        "row_count_correct": true,
+        "all_names_correct": true,
+        "missing_or_misread": [],
+        "unmatched_predictions": [],
+        "printed_names": [
+          "FAGE"
+        ],
+        "predicted_names": [
+          "FAGE"
+        ]
+      }
+    ]
+  }
+}

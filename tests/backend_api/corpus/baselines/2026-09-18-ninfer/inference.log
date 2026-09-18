@@ -1,0 +1,175 @@
+backend_ocr-1  | 
+backend_ocr-1  | ==========
+backend_ocr-1  | == CUDA ==
+backend_ocr-1  | ==========
+backend_ocr-1  | 
+backend_ocr-1  | CUDA Version 13.1.2
+backend_ocr-1  | 
+backend_ocr-1  | Container image Copyright (c) 2016-2023, NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+backend_ocr-1  | 
+backend_ocr-1  | This container image and its contents are governed by the NVIDIA Deep Learning Container License.
+backend_ocr-1  | By pulling and using the container, you accept the terms and conditions of this license:
+backend_ocr-1  | https://developer.nvidia.com/ngc/nvidia-deep-learning-container-license
+backend_ocr-1  | 
+backend_ocr-1  | A copy of this license is made available in this container at /NGC-DL-CONTAINER-LICENSE for your convenience.
+backend_ocr-1  | 
+backend_ocr-1  | 2026-09-18 13:53:28.213  INFO  starting engine
+backend_ocr-1  | 2026-09-18 13:53:28.666  INFO  loading weights | 20.0 GiB
+backend_ocr-1  | 2026-09-18 13:53:35.066  INFO  weights ready | 20.0 GiB | 6.4s | 3.13 GiB/s
+backend_ocr-1  | 2026-09-18 13:53:35.071  INFO  pinning host state | 146.8 MiB
+backend_ocr-1  | 2026-09-18 13:53:35.094  INFO  host state pinned | 146.8 MiB | 23.4 ms
+backend_ocr-1  | 2026-09-18 13:53:35.095  INFO  pinning host KV | 512.0 MiB
+backend_ocr-1  | 2026-09-18 13:53:35.165  INFO  host KV pinned | 512.0 MiB | 70.9 ms
+backend_ocr-1  | 2026-09-18 13:53:35.659  INFO  CUDA graphs ready | 493 ms
+backend_ocr-1  | 2026-09-18 13:53:35.659  INFO  engine ready | qwen3.8-27b | total 7.4s | weights 20.0 GiB
+backend_ocr-1  | 2026-09-18 13:53:35.659  INFO  capacity | KV 32,768 tokens, fp8, explicit | pages 512/512 | runtime 2.12 GiB | free 5.23 GiB
+backend_ocr-1  | 2026-09-18 13:53:35.659  INFO  context cache | 1 active + 0 cached device states | host 1 states, 512.0 MiB KV | private 2 | shared 4 | anchors 2
+backend_ocr-1  | 2026-09-18 13:53:35.659  INFO  media | 4 preprocess workers | cache 1.00 GiB | live 2.00 GiB
+backend_ocr-1  | 2026-09-18 13:53:35.710  INFO  listening on http://0.0.0.0:8080 | model qwen3.8-27b-ninfer-nvfp4 | auth disabled
+backend_ocr-1  | 2026-09-18 13:53:38.373  INFO  req#1 started | openai-chat non-stream | 2 messages | max output 8,192 | thinking off | media 1, prepared 427 ms
+backend_ocr-1  | 2026-09-18 13:53:40.710  INFO  throughput | 5.0s | prefill 409.6 tok/s (2,048 tok) | running 1 (prefill 1) | host 1.1% (55.9 ms)
+backend_ocr-1  | 2026-09-18 13:53:45.710  INFO  throughput | 5.0s | prefill 2.57k tok/s (12,827 tok) | decode 155.4 tok/s (777 tok) | running 1 (decode-ready 1) | batch 1.00 | host 46.6% (2.3s)
+backend_ocr-1  | 2026-09-18 13:53:49.554  INFO  req#1 done | openai-chat | stop token | prompt 14,875 | output 1,653 | cache 0 (0.0%) | TTFT 4.3s | total 11.6s | prefill 8.51k tok/s | decode 226.6 tok/s | mtp accepted 1,227/1,278 (96.0%)
+backend_ocr-1  | 2026-09-18 13:53:50.710  INFO  throughput | 5.0s | decode 175.0 tok/s (875 tok) | running 0 | batch 1.00 | host 0.1% (3.37 ms)
+backend_ocr-1  | 2026-09-18 13:53:51.949  INFO  req#2 started | openai-chat non-stream | 2 messages | max output 8,192 | thinking off | media 1, prepared 440 ms
+backend_ocr-1  | 2026-09-18 13:53:55.710  INFO  throughput | 5.0s | prefill 2.87k tok/s (14,336 tok) | running 1 (prefill 1) | host 47.0% (2.3s)
+backend_ocr-1  | 2026-09-18 13:54:00.710  INFO  throughput | 5.0s | prefill 98.4 tok/s (492 tok) | decode 220.6 tok/s (1,103 tok) | running 1 (decode-ready 1) | batch 1.00 | host 0.4% (22.3 ms)
+backend_ocr-1  | 2026-09-18 13:54:05.710  INFO  throughput | 5.0s | decode 225.6 tok/s (1,128 tok) | running 1 (decode-ready 1) | batch 1.00 | host 0.1% (3.95 ms)
+backend_ocr-1  | 2026-09-18 13:54:07.184  INFO  req#2 done | openai-chat | stop token | prompt 14,828 | output 2,569 | cache 0 (0.0%) | TTFT 4.3s | total 15.7s | queue 14.4 ms | prefill 8.64k tok/s | decode 226.2 tok/s | mtp accepted 1,908/1,983 (96.2%)
+backend_ocr-1  | 2026-09-18 13:54:09.818  INFO  req#3 started | openai-chat non-stream | 2 messages | max output 8,192 | thinking off | media 1, prepared 485 ms
+backend_ocr-1  | 2026-09-18 13:54:10.710  INFO  throughput | 5.0s | prefill 409.6 tok/s (2,048 tok) | decode 67.4 tok/s (337 tok) | running 1 (prefill 1) | batch 1.00 | host 0.6% (31.1 ms)
+backend_ocr-1  | 2026-09-18 13:54:15.710  INFO  throughput | 5.0s | prefill 2.57k tok/s (12,827 tok) | decode 86.4 tok/s (432 tok) | running 1 (decode-ready 1) | batch 1.00 | host 47.1% (2.4s)
+backend_ocr-1  | 2026-09-18 13:54:20.710  INFO  throughput | 5.0s | decode 225.0 tok/s (1,125 tok) | running 1 (decode-ready 1) | batch 1.00 | host 0.1% (4.13 ms)
+backend_ocr-1  | 2026-09-18 13:54:25.710  INFO  throughput | 5.0s | decode 226.8 tok/s (1,134 tok) | running 1 (decode-ready 1) | batch 1.00 | host 0.1% (3.83 ms)
+backend_ocr-1  | 2026-09-18 13:54:26.414  INFO  req#3 done | openai-chat | stop token | prompt 14,875 | output 2,850 | cache 0 (0.0%) | TTFT 4.4s | total 17.1s | prefill 8.54k tok/s | decode 224.6 tok/s | mtp accepted 2,115/2,205 (95.9%)
+backend_ocr-1  | 2026-09-18 13:54:28.634  INFO  req#4 started | openai-chat non-stream | 2 messages | max output 8,192 | thinking off | media 1, prepared 401 ms
+backend_ocr-1  | 2026-09-18 13:54:30.710  INFO  throughput | 5.0s | prefill 409.6 tok/s (2,048 tok) | decode 31.6 tok/s (158 tok) | running 1 (prefill 1) | batch 1.00 | host 0.6% (30.5 ms)
+backend_ocr-1  | 2026-09-18 13:54:35.710  INFO  throughput | 5.0s | prefill 2.56k tok/s (12,780 tok) | decode 139.8 tok/s (699 tok) | running 1 (decode-ready 1) | batch 1.00 | host 47.3% (2.4s)
+backend_ocr-1  | 2026-09-18 13:54:39.042  INFO  req#4 done | openai-chat | stop token | prompt 14,828 | output 1,447 | cache 0 (0.0%) | TTFT 4.3s | total 10.8s | prefill 8.53k tok/s | decode 222.8 tok/s | mtp accepted 1,073/1,122 (95.6%)
+backend_ocr-1  | 2026-09-18 13:54:40.710  INFO  throughput | 5.0s | decode 149.4 tok/s (747 tok) | running 0 | batch 1.00 | host 0.1% (2.51 ms)
+backend_ocr-1  | 2026-09-18 13:54:41.280  INFO  req#5 started | openai-chat non-stream | 2 messages | max output 8,192 | thinking off | media 1, prepared 401 ms
+backend_ocr-1  | 2026-09-18 13:54:45.710  INFO  throughput | 5.0s | prefill 2.89k tok/s (14,429 tok) | decode 23.6 tok/s (118 tok) | running 1 (decode-ready 1) | batch 1.00 | host 47.8% (2.4s)
+backend_ocr-1  | 2026-09-18 13:54:46.636  INFO  req#5 done | openai-chat | stop token | prompt 14,429 | output 325 | cache 0 (0.0%) | TTFT 4.3s | total 5.8s | prefill 8.50k tok/s | decode 220.1 tok/s | mtp accepted 240/255 (94.1%)
+backend_ocr-1  | 2026-09-18 13:54:48.967  INFO  req#6 started | openai-chat non-stream | 2 messages | max output 8,192 | thinking off | media 1, prepared 446 ms
+backend_ocr-1  | 2026-09-18 13:54:50.710  INFO  throughput | 5.0s | prefill 409.6 tok/s (2,048 tok) | decode 41.2 tok/s (206 tok) | running 1 (prefill 1) | batch 1.00 | host 0.6% (30.5 ms)
+backend_ocr-1  | 2026-09-18 13:54:55.710  INFO  throughput | 5.0s | prefill 2.48k tok/s (12,381 tok) | decode 126.4 tok/s (632 tok) | running 1 (decode-ready 1) | batch 1.00 | host 47.2% (2.4s)
+backend_ocr-1  | 2026-09-18 13:55:00.710  INFO  throughput | 5.0s | decode 223.2 tok/s (1,116 tok) | running 1 (decode-ready 1) | batch 1.00 | host 0.1% (3.70 ms)
+backend_ocr-1  | 2026-09-18 13:55:02.031  INFO  req#6 done | openai-chat | stop token | prompt 14,429 | output 2,043 | cache 0 (0.0%) | TTFT 4.3s | total 13.5s | prefill 8.49k tok/s | decode 222.5 tok/s | mtp accepted 1,515/1,584 (95.6%)
+backend_ocr-1  | 2026-09-18 13:55:04.366  INFO  req#7 started | openai-chat non-stream | 2 messages | max output 8,192 | thinking off | media 1, prepared 447 ms
+backend_ocr-1  | 2026-09-18 13:55:05.710  INFO  throughput | 5.0s | prefill 409.6 tok/s (2,048 tok) | decode 58.8 tok/s (294 tok) | running 1 (prefill 1) | batch 1.00 | host 0.6% (30.8 ms)
+backend_ocr-1  | 2026-09-18 13:55:10.710  INFO  throughput | 5.0s | prefill 2.47k tok/s (12,350 tok) | decode 109.4 tok/s (547 tok) | running 1 (decode-ready 1) | batch 1.00 | host 47.3% (2.4s)
+backend_ocr-1  | 2026-09-18 13:55:15.710  INFO  throughput | 5.0s | decode 222.8 tok/s (1,114 tok) | running 1 (decode-ready 1) | batch 1.00 | host 0.1% (3.77 ms)
+backend_ocr-1  | 2026-09-18 13:55:17.454  INFO  req#7 done | openai-chat | stop token | prompt 14,398 | output 2,054 | cache 0 (0.0%) | TTFT 4.3s | total 13.5s | prefill 8.47k tok/s | decode 223.2 tok/s | mtp accepted 1,526/1,584 (96.3%)
+backend_ocr-1  | 2026-09-18 13:55:19.827  INFO  req#8 started | openai-chat non-stream | 2 messages | max output 8,192 | thinking off | media 1, prepared 447 ms
+backend_ocr-1  | 2026-09-18 13:55:20.710  INFO  throughput | 5.0s | prefill 409.6 tok/s (2,048 tok) | decode 78.4 tok/s (392 tok) | running 1 (prefill 1) | batch 1.00 | host 0.6% (31.4 ms)
+backend_ocr-1  | 2026-09-18 13:55:25.710  INFO  throughput | 5.0s | prefill 2.48k tok/s (12,399 tok) | decode 85.6 tok/s (428 tok) | running 1 (decode-ready 1) | batch 1.00 | host 47.4% (2.4s)
+backend_ocr-1  | 2026-09-18 13:55:30.710  INFO  throughput | 5.0s | decode 220.4 tok/s (1,102 tok) | running 1 (decode-ready 1) | batch 1.00 | host 0.1% (3.91 ms)
+backend_ocr-1  | 2026-09-18 13:55:32.082  INFO  req#8 done | openai-chat | stop token | prompt 14,447 | output 1,842 | cache 0 (0.0%) | TTFT 4.4s | total 12.7s | prefill 8.46k tok/s | decode 220.4 tok/s | mtp accepted 1,363/1,437 (94.9%)
+backend_ocr-1  | 2026-09-18 13:55:34.466  INFO  req#9 started | openai-chat non-stream | 2 messages | max output 8,192 | thinking off | media 1, prepared 434 ms
+backend_ocr-1  | 2026-09-18 13:55:35.710  INFO  throughput | 5.0s | prefill 409.6 tok/s (2,048 tok) | decode 62.2 tok/s (311 tok) | running 1 (prefill 1) | batch 1.00 | host 0.6% (31.2 ms)
+backend_ocr-1  | 2026-09-18 13:55:40.710  INFO  throughput | 5.0s | prefill 2.50k tok/s (12,510 tok) | decode 101.0 tok/s (505 tok) | running 1 (decode-ready 1) | batch 1.00 | host 47.5% (2.4s)
+backend_ocr-1  | 2026-09-18 13:55:45.710  INFO  throughput | 5.0s | decode 223.6 tok/s (1,118 tok) | running 1 (decode-ready 1) | batch 1.00 | host 0.1% (3.78 ms)
+backend_ocr-1  | 2026-09-18 13:55:47.533  INFO  req#9 done | openai-chat | stop token | prompt 14,558 | output 2,030 | cache 0 (0.0%) | TTFT 4.4s | total 13.5s | prefill 8.45k tok/s | decode 221.8 tok/s | mtp accepted 1,506/1,572 (95.8%)
+backend_ocr-1  | 2026-09-18 13:55:49.825  INFO  req#10 started | openai-chat non-stream | 2 messages | max output 8,192 | thinking off | media 1, prepared 443 ms
+backend_ocr-1  | 2026-09-18 13:55:50.710  INFO  throughput | 5.0s | prefill 409.6 tok/s (2,048 tok) | decode 81.2 tok/s (406 tok) | running 1 (prefill 1) | batch 1.00 | host 0.6% (31.3 ms)
+backend_ocr-1  | 2026-09-18 13:55:55.710  INFO  throughput | 5.0s | prefill 2.50k tok/s (12,510 tok) | decode 87.8 tok/s (439 tok) | running 1 (decode-ready 1) | batch 1.00 | host 47.6% (2.4s)
+backend_ocr-1  | 2026-09-18 13:56:00.278  INFO  req#10 done | openai-chat | stop token | prompt 14,558 | output 1,448 | cache 0 (0.0%) | TTFT 4.4s | total 10.9s | prefill 8.44k tok/s | decode 221.5 tok/s | mtp accepted 1,074/1,122 (95.7%)
+backend_ocr-1  | 2026-09-18 13:56:00.710  INFO  throughput | 5.0s | decode 201.6 tok/s (1,008 tok) | running 0 | batch 1.00 | host 0.1% (3.95 ms)
+backend_ocr-1  | 2026-09-18 13:56:02.844  INFO  req#11 started | openai-chat non-stream | 2 messages | max output 8,192 | thinking off | media 1, prepared 460 ms
+backend_ocr-1  | 2026-09-18 13:56:05.710  INFO  throughput | 5.0s | prefill 1.23k tok/s (6,144 tok) | running 1 (prefill 1) | host 45.5% (2.3s)
+backend_ocr-1  | 2026-09-18 13:56:10.710  INFO  throughput | 5.0s | prefill 1.75k tok/s (8,731 tok) | decode 173.2 tok/s (866 tok) | running 1 (decode-ready 1) | batch 1.00 | host 2.9% (144 ms)
+backend_ocr-1  | 2026-09-18 13:56:12.138  INFO  req#11 done | openai-chat | stop token | prompt 14,875 | output 1,186 | cache 0 (0.0%) | TTFT 4.4s | total 9.8s | prefill 8.42k tok/s | decode 222.3 tok/s | mtp accepted 881/915 (96.3%)
+backend_ocr-1  | 2026-09-18 13:56:14.571  INFO  req#12 started | openai-chat non-stream | 2 messages | max output 8,192 | thinking off | media 1, prepared 435 ms
+backend_ocr-1  | 2026-09-18 13:56:15.710  INFO  throughput | 5.0s | prefill 409.6 tok/s (2,048 tok) | decode 63.8 tok/s (319 tok) | running 1 (prefill 1) | batch 1.00 | host 0.6% (30.9 ms)
+backend_ocr-1  | 2026-09-18 13:56:20.710  INFO  throughput | 5.0s | prefill 2.57k tok/s (12,827 tok) | decode 96.6 tok/s (483 tok) | running 1 (decode-ready 1) | batch 1.00 | host 47.8% (2.4s)
+backend_ocr-1  | 2026-09-18 13:56:25.710  INFO  throughput | 5.0s | decode 223.6 tok/s (1,118 tok) | running 1 (decode-ready 1) | batch 1.00 | host 0.1% (3.71 ms)
+backend_ocr-1  | 2026-09-18 13:56:27.483  INFO  req#12 done | openai-chat | stop token | prompt 14,875 | output 1,994 | cache 0 (0.0%) | TTFT 4.4s | total 13.4s | prefill 8.42k tok/s | decode 222.8 tok/s | mtp accepted 1,482/1,536 (96.5%)
+backend_ocr-1  | 2026-09-18 13:56:29.801  INFO  req#13 started | openai-chat non-stream | 2 messages | max output 8,192 | thinking off | media 1, prepared 438 ms
+backend_ocr-1  | 2026-09-18 13:56:30.710  INFO  throughput | 5.0s | prefill 409.6 tok/s (2,048 tok) | decode 78.4 tok/s (392 tok) | running 1 (prefill 1) | batch 1.00 | host 0.6% (31.6 ms)
+backend_ocr-1  | 2026-09-18 13:56:35.710  INFO  throughput | 5.0s | prefill 2.56k tok/s (12,780 tok) | decode 86.4 tok/s (432 tok) | running 1 (decode-ready 1) | batch 1.00 | host 47.7% (2.4s)
+backend_ocr-1  | 2026-09-18 13:56:40.710  INFO  throughput | 5.0s | decode 218.6 tok/s (1,093 tok) | running 1 (decode-ready 1) | batch 1.00 | host 0.1% (3.53 ms)
+backend_ocr-1  | 2026-09-18 13:56:44.575  INFO  req#13 done | openai-chat | stop token | prompt 14,828 | output 2,384 | cache 0 (0.0%) | TTFT 4.4s | total 15.2s | prefill 8.44k tok/s | decode 220.3 tok/s | mtp accepted 1,765/1,857 (95.0%)
+backend_ocr-1  | 2026-09-18 13:56:45.710  INFO  throughput | 5.0s | decode 171.6 tok/s (858 tok) | running 0 | batch 1.00 | host 0.1% (3.27 ms)
+backend_ocr-1  | 2026-09-18 13:56:47.040  INFO  req#14 started | openai-chat non-stream | 2 messages | max output 8,192 | thinking off | media 1, prepared 450 ms
+backend_ocr-1  | 2026-09-18 13:56:50.710  INFO  throughput | 5.0s | prefill 2.46k tok/s (12,288 tok) | running 1 (prefill 1) | host 47.3% (2.4s)
+backend_ocr-1  | 2026-09-18 13:56:55.710  INFO  throughput | 5.0s | prefill 517.4 tok/s (2,587 tok) | decode 206.4 tok/s (1,032 tok) | running 1 (decode-ready 1) | batch 1.00 | host 1.1% (56.3 ms)
+backend_ocr-1  | 2026-09-18 13:57:00.710  INFO  throughput | 5.0s | decode 220.6 tok/s (1,103 tok) | running 1 (decode-ready 1) | batch 1.00 | host 0.1% (3.85 ms)
+backend_ocr-1  | 2026-09-18 13:57:04.418  INFO  req#14 done | openai-chat | stop token | prompt 14,875 | output 2,963 | cache 0 (0.0%) | TTFT 4.4s | total 17.8s | prefill 8.40k tok/s | decode 221.0 tok/s | mtp accepted 2,196/2,301 (95.4%)
+backend_ocr-1  | 2026-09-18 13:57:05.710  INFO  throughput | 5.0s | decode 165.4 tok/s (827 tok) | running 0 | batch 1.00 | host 0.1% (2.86 ms)
+backend_ocr-1  | 2026-09-18 13:57:06.727  INFO  req#15 started | openai-chat non-stream | 2 messages | max output 8,192 | thinking off | media 1, prepared 448 ms
+backend_ocr-1  | 2026-09-18 13:57:10.710  INFO  throughput | 5.0s | prefill 2.97k tok/s (14,828 tok) | decode 0.8 tok/s (4 tok) | running 1 (decode-ready 1) | batch 1.00 | host 48.4% (2.4s)
+backend_ocr-1  | 2026-09-18 13:57:15.710  INFO  throughput | 5.0s | decode 221.4 tok/s (1,107 tok) | running 1 (decode-ready 1) | batch 1.00 | host 0.1% (3.61 ms)
+backend_ocr-1  | 2026-09-18 13:57:16.243  INFO  req#15 done | openai-chat | stop token | prompt 14,828 | output 1,230 | cache 0 (0.0%) | TTFT 4.4s | total 10.0s | prefill 8.42k tok/s | decode 221.3 tok/s | mtp accepted 913/951 (96.0%)
+backend_ocr-1  | 2026-09-18 13:57:18.512  INFO  req#16 started | openai-chat non-stream | 2 messages | max output 8,192 | thinking off | media 1, prepared 442 ms
+backend_ocr-1  | 2026-09-18 13:57:20.710  INFO  throughput | 5.0s | prefill 409.6 tok/s (2,048 tok) | decode 23.6 tok/s (118 tok) | running 1 (prefill 1) | batch 1.00 | host 0.6% (30.4 ms)
+backend_ocr-1  | 2026-09-18 13:57:25.710  INFO  throughput | 5.0s | prefill 2.56k tok/s (12,780 tok) | decode 144.2 tok/s (721 tok) | running 1 (decode-ready 1) | batch 1.00 | host 47.8% (2.4s)
+backend_ocr-1  | 2026-09-18 13:57:27.010  INFO  req#16 done | openai-chat | stop token | prompt 14,828 | output 1,012 | cache 0 (0.0%) | TTFT 4.4s | total 8.9s | prefill 8.42k tok/s | decode 222.9 tok/s | mtp accepted 753/777 (96.9%)
+backend_ocr-1  | 2026-09-18 13:57:29.228  INFO  req#17 started | openai-chat non-stream | 2 messages | max output 8,192 | thinking off | media 1, prepared 440 ms
+backend_ocr-1  | 2026-09-18 13:57:30.710  INFO  throughput | 5.0s | prefill 409.6 tok/s (2,048 tok) | decode 58.0 tok/s (290 tok) | running 1 (prefill 1) | batch 1.00 | host 0.6% (31.0 ms)
+backend_ocr-1  | 2026-09-18 13:57:35.710  INFO  throughput | 5.0s | prefill 2.56k tok/s (12,780 tok) | decode 110.4 tok/s (552 tok) | running 1 (decode-ready 1) | batch 1.00 | host 47.8% (2.4s)
+backend_ocr-1  | 2026-09-18 13:57:39.863  INFO  req#17 done | openai-chat | stop token | prompt 14,828 | output 1,455 | cache 0 (0.0%) | TTFT 4.4s | total 11.1s | prefill 8.42k tok/s | decode 217.9 tok/s | mtp accepted 1,074/1,143 (94.0%)
+backend_ocr-1  | 2026-09-18 13:57:40.710  INFO  throughput | 5.0s | decode 180.4 tok/s (902 tok) | running 0 | batch 1.00 | host 0.1% (3.13 ms)
+backend_ocr-1  | 2026-09-18 13:57:42.178  INFO  req#18 started | openai-chat non-stream | 2 messages | max output 8,192 | thinking off | media 1, prepared 445 ms
+backend_ocr-1  | 2026-09-18 13:57:45.710  INFO  throughput | 5.0s | prefill 2.25k tok/s (11,264 tok) | running 1 (prefill 1) | host 47.0% (2.4s)
+backend_ocr-1  | 2026-09-18 13:57:50.710  INFO  throughput | 5.0s | prefill 722.2 tok/s (3,611 tok) | decode 202.0 tok/s (1,010 tok) | running 1 (decode-ready 1) | batch 1.00 | host 1.4% (71.4 ms)
+backend_ocr-1  | 2026-09-18 13:57:55.710  INFO  throughput | 5.0s | decode 222.2 tok/s (1,111 tok) | running 1 (decode-ready 1) | batch 1.00 | host 0.1% (3.83 ms)
+backend_ocr-1  | 2026-09-18 13:57:56.158  INFO  req#18 done | openai-chat | stop token | prompt 14,875 | output 2,225 | cache 0 (0.0%) | TTFT 4.4s | total 14.4s | prefill 8.39k tok/s | decode 222.3 tok/s | mtp accepted 1,653/1,716 (96.3%)
+backend_ocr-1  | 2026-09-18 13:57:58.498  INFO  req#19 started | openai-chat non-stream | 2 messages | max output 8,192 | thinking off | media 1, prepared 448 ms
+backend_ocr-1  | 2026-09-18 13:58:00.710  INFO  throughput | 5.0s | prefill 409.6 tok/s (2,048 tok) | decode 20.6 tok/s (103 tok) | running 1 (prefill 1) | batch 1.00 | host 0.6% (30.3 ms)
+backend_ocr-1  | 2026-09-18 13:58:05.710  INFO  throughput | 5.0s | prefill 2.57k tok/s (12,827 tok) | decode 141.4 tok/s (707 tok) | running 1 (decode-ready 1) | batch 1.00 | host 47.9% (2.4s)
+backend_ocr-1  | 2026-09-18 13:58:10.710  INFO  throughput | 5.0s | decode 222.4 tok/s (1,112 tok) | running 1 (decode-ready 1) | batch 1.00 | host 0.1% (3.67 ms)
+backend_ocr-1  | 2026-09-18 13:58:10.874  INFO  req#19 done | openai-chat | stop token | prompt 14,875 | output 1,858 | cache 0 (0.0%) | TTFT 4.4s | total 12.8s | prefill 8.39k tok/s | decode 221.1 tok/s | mtp accepted 1,378/1,440 (95.7%)
+backend_ocr-1  | 2026-09-18 13:58:13.066  INFO  req#20 started | openai-chat non-stream | 2 messages | max output 8,192 | thinking off | media 1, prepared 422 ms
+backend_ocr-1  | 2026-09-18 13:58:15.710  INFO  throughput | 5.0s | prefill 819.2 tok/s (4,096 tok) | decode 7.6 tok/s (38 tok) | running 1 (prefill 1) | batch 1.00 | host 45.1% (2.3s)
+backend_ocr-1  | 2026-09-18 13:58:20.710  INFO  throughput | 5.0s | prefill 2.15k tok/s (10,732 tok) | decode 165.6 tok/s (828 tok) | running 1 (decode-ready 1) | batch 1.00 | host 3.4% (169 ms)
+backend_ocr-1  | 2026-09-18 13:58:22.444  INFO  req#20 done | openai-chat | stop token | prompt 14,828 | output 1,214 | cache 0 (0.0%) | TTFT 4.4s | total 9.8s | prefill 8.42k tok/s | decode 224.1 tok/s | mtp accepted 905/927 (97.6%)
+backend_ocr-1  | 2026-09-18 13:58:24.933  INFO  req#21 started | openai-chat non-stream | 2 messages | max output 8,192 | thinking off | media 1, prepared 450 ms
+backend_ocr-1  | 2026-09-18 13:58:25.710  INFO  throughput | 5.0s | prefill 409.6 tok/s (2,048 tok) | decode 77.0 tok/s (385 tok) | running 1 (prefill 1) | batch 1.00 | host 0.6% (31.1 ms)
+backend_ocr-1  | 2026-09-18 13:58:30.710  INFO  throughput | 5.0s | prefill 2.57k tok/s (12,827 tok) | decode 80.8 tok/s (404 tok) | running 1 (decode-ready 1) | batch 1.00 | host 47.8% (2.4s)
+backend_ocr-1  | 2026-09-18 13:58:32.249  INFO  req#21 done | openai-chat | stop token | prompt 14,875 | output 746 | cache 0 (0.0%) | TTFT 4.4s | total 7.8s | prefill 8.40k tok/s | decode 222.9 tok/s | mtp accepted 555/573 (96.9%)
+backend_ocr-1  | 2026-09-18 13:58:34.359  INFO  req#22 started | openai-chat non-stream | 2 messages | max output 8,192 | thinking off | media 1, prepared 421 ms
+backend_ocr-1  | 2026-09-18 13:58:35.710  INFO  throughput | 5.0s | prefill 409.6 tok/s (2,048 tok) | decode 68.2 tok/s (341 tok) | running 1 (prefill 1) | batch 1.00 | host 0.6% (31.1 ms)
+backend_ocr-1  | 2026-09-18 13:58:40.684  INFO  req#22 done | openai-chat | stop token | prompt 14,558 | output 526 | cache 0 (0.0%) | TTFT 4.4s | total 6.8s | prefill 8.42k tok/s | decode 219.3 tok/s | mtp accepted 391/411 (95.1%)
+backend_ocr-1  | 2026-09-18 13:58:40.710  INFO  throughput | 5.0s | prefill 2.50k tok/s (12,510 tok) | decode 105.0 tok/s (525 tok) | running 0 | batch 1.00 | host 47.7% (2.4s)
+backend_ocr-1  | 2026-09-18 13:58:42.855  INFO  req#23 started | openai-chat non-stream | 2 messages | max output 8,192 | thinking off | media 1, prepared 433 ms
+backend_ocr-1  | 2026-09-18 13:58:45.710  INFO  throughput | 5.0s | prefill 1.23k tok/s (6,144 tok) | running 1 (prefill 1) | host 45.5% (2.3s)
+backend_ocr-1  | 2026-09-18 13:58:50.157  INFO  req#23 done | openai-chat | stop token | prompt 14,558 | output 735 | cache 0 (0.0%) | TTFT 4.4s | total 7.7s | prefill 8.42k tok/s | decode 217.5 tok/s | mtp accepted 544/579 (94.0%)
+backend_ocr-1  | 2026-09-18 13:58:50.710  INFO  throughput | 5.0s | prefill 1.68k tok/s (8,414 tok) | decode 146.8 tok/s (734 tok) | running 0 | batch 1.00 | host 2.7% (136 ms)
+backend_ocr-1  | 2026-09-18 13:58:52.380  INFO  req#24 started | openai-chat non-stream | 2 messages | max output 8,192 | thinking off | media 1, prepared 442 ms
+backend_ocr-1  | 2026-09-18 13:58:55.710  INFO  throughput | 5.0s | prefill 2.05k tok/s (10,240 tok) | running 1 (prefill 1) | host 46.7% (2.3s)
+backend_ocr-1  | 2026-09-18 13:59:00.710  INFO  throughput | 5.0s | prefill 917.6 tok/s (4,588 tok) | decode 187.8 tok/s (939 tok) | running 1 (decode-ready 1) | batch 1.00 | host 1.7% (84.1 ms)
+backend_ocr-1  | 2026-09-18 13:59:05.710  INFO  throughput | 5.0s | decode 219.2 tok/s (1,096 tok) | running 1 (decode-ready 1) | batch 1.00 | host 0.1% (4.28 ms)
+backend_ocr-1  | 2026-09-18 13:59:06.233  INFO  req#24 done | openai-chat | stop token | prompt 14,828 | output 2,151 | cache 0 (0.0%) | TTFT 4.4s | total 14.3s | prefill 8.43k tok/s | decode 217.3 tok/s | mtp accepted 1,585/1,698 (93.3%)
+backend_ocr-1  | 2026-09-18 13:59:08.514  INFO  req#25 started | openai-chat non-stream | 2 messages | max output 8,192 | thinking off | media 1, prepared 448 ms
+backend_ocr-1  | 2026-09-18 13:59:10.710  INFO  throughput | 5.0s | prefill 409.6 tok/s (2,048 tok) | decode 23.0 tok/s (115 tok) | running 1 (prefill 1) | batch 1.00 | host 0.6% (30.7 ms)
+backend_ocr-1  | 2026-09-18 13:59:15.710  INFO  throughput | 5.0s | prefill 2.56k tok/s (12,780 tok) | decode 143.8 tok/s (719 tok) | running 1 (decode-ready 1) | batch 1.00 | host 47.8% (2.4s)
+backend_ocr-1  | 2026-09-18 13:59:15.959  INFO  req#25 done | openai-chat | stop token | prompt 14,828 | output 777 | cache 0 (0.0%) | TTFT 4.4s | total 7.9s | prefill 8.43k tok/s | decode 222.8 tok/s | mtp accepted 578/597 (96.8%)
+backend_ocr-1  | 2026-09-18 13:59:18.358  INFO  req#26 started | openai-chat non-stream | 2 messages | max output 8,192 | thinking off | media 1, prepared 456 ms
+backend_ocr-1  | 2026-09-18 13:59:20.710  INFO  throughput | 5.0s | prefill 409.6 tok/s (2,048 tok) | decode 11.4 tok/s (57 tok) | running 1 (prefill 1) | batch 1.00 | host 0.6% (30.6 ms)
+backend_ocr-1  | 2026-09-18 13:59:25.710  INFO  throughput | 5.0s | prefill 2.57k tok/s (12,827 tok) | decode 148.4 tok/s (742 tok) | running 1 (decode-ready 1) | batch 1.00 | host 47.8% (2.4s)
+backend_ocr-1  | 2026-09-18 13:59:26.948  INFO  req#26 done | openai-chat | stop token | prompt 14,875 | output 1,019 | cache 0 (0.0%) | TTFT 4.4s | total 9.1s | prefill 8.40k tok/s | decode 220.4 tok/s | mtp accepted 755/792 (95.3%)
+backend_ocr-1  | 2026-09-18 13:59:29.276  INFO  req#27 started | openai-chat non-stream | 2 messages | max output 8,192 | thinking off | media 1, prepared 447 ms
+backend_ocr-1  | 2026-09-18 13:59:30.710  INFO  throughput | 5.0s | prefill 409.6 tok/s (2,048 tok) | decode 55.2 tok/s (276 tok) | running 1 (prefill 1) | batch 1.00 | host 0.6% (31.7 ms)
+backend_ocr-1  | 2026-09-18 13:59:35.662  INFO  req#27 done | openai-chat | stop token | prompt 14,875 | output 537 | cache 0 (0.0%) | TTFT 4.4s | total 6.8s | prefill 8.40k tok/s | decode 222.2 tok/s | mtp accepted 399/414 (96.4%)
+backend_ocr-1  | 2026-09-18 13:59:35.710  INFO  throughput | 5.0s | prefill 2.57k tok/s (12,827 tok) | decode 107.2 tok/s (536 tok) | running 0 | batch 1.00 | host 47.8% (2.4s)
+backend_ocr-1  | 2026-09-18 13:59:38.063  INFO  req#28 started | openai-chat non-stream | 2 messages | max output 8,192 | thinking off | media 1, prepared 444 ms
+backend_ocr-1  | 2026-09-18 13:59:40.710  INFO  throughput | 5.0s | prefill 819.2 tok/s (4,096 tok) | running 1 (prefill 1) | host 45.0% (2.3s)
+backend_ocr-1  | 2026-09-18 13:59:45.710  INFO  throughput | 5.0s | prefill 2.16k tok/s (10,779 tok) | decode 163.8 tok/s (819 tok) | running 1 (decode-ready 1) | batch 1.00 | host 3.4% (171 ms)
+backend_ocr-1  | 2026-09-18 13:59:46.386  INFO  req#28 done | openai-chat | stop token | prompt 14,875 | output 969 | cache 0 (0.0%) | TTFT 4.4s | total 8.8s | prefill 8.40k tok/s | decode 222.4 tok/s | mtp accepted 720/747 (96.4%)
+backend_ocr-1  | 2026-09-18 13:59:48.713  INFO  req#29 started | openai-chat non-stream | 2 messages | max output 8,192 | thinking off | media 1, prepared 438 ms
+backend_ocr-1  | 2026-09-18 13:59:50.710  INFO  throughput | 5.0s | prefill 409.6 tok/s (2,048 tok) | decode 29.8 tok/s (149 tok) | running 1 (prefill 1) | batch 1.00 | host 0.6% (30.3 ms)
+backend_ocr-1  | 2026-09-18 13:59:55.106  INFO  req#29 done | openai-chat | stop token | prompt 14,875 | output 532 | cache 0 (0.0%) | TTFT 4.4s | total 6.8s | prefill 8.41k tok/s | decode 218.8 tok/s | mtp accepted 393/417 (94.2%)
+backend_ocr-1  | 2026-09-18 13:59:55.710  INFO  throughput | 5.0s | prefill 2.57k tok/s (12,827 tok) | decode 106.2 tok/s (531 tok) | running 0 | batch 1.00 | host 47.8% (2.4s)
+backend_ocr-1  | 2026-09-18 13:59:57.629  INFO  req#30 started | openai-chat non-stream | 2 messages | max output 8,192 | thinking off | media 1, prepared 468 ms
+backend_ocr-1  | 2026-09-18 14:00:00.710  INFO  throughput | 5.0s | prefill 1.64k tok/s (8,192 tok) | running 1 (prefill 1) | host 46.1% (2.3s)
+backend_ocr-1  | 2026-09-18 14:00:05.710  INFO  throughput | 5.0s | prefill 1.34k tok/s (6,683 tok) | decode 181.6 tok/s (908 tok) | running 1 (decode-ready 1) | batch 1.00 | host 2.3% (116 ms)
+backend_ocr-1  | 2026-09-18 14:00:05.979  INFO  req#30 done | openai-chat | stop token | prompt 14,875 | output 970 | cache 0 (0.0%) | TTFT 4.4s | total 8.8s | prefill 8.42k tok/s | decode 221.0 tok/s | mtp accepted 719/753 (95.5%)
+backend_ocr-1  | 2026-09-18 14:00:08.336  INFO  req#31 started | openai-chat non-stream | 2 messages | max output 8,192 | thinking off | media 1, prepared 451 ms
+backend_ocr-1  | 2026-09-18 14:00:10.710  INFO  throughput | 5.0s | prefill 409.6 tok/s (2,048 tok) | decode 12.2 tok/s (61 tok) | running 1 (prefill 1) | batch 1.00 | host 0.6% (30.1 ms)
+backend_ocr-1  | 2026-09-18 14:00:15.710  INFO  throughput | 5.0s | prefill 2.48k tok/s (12,381 tok) | decode 154.6 tok/s (773 tok) | running 1 (decode-ready 1) | batch 1.00 | host 47.5% (2.4s)
+backend_ocr-1  | 2026-09-18 14:00:20.710  INFO  throughput | 5.0s | decode 221.6 tok/s (1,108 tok) | running 1 (decode-ready 1) | batch 1.00 | host 0.1% (3.71 ms)
+backend_ocr-1  | 2026-09-18 14:00:25.244  INFO  req#31 done | openai-chat | stop token | prompt 14,429 | output 2,907 | cache 0 (0.0%) | TTFT 4.4s | total 17.4s | prefill 8.44k tok/s | decode 223.6 tok/s | mtp accepted 2,163/2,232 (96.9%)
+backend_ocr-1  | 2026-09-18 14:00:25.710  INFO  throughput | 5.0s | decode 205.0 tok/s (1,025 tok) | running 0 | batch 1.00 | host 0.1% (3.49 ms)
+backend_ocr-1  | 2026-09-18 14:00:27.852  INFO  req#32 started | openai-chat non-stream | 2 messages | max output 8,192 | thinking off | media 1, prepared 472 ms
+backend_ocr-1  | 2026-09-18 14:00:30.710  INFO  throughput | 5.0s | prefill 1.23k tok/s (6,144 tok) | running 1 (prefill 1) | host 45.6% (2.3s)
+backend_ocr-1  | 2026-09-18 14:00:34.208  INFO  req#32 done | openai-chat | stop token | prompt 14,396 | output 539 | cache 0 (0.0%) | TTFT 4.4s | total 6.8s | prefill 8.42k tok/s | decode 220.1 tok/s | mtp accepted 399/420 (95.0%)

@@ -1,0 +1,20 @@
+{
+  "8b": {
+    "count": 24,
+    "validated": 19,
+    "total_match": 18,
+    "line_count_match": 12,
+    "strict_match": 2,
+    "median_seconds": 21.48,
+    "wall_seconds": 385.0
+  },
+  "32b": {
+    "count": 24,
+    "validated": 12,
+    "total_match": 11,
+    "line_count_match": 7,
+    "strict_match": 1,
+    "median_seconds": 54.45,
+    "wall_seconds": 766.12
+  }
+}

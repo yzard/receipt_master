@@ -1,0 +1,416 @@
+{
+  "model": "nuextract2-8b",
+  "evaluated_at": "2026-09-17T03:56:21.833433766+00:00",
+  "scope": "All posted receipt snapshot; saved raw names, amounts, relationships and known numeric metadata; user aliases/categories excluded",
+  "snapshot": "/home/zyin/dev/receipt_master/tests/backend_api/corpus/confirmed/2026-09-17-candidates/snapshot.json",
+  "cases": [
+    {
+      "id": "2f97fc50-4cf3-47e1-bd44-ea6de95c774c",
+      "errors": [
+        "HTTP 502 Bad Gateway: {\"error\":{\"message\":\"Net product amount requires explicit linked item discounts\",\"code\":\"invalid_structured_output\",\"param\":null,\"type\":\"server_error\"}}"
+      ],
+      "duration_ms": 19158,
+      "images": [
+        {
+          "path": "images/2f97fc50-4cf3-47e1-bd44-ea6de95c774c-0.jpg",
+          "sha256": "6d441be7a2b010505db1d9e0d7e9a1311f6d9490fb2f4ff85e953d5b4aaed6aa",
+          "mime": "image/jpeg",
+          "image_id": "b30564de-c727-44cc-9c9d-c788acff1e7e",
+          "original_blob_id": "67dcc1ea-37ed-4628-9d63-f288807865a9",
+          "current_blob_id": "67dcc1ea-37ed-4628-9d63-f288807865a9"
+        }
+      ]
+    },
+    {
+      "id": "72a635b2-4b7e-4612-98ab-0f74d47fca59",
+      "errors": [
+        "HTTP 502 Bad Gateway: {\"error\":{\"message\":\"Net product amount requires explicit linked item discounts\",\"code\":\"invalid_structured_output\",\"param\":null,\"type\":\"server_error\"}}"
+      ],
+      "duration_ms": 24779,
+      "images": [
+        {
+          "path": "images/72a635b2-4b7e-4612-98ab-0f74d47fca59-0.jpg",
+          "sha256": "b7d63b591302895ea76db84528fa757b50e305afaffa2ec3e5b3350b0cfbd735",
+          "mime": "image/jpeg",
+          "image_id": "00460e03-1a0c-4536-b050-490118dbb626",
+          "original_blob_id": "cd6c4a15-c407-46e2-a711-59f205d49c2a",
+          "current_blob_id": "cd6c4a15-c407-46e2-a711-59f205d49c2a"
+        }
+      ]
+    },
+    {
+      "id": "e3843baa-904a-4bbf-bc21-278a1693d5c7",
+      "errors": [
+        "HTTP 502 Bad Gateway: {\"error\":{\"message\":\"Net product amount requires explicit linked item discounts\",\"code\":\"invalid_structured_output\",\"param\":null,\"type\":\"server_error\"}}"
+      ],
+      "duration_ms": 13144,
+      "images": [
+        {
+          "path": "images/e3843baa-904a-4bbf-bc21-278a1693d5c7-0.jpg",
+          "sha256": "356fdb838a323d5bd467c58f3af6b376ac592b74b6506fc249d242e4f8fe60e9",
+          "mime": "image/jpeg",
+          "image_id": "62933b7b-a9f1-4dab-b488-2a0b249e9516",
+          "original_blob_id": "76deaee3-69f0-458b-add1-6bef2aa0045c",
+          "current_blob_id": "76deaee3-69f0-458b-add1-6bef2aa0045c"
+        }
+      ]
+    },
+    {
+      "id": "4e491343-7593-42b4-b5b5-01e5648557ee",
+      "errors": [
+        "HTTP 502 Bad Gateway: {\"error\":{\"message\":\"Net product amount requires explicit linked item discounts\",\"code\":\"invalid_structured_output\",\"param\":null,\"type\":\"server_error\"}}"
+      ],
+      "duration_ms": 16358,
+      "images": [
+        {
+          "path": "images/4e491343-7593-42b4-b5b5-01e5648557ee-0.jpg",
+          "sha256": "4ab00246a1dc555fc50226621fd871128cc59487abb56ea56144518f04337973",
+          "mime": "image/jpeg",
+          "image_id": "84f2cba8-e8f3-4054-8464-b7f43cdab354",
+          "original_blob_id": "cce4309d-5a75-4abf-a4e1-35d8fa973919",
+          "current_blob_id": "cce4309d-5a75-4abf-a4e1-35d8fa973919"
+        }
+      ]
+    },
+    {
+      "id": "6d9da1ec-c0fc-4905-82b4-4ebd11716b1c",
+      "errors": [
+        "HTTP 502 Bad Gateway: {\"error\":{\"message\":\"Net product amount requires explicit linked item discounts\",\"code\":\"invalid_structured_output\",\"param\":null,\"type\":\"server_error\"}}"
+      ],
+      "duration_ms": 21414,
+      "images": [
+        {
+          "path": "images/6d9da1ec-c0fc-4905-82b4-4ebd11716b1c-0.jpg",
+          "sha256": "4e923d03bfca14983e11c57747cdd100d48df2ade06c82a40b4474c3aaf44f8e",
+          "mime": "image/jpeg",
+          "image_id": "3425d259-152f-48fb-b84f-0aad80c5dd11",
+          "original_blob_id": "4e3525e7-31ff-4e4c-af97-796d91c3fa04",
+          "current_blob_id": "4e3525e7-31ff-4e4c-af97-796d91c3fa04"
+        }
+      ]
+    },
+    {
+      "id": "73953603-31f5-496a-9dd4-76fc845c8398",
+      "errors": [
+        "HTTP 502 Bad Gateway: {\"error\":{\"message\":\"Net product amount requires explicit linked item discounts\",\"code\":\"invalid_structured_output\",\"param\":null,\"type\":\"server_error\"}}"
+      ],
+      "duration_ms": 15249,
+      "images": [
+        {
+          "path": "images/73953603-31f5-496a-9dd4-76fc845c8398-0.jpg",
+          "sha256": "a61d722f8ecffc1c4fbee2e6a98f1d4c7cf5e6fa0bd1869932f9a0c68a2e0057",
+          "mime": "image/jpeg",
+          "image_id": "6816dd1d-7bd2-433e-977d-fd8917e37928",
+          "original_blob_id": "78384e96-2daa-490f-98e8-5523c06a57bc",
+          "current_blob_id": "78384e96-2daa-490f-98e8-5523c06a57bc"
+        }
+      ]
+    },
+    {
+      "id": "e6c62f11-3b8d-4ac0-a860-1756df0efa55",
+      "errors": [
+        "HTTP 502 Bad Gateway: {\"error\":{\"message\":\"Net product amount requires explicit linked item discounts\",\"code\":\"invalid_structured_output\",\"param\":null,\"type\":\"server_error\"}}"
+      ],
+      "duration_ms": 34618,
+      "images": [
+        {
+          "path": "images/e6c62f11-3b8d-4ac0-a860-1756df0efa55-0.jpg",
+          "sha256": "d001c14c9e8a5399f2e87521c5cd1090a32b2ba34b8acc86d3c1b10f45b95408",
+          "mime": "image/jpeg",
+          "image_id": "c220eedb-83fe-41f8-8ed0-a86a0c11505e",
+          "original_blob_id": "82f1fbf0-7c39-4c0b-933e-132a8346e323",
+          "current_blob_id": "82f1fbf0-7c39-4c0b-933e-132a8346e323"
+        }
+      ]
+    },
+    {
+      "id": "d7f8ff6d-6502-4eeb-8850-2f15b131988f",
+      "errors": [
+        "HTTP 502 Bad Gateway: {\"error\":{\"message\":\"Net product amount requires explicit linked item discounts\",\"code\":\"invalid_structured_output\",\"param\":null,\"type\":\"server_error\"}}"
+      ],
+      "duration_ms": 12976,
+      "images": [
+        {
+          "path": "images/d7f8ff6d-6502-4eeb-8850-2f15b131988f-0.jpg",
+          "sha256": "dfa96fc6d9f4189b8172d5673320c6649d50aa941388ae95038a359713bbb6a3",
+          "mime": "image/jpeg",
+          "image_id": "506a11b6-6c41-4cdf-a280-d04c8dccb1b6",
+          "original_blob_id": "4865ab41-ce85-4340-b866-e529749f7d1c",
+          "current_blob_id": "4865ab41-ce85-4340-b866-e529749f7d1c"
+        }
+      ]
+    },
+    {
+      "id": "a31f7e6b-8bb1-49c8-a292-504d76d1a59c",
+      "errors": [
+        "HTTP 502 Bad Gateway: {\"error\":{\"message\":\"Net product amount requires explicit linked item discounts\",\"code\":\"invalid_structured_output\",\"param\":null,\"type\":\"server_error\"}}"
+      ],
+      "duration_ms": 15868,
+      "images": [
+        {
+          "path": "images/a31f7e6b-8bb1-49c8-a292-504d76d1a59c-0.jpg",
+          "sha256": "8494cc258d8c05da98d3b8237ffd15f2765ce8f4d6a4598582b50a141aa5b9bd",
+          "mime": "image/jpeg",
+          "image_id": "4b522b53-5e91-47ec-a0e2-d33197f18cba",
+          "original_blob_id": "e2dab378-50dc-4d4d-8bac-28abff305cd2",
+          "current_blob_id": "e2dab378-50dc-4d4d-8bac-28abff305cd2"
+        }
+      ]
+    },
+    {
+      "id": "3a8e3c19-e8d0-4ea8-8fa3-06e3cd5fcfd4",
+      "errors": [
+        "HTTP 502 Bad Gateway: {\"error\":{\"message\":\"Net product amount requires explicit linked item discounts\",\"code\":\"invalid_structured_output\",\"param\":null,\"type\":\"server_error\"}}"
+      ],
+      "duration_ms": 15605,
+      "images": [
+        {
+          "path": "images/3a8e3c19-e8d0-4ea8-8fa3-06e3cd5fcfd4-0.jpg",
+          "sha256": "6ed691ef1ce53bbe2bc6b3daffcae00997616334d50b9ba7361f33bb4ebe3971",
+          "mime": "image/jpeg",
+          "image_id": "c9970ece-a761-47c9-a5c6-151d36ff4608",
+          "original_blob_id": "2371028c-5ebc-4661-801f-71d9e9200151",
+          "current_blob_id": "2371028c-5ebc-4661-801f-71d9e9200151"
+        }
+      ]
+    },
+    {
+      "id": "8572dcef-7f7f-4d77-80c6-0ede75d45fa3",
+      "errors": [
+        "HTTP 502 Bad Gateway: {\"error\":{\"message\":\"Net product amount requires explicit linked item discounts\",\"code\":\"invalid_structured_output\",\"param\":null,\"type\":\"server_error\"}}"
+      ],
+      "duration_ms": 32324,
+      "images": [
+        {
+          "path": "images/8572dcef-7f7f-4d77-80c6-0ede75d45fa3-0.jpg",
+          "sha256": "473d762e6dd55ff22a09e27c139b695ac017bbb49c9060bdca89da8f3b5b0325",
+          "mime": "image/jpeg",
+          "image_id": "3ceeae4a-6b54-4542-9cce-ddfc99432069",
+          "original_blob_id": "be3d109e-2517-4d4f-9d92-b57efadd6ae7",
+          "current_blob_id": "be3d109e-2517-4d4f-9d92-b57efadd6ae7"
+        }
+      ]
+    },
+    {
+      "id": "924e246e-c811-497a-a61b-6b5724f7bacd",
+      "errors": [
+        "HTTP 502 Bad Gateway: {\"error\":{\"message\":\"Net product amount requires explicit linked item discounts\",\"code\":\"invalid_structured_output\",\"param\":null,\"type\":\"server_error\"}}"
+      ],
+      "duration_ms": 9795,
+      "images": [
+        {
+          "path": "images/924e246e-c811-497a-a61b-6b5724f7bacd-0.jpg",
+          "sha256": "cae48e69c852cdacc651856fc024b75db9a72ac1552cfc358f3402718b17c572",
+          "mime": "image/jpeg",
+          "image_id": "e6b80dc7-7ed8-4ccb-98c7-2799c9dcd977",
+          "original_blob_id": "ed5874ed-107e-4584-9801-8a66d4a9f7de",
+          "current_blob_id": "ed5874ed-107e-4584-9801-8a66d4a9f7de"
+        }
+      ]
+    },
+    {
+      "id": "e9ee06e0-f4aa-4c3c-812a-4e8abc21e3f0",
+      "errors": [
+        "HTTP 502 Bad Gateway: {\"error\":{\"message\":\"Net product amount requires explicit linked item discounts\",\"code\":\"invalid_structured_output\",\"param\":null,\"type\":\"server_error\"}}"
+      ],
+      "duration_ms": 19545,
+      "images": [
+        {
+          "path": "images/e9ee06e0-f4aa-4c3c-812a-4e8abc21e3f0-0.jpg",
+          "sha256": "521b5be29e403495c84882c143d696f61e35ae710f5887d713cf39bcfbd86c27",
+          "mime": "image/jpeg",
+          "image_id": "d2ed577e-c9de-4dcd-811a-43c58cf3fd49",
+          "original_blob_id": "d05fa894-7866-43ed-870f-6f2ce750ed02",
+          "current_blob_id": "d05fa894-7866-43ed-870f-6f2ce750ed02"
+        }
+      ]
+    },
+    {
+      "id": "e297a3d3-f9f1-4ba7-8e5e-a18e56fdecdd",
+      "errors": [
+        "HTTP 502 Bad Gateway: {\"error\":{\"message\":\"Net product amount requires explicit linked item discounts\",\"code\":\"invalid_structured_output\",\"param\":null,\"type\":\"server_error\"}}"
+      ],
+      "duration_ms": 7317,
+      "images": [
+        {
+          "path": "images/e297a3d3-f9f1-4ba7-8e5e-a18e56fdecdd-0.jpg",
+          "sha256": "cbc87da4e601be6b3918ad4c844fa1aefa235e6d5e396f0aa478d539c95c2306",
+          "mime": "image/jpeg",
+          "image_id": "cfe003de-de1a-4c2f-866e-01708b0df470",
+          "original_blob_id": "b14826a6-2741-4763-b60f-5c9cbc4ee6b7",
+          "current_blob_id": "b14826a6-2741-4763-b60f-5c9cbc4ee6b7"
+        }
+      ]
+    },
+    {
+      "id": "a6618e05-1d59-453f-90e9-4bbf87a3830c",
+      "errors": [
+        "HTTP 502 Bad Gateway: {\"error\":{\"message\":\"Net product amount requires explicit linked item discounts\",\"code\":\"invalid_structured_output\",\"param\":null,\"type\":\"server_error\"}}"
+      ],
+      "duration_ms": 12640,
+      "images": [
+        {
+          "path": "images/a6618e05-1d59-453f-90e9-4bbf87a3830c-0.jpg",
+          "sha256": "8fcb5d227f655303604e78449471a7e77526c3d75ae00871a83ea9a0be95e1b7",
+          "mime": "image/jpeg",
+          "image_id": "d6408c9b-9e6c-4114-9365-fc34fb90cab1",
+          "original_blob_id": "e0bbcd8d-3e30-42ec-870f-2d79f3bd1358",
+          "current_blob_id": "e0bbcd8d-3e30-42ec-870f-2d79f3bd1358"
+        }
+      ]
+    },
+    {
+      "id": "5331c892-9fb6-42b5-bdb3-5a205b1a0767",
+      "errors": [
+        "HTTP 502 Bad Gateway: {\"error\":{\"message\":\"Net product amount requires explicit linked item discounts\",\"code\":\"invalid_structured_output\",\"param\":null,\"type\":\"server_error\"}}"
+      ],
+      "duration_ms": 9688,
+      "images": [
+        {
+          "path": "images/5331c892-9fb6-42b5-bdb3-5a205b1a0767-0.jpg",
+          "sha256": "3ce373122f8273932529d28a33c32af11281ae64bc7bf25e1514be90c5e46b96",
+          "mime": "image/jpeg",
+          "image_id": "6e46ab44-d4c4-472b-8a15-71e932609e32",
+          "original_blob_id": "9b212a28-3e9a-4b78-9fd4-64a21fd5dc9e",
+          "current_blob_id": "9b212a28-3e9a-4b78-9fd4-64a21fd5dc9e"
+        }
+      ]
+    },
+    {
+      "id": "ebf82f5b-c4e7-4a49-8ce7-927233bfde95",
+      "errors": [
+        "HTTP 502 Bad Gateway: {\"error\":{\"message\":\"Net product amount requires explicit linked item discounts\",\"code\":\"invalid_structured_output\",\"param\":null,\"type\":\"server_error\"}}"
+      ],
+      "duration_ms": 22695,
+      "images": [
+        {
+          "path": "images/ebf82f5b-c4e7-4a49-8ce7-927233bfde95-0.jpg",
+          "sha256": "2ee6d8f5ba09016f96d9823e36460a7577eace21844d58d4077570a9d1a6d714",
+          "mime": "image/jpeg",
+          "image_id": "fc76078f-21c3-4665-b738-c7346738e492",
+          "original_blob_id": "b77190a0-182c-4239-a93e-1e6275548394",
+          "current_blob_id": "b77190a0-182c-4239-a93e-1e6275548394"
+        }
+      ]
+    },
+    {
+      "id": "c5fdc978-8f74-43bf-a5c5-e22d28f5aea9",
+      "errors": [
+        "HTTP 502 Bad Gateway: {\"error\":{\"message\":\"Net product amount requires explicit linked item discounts\",\"code\":\"invalid_structured_output\",\"param\":null,\"type\":\"server_error\"}}"
+      ],
+      "duration_ms": 6985,
+      "images": [
+        {
+          "path": "images/c5fdc978-8f74-43bf-a5c5-e22d28f5aea9-0.jpg",
+          "sha256": "d2a3b94e45b742007df1202e3000dc3048e15c46260e996ac9f742f4d0a1851d",
+          "mime": "image/jpeg",
+          "image_id": "9f2ed434-bf1d-4b57-a198-5688b8eba062",
+          "original_blob_id": "9089017d-1c45-4d8e-82c8-7f7d09eb19fa",
+          "current_blob_id": "9089017d-1c45-4d8e-82c8-7f7d09eb19fa"
+        }
+      ]
+    },
+    {
+      "id": "20267232-d4d0-4540-9c14-b0e051b06445",
+      "errors": [
+        "HTTP 502 Bad Gateway: {\"error\":{\"message\":\"Net product amount requires explicit linked item discounts\",\"code\":\"invalid_structured_output\",\"param\":null,\"type\":\"server_error\"}}"
+      ],
+      "duration_ms": 14405,
+      "images": [
+        {
+          "path": "images/20267232-d4d0-4540-9c14-b0e051b06445-0.jpg",
+          "sha256": "326bc82dc28e89d4ffb985b0bb6c1f54c6b6baa9d38cf0ea26a5853c32c5b07d",
+          "mime": "image/jpeg",
+          "image_id": "19bb63eb-0b5b-4db5-87c2-c038d2badecf",
+          "original_blob_id": "6805e9c9-e022-4bdd-8d10-d69601e03cc2",
+          "current_blob_id": "6805e9c9-e022-4bdd-8d10-d69601e03cc2"
+        }
+      ]
+    },
+    {
+      "id": "ca76c352-9601-498c-8324-0ef9bcf5ea3b",
+      "errors": [
+        "HTTP 502 Bad Gateway: {\"error\":{\"message\":\"Net product amount requires explicit linked item discounts\",\"code\":\"invalid_structured_output\",\"param\":null,\"type\":\"server_error\"}}"
+      ],
+      "duration_ms": 13810,
+      "images": [
+        {
+          "path": "images/ca76c352-9601-498c-8324-0ef9bcf5ea3b-0.jpg",
+          "sha256": "d4e6fe92476a1bff93318890fbaac50dde917c8c0386402cfec459807eefa0bc",
+          "mime": "image/jpeg",
+          "image_id": "d4653dfa-3508-4fa6-8b33-78ee5f5362df",
+          "original_blob_id": "a2991748-9d72-47f7-b5f9-77722eac4933",
+          "current_blob_id": "a2991748-9d72-47f7-b5f9-77722eac4933"
+        }
+      ]
+    },
+    {
+      "id": "4fc6a91b-faba-4d3e-82a3-be4c78270e99",
+      "errors": [
+        "HTTP 502 Bad Gateway: {\"error\":{\"message\":\"Net product amount requires explicit linked item discounts\",\"code\":\"invalid_structured_output\",\"param\":null,\"type\":\"server_error\"}}"
+      ],
+      "duration_ms": 12800,
+      "images": [
+        {
+          "path": "images/4fc6a91b-faba-4d3e-82a3-be4c78270e99-0.jpg",
+          "sha256": "80e79b5da9e0df10ad13ffae977a8900aaf39dac8da7431f20ac65ed05f629ad",
+          "mime": "image/jpeg",
+          "image_id": "aad18875-3b5b-44d2-b52f-989c0340bac3",
+          "original_blob_id": "71f53799-d08f-4839-bcff-3fe594dfde94",
+          "current_blob_id": "71f53799-d08f-4839-bcff-3fe594dfde94"
+        }
+      ]
+    },
+    {
+      "id": "6dd0be7d-4b6e-4b97-8a3d-c76de14f434c",
+      "errors": [
+        "HTTP 502 Bad Gateway: {\"error\":{\"message\":\"Net product amount requires explicit linked item discounts\",\"code\":\"invalid_structured_output\",\"param\":null,\"type\":\"server_error\"}}"
+      ],
+      "duration_ms": 12983,
+      "images": [
+        {
+          "path": "images/6dd0be7d-4b6e-4b97-8a3d-c76de14f434c-0.jpg",
+          "sha256": "367c5b3c8451eb15c061a254fa8d810fe951dadcfdb246fcb1c478e82191f7c0",
+          "mime": "image/jpeg",
+          "image_id": "c7bf12f3-c40d-4bdf-a475-0c91d7250592",
+          "original_blob_id": "aa33c487-4beb-48ea-9187-43a38184ba8d",
+          "current_blob_id": "aa33c487-4beb-48ea-9187-43a38184ba8d"
+        }
+      ]
+    },
+    {
+      "id": "b69bb2c5-7c75-4870-803e-25e321e086dd",
+      "errors": [
+        "HTTP 502 Bad Gateway: {\"error\":{\"message\":\"Net product amount requires explicit linked item discounts\",\"code\":\"invalid_structured_output\",\"param\":null,\"type\":\"server_error\"}}"
+      ],
+      "duration_ms": 6870,
+      "images": [
+        {
+          "path": "images/b69bb2c5-7c75-4870-803e-25e321e086dd-0.jpg",
+          "sha256": "73d8b77b4439aa8df3b5d143511b984d122143777c23d57d0a71e458ab28c274",
+          "mime": "image/jpeg",
+          "image_id": "9db3edb4-3f8d-46d3-b941-98f84d55b7e4",
+          "original_blob_id": "6bd61ec0-425a-40c1-9f5c-5b0b6392afef",
+          "current_blob_id": "6bd61ec0-425a-40c1-9f5c-5b0b6392afef"
+        }
+      ]
+    },
+    {
+      "id": "1b072114-24ee-4bb5-80a5-018ce442a512",
+      "errors": [
+        "HTTP 502 Bad Gateway: {\"error\":{\"message\":\"Net product amount requires explicit linked item discounts\",\"code\":\"invalid_structured_output\",\"param\":null,\"type\":\"server_error\"}}"
+      ],
+      "duration_ms": 26550,
+      "images": [
+        {
+          "path": "images/1b072114-24ee-4bb5-80a5-018ce442a512-0.jpg",
+          "sha256": "372e79b57ba13beea94e071f98cdab837231ed1a458f4a49f7a254620244139e",
+          "mime": "image/jpeg",
+          "image_id": "70eb0efa-bdae-4c9f-8a3e-ee68c5392640",
+          "original_blob_id": "2466c60a-28cc-4a7b-88c5-8ee60b101824",
+          "current_blob_id": "2466c60a-28cc-4a7b-88c5-8ee60b101824"
+        }
+      ]
+    }
+  ]
+}

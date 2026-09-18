@@ -1,0 +1,184 @@
+{
+  "names": {
+    "dual": {
+      "receipts": 32,
+      "matched_names": 119,
+      "verified_names": 136,
+      "name_recall": 0.875,
+      "clear_matched_names": 104,
+      "clear_predicted_names": 128,
+      "clear_precision": 0.8125,
+      "fully_correct_receipts": 18,
+      "fully_reviewable_receipts": 28,
+      "correct_row_counts": 28
+    },
+    "llama": {
+      "receipts": 32,
+      "matched_names": 133,
+      "verified_names": 136,
+      "name_recall": 0.9779411764705882,
+      "clear_matched_names": 117,
+      "clear_predicted_names": 120,
+      "clear_precision": 0.975,
+      "fully_correct_receipts": 26,
+      "fully_reviewable_receipts": 28,
+      "correct_row_counts": 31
+    },
+    "ninfer": {
+      "receipts": 32,
+      "matched_names": 132,
+      "verified_names": 136,
+      "name_recall": 0.9705882352941176,
+      "clear_matched_names": 116,
+      "clear_predicted_names": 120,
+      "clear_precision": 0.9666666666666667,
+      "fully_correct_receipts": 25,
+      "fully_reviewable_receipts": 28,
+      "correct_row_counts": 31
+    }
+  },
+  "fields": {
+    "dual": {
+      "valid": 32,
+      "total_correct": 32,
+      "weight_pair_hits": 20,
+      "weight_name_pair_hits": 20,
+      "weight_count": 20,
+      "differences": []
+    },
+    "llama": {
+      "valid": 32,
+      "total_correct": 31,
+      "weight_pair_hits": 13,
+      "weight_name_pair_hits": 13,
+      "weight_count": 20,
+      "differences": [
+        {
+          "id": "78f63611-ad9f-4982-86aa-7b16450f46a7",
+          "expected_total": 792,
+          "actual_total": 792,
+          "missing_name_amount_weight": [
+            [
+              "ENVYAPPLE",
+              792,
+              1202020
+            ]
+          ]
+        },
+        {
+          "id": "fe3a7e41-45ad-4865-8a83-427a696481db",
+          "expected_total": 2725,
+          "actual_total": 2725,
+          "missing_name_amount_weight": [
+            [
+              "CHINESELEEK",
+              200,
+              226796
+            ],
+            [
+              "CHIVES",
+              341,
+              344730
+            ],
+            [
+              "CHINESECABBAGE",
+              186,
+              1220163
+            ]
+          ]
+        },
+        {
+          "id": "199fc34a-4857-4aac-873c-8c55f8b223a9",
+          "expected_total": 5468,
+          "actual_total": 5468,
+          "missing_name_amount_weight": [
+            [
+              "ENVYAPPLE",
+              870,
+              1319954
+            ],
+            [
+              "ORGANICBANANA",
+              401,
+              1410672
+            ]
+          ]
+        },
+        {
+          "id": "d7f8ff6d-6502-4eeb-8850-2f15b131988f",
+          "expected_total": 421,
+          "actual_total": 421,
+          "missing_name_amount_weight": [
+            [
+              "TAIWANCABBAGE1POUNDS",
+              175,
+              1369849
+            ]
+          ]
+        },
+        {
+          "id": "8572dcef-7f7f-4d77-80c6-0ede75d45fa3",
+          "expected_total": 13803,
+          "actual_total": 12380,
+          "missing_name_amount_weight": []
+        }
+      ]
+    },
+    "ninfer": {
+      "valid": 32,
+      "total_correct": 31,
+      "weight_pair_hits": 18,
+      "weight_name_pair_hits": 17,
+      "weight_count": 20,
+      "differences": [
+        {
+          "id": "fe3a7e41-45ad-4865-8a83-427a696481db",
+          "expected_total": 2725,
+          "actual_total": 2725,
+          "missing_name_amount_weight": [
+            [
+              "CHINESELEEK",
+              200,
+              226796
+            ],
+            [
+              "CHIVES",
+              341,
+              344730
+            ],
+            [
+              "CHINESECABBAGE",
+              186,
+              1220163
+            ]
+          ]
+        },
+        {
+          "id": "8572dcef-7f7f-4d77-80c6-0ede75d45fa3",
+          "expected_total": 13803,
+          "actual_total": 12380,
+          "missing_name_amount_weight": []
+        }
+      ]
+    }
+  },
+  "latency": {
+    "llama": {
+      "batch_seconds": 887.844,
+      "median_seconds": 24.624000000000002,
+      "min_seconds": 8.04,
+      "max_seconds": 49.621,
+      "median_prompt_tokens": 5756.0
+    },
+    "ninfer": {
+      "batch_seconds": 418.447,
+      "median_seconds": 10.914000000000001,
+      "min_seconds": 5.815,
+      "max_seconds": 17.899,
+      "median_prompt_tokens": 14828.0
+    }
+  },
+  "raw_json_objects": 2,
+  "raw_requests": 32,
+  "formatting_only_decoded": 32
+}

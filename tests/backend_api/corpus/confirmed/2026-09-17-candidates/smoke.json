@@ -1,0 +1,107 @@
+{
+  "captured_at_utc": "2026-09-17T03:39:43.897419+00:00",
+  "selection": "all non-deleted posted receipts",
+  "image_selection": "all current non-deleted photos, in saved order, including saved rotations",
+  "cases": [
+    {
+      "id": "4fc6a91b-faba-4d3e-82a3-be4c78270e99",
+      "expected": {
+        "id": "4fc6a91b-faba-4d3e-82a3-be4c78270e99",
+        "store": "Costco",
+        "recognizedStore": "",
+        "branch": "Rego Park #1070",
+        "address": "61-35 Junction Blvd, Rego Park, NY 11374",
+        "country": "US",
+        "currency": "USD",
+        "timeSource": "recognized",
+        "rawTime": "2026-08-20 15:33:00",
+        "totalSource": "recognized",
+        "occurredAt": 1787254380000,
+        "createdAt": 1789595077543,
+        "revision": 6,
+        "totalMinor": -5528,
+        "posted": true,
+        "lines": [
+          {
+            "id": "b6bd9b91-c49c-4a98-9ac5-c501f536181f",
+            "kind": "other_adjustment",
+            "rawName": "EXC GS DOWN",
+            "taxCode": null,
+            "sku": null,
+            "isWeighed": false,
+            "standardName": "",
+            "categoryId": "00000000-0000-4000-8000-000000000001",
+            "productId": null,
+            "discountTarget": null,
+            "quantityUnit": null,
+            "weightMg": null,
+            "quantityMicros": null,
+            "unitPriceScaled": null,
+            "amountMinor": -5077,
+            "printedAmountMinor": null,
+            "rememberAlias": false,
+            "warnings": [],
+            "evidence": [],
+            "display": {
+              "weightText": "",
+              "weightUnit": "kg",
+              "weightLabel": "",
+              "quantityText": "",
+              "quantityUnit": "",
+              "priceText": "",
+              "amountText": "-50.77",
+              "pricingNote": ""
+            }
+          },
+          {
+            "id": "2037ef2f-1185-4397-9269-b74eb4e26187",
+            "kind": "tax",
+            "rawName": "TAX",
+            "taxCode": null,
+            "sku": null,
+            "isWeighed": false,
+            "standardName": "",
+            "categoryId": "00000000-0000-4000-8000-000000000002",
+            "productId": null,
+            "discountTarget": null,
+            "quantityUnit": null,
+            "weightMg": null,
+            "quantityMicros": null,
+            "unitPriceScaled": null,
+            "amountMinor": -451,
+            "printedAmountMinor": null,
+            "rememberAlias": false,
+            "warnings": [],
+            "evidence": [],
+            "display": {
+              "weightText": "",
+              "weightUnit": "kg",
+              "weightLabel": "",
+              "quantityText": "",
+              "quantityUnit": "",
+              "priceText": "",
+              "amountText": "-4.51",
+              "pricingNote": ""
+            }
+          }
+        ],
+        "summary": {
+          "knownTotal": -5528,
+          "difference": 0
+        }
+      },
+      "zone": "America/New_York",
+      "zone_source": "explicit_fallback",
+      "images": [
+        {
+          "path": "images/4fc6a91b-faba-4d3e-82a3-be4c78270e99-0.jpg",
+          "sha256": "80e79b5da9e0df10ad13ffae977a8900aaf39dac8da7431f20ac65ed05f629ad",
+          "mime": "image/jpeg",
+          "image_id": "aad18875-3b5b-44d2-b52f-989c0340bac3",
+          "original_blob_id": "71f53799-d08f-4839-bcff-3fe594dfde94",
+          "current_blob_id": "71f53799-d08f-4839-bcff-3fe594dfde94"
+        }
+      ]
+    }
+  ]
+}

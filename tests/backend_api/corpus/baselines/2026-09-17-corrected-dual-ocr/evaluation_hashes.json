@@ -1,0 +1,8 @@
+{
+  "tests/backend_api/corpus/baselines/2026-09-17-corrected-dual-ocr/ablation_scorer.rs": "7546a004b97d5dd65da86d800260e08dc7e7abf29ffaf687ed4234a70d544fd4",
+  "tests/backend_api/corpus/baselines/2026-09-17-corrected-dual-ocr/compare_corrected.py": "758182e6d5d1188dc6e70c98cac58e96f557094ce17fae2c5b3a30fda4caea95",
+  "tests/backend_api/corpus/baselines/2026-09-17-corrected-dual-ocr/report.json": "c89b90c3f81d5eb32dac5f9c9d398aafeaaa373a493f12383352f5105f3bac25",
+  "tests/backend_api/corpus/baselines/2026-09-17-corrected-dual-ocr/unlimited.json": "a132342c2c9eb754c10ea4e0a4d79f9bcebed4a465ad3406696a8cdeaa2d1569",
+  "tests/backend_api/corpus/baselines/2026-09-17-corrected-dual-ocr/paddle.json": "80182c23bf98d57e06b3dce83c1a1d51d5446685828560ff2390ba5e87116566",
+  "tests/backend_api/corpus/baselines/2026-09-17-corrected-dual-ocr/both.json": "2de7f5d0d96ae550064bc939277d3238be8b758c93e0c0f85683a4b96f9a1318"
+}

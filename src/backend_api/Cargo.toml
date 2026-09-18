@@ -1,0 +1,50 @@
+[package]
+name = "receipt-backend-api"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+axum = { version = "0.8", features = ["multipart"] }
+base64 = "0.22"
+image = { version = "0.25", default-features = false, features = ["jpeg", "png", "webp"] }
+jsonschema = { version = "0.56", default-features = false }
+libc = "0.2"
+regex = "1"
+reqwest = { version = "0.12", default-features = false, features = ["json", "rustls-tls"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = { version = "1", features = ["preserve_order"] }
+subtle = "2"
+tokio = { version = "1", features = ["full"] }
+serde_yaml_ng = "0.10"
+tower = { version = "0.5", features = ["util"] }
+tower-http = { version = "0.6", features = ["fs"] }
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+uuid = { version = "1", features = ["v4"] }
+
+rusqlite = { version = "0.38", features = ["bundled", "backup"] }
+sha2 = "0.10"
+unicode-normalization = "0.1"
+chrono = "0.4"
+chrono-tz = "0.10"
+zip = { version = "4", default-features = false, features = ["deflate"] }
+
+tempfile = "3"
+
+[dev-dependencies]
+
+[[test]]
+name = "api"
+path = "../../tests/backend_api/api.rs"
+
+[[test]]
+name = "storage"
+path = "../../tests/backend_api/storage.rs"
+
+[[test]]
+name = "corpus"
+path = "../../tests/backend_api/corpus.rs"
+
+[[test]]
+name = "parsing"
+path = "../../tests/backend_api/parsing.rs"

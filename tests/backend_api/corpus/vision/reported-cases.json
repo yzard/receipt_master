@@ -1,0 +1,60 @@
+{
+  "scope": "Critical invariants from user feedback and source photos; not full-field manual annotations or general OCR accuracy.",
+  "cases": [
+    {
+      "id": "3a8e3c19",
+      "known_store": "Costco",
+      "image": "images/3a8e3c19-0.jpg",
+      "sha256": "6ed691ef1ce53bbe2bc6b3daffcae00997616334d50b9ba7361f33bb4ebe3971",
+      "total": "256.70",
+      "product_count": 5,
+      "discount_amounts": [
+        "-5.00",
+        "-5.00"
+      ],
+      "product_skus": [
+        "1683859",
+        "690843",
+        "1898552",
+        "1121864",
+        "1121864"
+      ]
+    },
+    {
+      "id": "e6c62f11",
+      "known_store": "Costco",
+      "image": "images/e6c62f11-0.jpg",
+      "sha256": "d001c14c9e8a5399f2e87521c5cd1090a32b2ba34b8acc86d3c1b10f45b95408",
+      "total": "154.92",
+      "product_count": 8,
+      "discount_amounts": [
+        "-6.00",
+        "-4.00",
+        "-11.00"
+      ],
+      "product_skus": [
+        "1919329",
+        "2048748",
+        "723675",
+        "1959977",
+        "938492",
+        "3610583",
+        "867221",
+        "1009982"
+      ]
+    },
+    {
+      "id": "6d9da1ec",
+      "known_store": "skyFOODS",
+      "image": "images/6d9da1ec-0.jpg",
+      "sha256": "4e923d03bfca14983e11c57747cdd100d48df2ade06c82a40b4474c3aaf44f8e",
+      "total": "30.32",
+      "product_count": 7,
+      "discount_amounts": [
+        "-0.99",
+        "-1.00"
+      ],
+      "product_skus": []
+    }
+  ]
+}

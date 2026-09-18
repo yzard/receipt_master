@@ -1,0 +1,54 @@
+{
+  "id": "6d9da1ec",
+  "sha256": "4e923d03bfca14983e11c57747cdd100d48df2ade06c82a40b4474c3aaf44f8e",
+  "duration_seconds": 72.08,
+  "response": {
+    "id": "chatcmpl-9039dca82e1f6441",
+    "object": "chat.completion",
+    "created": 1789612083,
+    "model": "qwen3-vl-8b-instruct",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "{\n  \"store\": null,\n  \"branch\": \"Sky Foods\",\n  \"address\": \"40-24 COLLEGE POINT BLVD FLUSHING, NY 11355\",\n  \"country\": \"US\",\n  \"currency\": \"USD\",\n  \"local_time\": \"2026-08-27 15:19:45\",\n  \"total\": \"30.32\",\n  \"lines\": [\n    {\n      \"name\": \"LONG HOT PEPPER (1POUNDS)\",\n      \"standard_name\": \"牛角椒 (1磅)\",\n      \"kind\": \"product\",\n      \"quantity\": \"1\",\n      \"quantity_unit\": \"POUNDS\",\n      \"unit_price\": \"1.99\",\n      \"amount\": \"1.29\",\n      \"confidence\": null,\n      \"discount_target_index\": null,\n      \"review_notes\": [],\n      \"sku\": null,\n      \"tax_code\": \"F\",\n      \"is_weighed\": true,\n      \"evidence\": [\n        {\n          \"image_index\": 0,\n          \"box\": [\n            0.29,\n            0.34,\n            0.69,\n            0.38\n          ]\n        }\n      ],\n      \"package_weight\": null,\n      \"package_weight_unit\": null,\n      \"amount_basis\": \"gross\"\n    },\n    {\n      \"name\": \"CHIVES (1POUNDS)\",\n      \"standard_name\": \"韭菜 (1磅)\",\n      \"kind\": \"product\",\n      \"quantity\": \"1\",\n      \"quantity_unit\": \"POUNDS\",\n      \"unit_price\": \"3.99\",\n      \"amount\": \"2.15\",\n      \"confidence\": null,\n      \"discount_target_index\": null,\n      \"review_notes\": [],\n      \"sku\": null,\n      \"tax_code\": \"F\",\n      \"is_weighed\": true,\n      \"evidence\": [\n        {\n          \"image_index\": 0,\n          \"box\": [\n            0.29,\n            0.38,\n            0.69,\n            0.42\n          ]\n        }\n      ],\n      \"package_weight\": null,\n      \"package_weight_unit\": null,\n      \"amount_basis\": \"gross\"\n    },\n    {\n      \"name\": \"BOK CHOY TIPS (1POUNDS)\",\n      \"standard_name\": \"白菜苗 (1磅)\",\n      \"kind\": \"product\",\n      \"quantity\": \"1\",\n      \"quantity_unit\": \"POUNDS\",\n      \"unit_price\": \"2.49\",\n      \"amount\": \"4.91\",\n      \"confidence\": null,\n      \"discount_target_index\": null,\n      \"review_notes\": [],\n      \"sku\": null,\n      \"tax_code\": \"F\",\n      \"is_weighed\": true,\n      \"evidence\": [\n        {\n          \"image_index\": 0,\n          \"box\": [\n            0.29,\n            0.42,\n            0.69,\n            0.46\n          ]\n        }\n      ],\n      \"package_weight\": null,\n      \"package_weight_unit\": null,\n      \"amount_basis\": \"gross\"\n    },\n    {\n      \"name\": \"MAPLEHILL WHOLE MILK\",\n      \"standard_name\": \"MAPLEHILL 全脂牛奶\",\n      \"kind\": \"product\",\n      \"quantity\": \"1\",\n      \"quantity_unit\": null,\n      \"unit_price\": null,\n      \"amount\": \"9.99\",\n      \"confidence\": null,\n      \"discount_target_index\": null,\n      \"review_notes\": [],\n      \"sku\": null,\n      \"tax_code\": \"F\",\n      \"is_weighed\": false,\n      \"evidence\": [\n        {\n          \"image_index\": 0,\n          \"box\": [\n            0.29,\n            0.46,\n            0.69,\n            0.51\n          ]\n        }\n      ],\n      \"package_weight\": null,\n      \"package_weight_unit\": null,\n      \"amount_basis\": \"gross\"\n    },\n    {\n      \"name\": \"KANGLV JUMBO DRIED TOFU\",\n      \"standard_name\": \"康綠 大豆腐乾\",\n      \"kind\": \"product\",\n      \"quantity\": \"1\",\n      \"quantity_unit\": null,\n      \"unit_price\": \"5.99\",\n      \"amount\": \"3.00\",\n      \"confidence\": null,\n      \"discount_target_index\": null,\n      \"review_notes\": [],\n      \"sku\": null,\n      \"tax_code\": \"F\",\n      \"is_weighed\": false,\n      \"evidence\": [\n        {\n          \"image_index\": 0,\n          \"box\": [\n            0.29,\n            0.51,\n            0.69,\n            0.55\n          ]\n        }\n      ],\n      \"package_weight\": null,\n      \"package_weight_unit\": null,\n      \"amount_basis\": \"gross\"\n    },\n    {\n      \"name\": \"KANGLV JUMBO DRIED TOFU\",\n      \"standard_name\": \"康綠 大豆腐乾\",\n      \"kind\": \"item_discount\",\n      \"quantity\": null,\n      \"quantity_unit\": null,\n      \"unit_price\": null,\n      \"amount\": \"-0.99\",\n      \"confidence\": null,\n      \"discount_target_index\": 0,\n      \"review_notes\": [],\n      \"sku\": null,\n      \"tax_code\": null,\n      \"is_weighed\": false,\n      \"evidence\": [\n        {\n          \"image_index\": 0,\n          \"box\": [\n            0.29,\n            0.55,\n            0.69,\n            0.59\n          ]\n        }\n      ],\n      \"package_weight\": null,\n      \"package_weight_unit\": null,\n      \"amount_basis\": \"gross\"\n    },\n    {\n      \"name\": \"KANGLV JUMBO DRIED TOFU\",\n      \"standard_name\": \"康綠 大豆腐乾\",\n      \"kind\": \"product\",\n      \"quantity\": \"1\",\n      \"quantity_unit\": null,\n      \"unit_price\": \"5.99\",\n      \"amount\": \"2.99\",\n      \"confidence\": null,\n      \"discount_target_index\": null,\n      \"review_notes\": [],\n      \"sku\": null,\n      \"tax_code\": \"F\",\n      \"is_weighed\": false,\n      \"evidence\": [\n        {\n          \"image_index\": 0,\n          \"box\": [\n            0.29,\n            0.59,\n            0.69,\n            0.63\n          ]\n        }\n      ],\n      \"package_weight\": null,\n      \"package_weight_unit\": null,\n      \"amount_basis\": \"gross\"\n    },\n    {\n      \"name\": \"KANGLV JUMBO DRIED TOFU\",\n      \"standard_name\": \"康綠 大豆腐乾\",\n      \"kind\": \"item_discount\",\n      \"quantity\": null,\n      \"quantity_unit\": null,\n      \"unit_price\": null,\n      \"amount\": \"-1.00\",\n      \"confidence\": null,\n      \"discount_target_index\": 1,\n      \"review_notes\": [],\n      \"sku\": null,\n      \"tax_code\": null,\n      \"is_weighed\": false,\n      \"evidence\": [\n        {\n          \"image_index\": 0,\n          \"box\": [\n            0.29,\n            0.63,\n            0.69,\n            0.67\n          ]\n        }\n      ],\n      \"package_weight\": null,\n      \"package_weight_unit\": null,\n      \"amount_basis\": \"gross\"\n    },\n    {\n      \"name\": \"L.K.K SUPEREME FIRST DRAW S\",\n      \"standard_name\": \"李錦記 頭道 原釀頭抽\",\n      \"kind\": \"product\",\n      \"quantity\": \"1\",\n      \"quantity_unit\": null,\n      \"unit_price\": \"5.99\",\n      \"amount\": \"5.99\",\n      \"confidence\": null,\n      \"discount_target_index\": null,\n      \"review_notes\": [],\n      \"sku\": null,\n      \"tax_code\": \"F\",\n      \"is_weighed\": false,\n      \"evidence\": [\n        {\n          \"image_index\": 0,\n          \"box\": [\n            0.29,\n            0.67,\n            0.69,\n            0.71\n          ]\n        }\n      ],\n      \"package_weight\": null,\n      \"package_weight_unit\": null,\n      \"amount_basis\": \"gross\"\n    },\n    {\n      \"name\": \"TAX\",\n      \"standard_name\": null,\n      \"kind\": \"tax\",\n      \"quantity\": null,\n      \"quantity_unit\": null,\n      \"unit_price\": null,\n      \"amount\": \"0.00\",\n      \"confidence\": null,\n      \"discount_target_index\": null,\n      \"review_notes\": [],\n      \"sku\": null,\n      \"tax_code\": null,\n      \"is_weighed\": false,\n      \"evidence\": [\n        {\n          \"image_index\": 0,\n          \"box\": [\n            0.29,\n            0.71,\n            0.69,\n            0.75\n          ]\n        }\n      ],\n      \"package_weight\": null,\n      \"package_weight_unit\": null,\n      \"amount_basis\": \"gross\"\n    }\n  ]\n}",
+          "refusal": null,
+          "annotations": null,
+          "audio": null,
+          "function_call": null,
+          "reasoning": null
+        },
+        "logprobs": null,
+        "finish_reason": "stop",
+        "stop_reason": null,
+        "token_ids": null,
+        "routed_experts": null
+      }
+    ],
+    "service_tier": null,
+    "system_fingerprint": "vllm-0.23.1rc1.dev541+g7aaf016a1-d9f86fd0",
+    "usage": {
+      "prompt_tokens": 17980,
+      "completion_tokens": 4102,
+      "total_tokens": 22082
+    },
+    "prompt_logprobs": null,
+    "prompt_token_ids": null,
+    "prompt_text": null,
+    "kv_transfer_params": null,
+    "receipt_vision": {
+      "model": "qwen3-vl-8b-instruct",
+      "prompt_version": "vision-v5",
+      "prompt_sha256": "19f5cd9f832f568bdc4efc77a06cb5fb1b4a0694fc2c1f314f1e03cb87fbcb5e",
+      "image_count": 1,
+      "attempts": 2,
+      "arithmetic_mismatch": true
+    }
+  },
+  "errors": [
+    "sum of charges",
+    "discount product name",
+    "discount product name"
+  ]
+}

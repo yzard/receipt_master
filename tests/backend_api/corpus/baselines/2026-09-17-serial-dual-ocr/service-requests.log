@@ -1,0 +1,72 @@
+(APIServer pid=57) INFO:     127.0.0.1:44174 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43694 - "POST /recognize HTTP/1.1" 200 OK
+INFO:     172.20.0.2:45892 - "POST /v1/ocr/recognize HTTP/1.1" 200 OK
+(APIServer pid=57) INFO:     127.0.0.1:50106 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52976 - "POST /recognize HTTP/1.1" 200 OK
+INFO:     172.20.0.2:45892 - "POST /v1/ocr/recognize HTTP/1.1" 200 OK
+(APIServer pid=57) INFO:     127.0.0.1:49204 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52840 - "POST /recognize HTTP/1.1" 200 OK
+INFO:     172.20.0.2:45892 - "POST /v1/ocr/recognize HTTP/1.1" 200 OK
+(APIServer pid=57) INFO:     127.0.0.1:44632 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53848 - "POST /recognize HTTP/1.1" 200 OK
+INFO:     172.20.0.2:45892 - "POST /v1/ocr/recognize HTTP/1.1" 200 OK
+(APIServer pid=57) INFO:     127.0.0.1:58310 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51988 - "POST /recognize HTTP/1.1" 200 OK
+INFO:     172.20.0.2:45892 - "POST /v1/ocr/recognize HTTP/1.1" 200 OK
+(APIServer pid=57) INFO:     127.0.0.1:60914 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60250 - "POST /recognize HTTP/1.1" 200 OK
+INFO:     172.20.0.2:45892 - "POST /v1/ocr/recognize HTTP/1.1" 200 OK
+(APIServer pid=57) INFO:     127.0.0.1:39444 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39988 - "POST /recognize HTTP/1.1" 200 OK
+INFO:     172.20.0.2:45892 - "POST /v1/ocr/recognize HTTP/1.1" 200 OK
+(APIServer pid=57) INFO:     127.0.0.1:54332 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60314 - "POST /recognize HTTP/1.1" 200 OK
+INFO:     172.20.0.2:45892 - "POST /v1/ocr/recognize HTTP/1.1" 200 OK
+(APIServer pid=57) INFO:     127.0.0.1:42114 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:37610 - "POST /recognize HTTP/1.1" 200 OK
+INFO:     172.20.0.2:45892 - "POST /v1/ocr/recognize HTTP/1.1" 200 OK
+(APIServer pid=57) INFO:     127.0.0.1:60830 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50954 - "POST /recognize HTTP/1.1" 200 OK
+INFO:     172.20.0.2:45892 - "POST /v1/ocr/recognize HTTP/1.1" 200 OK
+(APIServer pid=57) INFO:     127.0.0.1:40610 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57072 - "POST /recognize HTTP/1.1" 200 OK
+INFO:     172.20.0.2:45892 - "POST /v1/ocr/recognize HTTP/1.1" 200 OK
+(APIServer pid=57) INFO:     127.0.0.1:36112 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33834 - "POST /recognize HTTP/1.1" 200 OK
+INFO:     172.20.0.2:45892 - "POST /v1/ocr/recognize HTTP/1.1" 200 OK
+(APIServer pid=57) INFO:     127.0.0.1:45810 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33834 - "POST /recognize HTTP/1.1" 200 OK
+INFO:     172.20.0.2:45892 - "POST /v1/ocr/recognize HTTP/1.1" 200 OK
+(APIServer pid=57) INFO:     127.0.0.1:59782 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:32810 - "POST /recognize HTTP/1.1" 200 OK
+INFO:     172.20.0.2:45892 - "POST /v1/ocr/recognize HTTP/1.1" 200 OK
+(APIServer pid=57) INFO:     127.0.0.1:40226 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36900 - "POST /recognize HTTP/1.1" 200 OK
+INFO:     172.20.0.2:45892 - "POST /v1/ocr/recognize HTTP/1.1" 200 OK
+(APIServer pid=57) INFO:     127.0.0.1:49658 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52994 - "POST /recognize HTTP/1.1" 200 OK
+INFO:     172.20.0.2:45892 - "POST /v1/ocr/recognize HTTP/1.1" 200 OK
+(APIServer pid=57) INFO:     127.0.0.1:53766 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54560 - "POST /recognize HTTP/1.1" 200 OK
+INFO:     172.20.0.2:45892 - "POST /v1/ocr/recognize HTTP/1.1" 200 OK
+(APIServer pid=57) INFO:     127.0.0.1:53392 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35852 - "POST /recognize HTTP/1.1" 200 OK
+INFO:     172.20.0.2:45892 - "POST /v1/ocr/recognize HTTP/1.1" 200 OK
+(APIServer pid=57) INFO:     127.0.0.1:42530 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48538 - "POST /recognize HTTP/1.1" 200 OK
+INFO:     172.20.0.2:45892 - "POST /v1/ocr/recognize HTTP/1.1" 200 OK
+(APIServer pid=57) INFO:     127.0.0.1:41968 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56134 - "POST /recognize HTTP/1.1" 200 OK
+INFO:     172.20.0.2:45892 - "POST /v1/ocr/recognize HTTP/1.1" 200 OK
+(APIServer pid=57) INFO:     127.0.0.1:58814 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46482 - "POST /recognize HTTP/1.1" 200 OK
+INFO:     172.20.0.2:45892 - "POST /v1/ocr/recognize HTTP/1.1" 200 OK
+(APIServer pid=57) INFO:     127.0.0.1:56556 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53392 - "POST /recognize HTTP/1.1" 200 OK
+INFO:     172.20.0.2:45892 - "POST /v1/ocr/recognize HTTP/1.1" 200 OK
+(APIServer pid=57) INFO:     127.0.0.1:59188 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:42814 - "POST /recognize HTTP/1.1" 200 OK
+INFO:     172.20.0.2:45892 - "POST /v1/ocr/recognize HTTP/1.1" 200 OK
+(APIServer pid=57) INFO:     127.0.0.1:48746 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54028 - "POST /recognize HTTP/1.1" 200 OK
+INFO:     172.20.0.2:45892 - "POST /v1/ocr/recognize HTTP/1.1" 200 OK

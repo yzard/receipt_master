@@ -1,0 +1,17 @@
+{
+  "baseline": "../2026-09-16-comparison",
+  "structured_success": 17,
+  "receipt_total": 17,
+  "strict_receipt_pass": 6,
+  "total_pass": 17,
+  "time_pass": 16,
+  "store_pass": 16,
+  "all_amounts_and_discounts_pass": 15,
+  "all_weights_and_rates_pass": 13,
+  "source_sha256": {
+    "src/backend_api/src/dual_ocr.rs": "b1577bb449b6b0a9288fbb500611083aefbe06d954f964e33bb6f9e2f7384767",
+    "src/backend_api/src/pipeline.rs": "a5da9d88c1015a3e01c352b7397afd49a28ff151a0e1b163024006a566b2b9df",
+    "src/backend_api/src/structure_prompt.txt": "3157906dfa978548355136ab196023119b7c2850049679f5c51d2b129a776617",
+    "tests/backend_api/corpus/index.json": "c050167a1f3989f413b552a3f5bfcd7614e937c23bf8a306c19d3535a1a67eab"
+  }
+}

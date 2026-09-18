@@ -1,0 +1,85 @@
+{
+  "provenance": "Manually checked against the bundled original photo; not copied from model predictions.",
+  "notes": [],
+  "input": {
+    "store": null,
+    "branch": null,
+    "address": null,
+    "country": "US",
+    "currency": "USD",
+    "local_time": "2026-08-20 15:33:00",
+    "total": "-55.28",
+    "lines": [
+      {
+        "name": "EXC GS DOWN",
+        "product_name": null,
+        "kind": "other_adjustment",
+        "quantity": null,
+        "quantity_unit": null,
+        "unit_price": null,
+        "amount": "-50.77",
+        "confidence": null,
+        "discount_target_index": null,
+        "sku": null,
+        "tax_code": null,
+        "is_weighed": false,
+        "review_notes": [],
+        "evidence": [],
+        "package_weight": null,
+        "package_weight_unit": null,
+        "amount_basis": "gross"
+      },
+      {
+        "name": "TAX",
+        "product_name": null,
+        "kind": "tax",
+        "quantity": null,
+        "quantity_unit": null,
+        "unit_price": null,
+        "amount": "-4.51",
+        "confidence": null,
+        "discount_target_index": null,
+        "sku": null,
+        "tax_code": null,
+        "is_weighed": false,
+        "review_notes": [],
+        "evidence": [],
+        "package_weight": null,
+        "package_weight_unit": null,
+        "amount_basis": "gross"
+      }
+    ]
+  },
+  "expected": {
+    "total_minor": -5528,
+    "local_time": "2026-08-20 15:33:00",
+    "store": "Costco",
+    "lines": [
+      {
+        "name": "EXC GS DOWN",
+        "product_name": null,
+        "kind": "other_adjustment",
+        "amount_minor": -5077,
+        "weight_mg": null,
+        "printed_amount_minor": null,
+        "quantity_micros": null,
+        "unit_price_scaled": null,
+        "discount_target_index": null
+      },
+      {
+        "name": "TAX",
+        "product_name": null,
+        "kind": "tax",
+        "amount_minor": -451,
+        "weight_mg": null,
+        "printed_amount_minor": null,
+        "quantity_micros": null,
+        "unit_price_scaled": null,
+        "discount_target_index": null
+      }
+    ],
+    "store_alternatives": [
+      "Costco Wholesale"
+    ]
+  }
+}

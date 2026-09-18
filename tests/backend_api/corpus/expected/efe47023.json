@@ -1,0 +1,159 @@
+{
+  "provenance": "Manually checked against the bundled original photo; not copied from model predictions.",
+  "notes": [
+    "Pen obscures characters in all three names. Score the independently visible beginning and ending fragments, not inferred hidden letters. Amounts and counts remain exact."
+  ],
+  "input": {
+    "store": null,
+    "branch": null,
+    "address": null,
+    "country": "US",
+    "currency": "USD",
+    "local_time": "2026-09-05 16:03:00",
+    "total": "100.77",
+    "lines": [
+      {
+        "name": "PASTURE EGGS",
+        "product_name": null,
+        "kind": "product",
+        "quantity": null,
+        "quantity_unit": null,
+        "unit_price": null,
+        "amount": "8.79",
+        "confidence": null,
+        "discount_target_index": null,
+        "sku": null,
+        "tax_code": null,
+        "is_weighed": false,
+        "review_notes": [],
+        "evidence": [],
+        "package_weight": null,
+        "package_weight_unit": null,
+        "amount_basis": "gross"
+      },
+      {
+        "name": "OPTIMUM W",
+        "product_name": null,
+        "kind": "product",
+        "quantity": null,
+        "quantity_unit": null,
+        "unit_price": null,
+        "amount": "74.99",
+        "confidence": null,
+        "discount_target_index": null,
+        "sku": null,
+        "tax_code": null,
+        "is_weighed": false,
+        "review_notes": [],
+        "evidence": [],
+        "package_weight": null,
+        "package_weight_unit": null,
+        "amount_basis": "gross"
+      },
+      {
+        "name": "KS UNSL ST",
+        "product_name": null,
+        "kind": "product",
+        "quantity": null,
+        "quantity_unit": null,
+        "unit_price": null,
+        "amount": "16.99",
+        "confidence": null,
+        "discount_target_index": null,
+        "sku": null,
+        "tax_code": null,
+        "is_weighed": false,
+        "review_notes": [],
+        "evidence": [],
+        "package_weight": null,
+        "package_weight_unit": null,
+        "amount_basis": "gross"
+      },
+      {
+        "name": "TAX",
+        "product_name": null,
+        "kind": "tax",
+        "quantity": null,
+        "quantity_unit": null,
+        "unit_price": null,
+        "amount": "0.00",
+        "confidence": null,
+        "discount_target_index": null,
+        "sku": null,
+        "tax_code": null,
+        "is_weighed": false,
+        "review_notes": [],
+        "evidence": [],
+        "package_weight": null,
+        "package_weight_unit": null,
+        "amount_basis": "gross"
+      }
+    ]
+  },
+  "expected": {
+    "total_minor": 10077,
+    "local_time": "2026-09-05 16:03:00",
+    "store": "Costco",
+    "lines": [
+      {
+        "name": "PASTURE EGGS",
+        "product_name": null,
+        "kind": "product",
+        "amount_minor": 879,
+        "weight_mg": null,
+        "printed_amount_minor": null,
+        "quantity_micros": null,
+        "unit_price_scaled": null,
+        "discount_target_index": null,
+        "visible_name_fragments": [
+          "PASTURE E",
+          "GS"
+        ]
+      },
+      {
+        "name": "OPTIMUM W",
+        "product_name": null,
+        "kind": "product",
+        "amount_minor": 7499,
+        "weight_mg": null,
+        "printed_amount_minor": null,
+        "quantity_micros": null,
+        "unit_price_scaled": null,
+        "discount_target_index": null,
+        "visible_name_fragments": [
+          "OPTIMUM",
+          "W"
+        ]
+      },
+      {
+        "name": "KS UNSL ST",
+        "product_name": null,
+        "kind": "product",
+        "amount_minor": 1699,
+        "weight_mg": null,
+        "printed_amount_minor": null,
+        "quantity_micros": null,
+        "unit_price_scaled": null,
+        "discount_target_index": null,
+        "visible_name_fragments": [
+          "KS UNSL",
+          "ST"
+        ]
+      },
+      {
+        "name": "TAX",
+        "product_name": null,
+        "kind": "tax",
+        "amount_minor": 0,
+        "weight_mg": null,
+        "printed_amount_minor": null,
+        "quantity_micros": null,
+        "unit_price_scaled": null,
+        "discount_target_index": null
+      }
+    ],
+    "store_alternatives": [
+      "Costco Wholesale"
+    ]
+  }
+}

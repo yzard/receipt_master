@@ -1,0 +1,82 @@
+{
+  "provenance": "Manually checked against the bundled original photo; not copied from model predictions.",
+  "notes": [],
+  "input": {
+    "store": null,
+    "branch": null,
+    "address": null,
+    "country": "US",
+    "currency": "USD",
+    "local_time": "2026-09-13 20:45:00",
+    "total": "10.17",
+    "lines": [
+      {
+        "name": "ENVY APPLE",
+        "product_name": null,
+        "kind": "product",
+        "quantity": "3.40",
+        "quantity_unit": "lb",
+        "unit_price": "2.99",
+        "amount": "10.17",
+        "confidence": null,
+        "discount_target_index": null,
+        "sku": null,
+        "tax_code": null,
+        "is_weighed": false,
+        "review_notes": [],
+        "evidence": [],
+        "package_weight": null,
+        "package_weight_unit": null,
+        "amount_basis": "gross"
+      },
+      {
+        "name": "TAX",
+        "product_name": null,
+        "kind": "tax",
+        "quantity": null,
+        "quantity_unit": null,
+        "unit_price": null,
+        "amount": "0.00",
+        "confidence": null,
+        "discount_target_index": null,
+        "sku": null,
+        "tax_code": null,
+        "is_weighed": false,
+        "review_notes": [],
+        "evidence": [],
+        "package_weight": null,
+        "package_weight_unit": null,
+        "amount_basis": "gross"
+      }
+    ]
+  },
+  "expected": {
+    "total_minor": 1017,
+    "local_time": "2026-09-13 20:45:00",
+    "store": "H MART",
+    "lines": [
+      {
+        "name": "ENVY APPLE",
+        "product_name": null,
+        "kind": "product",
+        "amount_minor": 1017,
+        "weight_mg": 1542214,
+        "printed_amount_minor": null,
+        "quantity_micros": 3400000,
+        "unit_price_scaled": 299000000,
+        "discount_target_index": null
+      },
+      {
+        "name": "TAX",
+        "product_name": null,
+        "kind": "tax",
+        "amount_minor": 0,
+        "weight_mg": null,
+        "printed_amount_minor": null,
+        "quantity_micros": null,
+        "unit_price_scaled": null,
+        "discount_target_index": null
+      }
+    ]
+  }
+}

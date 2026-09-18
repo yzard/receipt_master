@@ -1,0 +1,33 @@
+{
+  "id": "00710190",
+  "images": [
+    {
+      "path": "images/00710190-0.jpg",
+      "sha256": "3f0c97d5bbbf3741f888f15755dfd97a4af52b2d460263ea68a18beb61b6abd7"
+    }
+  ],
+  "provider": "unlimited",
+  "raw": {
+    "id": "chatcmpl-a7bb17e57c13461597712d838ec27696",
+    "object": "chat.completion",
+    "created": 1789567899,
+    "model": "unlimited-ocr",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "<|det|>header [342, 20, 577, 66]<|/det|>skyFOODS\n<|det|>header [421, 60, 576, 68]<|/det|>everyday fresh at low prices\n<|det|>header [421, 68, 576, 86]<|/det|>曾我超级市场\n<|det|>text [430, 115, 509, 130]<|/det|>Sky Foods\n<|det|>text [365, 131, 567, 144]<|/det|>40-24 COLLEGE POINT BLVD\n<|det|>text [398, 146, 542, 159]<|/det|>FLUSHING, NY 11355\n<|det|>text [416, 161, 525, 175]<|/det|>(718)939-6688\n<|det|>text [297, 190, 501, 204]<|/det|>Station 10 284724425625\n<|det|>text [297, 206, 459, 220]<|/det|>07/25/2026 19:32:46\n<|det|>text [297, 222, 409, 235]<|/det|>Cashier # 110\n<|det|>text [298, 251, 618, 266]<|/det|>1 CTC SQ COOKIES ( WHEAT ) $6.99 F\n<|det|>text [298, 267, 441, 281]<|/det|>莊家 方塊酥(全麥)\n<|det|>text [298, 282, 618, 296]<|/det|>1 KK SMOKED TOFU $6.99 F\n<|det|>text [298, 297, 393, 311]<|/det|>廣信己 燦豆乾\n<|det|>text [298, 312, 618, 326]<|/det|>1 HLS FLAVOR PEANUT-SPICY $4.99 F\n<|det|>text [298, 327, 519, 342]<|/det|>鶴林小山 美味花生-香辣火氣甜味\n<|det|>text [313, 343, 484, 357]<|/det|>Qty Pkg Disc. -$1.00\n<|det|>text [314, 358, 517, 372]<|/det|>1 @ $5.99 each (1/$4.99)\n<|det|>text [298, 373, 618, 387]<|/det|>1 CHINESE LEEK (1POUNDS) $1.64 F\n<|det|>text [298, 388, 424, 403]<|/det|>中國蒜苗 (1磅)\n<|det|>text [313, 404, 468, 418]<|/det|>0.41 lb @ $3.99/lb\n<|det|>text [391, 435, 511, 449]<|/det|>Item Count: 4\n<|det|>text [407, 451, 551, 465]<|/det|>Subtotal: $20.61\n<|det|>text [450, 467, 547, 480]<|/det|>Tax: $0.00\n<|det|>text [434, 482, 551, 495]<|/det|>Total: $20.61\n<|det|>text [416, 498, 551, 512]<|/det|>Payment: $20.61\n<|det|>text [382, 528, 545, 543]<|/det|>Cash Change: $0.00\n<|det|>text [398, 559, 545, 573]<|/det|>You Saved: $1.00\n<|det|>text [296, 590, 393, 605]<|/det|>CREDIT SALE\n<|det|>text [296, 606, 477, 620]<|/det|>M/C *****3566\n<|det|>text [296, 622, 511, 636]<|/det|>ENTRY METHOD: CONTACTLESS\n<|det|>text [296, 638, 442, 652]<|/det|>AUTH CODE: 71330Z\n<|det|>text [296, 654, 424, 668]<|/det|>AMOUNT: $20.61\n<|det|>text [396, 686, 543, 701]<|/det|>-www.skyfoods.com-\n<|det|>text [296, 702, 648, 716]<|/det|>No refund or exchanges on Meats, Seafood,\n<|det|>text [296, 717, 641, 732]<|/det|>Veges, Fruits, Mooncake, FrozenFoods, and\n<|det|>text [296, 733, 650, 748]<|/det|>Giftcard, Seasonal items. No refund will be\n<|det|>text [296, 749, 650, 764]<|/det|>Issued for missing items outside of store\n<|det|>text [312, 765, 624, 780]<|/det|>premises. Exchanges and Store Credit\n<|det|>text [312, 781, 632, 796]<|/det|>within 7 days for dry goods only.Must\n<|det|>text [304, 797, 631, 812]<|/det|>present receipt for proof of purchase.\n<|det|>text [304, 813, 631, 828]<|/det|>Subject to manager approval. Thank You!\n<|det|>text [321, 829, 617, 844]<|/det|>内類，海鮮，蔬菜瓜果，月餅，冷凍產品\n<|det|>text [331, 845, 610, 860]<|/det|>禮卡、季節性產品恕不退換，店鋪外\n<|det|>text [331, 861, 617, 876]<|/det|>讀失物品將不予退款。雜貨類產品7天\n<|det|>text [331, 877, 610, 892]<|/det|>可憑收据更換或退店内抵用券，如有\n<|det|>text [331, 893, 604, 909]<|/det|>裝運間，請咨詢本店經理。謝謝惠顧！\n<|det|>footer [320, 914, 642, 984]<|/det|>1028472424525*"
+        },
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 1517,
+      "completion_tokens": 1202,
+      "total_tokens": 2719
+    }
+  },
+  "text": "<|det|>header [342, 20, 577, 66]<|/det|>skyFOODS\n<|det|>header [421, 60, 576, 68]<|/det|>everyday fresh at low prices\n<|det|>header [421, 68, 576, 86]<|/det|>曾我超级市场\n<|det|>text [430, 115, 509, 130]<|/det|>Sky Foods\n<|det|>text [365, 131, 567, 144]<|/det|>40-24 COLLEGE POINT BLVD\n<|det|>text [398, 146, 542, 159]<|/det|>FLUSHING, NY 11355\n<|det|>text [416, 161, 525, 175]<|/det|>(718)939-6688\n<|det|>text [297, 190, 501, 204]<|/det|>Station 10 284724425625\n<|det|>text [297, 206, 459, 220]<|/det|>07/25/2026 19:32:46\n<|det|>text [297, 222, 409, 235]<|/det|>Cashier # 110\n<|det|>text [298, 251, 618, 266]<|/det|>1 CTC SQ COOKIES ( WHEAT ) $6.99 F\n<|det|>text [298, 267, 441, 281]<|/det|>莊家 方塊酥(全麥)\n<|det|>text [298, 282, 618, 296]<|/det|>1 KK SMOKED TOFU $6.99 F\n<|det|>text [298, 297, 393, 311]<|/det|>廣信己 燦豆乾\n<|det|>text [298, 312, 618, 326]<|/det|>1 HLS FLAVOR PEANUT-SPICY $4.99 F\n<|det|>text [298, 327, 519, 342]<|/det|>鶴林小山 美味花生-香辣火氣甜味\n<|det|>text [313, 343, 484, 357]<|/det|>Qty Pkg Disc. -$1.00\n<|det|>text [314, 358, 517, 372]<|/det|>1 @ $5.99 each (1/$4.99)\n<|det|>text [298, 373, 618, 387]<|/det|>1 CHINESE LEEK (1POUNDS) $1.64 F\n<|det|>text [298, 388, 424, 403]<|/det|>中國蒜苗 (1磅)\n<|det|>text [313, 404, 468, 418]<|/det|>0.41 lb @ $3.99/lb\n<|det|>text [391, 435, 511, 449]<|/det|>Item Count: 4\n<|det|>text [407, 451, 551, 465]<|/det|>Subtotal: $20.61\n<|det|>text [450, 467, 547, 480]<|/det|>Tax: $0.00\n<|det|>text [434, 482, 551, 495]<|/det|>Total: $20.61\n<|det|>text [416, 498, 551, 512]<|/det|>Payment: $20.61\n<|det|>text [382, 528, 545, 543]<|/det|>Cash Change: $0.00\n<|det|>text [398, 559, 545, 573]<|/det|>You Saved: $1.00\n<|det|>text [296, 590, 393, 605]<|/det|>CREDIT SALE\n<|det|>text [296, 606, 477, 620]<|/det|>M/C *****3566\n<|det|>text [296, 622, 511, 636]<|/det|>ENTRY METHOD: CONTACTLESS\n<|det|>text [296, 638, 442, 652]<|/det|>AUTH CODE: 71330Z\n<|det|>text [296, 654, 424, 668]<|/det|>AMOUNT: $20.61\n<|det|>text [396, 686, 543, 701]<|/det|>-www.skyfoods.com-\n<|det|>text [296, 702, 648, 716]<|/det|>No refund or exchanges on Meats, Seafood,\n<|det|>text [296, 717, 641, 732]<|/det|>Veges, Fruits, Mooncake, FrozenFoods, and\n<|det|>text [296, 733, 650, 748]<|/det|>Giftcard, Seasonal items. No refund will be\n<|det|>text [296, 749, 650, 764]<|/det|>Issued for missing items outside of store\n<|det|>text [312, 765, 624, 780]<|/det|>premises. Exchanges and Store Credit\n<|det|>text [312, 781, 632, 796]<|/det|>within 7 days for dry goods only.Must\n<|det|>text [304, 797, 631, 812]<|/det|>present receipt for proof of purchase.\n<|det|>text [304, 813, 631, 828]<|/det|>Subject to manager approval. Thank You!\n<|det|>text [321, 829, 617, 844]<|/det|>内類，海鮮，蔬菜瓜果，月餅，冷凍產品\n<|det|>text [331, 845, 610, 860]<|/det|>禮卡、季節性產品恕不退換，店鋪外\n<|det|>text [331, 861, 617, 876]<|/det|>讀失物品將不予退款。雜貨類產品7天\n<|det|>text [331, 877, 610, 892]<|/det|>可憑收据更換或退店内抵用券，如有\n<|det|>text [331, 893, 604, 909]<|/det|>裝運間，請咨詢本店經理。謝謝惠顧！\n<|det|>footer [320, 914, 642, 984]<|/det|>1028472424525*",
+  "duration_ms": 12097
+}

@@ -1,0 +1,43 @@
+// Reviewed merchant crops compiled into the API; no runtime data directory dependency.
+pub const IMAGES: &[(&str, &[u8])] = &[
+    (
+        "8fc656c8-871e-4055-90c9-dd50d2df37af.png",
+        include_bytes!("../resources/merchants/8fc656c8-871e-4055-90c9-dd50d2df37af.png"),
+    ),
+    (
+        "568fd6b3-1e5a-425f-bbb7-f28a6e746f73.png",
+        include_bytes!("../resources/merchants/568fd6b3-1e5a-425f-bbb7-f28a6e746f73.png"),
+    ),
+    (
+        "d032dd1a-26e5-4a40-bcd0-a5b2d93a2a9f.png",
+        include_bytes!("../resources/merchants/d032dd1a-26e5-4a40-bcd0-a5b2d93a2a9f.png"),
+    ),
+    (
+        "dfbbab17-7d64-4bf4-bb04-eabec6f997db.png",
+        include_bytes!("../resources/merchants/dfbbab17-7d64-4bf4-bb04-eabec6f997db.png"),
+    ),
+    (
+        "b76ca143-1d0b-43ce-bbff-56170fb83ec4.png",
+        include_bytes!("../resources/merchants/b76ca143-1d0b-43ce-bbff-56170fb83ec4.png"),
+    ),
+    (
+        "2785b7a4-2347-4172-98f6-17e59f15ccac.png",
+        include_bytes!("../resources/merchants/2785b7a4-2347-4172-98f6-17e59f15ccac.png"),
+    ),
+    (
+        "d497bf9c-58db-4672-bafc-1f8d3bddff8f.png",
+        include_bytes!("../resources/merchants/d497bf9c-58db-4672-bafc-1f8d3bddff8f.png"),
+    ),
+    (
+        "6e9fed69-c50d-4140-8902-644d5f40581a.png",
+        include_bytes!("../resources/merchants/6e9fed69-c50d-4140-8902-644d5f40581a.png"),
+    ),
+    (
+        "14911b95-ca00-4dd0-b08b-dc5ac3515fe8.png",
+        include_bytes!("../resources/merchants/14911b95-ca00-4dd0-b08b-dc5ac3515fe8.png"),
+    ),
+    (
+        "95257097-8e3f-4c57-ad27-3d3d93292291.png",
+        include_bytes!("../resources/merchants/95257097-8e3f-4c57-ad27-3d3d93292291.png"),
+    ),
+];

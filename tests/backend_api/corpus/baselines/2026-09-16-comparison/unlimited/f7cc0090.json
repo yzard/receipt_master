@@ -1,0 +1,33 @@
+{
+  "id": "f7cc0090",
+  "images": [
+    {
+      "path": "images/f7cc0090-0.jpg",
+      "sha256": "0bf2e9e11733babcf62890bcff46ed6f1677ab6e619f246daaef7eaba37dc0d3"
+    }
+  ],
+  "provider": "unlimited",
+  "raw": {
+    "id": "chatcmpl-9aca991179eb4623aeaf5d793e4488ad",
+    "object": "chat.completion",
+    "created": 1789567819,
+    "model": "unlimited-ocr",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "<|det|>header [261, 62, 667, 122]<|/det|>COSTCO\n<|det|>header [394, 120, 658, 145]<|/det|>WHOLESALE\n<|det|>text [297, 158, 635, 180]<|/det|>Rego Park #1070\n<|det|>text [342, 182, 590, 203]<|/det|>61-35 Junction Blvd\n<|det|>text [342, 204, 590, 225]<|/det|>Rego Park, NY 11374\n<|det|>title [321, 242, 611, 275]<|/det|>SELF-CHECKOUT\n<|det|>text [220, 298, 508, 319]<|/det|>Member 111886754734\n<|det|>text [295, 320, 676, 339]<|/det|>57554 BLUEBERRIES 7.99\n<|det|>text [313, 340, 676, 360]<|/det|>10579 SALMON 36.96\n<|det|>text [298, 361, 676, 380]<|/det|>545345 KS PUSTACHIO 16.99\n<|det|>text [325, 382, 676, 401]<|/det|>SUBTOTAL 61.94\n<|det|>text [325, 404, 676, 424]<|/det|>TAX 0.00\n<|det|>text [259, 427, 687, 448]<|/det|>**** TOTAL 61.94\n<|det|>text [221, 469, 575, 488]<|/det|>XXXXXXXXXX*9653 H\n<|det|>text [222, 490, 485, 508]<|/det|>#ID: A0000000031010\n<|det|>text [222, 510, 616, 530]<|/det|>Seq# 206393 App#: 95073C\n<|det|>text [222, 531, 616, 551]<|/det|>Costco Visa Resp: APPROVED\n<|det|>text [222, 553, 473, 573]<|/det|>APPROVED - Purchase\n<|det|>text [222, 575, 406, 595]<|/det|>AMOUNT: $61.94\n<|det|>text [325, 616, 688, 637]<|/det|>Costco Visa 61.94\n<|det|>text [326, 639, 686, 660]<|/det|>CHANGE 0.00\n<|det|>text [223, 680, 660, 701]<|/det|>TOTAL NUMBER OF ITEMS SOLD - 3\n<|det|>text [226, 703, 660, 723]<|/det|>©:P/02:17:45 1070 206 257 706\n<|det|>text [331, 778, 607, 795]<|/det|>21107020602572609021745\n<|det|>text [263, 799, 504, 820]<|/det|>OP#: 706 Name: SCO\n<|det|>text [290, 842, 664, 864]<|/det|>Thank You! Please Come Again\n<|det|>text [259, 908, 560, 927]<|/det|>Items Sold: 3\n<|det|>text [259, 930, 698, 950]<|/det|>PY 09/02/2026 17:45"
+        },
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 1517,
+      "completion_tokens": 662,
+      "total_tokens": 2179
+    }
+  },
+  "text": "<|det|>header [261, 62, 667, 122]<|/det|>COSTCO\n<|det|>header [394, 120, 658, 145]<|/det|>WHOLESALE\n<|det|>text [297, 158, 635, 180]<|/det|>Rego Park #1070\n<|det|>text [342, 182, 590, 203]<|/det|>61-35 Junction Blvd\n<|det|>text [342, 204, 590, 225]<|/det|>Rego Park, NY 11374\n<|det|>title [321, 242, 611, 275]<|/det|>SELF-CHECKOUT\n<|det|>text [220, 298, 508, 319]<|/det|>Member 111886754734\n<|det|>text [295, 320, 676, 339]<|/det|>57554 BLUEBERRIES 7.99\n<|det|>text [313, 340, 676, 360]<|/det|>10579 SALMON 36.96\n<|det|>text [298, 361, 676, 380]<|/det|>545345 KS PUSTACHIO 16.99\n<|det|>text [325, 382, 676, 401]<|/det|>SUBTOTAL 61.94\n<|det|>text [325, 404, 676, 424]<|/det|>TAX 0.00\n<|det|>text [259, 427, 687, 448]<|/det|>**** TOTAL 61.94\n<|det|>text [221, 469, 575, 488]<|/det|>XXXXXXXXXX*9653 H\n<|det|>text [222, 490, 485, 508]<|/det|>#ID: A0000000031010\n<|det|>text [222, 510, 616, 530]<|/det|>Seq# 206393 App#: 95073C\n<|det|>text [222, 531, 616, 551]<|/det|>Costco Visa Resp: APPROVED\n<|det|>text [222, 553, 473, 573]<|/det|>APPROVED - Purchase\n<|det|>text [222, 575, 406, 595]<|/det|>AMOUNT: $61.94\n<|det|>text [325, 616, 688, 637]<|/det|>Costco Visa 61.94\n<|det|>text [326, 639, 686, 660]<|/det|>CHANGE 0.00\n<|det|>text [223, 680, 660, 701]<|/det|>TOTAL NUMBER OF ITEMS SOLD - 3\n<|det|>text [226, 703, 660, 723]<|/det|>©:P/02:17:45 1070 206 257 706\n<|det|>text [331, 778, 607, 795]<|/det|>21107020602572609021745\n<|det|>text [263, 799, 504, 820]<|/det|>OP#: 706 Name: SCO\n<|det|>text [290, 842, 664, 864]<|/det|>Thank You! Please Come Again\n<|det|>text [259, 908, 560, 927]<|/det|>Items Sold: 3\n<|det|>text [259, 930, 698, 950]<|/det|>PY 09/02/2026 17:45",
+  "duration_ms": 6218
+}

@@ -1,0 +1,33 @@
+{
+  "id": "a730a1be",
+  "images": [
+    {
+      "path": "images/a730a1be-0.jpg",
+      "sha256": "8214940462206a96d1f2a2980282c4257aec0d0a018a3f64c1770b014c9f7287"
+    }
+  ],
+  "provider": "unlimited",
+  "raw": {
+    "id": "chatcmpl-4fe3cf8d608246969d23679e68300d87",
+    "object": "chat.completion",
+    "created": 1789567851,
+    "model": "unlimited-ocr",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "<|det|>header [352, 33, 636, 86]<|/det|>skyFOODS\n<|det|>header [455, 77, 631, 86]<|/det|>everyday fresh slow prices\n<|det|>header [455, 86, 631, 108]<|/det|>黑猫超市\n<|det|>text [457, 139, 551, 155]<|/det|>Sky Foods\n<|det|>text [378, 156, 621, 171]<|/det|>40-24 COLLEGE POINT BLVD\n<|det|>text [418, 172, 591, 188]<|/det|>FLUSHING,NY 11355\n<|det|>text [439, 190, 571, 206]<|/det|>(718)939-6688\n<|det|>text [294, 224, 540, 241]<|/det|>Station 06 293324415651\n<|det|>text [294, 243, 490, 259]<|/det|>08/11/2026 18:33:26\n<|det|>text [294, 261, 429, 277]<|/det|>Cashier # 106\n<|det|>text [294, 297, 687, 315]<|/det|>1 TTX CHOPPED CHILI PASTE $4.99 F\n<|det|>text [294, 317, 472, 334]<|/det|>廣廣鄉 鼓香朝天椒\n<|det|>text [294, 335, 686, 350]<|/det|>1 CHINESE LEEK (1POUNDS) $2.27 F\n<|det|>text [291, 350, 450, 365]<|/det|>中國聯泰君 1(1元)\n<|det|>text [308, 366, 501, 381]<|/det|>0.57 lb @ $3.99/lb\n<|det|>text [288, 383, 691, 400]<|/det|>1 H.D.L SPICY SAUCE $6.99 F\n<|det|>text [285, 401, 471, 420]<|/det|>海南 黄煌香葱蜜菜椒椒酱\n<|det|>text [285, 421, 693, 438]<|/det|>1 KANGLV JUMBO DRIED TOFU $3.00 F\n<|det|>text [284, 439, 428, 457]<|/det|>康綠 大豆腐乾\n<|det|>text [304, 459, 523, 476]<|/det|>Qty Spl Disc. -$0.99\n<|det|>text [306, 478, 427, 495]<|/det|>1 @ 2/$5.99\n<|det|>text [284, 497, 693, 515]<|/det|>1 KANGLV JUMBO DRIED TOFU $2.99 F\n<|det|>text [283, 517, 428, 536]<|/det|>康綠 大豆腐乾\n<|det|>text [303, 537, 523, 555]<|/det|>Qty Spl Disc. - $1.00\n<|det|>text [304, 557, 426, 574]<|/det|>1 @ 2/$5.99\n<|det|>text [281, 576, 697, 594]<|/det|>1 LUHUA WUCHANG RICE $27.99 F\n<|det|>text [278, 596, 427, 616]<|/det|>魯花 五常大米\n<|det|>text [401, 637, 558, 655]<|/det|>Item Count: 6\n<|det|>text [423, 657, 611, 674]<|/det|>Subtotal: $48.23\n<|det|>text [478, 676, 600, 693]<|/det|>Tax: $0.00\n<|det|>text [456, 695, 610, 712]<|/det|>Total: $48.23\n<|det|>text [434, 714, 610, 733]<|/det|>Payment: $48.23\n<|det|>text [389, 754, 600, 774]<|/det|>Cash Change: $0.00\n<|det|>text [411, 794, 600, 814]<|/det|>You Saved: $1.99\n<|det|>text [277, 835, 402, 855]<|/det|>CREDIT SALE\n<|det|>text [277, 857, 512, 876]<|/det|>M/C 517604*****3586\n<|det|>text [277, 878, 557, 899]<|/det|>ENTRY METHOD: CONTACTLESS\n<|det|>text [275, 901, 467, 923]<|/det|>AUTH CODE: 845312\n<|det|>text [274, 925, 446, 946]<|/det|>AMOUNT: $46.23\n<|det|>footer [414, 967, 593, 984]<|/det|>-www.skyfoods.com-\n<|det|>footer [275, 986, 735, 999]<|/det|>No refund or exchanges on Meats. Seafood"
+        },
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 1517,
+      "completion_tokens": 1007,
+      "total_tokens": 2524
+    }
+  },
+  "text": "<|det|>header [352, 33, 636, 86]<|/det|>skyFOODS\n<|det|>header [455, 77, 631, 86]<|/det|>everyday fresh slow prices\n<|det|>header [455, 86, 631, 108]<|/det|>黑猫超市\n<|det|>text [457, 139, 551, 155]<|/det|>Sky Foods\n<|det|>text [378, 156, 621, 171]<|/det|>40-24 COLLEGE POINT BLVD\n<|det|>text [418, 172, 591, 188]<|/det|>FLUSHING,NY 11355\n<|det|>text [439, 190, 571, 206]<|/det|>(718)939-6688\n<|det|>text [294, 224, 540, 241]<|/det|>Station 06 293324415651\n<|det|>text [294, 243, 490, 259]<|/det|>08/11/2026 18:33:26\n<|det|>text [294, 261, 429, 277]<|/det|>Cashier # 106\n<|det|>text [294, 297, 687, 315]<|/det|>1 TTX CHOPPED CHILI PASTE $4.99 F\n<|det|>text [294, 317, 472, 334]<|/det|>廣廣鄉 鼓香朝天椒\n<|det|>text [294, 335, 686, 350]<|/det|>1 CHINESE LEEK (1POUNDS) $2.27 F\n<|det|>text [291, 350, 450, 365]<|/det|>中國聯泰君 1(1元)\n<|det|>text [308, 366, 501, 381]<|/det|>0.57 lb @ $3.99/lb\n<|det|>text [288, 383, 691, 400]<|/det|>1 H.D.L SPICY SAUCE $6.99 F\n<|det|>text [285, 401, 471, 420]<|/det|>海南 黄煌香葱蜜菜椒椒酱\n<|det|>text [285, 421, 693, 438]<|/det|>1 KANGLV JUMBO DRIED TOFU $3.00 F\n<|det|>text [284, 439, 428, 457]<|/det|>康綠 大豆腐乾\n<|det|>text [304, 459, 523, 476]<|/det|>Qty Spl Disc. -$0.99\n<|det|>text [306, 478, 427, 495]<|/det|>1 @ 2/$5.99\n<|det|>text [284, 497, 693, 515]<|/det|>1 KANGLV JUMBO DRIED TOFU $2.99 F\n<|det|>text [283, 517, 428, 536]<|/det|>康綠 大豆腐乾\n<|det|>text [303, 537, 523, 555]<|/det|>Qty Spl Disc. - $1.00\n<|det|>text [304, 557, 426, 574]<|/det|>1 @ 2/$5.99\n<|det|>text [281, 576, 697, 594]<|/det|>1 LUHUA WUCHANG RICE $27.99 F\n<|det|>text [278, 596, 427, 616]<|/det|>魯花 五常大米\n<|det|>text [401, 637, 558, 655]<|/det|>Item Count: 6\n<|det|>text [423, 657, 611, 674]<|/det|>Subtotal: $48.23\n<|det|>text [478, 676, 600, 693]<|/det|>Tax: $0.00\n<|det|>text [456, 695, 610, 712]<|/det|>Total: $48.23\n<|det|>text [434, 714, 610, 733]<|/det|>Payment: $48.23\n<|det|>text [389, 754, 600, 774]<|/det|>Cash Change: $0.00\n<|det|>text [411, 794, 600, 814]<|/det|>You Saved: $1.99\n<|det|>text [277, 835, 402, 855]<|/det|>CREDIT SALE\n<|det|>text [277, 857, 512, 876]<|/det|>M/C 517604*****3586\n<|det|>text [277, 878, 557, 899]<|/det|>ENTRY METHOD: CONTACTLESS\n<|det|>text [275, 901, 467, 923]<|/det|>AUTH CODE: 845312\n<|det|>text [274, 925, 446, 946]<|/det|>AMOUNT: $46.23\n<|det|>footer [414, 967, 593, 984]<|/det|>-www.skyfoods.com-\n<|det|>footer [275, 986, 735, 999]<|/det|>No refund or exchanges on Meats. Seafood",
+  "duration_ms": 8472
+}

@@ -1,0 +1,30 @@
+{
+  "unlimited": {
+    "english_name_matches": 52,
+    "english_name_total": 56,
+    "chinese_name_matches": 15,
+    "chinese_name_total": 29,
+    "structured_success": 16,
+    "strict_receipt_pass": 4,
+    "total_pass": 16,
+    "time_pass": 15,
+    "store_pass": 15,
+    "all_amounts_and_discounts_pass": 14,
+    "all_weights_and_rates_pass": 12,
+    "receipt_total": 17
+  },
+  "ppocrv6": {
+    "english_name_matches": 50,
+    "english_name_total": 56,
+    "chinese_name_matches": 23,
+    "chinese_name_total": 29,
+    "structured_success": 17,
+    "strict_receipt_pass": 0,
+    "total_pass": 13,
+    "time_pass": 16,
+    "store_pass": 6,
+    "all_amounts_and_discounts_pass": 9,
+    "all_weights_and_rates_pass": 5,
+    "receipt_total": 17
+  }
+}

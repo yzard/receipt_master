@@ -1,0 +1,101 @@
+{
+  "store": "COSTCO",
+  "branch": "Rego Park #1070",
+  "address": "61-35 Junction Blvd, Rego Park, NY 11374",
+  "country": null,
+  "currency": "USD",
+  "local_time": "2026-08-20 15:33:00",
+  "total": "55.28",
+  "lines": [
+    {
+      "name": "SUBTOTAL",
+      "standard_name": null,
+      "kind": "product",
+      "weight_g": null,
+      "quantity": null,
+      "quantity_unit": null,
+      "unit_price": null,
+      "amount": "50.77",
+      "confidence": null,
+      "discount_target_index": null,
+      "box": [
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "TAX",
+      "standard_name": null,
+      "kind": "tax",
+      "weight_g": null,
+      "quantity": null,
+      "quantity_unit": null,
+      "unit_price": null,
+      "amount": "4.51",
+      "confidence": null,
+      "discount_target_index": null,
+      "box": [
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "TOTAL TAX",
+      "standard_name": null,
+      "kind": "tax",
+      "weight_g": null,
+      "quantity": null,
+      "quantity_unit": null,
+      "unit_price": null,
+      "amount": "4.51",
+      "confidence": null,
+      "discount_target_index": null,
+      "box": [
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "TOTAL",
+      "standard_name": null,
+      "kind": "product",
+      "weight_g": null,
+      "quantity": null,
+      "quantity_unit": null,
+      "unit_price": null,
+      "amount": "55.28",
+      "confidence": null,
+      "discount_target_index": null,
+      "box": [
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "CHANGE",
+      "standard_name": null,
+      "kind": "deposit",
+      "weight_g": null,
+      "quantity": null,
+      "quantity_unit": null,
+      "unit_price": null,
+      "amount": "0.00",
+      "confidence": null,
+      "discount_target_index": null,
+      "box": [
+        0,
+        0,
+        0,
+        0
+      ]
+    }
+  ]
+}

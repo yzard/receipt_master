@@ -1,0 +1,51 @@
+{
+  "snapshot": "../../confirmed/2026-09-17/snapshot.json",
+  "snapshot_sha256": "85df9ba9c5fb2014de9fe87afd3ee65d8c2b7fe90c80f1e4684309625ce8a843",
+  "prompt_version": "vision-v7",
+  "source_hashes": {
+    "src/backend_api/src/vision_prompt.txt": "5a432f3f47b9ffb2977c31c33854856ab5ae75bb418d91290f4dd5a8b7a06473",
+    "src/backend_api/src/receipt_schema.json": "f6dec7e7d07fc6e6da4b1c7b2c2046d15cd7cca6b5b49f94adc9cbfcd64452a8",
+    "src/backend_api/src/prompts/skyfoods.txt": "a4ab85a158f3ca0cfbaca6f23d9be03be11363105814fee5d01f8fb8e988a689",
+    "src/backend_api/src/prompts/hmart.txt": "35834b5f8b699178e1d8f3724d69040e81cf8805debe800707308366bfd74f39",
+    "src/backend_api/src/prompts/costco.txt": "86ca97d9f48b94aea4453eba6d5066907bda98739a75297af2fa0358d5088de6"
+  },
+  "weights": {
+    "8b": {
+      "repository": "Qwen/Qwen3-VL-8B-Instruct",
+      "revision": "0c351dd01ed87e9c1b53cbc748cba10e6187ff3b",
+      "precision": "BF16",
+      "kv_cache": "auto/BF16"
+    },
+    "32b": {
+      "repository": "QuantTrio/Qwen3-VL-32B-Instruct-AWQ",
+      "revision": "c2d44b1376c73fa120fdb4e216c2ef61c1945498",
+      "precision": "AWQ 4-bit with BF16 activation; visual module unquantized",
+      "kv_cache": "FP8; no calibrated KV scales supplied"
+    }
+  },
+  "image_ids": {
+    "receipt-master-backend-ocr:8b-baseline": "sha256:ccac526e6300f958694332fb5492ea0d64a36adb09df966190a700dc9081586a",
+    "receipt-master-backend-ocr:local": "sha256:3dbda88f9e1ee5d4971560b8d4b5477f6527aa8d1c782f85386d8ac1402699e9",
+    "receipt-master-backend-api:local": "sha256:b91dc45fdcd48d80a5eadfdd3e44ee31e126e0c56dbd94c9ef4e72cbed12c6f9"
+  },
+  "checks": {
+    "rust_passed": 79,
+    "ocr_python_passed": 4,
+    "combined_build": "passed",
+    "confirmed_data_after_evaluation": "All 24 receipt DTOs, revisions and photo hashes unchanged"
+  },
+  "initial_capacity_adjustment": {
+    "memory_fraction": 0.82,
+    "available_kv_gib": 3.98,
+    "required_kv_gib": 4.0,
+    "final_memory_fraction": 0.83
+  },
+  "decision": "Restore 8B BF16 after evaluation; 32B AWQ with FP8 KV underperformed on the frozen confirmed corpus.",
+  "restored_runtime": {
+    "model": "qwen3-vl-8b-instruct",
+    "ocr_image": "sha256:ac894376d848f348940dc26164ab74019dba3fe31c3e240407094d2063b33805",
+    "kv_cache_dtype": "auto",
+    "multi_image_smoke": "passed; overlapping two-photo receipt, async application, responsive queries and served APK hash verified; probe purged",
+    "apk_build": 10025
+  }
+}

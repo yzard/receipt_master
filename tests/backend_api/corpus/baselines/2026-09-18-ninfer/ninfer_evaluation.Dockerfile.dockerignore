@@ -1,0 +1,6 @@
+**
+!build/
+!build/ninfer/
+!build/ninfer/source/
+!build/ninfer/source/**
+build/ninfer/source/.git

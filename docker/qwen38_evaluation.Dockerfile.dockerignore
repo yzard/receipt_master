@@ -1,0 +1,8 @@
+**
+!build/
+!build/qwen38/
+!build/qwen38/runtime/
+!build/qwen38/runtime/llama-b11037/
+!build/qwen38/runtime/llama-b11037/**
+!build/qwen38/runtime/cudart-llama-b11037-bin-ubuntu-cuda-12.8-x64/
+!build/qwen38/runtime/cudart-llama-b11037-bin-ubuntu-cuda-12.8-x64/**

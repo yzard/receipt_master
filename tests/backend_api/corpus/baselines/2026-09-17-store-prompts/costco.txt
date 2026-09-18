@@ -1,0 +1,13 @@
+MERCHANT PROFILE: COSTCO
+
+Read all priced rows, including the PRE-SCANNED section (often BOUNTY and CHARMIN) before the ordinary item section. Section boundaries are not transaction boundaries.
+
+Typical merchandise row: optional one-letter tax code, numeric SKU, entire name, price, sometimes a trailing tax code. E 2338 WHITE PEACH => tax_code E, sku 2338, name WHITE PEACH. 2338 WHITE PEACH => tax_code null, sku 2338. Missing leading code must not prevent SKU extraction. Prefer the leading code if a trailing marker also exists. Preserve SKU zeros and complete names/asterisks.
+
+Coupon rows can have a coupon number then /product-SKU or /short-product-label and a price ending in minus. These are NEGATIVE item_discount, not merchandise, including a label like /BRSH HD. Locate the preceding matching product, copy its name/SKU/tax_code and reference its FINAL lines index. Inspect each price for tiny trailing '-' even beside a tax marker. Do not skip coupons under CHARMIN, tissues or toothbrush heads. Costco merchandise prices normally use amount_basis=gross; coupons subtract separately. Repeated purchases each retain their own coupon association.
+
+NY BOTTLE DE and explicit bottle/container fees are deposit, not product. TAX is separate once. INSTANT SAVINGS is an aggregate summary, never an additional discount. Executive Reward is payment: consumption total is before subtracting reward, even if the card charge below it differs.
+
+Check the transaction heading for REFUND/RETURN. Returned merchandise and refunded tax must be negative even if numbers are printed without visible minus signs. Membership/service adjustments such as EXC GS DOWN are other_adjustment, negative on a refund. Do not infer return from the standard return policy footer. Read the transaction time at the bottom carefully rather than using nearby membership/card dates.
+
+Include printed TAX 0.00 as a separate tax row. TOTAL and SUBTOTAL must NEVER enter lines, even as other_adjustment. Example duplicate: OCEAN MIST19.99, coupon5.00-, OCEAN MIST19.99, coupon5.00- -> FOUR lines, TWO product rows and TWO discounts targeting indices0 and2.

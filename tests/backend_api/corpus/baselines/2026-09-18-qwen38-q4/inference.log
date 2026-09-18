@@ -1,0 +1,1062 @@
+backend_ocr-1  | 0.00.098.782 W Setting 'enable_thinking' via --chat-template-kwargs is deprecated. Use --reasoning on / --reasoning off instead.
+backend_ocr-1  | 0.00.098.850 I cmn  common_param: common_params_print_info: verbosity = 3 (adjust with the `-lv N` CLI arg)
+backend_ocr-1  | 0.00.099.093 W srv  llama_server: -----------------
+backend_ocr-1  | 0.00.099.094 W srv  llama_server: CORS is set to allow all origins ('*') and no API key is set
+backend_ocr-1  | 0.00.099.094 W srv  llama_server: this can be a security risk (cross-origin attacks)
+backend_ocr-1  | 0.00.099.094 W srv  llama_server: more info: https://github.com/ggml-org/llama.cpp/pull/25655
+backend_ocr-1  | 0.00.099.094 W srv  llama_server: -----------------
+backend_ocr-1  | 0.00.100.267 I srv    load_model: loading model '/models/Qwen3.8-27B-Q4_K_M.gguf'
+backend_ocr-1  | 0.01.558.251 I cmn          init: llama threadpool init, n_threads = 8
+backend_ocr-1  | 0.02.704.565 W load_hparams: Qwen-VL models require at minimum 1024 image tokens to function correctly on grounding tasks
+backend_ocr-1  | 0.02.704.569 W load_hparams: if you encounter problems with accuracy, try adding --image-min-tokens 1024
+backend_ocr-1  | 0.02.704.569 W load_hparams: more info: https://github.com/ggml-org/llama.cpp/issues/16842
+backend_ocr-1  | 
+backend_ocr-1  | 0.02.796.460 I srv    load_model: loaded multimodal model, '/models/mmproj-Qwen3.8-27B-BF16.gguf'
+backend_ocr-1  | 0.02.827.769 I srv    load_model: initializing, n_slots = 1, n_ctx_slot = 32768, kv_unified = 'false'
+backend_ocr-1  | 0.02.830.482 W srv          init: chat template supports preserving reasoning, it is enabled by default (may use more tokens, disable via --no-reasoning-preserve)
+backend_ocr-1  | 0.02.830.516 I srv  llama_server: model loaded
+backend_ocr-1  | 0.02.830.519 I srv  llama_server: listening on http://0.0.0.0:8000
+backend_ocr-1  | 0.06.762.999 I slot get_availabl: id  0 | task -1 | selected slot by LRU, t_last = -1
+backend_ocr-1  | 0.06.763.311 I slot launch_slot_: id  0 | task 0 | processing task, is_child = 0
+backend_ocr-1  | 0.12.652.932 W find_slot: non-consecutive token position 1778 after 1777 for sequence 0 with 512 new tokens
+backend_ocr-1  | 0.12.652.936 W find_slot: non-consecutive token position 1778 after 1778 for sequence 0 with 512 new tokens
+backend_ocr-1  | 0.12.652.936 W find_slot: non-consecutive token position 1778 after 1778 for sequence 0 with 512 new tokens
+backend_ocr-1  | 0.12.652.936 W find_slot: non-consecutive token position 1778 after 1778 for sequence 0 with 512 new tokens
+backend_ocr-1  | 0.12.653.532 W find_slot: non-consecutive token position 1778 after 1777 for sequence 0 with 512 new tokens
+backend_ocr-1  | 0.12.750.677 W find_slot: non-consecutive token position 1778 after 1778 for sequence 0 with 512 new tokens
+backend_ocr-1  | 0.12.910.794 W find_slot: non-consecutive token position 1778 after 1778 for sequence 0 with 512 new tokens
+backend_ocr-1  | 0.13.071.308 W find_slot: non-consecutive token position 1778 after 1778 for sequence 0 with 512 new tokens
+backend_ocr-1  | 0.13.236.151 W find_slot: non-consecutive token position 1778 after 1778 for sequence 0 with 512 new tokens
+backend_ocr-1  | 0.13.236.154 W find_slot: non-consecutive token position 1778 after 1778 for sequence 0 with 512 new tokens
+backend_ocr-1  | 0.13.236.154 W find_slot: non-consecutive token position 1778 after 1778 for sequence 0 with 512 new tokens
+backend_ocr-1  | 0.13.236.155 W find_slot: non-consecutive token position 1778 after 1778 for sequence 0 with 431 new tokens
+backend_ocr-1  | 0.13.236.717 W find_slot: non-consecutive token position 1778 after 1778 for sequence 0 with 512 new tokens
+backend_ocr-1  | 0.13.396.179 W find_slot: non-consecutive token position 1778 after 1778 for sequence 0 with 512 new tokens
+backend_ocr-1  | 0.13.560.631 W find_slot: non-consecutive token position 1778 after 1778 for sequence 0 with 512 new tokens
+backend_ocr-1  | 0.13.723.835 W find_slot: non-consecutive token position 1778 after 1778 for sequence 0 with 431 new tokens
+backend_ocr-1  | 0.13.877.086 W find_slot: non-consecutive token position 1856 after 1778 for sequence 0 with 6 new tokens
+backend_ocr-1  | 0.13.877.100 W find_slot: non-consecutive token position 1856 after 1778 for sequence 0 with 6 new tokens
+backend_ocr-1  | 0.13.949.171 I slot print_timing: id  0 | task 0 | prompt processing, n_tokens =   5799, progress = 1.00, t =   7.19 s / 807.00 tokens per second
+backend_ocr-1  | 0.17.150.753 I slot print_timing: id  0 | task 0 | n_gen =    156, tg =  51.65 t/s, tg_3s =  51.98 t/s
+backend_ocr-1  | 0.20.165.969 I slot print_timing: id  0 | task 0 | n_gen =    312, tg =  51.69 t/s, tg_3s =  51.74 t/s
+backend_ocr-1  | 0.23.176.126 I slot print_timing: id  0 | task 0 | n_gen =    479, tg =  52.96 t/s, tg_3s =  55.48 t/s
+backend_ocr-1  | 0.26.178.486 I slot print_timing: id  0 | task 0 | n_gen =    680, tg =  56.45 t/s, tg_3s =  66.95 t/s
+backend_ocr-1  | 0.29.184.030 I slot print_timing: id  0 | task 0 | n_gen =    881, tg =  58.53 t/s, tg_3s =  66.88 t/s
+backend_ocr-1  | 0.32.188.394 I slot print_timing: id  0 | task 0 | n_gen =   1082, tg =  59.93 t/s, tg_3s =  66.90 t/s
+backend_ocr-1  | 0.35.199.003 I slot print_timing: id  0 | task 0 | n_gen =   1283, tg =  60.90 t/s, tg_3s =  66.76 t/s
+backend_ocr-1  | 0.38.211.361 I slot print_timing: id  0 | task 0 | n_gen =   1484, tg =  61.63 t/s, tg_3s =  66.73 t/s
+backend_ocr-1  | 0.40.417.978 I slot print_timing: id  0 | task 0 | prompt eval time =    7386.44 ms /  5803 tokens (    1.27 ms per token,   785.63 tokens per second)
+backend_ocr-1  | 0.40.417.980 I slot print_timing: id  0 | task 0 |        eval time =   26268.21 ms /  1631 tokens (   16.12 ms per token,    62.05 tokens per second)
+backend_ocr-1  | 0.40.417.980 I slot print_timing: id  0 | task 0 |       total time =   33654.65 ms /  7434 tokens
+backend_ocr-1  | 0.40.417.984 I slot print_timing: id  0 | task 0 |    graphs reused =       1623
+backend_ocr-1  | 0.40.418.062 I slot      release: id  0 | task 0 | stop processing: n_tokens = 7433, truncated = 0
+backend_ocr-1  | 0.42.785.883 I slot get_availabl: id  0 | task -1 | selected slot by LCP similarity, f_sim_best = 0.222 (> 0.100 thold), f_keep = 0.172
+backend_ocr-1  | 0.42.955.639 I slot launch_slot_: id  0 | task 1635 | processing task, is_child = 0
+backend_ocr-1  | 0.44.581.656 W find_slot: non-consecutive token position 1731 after 1730 for sequence 0 with 512 new tokens
+backend_ocr-1  | 0.44.581.660 W find_slot: non-consecutive token position 1731 after 1731 for sequence 0 with 512 new tokens
+backend_ocr-1  | 0.44.581.661 W find_slot: non-consecutive token position 1731 after 1731 for sequence 0 with 512 new tokens
+backend_ocr-1  | 0.44.581.661 W find_slot: non-consecutive token position 1731 after 1731 for sequence 0 with 512 new tokens
+backend_ocr-1  | 0.44.582.229 W find_slot: non-consecutive token position 1731 after 1730 for sequence 0 with 512 new tokens
+backend_ocr-1  | 0.44.663.110 W find_slot: non-consecutive token position 1731 after 1731 for sequence 0 with 512 new tokens
+backend_ocr-1  | 0.44.796.180 W find_slot: non-consecutive token position 1731 after 1731 for sequence 0 with 512 new tokens
+backend_ocr-1  | 0.44.930.339 W find_slot: non-consecutive token position 1731 after 1731 for sequence 0 with 512 new tokens
+backend_ocr-1  | 0.45.067.717 W find_slot: non-consecutive token position 1731 after 1731 for sequence 0 with 512 new tokens
+backend_ocr-1  | 0.45.067.720 W find_slot: non-consecutive token position 1731 after 1731 for sequence 0 with 512 new tokens
+backend_ocr-1  | 0.45.067.720 W find_slot: non-consecutive token position 1731 after 1731 for sequence 0 with 512 new tokens
+backend_ocr-1  | 0.45.067.720 W find_slot: non-consecutive token position 1731 after 1731 for sequence 0 with 431 new tokens
+backend_ocr-1  | 0.45.068.250 W find_slot: non-consecutive token position 1731 after 1731 for sequence 0 with 512 new tokens
+backend_ocr-1  | 0.45.200.611 W find_slot: non-consecutive token position 1731 after 1731 for sequence 0 with 512 new tokens
+backend_ocr-1  | 0.45.337.020 W find_slot: non-consecutive token position 1731 after 1731 for sequence 0 with 512 new tokens
+backend_ocr-1  | 0.45.473.729 W find_slot: non-consecutive token position 1731 after 1731 for sequence 0 with 431 new tokens
+backend_ocr-1  | 0.45.602.506 W find_slot: non-consecutive token position 1809 after 1731 for sequence 0 with 6 new tokens
+backend_ocr-1  | 0.45.602.523 W find_slot: non-consecutive token position 1809 after 1731 for sequence 0 with 6 new tokens
+backend_ocr-1  | 0.48.727.586 I slot print_timing: id  0 | task 1635 | n_gen =    199, tg =  65.98 t/s, tg_3s =  66.31 t/s
+backend_ocr-1  | 0.51.734.074 I slot print_timing: id  0 | task 1635 | n_gen =    393, tg =  65.25 t/s, tg_3s =  64.53 t/s
+backend_ocr-1  | 0.54.737.417 I slot print_timing: id  0 | task 1635 | n_gen =    594, tg =  65.81 t/s, tg_3s =  66.93 t/s
+backend_ocr-1  | 0.57.744.671 I slot print_timing: id  0 | task 1635 | n_gen =    795, tg =  66.07 t/s, tg_3s =  66.84 t/s
+backend_ocr-1  | 1.00.753.932 I slot print_timing: id  0 | task 1635 | n_gen =    996, tg =  66.21 t/s, tg_3s =  66.79 t/s
+backend_ocr-1  | 1.03.765.172 I slot print_timing: id  0 | task 1635 | n_gen =   1197, tg =  66.30 t/s, tg_3s =  66.75 t/s
+backend_ocr-1  | 1.06.776.925 I slot print_timing: id  0 | task 1635 | n_gen =   1398, tg =  66.36 t/s, tg_3s =  66.74 t/s
+backend_ocr-1  | 1.09.781.862 I slot print_timing: id  0 | task 1635 | n_gen =   1598, tg =  66.39 t/s, tg_3s =  66.56 t/s
+backend_ocr-1  | 1.12.790.205 I slot print_timing: id  0 | task 1635 | n_gen =   1798, tg =  66.40 t/s, tg_3s =  66.48 t/s
+backend_ocr-1  | 1.15.801.297 I slot print_timing: id  0 | task 1635 | n_gen =   1998, tg =  66.40 t/s, tg_3s =  66.42 t/s
+backend_ocr-1  | 1.18.805.551 I slot print_timing: id  0 | task 1635 | n_gen =   2187, tg =  66.08 t/s, tg_3s =  62.91 t/s
+backend_ocr-1  | 1.21.813.300 I slot print_timing: id  0 | task 1635 | n_gen =   2388, tg =  66.15 t/s, tg_3s =  66.83 t/s
+backend_ocr-1  | 1.24.346.085 I slot print_timing: id  0 | task 1635 | prompt eval time =    2770.92 ms /  5756 tokens (    0.48 ms per token,  2077.29 tokens per second)
+backend_ocr-1  | 1.24.346.087 I slot print_timing: id  0 | task 1635 |        eval time =   38619.50 ms /  2557 tokens (   15.11 ms per token,    66.18 tokens per second)
+backend_ocr-1  | 1.24.346.088 I slot print_timing: id  0 | task 1635 |       total time =   41390.43 ms /  8313 tokens
+backend_ocr-1  | 1.24.346.088 I slot print_timing: id  0 | task 1635 |    graphs reused =       4168
+backend_ocr-1  | 1.24.346.150 I slot      release: id  0 | task 1635 | stop processing: n_tokens = 8312, truncated = 0
+backend_ocr-1  | 1.26.874.940 I slot get_availabl: id  0 | task -1 | selected slot by LCP similarity, f_sim_best = 0.220 (> 0.100 thold), f_keep = 0.154
+backend_ocr-1  | 1.27.052.053 I slot launch_slot_: id  0 | task 4196 | processing task, is_child = 0
+backend_ocr-1  | 1.28.703.114 W find_slot: non-consecutive token position 1778 after 1777 for sequence 0 with 512 new tokens
+backend_ocr-1  | 1.28.703.118 W find_slot: non-consecutive token position 1778 after 1778 for sequence 0 with 512 new tokens
+backend_ocr-1  | 1.28.703.118 W find_slot: non-consecutive token position 1778 after 1778 for sequence 0 with 512 new tokens
+backend_ocr-1  | 1.28.703.118 W find_slot: non-consecutive token position 1778 after 1778 for sequence 0 with 512 new tokens
+backend_ocr-1  | 1.28.703.717 W find_slot: non-consecutive token position 1778 after 1777 for sequence 0 with 512 new tokens
+backend_ocr-1  | 1.28.785.132 W find_slot: non-consecutive token position 1778 after 1778 for sequence 0 with 512 new tokens
+backend_ocr-1  | 1.28.919.877 W find_slot: non-consecutive token position 1778 after 1778 for sequence 0 with 512 new tokens
+backend_ocr-1  | 1.29.055.479 W find_slot: non-consecutive token position 1778 after 1778 for sequence 0 with 512 new tokens
+backend_ocr-1  | 1.29.194.584 W find_slot: non-consecutive token position 1778 after 1778 for sequence 0 with 512 new tokens
+backend_ocr-1  | 1.29.194.586 W find_slot: non-consecutive token position 1778 after 1778 for sequence 0 with 512 new tokens
+backend_ocr-1  | 1.29.194.586 W find_slot: non-consecutive token position 1778 after 1778 for sequence 0 with 512 new tokens
+backend_ocr-1  | 1.29.194.586 W find_slot: non-consecutive token position 1778 after 1778 for sequence 0 with 431 new tokens
+backend_ocr-1  | 1.29.195.127 W find_slot: non-consecutive token position 1778 after 1778 for sequence 0 with 512 new tokens
+backend_ocr-1  | 1.29.329.112 W find_slot: non-consecutive token position 1778 after 1778 for sequence 0 with 512 new tokens
+backend_ocr-1  | 1.29.466.702 W find_slot: non-consecutive token position 1778 after 1778 for sequence 0 with 512 new tokens
+backend_ocr-1  | 1.29.604.994 W find_slot: non-consecutive token position 1778 after 1778 for sequence 0 with 431 new tokens
+backend_ocr-1  | 1.29.735.219 W find_slot: non-consecutive token position 1856 after 1778 for sequence 0 with 6 new tokens
+backend_ocr-1  | 1.29.735.234 W find_slot: non-consecutive token position 1856 after 1778 for sequence 0 with 6 new tokens
+backend_ocr-1  | 1.32.868.890 I slot print_timing: id  0 | task 4196 | n_gen =    196, tg =  64.83 t/s, tg_3s =  65.16 t/s
+backend_ocr-1  | 1.35.872.182 I slot print_timing: id  0 | task 4196 | n_gen =    393, tg =  65.21 t/s, tg_3s =  65.59 t/s
+backend_ocr-1  | 1.38.877.904 I slot print_timing: id  0 | task 4196 | n_gen =    594, tg =  65.76 t/s, tg_3s =  66.87 t/s
+backend_ocr-1  | 1.41.891.904 I slot print_timing: id  0 | task 4196 | n_gen =    795, tg =  66.00 t/s, tg_3s =  66.69 t/s
+backend_ocr-1  | 1.44.892.052 I slot print_timing: id  0 | task 4196 | n_gen =    995, tg =  66.13 t/s, tg_3s =  66.66 t/s
+backend_ocr-1  | 1.47.895.100 I slot print_timing: id  0 | task 4196 | n_gen =   1195, tg =  66.21 t/s, tg_3s =  66.60 t/s
+backend_ocr-1  | 1.50.898.621 I slot print_timing: id  0 | task 4196 | n_gen =   1395, tg =  66.26 t/s, tg_3s =  66.59 t/s
+backend_ocr-1  | 1.53.904.856 I slot print_timing: id  0 | task 4196 | n_gen =   1595, tg =  66.30 t/s, tg_3s =  66.53 t/s
+backend_ocr-1  | 1.56.905.177 I slot print_timing: id  0 | task 4196 | n_gen =   1794, tg =  66.30 t/s, tg_3s =  66.33 t/s
+backend_ocr-1  | 1.59.905.452 I slot print_timing: id  0 | task 4196 | n_gen =   1993, tg =  66.30 t/s, tg_3s =  66.33 t/s
+backend_ocr-1  | 2.02.917.216 I slot print_timing: id  0 | task 4196 | n_gen =   2193, tg =  66.31 t/s, tg_3s =  66.41 t/s
+backend_ocr-1  | 2.05.917.313 I slot print_timing: id  0 | task 4196 | n_gen =   2393, tg =  66.34 t/s, tg_3s =  66.66 t/s
+backend_ocr-1  | 2.08.928.162 I slot print_timing: id  0 | task 4196 | n_gen =   2594, tg =  66.37 t/s, tg_3s =  66.76 t/s
+backend_ocr-1  | 2.11.930.153 I slot print_timing: id  0 | task 4196 | n_gen =   2794, tg =  66.39 t/s, tg_3s =  66.62 t/s
+backend_ocr-1  | 2.12.245.362 I slot print_timing: id  0 | task 4196 | prompt eval time =    2808.79 ms /  5803 tokens (    0.48 ms per token,  2066.01 tokens per second)
+backend_ocr-1  | 2.12.245.364 I slot print_timing: id  0 | task 4196 |        eval time =   42384.50 ms /  2815 tokens (   15.06 ms per token,    66.39 tokens per second)
+backend_ocr-1  | 2.12.245.364 I slot print_timing: id  0 | task 4196 |       total time =   45193.29 ms /  8618 tokens
+backend_ocr-1  | 2.12.245.365 I slot print_timing: id  0 | task 4196 |    graphs reused =       6970
+backend_ocr-1  | 2.12.245.429 I slot      release: id  0 | task 4196 | stop processing: n_tokens = 8617, truncated = 0
+backend_ocr-1  | 2.14.404.892 I slot get_availabl: id  0 | task -1 | selected slot by LCP similarity, f_sim_best = 0.222 (> 0.100 thold), f_keep = 0.148
+backend_ocr-1  | 2.14.588.865 I slot launch_slot_: id  0 | task 7015 | processing task, is_child = 0
+backend_ocr-1  | 2.16.241.437 W find_slot: non-consecutive token position 1731 after 1730 for sequence 0 with 512 new tokens
+backend_ocr-1  | 2.16.241.441 W find_slot: non-consecutive token position 1731 after 1731 for sequence 0 with 512 new tokens
+backend_ocr-1  | 2.16.241.441 W find_slot: non-consecutive token position 1731 after 1731 for sequence 0 with 512 new tokens
+backend_ocr-1  | 2.16.241.441 W find_slot: non-consecutive token position 1731 after 1731 for sequence 0 with 512 new tokens
+backend_ocr-1  | 2.16.242.025 W find_slot: non-consecutive token position 1731 after 1730 for sequence 0 with 512 new tokens
+backend_ocr-1  | 2.16.323.964 W find_slot: non-consecutive token position 1731 after 1731 for sequence 0 with 512 new tokens
+backend_ocr-1  | 2.16.459.503 W find_slot: non-consecutive token position 1731 after 1731 for sequence 0 with 512 new tokens
+backend_ocr-1  | 2.16.595.956 W find_slot: non-consecutive token position 1731 after 1731 for sequence 0 with 512 new tokens
+backend_ocr-1  | 2.16.735.350 W find_slot: non-consecutive token position 1731 after 1731 for sequence 0 with 512 new tokens
+backend_ocr-1  | 2.16.735.352 W find_slot: non-consecutive token position 1731 after 1731 for sequence 0 with 512 new tokens
+backend_ocr-1  | 2.16.735.352 W find_slot: non-consecutive token position 1731 after 1731 for sequence 0 with 512 new tokens
+backend_ocr-1  | 2.16.735.352 W find_slot: non-consecutive token position 1731 after 1731 for sequence 0 with 431 new tokens
+backend_ocr-1  | 2.16.735.892 W find_slot: non-consecutive token position 1731 after 1731 for sequence 0 with 512 new tokens
+backend_ocr-1  | 2.16.871.079 W find_slot: non-consecutive token position 1731 after 1731 for sequence 0 with 512 new tokens
+backend_ocr-1  | 2.17.009.536 W find_slot: non-consecutive token position 1731 after 1731 for sequence 0 with 512 new tokens
+backend_ocr-1  | 2.17.148.636 W find_slot: non-consecutive token position 1731 after 1731 for sequence 0 with 431 new tokens
+backend_ocr-1  | 2.17.279.579 W find_slot: non-consecutive token position 1809 after 1731 for sequence 0 with 6 new tokens
+backend_ocr-1  | 2.17.279.593 W find_slot: non-consecutive token position 1809 after 1731 for sequence 0 with 6 new tokens
+backend_ocr-1  | 2.20.417.506 I slot print_timing: id  0 | task 7015 | n_gen =    199, tg =  65.76 t/s, tg_3s =  66.09 t/s
+backend_ocr-1  | 2.23.423.362 I slot print_timing: id  0 | task 7015 | n_gen =    393, tg =  65.15 t/s, tg_3s =  64.54 t/s
+backend_ocr-1  | 2.26.432.737 I slot print_timing: id  0 | task 7015 | n_gen =    594, tg =  65.70 t/s, tg_3s =  66.79 t/s
+backend_ocr-1  | 2.29.447.543 I slot print_timing: id  0 | task 7015 | n_gen =    795, tg =  65.94 t/s, tg_3s =  66.67 t/s
+backend_ocr-1  | 2.32.449.331 I slot print_timing: id  0 | task 7015 | n_gen =    995, tg =  66.08 t/s, tg_3s =  66.63 t/s
+backend_ocr-1  | 2.35.453.997 I slot print_timing: id  0 | task 7015 | n_gen =   1195, tg =  66.16 t/s, tg_3s =  66.56 t/s
+backend_ocr-1  | 2.38.457.040 I slot print_timing: id  0 | task 7015 | n_gen =   1395, tg =  66.22 t/s, tg_3s =  66.60 t/s
+backend_ocr-1  | 2.39.377.923 I slot print_timing: id  0 | task 7015 | prompt eval time =    2817.72 ms /  5756 tokens (    0.49 ms per token,  2042.79 tokens per second)
+backend_ocr-1  | 2.39.377.925 I slot print_timing: id  0 | task 7015 |        eval time =   21971.33 ms /  1456 tokens (   15.10 ms per token,    66.22 tokens per second)
+backend_ocr-1  | 2.39.377.925 I slot print_timing: id  0 | task 7015 |       total time =   24789.04 ms /  7212 tokens
+backend_ocr-1  | 2.39.377.926 I slot print_timing: id  0 | task 7015 |    graphs reused =       8418
+backend_ocr-1  | 2.39.377.988 I slot      release: id  0 | task 7015 | stop processing: n_tokens = 7211, truncated = 0
+backend_ocr-1  | 2.41.582.748 I slot get_availabl: id  0 | task -1 | selected slot by LCP similarity, f_sim_best = 0.238 (> 0.100 thold), f_keep = 0.177
+backend_ocr-1  | 2.41.690.015 I slot launch_slot_: id  0 | task 8475 | processing task, is_child = 0
+backend_ocr-1  | 2.43.226.714 W find_slot: non-consecutive token position 1332 after 1331 for sequence 0 with 512 new tokens
+backend_ocr-1  | 2.43.226.717 W find_slot: non-consecutive token position 1332 after 1332 for sequence 0 with 512 new tokens
+backend_ocr-1  | 2.43.226.717 W find_slot: non-consecutive token position 1332 after 1332 for sequence 0 with 512 new tokens
+backend_ocr-1  | 2.43.226.718 W find_slot: non-consecutive token position 1332 after 1332 for sequence 0 with 512 new tokens
+backend_ocr-1  | 2.43.227.303 W find_slot: non-consecutive token position 1332 after 1331 for sequence 0 with 512 new tokens
+backend_ocr-1  | 2.43.309.177 W find_slot: non-consecutive token position 1332 after 1332 for sequence 0 with 512 new tokens
+backend_ocr-1  | 2.43.444.694 W find_slot: non-consecutive token position 1332 after 1332 for sequence 0 with 512 new tokens
+backend_ocr-1  | 2.43.581.090 W find_slot: non-consecutive token position 1332 after 1332 for sequence 0 with 512 new tokens
+backend_ocr-1  | 2.43.720.350 W find_slot: non-consecutive token position 1332 after 1332 for sequence 0 with 512 new tokens
+backend_ocr-1  | 2.43.720.352 W find_slot: non-consecutive token position 1332 after 1332 for sequence 0 with 512 new tokens
+backend_ocr-1  | 2.43.720.352 W find_slot: non-consecutive token position 1332 after 1332 for sequence 0 with 512 new tokens
+backend_ocr-1  | 2.43.720.352 W find_slot: non-consecutive token position 1332 after 1332 for sequence 0 with 431 new tokens
+backend_ocr-1  | 2.43.720.890 W find_slot: non-consecutive token position 1332 after 1332 for sequence 0 with 512 new tokens
+backend_ocr-1  | 2.43.855.973 W find_slot: non-consecutive token position 1332 after 1332 for sequence 0 with 512 new tokens
+backend_ocr-1  | 2.43.994.400 W find_slot: non-consecutive token position 1332 after 1332 for sequence 0 with 512 new tokens
+backend_ocr-1  | 2.44.133.469 W find_slot: non-consecutive token position 1332 after 1332 for sequence 0 with 431 new tokens
+backend_ocr-1  | 2.44.264.172 W find_slot: non-consecutive token position 1410 after 1332 for sequence 0 with 6 new tokens
+backend_ocr-1  | 2.44.264.185 W find_slot: non-consecutive token position 1410 after 1332 for sequence 0 with 6 new tokens
+backend_ocr-1  | 2.47.396.810 I slot print_timing: id  0 | task 8475 | n_gen =    194, tg =  64.10 t/s, tg_3s =  64.43 t/s
+backend_ocr-1  | 2.49.210.310 I slot print_timing: id  0 | task 8475 | prompt eval time =    2695.75 ms /  5357 tokens (    0.50 ms per token,  1987.20 tokens per second)
+backend_ocr-1  | 2.49.210.312 I slot print_timing: id  0 | task 8475 |        eval time =    4824.52 ms /   313 tokens (   15.46 ms per token,    64.67 tokens per second)
+backend_ocr-1  | 2.49.210.312 I slot print_timing: id  0 | task 8475 |       total time =    7520.28 ms /  5670 tokens
+backend_ocr-1  | 2.49.210.313 I slot print_timing: id  0 | task 8475 |    graphs reused =       8727
+backend_ocr-1  | 2.49.210.361 I slot      release: id  0 | task 8475 | stop processing: n_tokens = 5669, truncated = 0
+backend_ocr-1  | 2.51.416.957 I slot get_availabl: id  0 | task -1 | selected slot by LCP similarity, f_sim_best = 0.249 (> 0.100 thold), f_keep = 0.235
+backend_ocr-1  | 2.51.550.689 I slot launch_slot_: id  0 | task 8792 | processing task, is_child = 0
+backend_ocr-1  | 2.52.756.452 W find_slot: non-consecutive token position 1332 after 1331 for sequence 0 with 512 new tokens
+backend_ocr-1  | 2.52.756.456 W find_slot: non-consecutive token position 1332 after 1332 for sequence 0 with 512 new tokens
+backend_ocr-1  | 2.52.756.456 W find_slot: non-consecutive token position 1332 after 1332 for sequence 0 with 512 new tokens
+backend_ocr-1  | 2.52.756.457 W find_slot: non-consecutive token position 1332 after 1332 for sequence 0 with 512 new tokens
+backend_ocr-1  | 2.52.757.037 W find_slot: non-consecutive token position 1332 after 1331 for sequence 0 with 512 new tokens
+backend_ocr-1  | 2.52.839.005 W find_slot: non-consecutive token position 1332 after 1332 for sequence 0 with 512 new tokens
+backend_ocr-1  | 2.52.974.156 W find_slot: non-consecutive token position 1332 after 1332 for sequence 0 with 512 new tokens
+backend_ocr-1  | 2.53.110.295 W find_slot: non-consecutive token position 1332 after 1332 for sequence 0 with 512 new tokens
+backend_ocr-1  | 2.53.249.491 W find_slot: non-consecutive token position 1332 after 1332 for sequence 0 with 512 new tokens
+backend_ocr-1  | 2.53.249.493 W find_slot: non-consecutive token position 1332 after 1332 for sequence 0 with 512 new tokens
+backend_ocr-1  | 2.53.249.493 W find_slot: non-consecutive token position 1332 after 1332 for sequence 0 with 512 new tokens
+backend_ocr-1  | 2.53.249.494 W find_slot: non-consecutive token position 1332 after 1332 for sequence 0 with 431 new tokens
+backend_ocr-1  | 2.53.250.020 W find_slot: non-consecutive token position 1332 after 1332 for sequence 0 with 512 new tokens
+backend_ocr-1  | 2.53.384.733 W find_slot: non-consecutive token position 1332 after 1332 for sequence 0 with 512 new tokens
+backend_ocr-1  | 2.53.522.955 W find_slot: non-consecutive token position 1332 after 1332 for sequence 0 with 512 new tokens
+backend_ocr-1  | 2.53.661.972 W find_slot: non-consecutive token position 1332 after 1332 for sequence 0 with 431 new tokens
+backend_ocr-1  | 2.53.792.512 W find_slot: non-consecutive token position 1410 after 1332 for sequence 0 with 6 new tokens
+backend_ocr-1  | 2.53.792.525 W find_slot: non-consecutive token position 1410 after 1332 for sequence 0 with 6 new tokens
+backend_ocr-1  | 2.56.907.990 I slot print_timing: id  0 | task 8792 | n_gen =    196, tg =  64.92 t/s, tg_3s =  65.26 t/s
+backend_ocr-1  | 2.59.916.481 I slot print_timing: id  0 | task 8792 | n_gen =    394, tg =  65.37 t/s, tg_3s =  65.81 t/s
+backend_ocr-1  | 3.02.925.621 I slot print_timing: id  0 | task 8792 | n_gen =    595, tg =  65.85 t/s, tg_3s =  66.80 t/s
+backend_ocr-1  | 3.05.937.273 I slot print_timing: id  0 | task 8792 | n_gen =    796, tg =  66.07 t/s, tg_3s =  66.74 t/s
+backend_ocr-1  | 3.08.942.686 I slot print_timing: id  0 | task 8792 | n_gen =    996, tg =  66.16 t/s, tg_3s =  66.55 t/s
+backend_ocr-1  | 3.11.957.445 I slot print_timing: id  0 | task 8792 | n_gen =   1197, tg =  66.25 t/s, tg_3s =  66.67 t/s
+backend_ocr-1  | 3.14.960.683 I slot print_timing: id  0 | task 8792 | n_gen =   1397, tg =  66.30 t/s, tg_3s =  66.59 t/s
+backend_ocr-1  | 3.15.364.003 I slot print_timing: id  0 | task 8792 | prompt eval time =    2353.76 ms /  4050 tokens (    0.58 ms per token,  1720.65 tokens per second)
+backend_ocr-1  | 3.15.364.005 I slot print_timing: id  0 | task 8792 |        eval time =   21459.53 ms /  1423 tokens (   15.09 ms per token,    66.26 tokens per second)
+backend_ocr-1  | 3.15.364.005 I slot print_timing: id  0 | task 8792 |       total time =   23813.29 ms /  5473 tokens
+backend_ocr-1  | 3.15.364.006 I slot print_timing: id  0 | task 8792 |    graphs reused =      10142
+backend_ocr-1  | 3.15.364.058 I slot      release: id  0 | task 8792 | stop processing: n_tokens = 6779, truncated = 0
+backend_ocr-1  | 3.17.623.772 I slot get_availabl: id  0 | task -1 | selected slot by LCP similarity, f_sim_best = 0.239 (> 0.100 thold), f_keep = 0.188
+backend_ocr-1  | 3.17.786.762 I slot launch_slot_: id  0 | task 10218 | processing task, is_child = 0
+backend_ocr-1  | 3.19.303.223 W find_slot: non-consecutive token position 1301 after 1300 for sequence 0 with 512 new tokens
+backend_ocr-1  | 3.19.303.227 W find_slot: non-consecutive token position 1301 after 1301 for sequence 0 with 512 new tokens
+backend_ocr-1  | 3.19.303.227 W find_slot: non-consecutive token position 1301 after 1301 for sequence 0 with 512 new tokens
+backend_ocr-1  | 3.19.303.227 W find_slot: non-consecutive token position 1301 after 1301 for sequence 0 with 512 new tokens
+backend_ocr-1  | 3.19.303.827 W find_slot: non-consecutive token position 1301 after 1300 for sequence 0 with 512 new tokens
+backend_ocr-1  | 3.19.385.656 W find_slot: non-consecutive token position 1301 after 1301 for sequence 0 with 512 new tokens
+backend_ocr-1  | 3.19.521.043 W find_slot: non-consecutive token position 1301 after 1301 for sequence 0 with 512 new tokens
+backend_ocr-1  | 3.19.657.306 W find_slot: non-consecutive token position 1301 after 1301 for sequence 0 with 512 new tokens
+backend_ocr-1  | 3.19.796.497 W find_slot: non-consecutive token position 1301 after 1301 for sequence 0 with 512 new tokens
+backend_ocr-1  | 3.19.796.499 W find_slot: non-consecutive token position 1301 after 1301 for sequence 0 with 512 new tokens
+backend_ocr-1  | 3.19.796.500 W find_slot: non-consecutive token position 1301 after 1301 for sequence 0 with 512 new tokens
+backend_ocr-1  | 3.19.796.500 W find_slot: non-consecutive token position 1301 after 1301 for sequence 0 with 431 new tokens
+backend_ocr-1  | 3.19.797.670 W find_slot: non-consecutive token position 1301 after 1301 for sequence 0 with 512 new tokens
+backend_ocr-1  | 3.19.932.014 W find_slot: non-consecutive token position 1301 after 1301 for sequence 0 with 512 new tokens
+backend_ocr-1  | 3.20.070.242 W find_slot: non-consecutive token position 1301 after 1301 for sequence 0 with 512 new tokens
+backend_ocr-1  | 3.20.209.086 W find_slot: non-consecutive token position 1301 after 1301 for sequence 0 with 431 new tokens
+backend_ocr-1  | 3.20.339.744 W find_slot: non-consecutive token position 1379 after 1301 for sequence 0 with 6 new tokens
+backend_ocr-1  | 3.20.339.757 W find_slot: non-consecutive token position 1379 after 1301 for sequence 0 with 6 new tokens
+backend_ocr-1  | 3.23.473.908 I slot print_timing: id  0 | task 10218 | n_gen =    196, tg =  64.68 t/s, tg_3s =  65.01 t/s
+backend_ocr-1  | 3.26.475.228 I slot print_timing: id  0 | task 10218 | n_gen =    392, tg =  64.99 t/s, tg_3s =  65.30 t/s
+backend_ocr-1  | 3.29.485.980 I slot print_timing: id  0 | task 10218 | n_gen =    593, tg =  65.58 t/s, tg_3s =  66.76 t/s
+backend_ocr-1  | 3.32.494.526 I slot print_timing: id  0 | task 10218 | n_gen =    794, tg =  65.89 t/s, tg_3s =  66.81 t/s
+backend_ocr-1  | 3.35.509.342 I slot print_timing: id  0 | task 10218 | n_gen =    995, tg =  66.04 t/s, tg_3s =  66.67 t/s
+backend_ocr-1  | 3.38.509.911 I slot print_timing: id  0 | task 10218 | n_gen =   1195, tg =  66.15 t/s, tg_3s =  66.65 t/s
+backend_ocr-1  | 3.41.512.077 I slot print_timing: id  0 | task 10218 | n_gen =   1395, tg =  66.21 t/s, tg_3s =  66.62 t/s
+backend_ocr-1  | 3.44.515.526 I slot print_timing: id  0 | task 10218 | n_gen =   1595, tg =  66.26 t/s, tg_3s =  66.59 t/s
+backend_ocr-1  | 3.47.518.831 I slot print_timing: id  0 | task 10218 | n_gen =   1795, tg =  66.30 t/s, tg_3s =  66.59 t/s
+backend_ocr-1  | 3.50.529.998 I slot print_timing: id  0 | task 10218 | n_gen =   1995, tg =  66.31 t/s, tg_3s =  66.42 t/s
+backend_ocr-1  | 3.50.740.589 I slot print_timing: id  0 | task 10218 | prompt eval time =    2672.11 ms /  5326 tokens (    0.50 ms per token,  1993.19 tokens per second)
+backend_ocr-1  | 3.50.740.590 I slot print_timing: id  0 | task 10218 |        eval time =   30281.71 ms /  2009 tokens (   15.08 ms per token,    66.31 tokens per second)
+backend_ocr-1  | 3.50.740.591 I slot print_timing: id  0 | task 10218 |       total time =   32953.81 ms /  7335 tokens
+backend_ocr-1  | 3.50.740.592 I slot print_timing: id  0 | task 10218 |    graphs reused =      12141
+backend_ocr-1  | 3.50.740.645 I slot      release: id  0 | task 10218 | stop processing: n_tokens = 7334, truncated = 0
+backend_ocr-1  | 3.53.004.614 I slot get_availabl: id  0 | task -1 | selected slot by LCP similarity, f_sim_best = 0.237 (> 0.100 thold), f_keep = 0.174
+backend_ocr-1  | 3.53.174.751 I slot launch_slot_: id  0 | task 12231 | processing task, is_child = 0
+backend_ocr-1  | 3.54.720.217 W find_slot: non-consecutive token position 1350 after 1349 for sequence 0 with 512 new tokens
+backend_ocr-1  | 3.54.720.220 W find_slot: non-consecutive token position 1350 after 1350 for sequence 0 with 512 new tokens
+backend_ocr-1  | 3.54.720.221 W find_slot: non-consecutive token position 1350 after 1350 for sequence 0 with 512 new tokens
+backend_ocr-1  | 3.54.720.221 W find_slot: non-consecutive token position 1350 after 1350 for sequence 0 with 512 new tokens
+backend_ocr-1  | 3.54.720.819 W find_slot: non-consecutive token position 1350 after 1349 for sequence 0 with 512 new tokens
+backend_ocr-1  | 3.54.802.788 W find_slot: non-consecutive token position 1350 after 1350 for sequence 0 with 512 new tokens
+backend_ocr-1  | 3.54.938.336 W find_slot: non-consecutive token position 1350 after 1350 for sequence 0 with 512 new tokens
+backend_ocr-1  | 3.55.074.780 W find_slot: non-consecutive token position 1350 after 1350 for sequence 0 with 512 new tokens
+backend_ocr-1  | 3.55.214.231 W find_slot: non-consecutive token position 1350 after 1350 for sequence 0 with 512 new tokens
+backend_ocr-1  | 3.55.214.233 W find_slot: non-consecutive token position 1350 after 1350 for sequence 0 with 512 new tokens
+backend_ocr-1  | 3.55.214.234 W find_slot: non-consecutive token position 1350 after 1350 for sequence 0 with 512 new tokens
+backend_ocr-1  | 3.55.214.234 W find_slot: non-consecutive token position 1350 after 1350 for sequence 0 with 431 new tokens
+backend_ocr-1  | 3.55.214.780 W find_slot: non-consecutive token position 1350 after 1350 for sequence 0 with 512 new tokens
+backend_ocr-1  | 3.55.349.891 W find_slot: non-consecutive token position 1350 after 1350 for sequence 0 with 512 new tokens
+backend_ocr-1  | 3.55.488.385 W find_slot: non-consecutive token position 1350 after 1350 for sequence 0 with 512 new tokens
+backend_ocr-1  | 3.55.627.413 W find_slot: non-consecutive token position 1350 after 1350 for sequence 0 with 431 new tokens
+backend_ocr-1  | 3.55.758.244 W find_slot: non-consecutive token position 1428 after 1350 for sequence 0 with 6 new tokens
+backend_ocr-1  | 3.55.758.257 W find_slot: non-consecutive token position 1428 after 1350 for sequence 0 with 6 new tokens
+backend_ocr-1  | 3.58.894.029 I slot print_timing: id  0 | task 12231 | n_gen =    199, tg =  65.68 t/s, tg_3s =  66.01 t/s
+backend_ocr-1  | 4.01.895.977 I slot print_timing: id  0 | task 12231 | n_gen =    393, tg =  65.15 t/s, tg_3s =  64.62 t/s
+backend_ocr-1  | 4.04.906.330 I slot print_timing: id  0 | task 12231 | n_gen =    592, tg =  65.47 t/s, tg_3s =  66.11 t/s
+backend_ocr-1  | 4.07.920.200 I slot print_timing: id  0 | task 12231 | n_gen =    790, tg =  65.53 t/s, tg_3s =  65.70 t/s
+backend_ocr-1  | 4.10.931.166 I slot print_timing: id  0 | task 12231 | n_gen =    991, tg =  65.77 t/s, tg_3s =  66.76 t/s
+backend_ocr-1  | 4.13.934.055 I slot print_timing: id  0 | task 12231 | n_gen =   1191, tg =  65.91 t/s, tg_3s =  66.60 t/s
+backend_ocr-1  | 4.16.939.314 I slot print_timing: id  0 | task 12231 | n_gen =   1391, tg =  66.00 t/s, tg_3s =  66.55 t/s
+backend_ocr-1  | 4.19.946.827 I slot print_timing: id  0 | task 12231 | n_gen =   1591, tg =  66.06 t/s, tg_3s =  66.50 t/s
+backend_ocr-1  | 4.22.951.544 I slot print_timing: id  0 | task 12231 | n_gen =   1791, tg =  66.12 t/s, tg_3s =  66.56 t/s
+backend_ocr-1  | 4.23.135.395 I slot print_timing: id  0 | task 12231 | prompt eval time =    2704.43 ms /  5375 tokens (    0.50 ms per token,  1987.48 tokens per second)
+backend_ocr-1  | 4.23.135.397 I slot print_timing: id  0 | task 12231 |        eval time =   27256.20 ms /  1803 tokens (   15.13 ms per token,    66.11 tokens per second)
+backend_ocr-1  | 4.23.135.397 I slot print_timing: id  0 | task 12231 |       total time =   29960.63 ms /  7178 tokens
+backend_ocr-1  | 4.23.135.398 I slot print_timing: id  0 | task 12231 |    graphs reused =      13934
+backend_ocr-1  | 4.23.135.452 I slot      release: id  0 | task 12231 | stop processing: n_tokens = 7177, truncated = 0
+backend_ocr-1  | 4.25.465.954 I slot get_availabl: id  0 | task -1 | selected slot by LCP similarity, f_sim_best = 0.232 (> 0.100 thold), f_keep = 0.178
+backend_ocr-1  | 4.25.637.023 I slot launch_slot_: id  0 | task 14038 | processing task, is_child = 0
+backend_ocr-1  | 4.27.213.152 W find_slot: non-consecutive token position 1461 after 1460 for sequence 0 with 512 new tokens
+backend_ocr-1  | 4.27.213.155 W find_slot: non-consecutive token position 1461 after 1461 for sequence 0 with 512 new tokens
+backend_ocr-1  | 4.27.213.155 W find_slot: non-consecutive token position 1461 after 1461 for sequence 0 with 512 new tokens
+backend_ocr-1  | 4.27.213.156 W find_slot: non-consecutive token position 1461 after 1461 for sequence 0 with 512 new tokens
+backend_ocr-1  | 4.27.213.746 W find_slot: non-consecutive token position 1461 after 1460 for sequence 0 with 512 new tokens
+backend_ocr-1  | 4.27.295.957 W find_slot: non-consecutive token position 1461 after 1461 for sequence 0 with 512 new tokens
+backend_ocr-1  | 4.27.431.461 W find_slot: non-consecutive token position 1461 after 1461 for sequence 0 with 512 new tokens
+backend_ocr-1  | 4.27.567.914 W find_slot: non-consecutive token position 1461 after 1461 for sequence 0 with 512 new tokens
+backend_ocr-1  | 4.27.707.393 W find_slot: non-consecutive token position 1461 after 1461 for sequence 0 with 512 new tokens
+backend_ocr-1  | 4.27.707.394 W find_slot: non-consecutive token position 1461 after 1461 for sequence 0 with 512 new tokens
+backend_ocr-1  | 4.27.707.395 W find_slot: non-consecutive token position 1461 after 1461 for sequence 0 with 512 new tokens
+backend_ocr-1  | 4.27.707.395 W find_slot: non-consecutive token position 1461 after 1461 for sequence 0 with 431 new tokens
+backend_ocr-1  | 4.27.707.939 W find_slot: non-consecutive token position 1461 after 1461 for sequence 0 with 512 new tokens
+backend_ocr-1  | 4.27.843.157 W find_slot: non-consecutive token position 1461 after 1461 for sequence 0 with 512 new tokens
+backend_ocr-1  | 4.27.981.759 W find_slot: non-consecutive token position 1461 after 1461 for sequence 0 with 512 new tokens
+backend_ocr-1  | 4.28.121.035 W find_slot: non-consecutive token position 1461 after 1461 for sequence 0 with 431 new tokens
+backend_ocr-1  | 4.28.252.148 W find_slot: non-consecutive token position 1539 after 1461 for sequence 0 with 6 new tokens
+backend_ocr-1  | 4.28.252.162 W find_slot: non-consecutive token position 1539 after 1461 for sequence 0 with 6 new tokens
+backend_ocr-1  | 4.31.378.224 I slot print_timing: id  0 | task 14038 | n_gen =    198, tg =  65.58 t/s, tg_3s =  65.92 t/s
+backend_ocr-1  | 4.34.381.975 I slot print_timing: id  0 | task 14038 | n_gen =    393, tg =  65.25 t/s, tg_3s =  64.92 t/s
+backend_ocr-1  | 4.37.393.065 I slot print_timing: id  0 | task 14038 | n_gen =    594, tg =  65.75 t/s, tg_3s =  66.75 t/s
+backend_ocr-1  | 4.40.407.108 I slot print_timing: id  0 | task 14038 | n_gen =    795, tg =  65.99 t/s, tg_3s =  66.69 t/s
+backend_ocr-1  | 4.43.408.494 I slot print_timing: id  0 | task 14038 | n_gen =    995, tg =  66.12 t/s, tg_3s =  66.64 t/s
+backend_ocr-1  | 4.46.412.590 I slot print_timing: id  0 | task 14038 | n_gen =   1195, tg =  66.19 t/s, tg_3s =  66.58 t/s
+backend_ocr-1  | 4.49.415.710 I slot print_timing: id  0 | task 14038 | n_gen =   1395, tg =  66.25 t/s, tg_3s =  66.60 t/s
+backend_ocr-1  | 4.52.423.162 I slot print_timing: id  0 | task 14038 | n_gen =   1595, tg =  66.28 t/s, tg_3s =  66.50 t/s
+backend_ocr-1  | 4.55.435.269 I slot print_timing: id  0 | task 14038 | n_gen =   1795, tg =  66.29 t/s, tg_3s =  66.40 t/s
+backend_ocr-1  | 4.58.437.868 I slot print_timing: id  0 | task 14038 | n_gen =   1994, tg =  66.29 t/s, tg_3s =  66.28 t/s
+backend_ocr-1  | 5.01.210.763 I slot print_timing: id  0 | task 14038 | prompt eval time =    2737.34 ms /  5486 tokens (    0.50 ms per token,  2004.13 tokens per second)
+backend_ocr-1  | 5.01.210.764 I slot print_timing: id  0 | task 14038 |        eval time =   32836.38 ms /  2178 tokens (   15.08 ms per token,    66.30 tokens per second)
+backend_ocr-1  | 5.01.210.765 I slot print_timing: id  0 | task 14038 |       total time =   35573.72 ms /  7664 tokens
+backend_ocr-1  | 5.01.210.766 I slot print_timing: id  0 | task 14038 |    graphs reused =      16102
+backend_ocr-1  | 5.01.210.822 I slot      release: id  0 | task 14038 | stop processing: n_tokens = 7663, truncated = 0
+backend_ocr-1  | 5.03.433.663 I slot get_availabl: id  0 | task -1 | selected slot by LCP similarity, f_sim_best = 0.266 (> 0.100 thold), f_keep = 0.191
+backend_ocr-1  | 5.03.612.381 I slot launch_slot_: id  0 | task 16220 | processing task, is_child = 0
+backend_ocr-1  | 5.04.820.439 W find_slot: non-consecutive token position 1461 after 1460 for sequence 0 with 512 new tokens
+backend_ocr-1  | 5.04.820.442 W find_slot: non-consecutive token position 1461 after 1461 for sequence 0 with 512 new tokens
+backend_ocr-1  | 5.04.820.442 W find_slot: non-consecutive token position 1461 after 1461 for sequence 0 with 512 new tokens
+backend_ocr-1  | 5.04.820.443 W find_slot: non-consecutive token position 1461 after 1461 for sequence 0 with 512 new tokens
+backend_ocr-1  | 5.04.821.039 W find_slot: non-consecutive token position 1461 after 1460 for sequence 0 with 512 new tokens
+backend_ocr-1  | 5.04.903.187 W find_slot: non-consecutive token position 1461 after 1461 for sequence 0 with 512 new tokens
+backend_ocr-1  | 5.05.038.951 W find_slot: non-consecutive token position 1461 after 1461 for sequence 0 with 512 new tokens
+backend_ocr-1  | 5.05.175.715 W find_slot: non-consecutive token position 1461 after 1461 for sequence 0 with 512 new tokens
+backend_ocr-1  | 5.05.315.211 W find_slot: non-consecutive token position 1461 after 1461 for sequence 0 with 512 new tokens
+backend_ocr-1  | 5.05.315.213 W find_slot: non-consecutive token position 1461 after 1461 for sequence 0 with 512 new tokens
+backend_ocr-1  | 5.05.315.213 W find_slot: non-consecutive token position 1461 after 1461 for sequence 0 with 512 new tokens
+backend_ocr-1  | 5.05.315.214 W find_slot: non-consecutive token position 1461 after 1461 for sequence 0 with 431 new tokens
+backend_ocr-1  | 5.05.315.752 W find_slot: non-consecutive token position 1461 after 1461 for sequence 0 with 512 new tokens
+backend_ocr-1  | 5.05.451.350 W find_slot: non-consecutive token position 1461 after 1461 for sequence 0 with 512 new tokens
+backend_ocr-1  | 5.05.590.028 W find_slot: non-consecutive token position 1461 after 1461 for sequence 0 with 512 new tokens
+backend_ocr-1  | 5.05.729.301 W find_slot: non-consecutive token position 1461 after 1461 for sequence 0 with 431 new tokens
+backend_ocr-1  | 5.05.860.464 W find_slot: non-consecutive token position 1539 after 1461 for sequence 0 with 6 new tokens
+backend_ocr-1  | 5.05.860.477 W find_slot: non-consecutive token position 1539 after 1461 for sequence 0 with 6 new tokens
+backend_ocr-1  | 5.08.994.661 I slot print_timing: id  0 | task 16220 | n_gen =    199, tg =  65.79 t/s, tg_3s =  66.12 t/s
+backend_ocr-1  | 5.11.997.011 I slot print_timing: id  0 | task 16220 | n_gen =    393, tg =  65.20 t/s, tg_3s =  64.62 t/s
+backend_ocr-1  | 5.15.009.373 I slot print_timing: id  0 | task 16220 | n_gen =    594, tg =  65.71 t/s, tg_3s =  66.73 t/s
+backend_ocr-1  | 5.18.023.271 I slot print_timing: id  0 | task 16220 | n_gen =    795, tg =  65.96 t/s, tg_3s =  66.69 t/s
+backend_ocr-1  | 5.21.024.046 I slot print_timing: id  0 | task 16220 | n_gen =    995, tg =  66.09 t/s, tg_3s =  66.65 t/s
+backend_ocr-1  | 5.24.028.968 I slot print_timing: id  0 | task 16220 | n_gen =   1195, tg =  66.17 t/s, tg_3s =  66.56 t/s
+backend_ocr-1  | 5.27.032.229 I slot print_timing: id  0 | task 16220 | n_gen =   1395, tg =  66.23 t/s, tg_3s =  66.59 t/s
+backend_ocr-1  | 5.27.921.650 I slot print_timing: id  0 | task 16220 | prompt eval time =    2372.58 ms /  4049 tokens (    0.59 ms per token,  1706.58 tokens per second)
+backend_ocr-1  | 5.27.921.652 I slot print_timing: id  0 | task 16220 |        eval time =   21936.67 ms /  1454 tokens (   15.10 ms per token,    66.24 tokens per second)
+backend_ocr-1  | 5.27.921.653 I slot print_timing: id  0 | task 16220 |       total time =   24309.25 ms /  5503 tokens
+backend_ocr-1  | 5.27.921.653 I slot print_timing: id  0 | task 16220 |    graphs reused =      17548
+backend_ocr-1  | 5.27.921.720 I slot      release: id  0 | task 16220 | stop processing: n_tokens = 6939, truncated = 0
+backend_ocr-1  | 5.30.414.400 I slot get_availabl: id  0 | task -1 | selected slot by LCP similarity, f_sim_best = 0.220 (> 0.100 thold), f_keep = 0.184
+backend_ocr-1  | 5.30.414.677 W srv         alloc:  - making room for prompt cache entry, removing oldest entry (size = 913.611 MiB)
+backend_ocr-1  | 5.30.597.300 I slot launch_slot_: id  0 | task 17677 | processing task, is_child = 0
+backend_ocr-1  | 5.32.259.051 W find_slot: non-consecutive token position 1778 after 1777 for sequence 0 with 512 new tokens
+backend_ocr-1  | 5.32.259.055 W find_slot: non-consecutive token position 1778 after 1778 for sequence 0 with 512 new tokens
+backend_ocr-1  | 5.32.259.055 W find_slot: non-consecutive token position 1778 after 1778 for sequence 0 with 512 new tokens
+backend_ocr-1  | 5.32.259.055 W find_slot: non-consecutive token position 1778 after 1778 for sequence 0 with 512 new tokens
+backend_ocr-1  | 5.32.259.677 W find_slot: non-consecutive token position 1778 after 1777 for sequence 0 with 512 new tokens
+backend_ocr-1  | 5.32.341.923 W find_slot: non-consecutive token position 1778 after 1778 for sequence 0 with 512 new tokens
+backend_ocr-1  | 5.32.478.045 W find_slot: non-consecutive token position 1778 after 1778 for sequence 0 with 512 new tokens
+backend_ocr-1  | 5.32.615.156 W find_slot: non-consecutive token position 1778 after 1778 for sequence 0 with 512 new tokens
+backend_ocr-1  | 5.32.755.196 W find_slot: non-consecutive token position 1778 after 1778 for sequence 0 with 512 new tokens
+backend_ocr-1  | 5.32.755.199 W find_slot: non-consecutive token position 1778 after 1778 for sequence 0 with 512 new tokens
+backend_ocr-1  | 5.32.755.200 W find_slot: non-consecutive token position 1778 after 1778 for sequence 0 with 512 new tokens
+backend_ocr-1  | 5.32.755.200 W find_slot: non-consecutive token position 1778 after 1778 for sequence 0 with 431 new tokens
+backend_ocr-1  | 5.32.755.755 W find_slot: non-consecutive token position 1778 after 1778 for sequence 0 with 512 new tokens
+backend_ocr-1  | 5.32.891.288 W find_slot: non-consecutive token position 1778 after 1778 for sequence 0 with 512 new tokens
+backend_ocr-1  | 5.33.030.319 W find_slot: non-consecutive token position 1778 after 1778 for sequence 0 with 512 new tokens
+backend_ocr-1  | 5.33.170.023 W find_slot: non-consecutive token position 1778 after 1778 for sequence 0 with 431 new tokens
+backend_ocr-1  | 5.33.301.573 W find_slot: non-consecutive token position 1856 after 1778 for sequence 0 with 6 new tokens
+backend_ocr-1  | 5.33.301.589 W find_slot: non-consecutive token position 1856 after 1778 for sequence 0 with 6 new tokens
+backend_ocr-1  | 5.36.440.478 I slot print_timing: id  0 | task 17677 | n_gen =    196, tg =  64.71 t/s, tg_3s =  65.04 t/s
+backend_ocr-1  | 5.39.447.333 I slot print_timing: id  0 | task 17677 | n_gen =    392, tg =  64.95 t/s, tg_3s =  65.18 t/s
+backend_ocr-1  | 5.42.458.284 I slot print_timing: id  0 | task 17677 | n_gen =    593, tg =  65.55 t/s, tg_3s =  66.76 t/s
+backend_ocr-1  | 5.45.460.824 I slot print_timing: id  0 | task 17677 | n_gen =    793, tg =  65.81 t/s, tg_3s =  66.61 t/s
+backend_ocr-1  | 5.48.466.870 I slot print_timing: id  0 | task 17677 | n_gen =    993, tg =  65.96 t/s, tg_3s =  66.53 t/s
+backend_ocr-1  | 5.50.993.898 I slot print_timing: id  0 | task 17677 | prompt eval time =    2829.69 ms /  5803 tokens (    0.49 ms per token,  2050.75 tokens per second)
+backend_ocr-1  | 5.50.993.901 I slot print_timing: id  0 | task 17677 |        eval time =   17566.89 ms /  1161 tokens (   15.14 ms per token,    66.03 tokens per second)
+backend_ocr-1  | 5.50.993.901 I slot print_timing: id  0 | task 17677 |       total time =   20396.58 ms /  6964 tokens
+backend_ocr-1  | 5.50.993.902 I slot print_timing: id  0 | task 17677 |    graphs reused =      18702
+backend_ocr-1  | 5.50.993.969 I slot      release: id  0 | task 17677 | stop processing: n_tokens = 6963, truncated = 0
+backend_ocr-1  | 5.53.372.066 I slot get_availabl: id  0 | task -1 | selected slot by LCP similarity, f_sim_best = 0.306 (> 0.100 thold), f_keep = 0.255
+backend_ocr-1  | 5.53.372.207 W srv         alloc:  - making room for prompt cache entry, removing oldest entry (size = 968.569 MiB)
+backend_ocr-1  | 5.53.550.204 I slot launch_slot_: id  0 | task 18842 | processing task, is_child = 0
+backend_ocr-1  | 5.54.758.013 W find_slot: non-consecutive token position 1778 after 1777 for sequence 0 with 512 new tokens
+backend_ocr-1  | 5.54.758.016 W find_slot: non-consecutive token position 1778 after 1778 for sequence 0 with 512 new tokens
+backend_ocr-1  | 5.54.758.016 W find_slot: non-consecutive token position 1778 after 1778 for sequence 0 with 512 new tokens
+backend_ocr-1  | 5.54.758.017 W find_slot: non-consecutive token position 1778 after 1778 for sequence 0 with 512 new tokens
+backend_ocr-1  | 5.54.758.625 W find_slot: non-consecutive token position 1778 after 1777 for sequence 0 with 512 new tokens
+backend_ocr-1  | 5.54.840.720 W find_slot: non-consecutive token position 1778 after 1778 for sequence 0 with 512 new tokens
+backend_ocr-1  | 5.54.976.497 W find_slot: non-consecutive token position 1778 after 1778 for sequence 0 with 512 new tokens
+backend_ocr-1  | 5.55.113.324 W find_slot: non-consecutive token position 1778 after 1778 for sequence 0 with 512 new tokens
+backend_ocr-1  | 5.55.253.206 W find_slot: non-consecutive token position 1778 after 1778 for sequence 0 with 512 new tokens
+backend_ocr-1  | 5.55.253.209 W find_slot: non-consecutive token position 1778 after 1778 for sequence 0 with 512 new tokens
+backend_ocr-1  | 5.55.253.209 W find_slot: non-consecutive token position 1778 after 1778 for sequence 0 with 512 new tokens
+backend_ocr-1  | 5.55.253.209 W find_slot: non-consecutive token position 1778 after 1778 for sequence 0 with 431 new tokens
+backend_ocr-1  | 5.55.253.772 W find_slot: non-consecutive token position 1778 after 1778 for sequence 0 with 512 new tokens
+backend_ocr-1  | 5.55.389.175 W find_slot: non-consecutive token position 1778 after 1778 for sequence 0 with 512 new tokens
+backend_ocr-1  | 5.55.527.959 W find_slot: non-consecutive token position 1778 after 1778 for sequence 0 with 512 new tokens
+backend_ocr-1  | 5.55.667.390 W find_slot: non-consecutive token position 1778 after 1778 for sequence 0 with 431 new tokens
+backend_ocr-1  | 5.55.798.634 W find_slot: non-consecutive token position 1856 after 1778 for sequence 0 with 6 new tokens
+backend_ocr-1  | 5.55.798.651 W find_slot: non-consecutive token position 1856 after 1778 for sequence 0 with 6 new tokens
+backend_ocr-1  | 5.58.946.280 I slot print_timing: id  0 | task 18842 | n_gen =    196, tg =  64.50 t/s, tg_3s =  64.84 t/s
+backend_ocr-1  | 6.01.958.701 I slot print_timing: id  0 | task 18842 | n_gen =    394, tg =  65.12 t/s, tg_3s =  65.73 t/s
+backend_ocr-1  | 6.04.970.287 I slot print_timing: id  0 | task 18842 | n_gen =    595, tg =  65.66 t/s, tg_3s =  66.74 t/s
+backend_ocr-1  | 6.07.972.961 I slot print_timing: id  0 | task 18842 | n_gen =    795, tg =  65.89 t/s, tg_3s =  66.61 t/s
+backend_ocr-1  | 6.10.976.888 I slot print_timing: id  0 | task 18842 | n_gen =    995, tg =  66.03 t/s, tg_3s =  66.58 t/s
+backend_ocr-1  | 6.13.984.237 I slot print_timing: id  0 | task 18842 | n_gen =   1195, tg =  66.11 t/s, tg_3s =  66.50 t/s
+backend_ocr-1  | 6.16.993.323 I slot print_timing: id  0 | task 18842 | n_gen =   1395, tg =  66.16 t/s, tg_3s =  66.47 t/s
+backend_ocr-1  | 6.20.003.389 I slot print_timing: id  0 | task 18842 | n_gen =   1595, tg =  66.20 t/s, tg_3s =  66.44 t/s
+backend_ocr-1  | 6.23.005.472 I slot print_timing: id  0 | task 18842 | n_gen =   1794, tg =  66.21 t/s, tg_3s =  66.29 t/s
+backend_ocr-1  | 6.26.009.671 I slot print_timing: id  0 | task 18842 | n_gen =   1993, tg =  66.21 t/s, tg_3s =  66.24 t/s
+backend_ocr-1  | 6.26.401.813 I slot print_timing: id  0 | task 18842 | prompt eval time =    2373.03 ms /  4049 tokens (    0.59 ms per token,  1706.26 tokens per second)
+backend_ocr-1  | 6.26.401.814 I slot print_timing: id  0 | task 18842 |        eval time =   30478.57 ms /  2019 tokens (   15.10 ms per token,    66.21 tokens per second)
+backend_ocr-1  | 6.26.401.814 I slot print_timing: id  0 | task 18842 |       total time =   32851.59 ms /  6068 tokens
+backend_ocr-1  | 6.26.401.816 I slot print_timing: id  0 | task 18842 |    graphs reused =      20711
+backend_ocr-1  | 6.26.401.879 I slot      release: id  0 | task 18842 | stop processing: n_tokens = 7821, truncated = 0
+backend_ocr-1  | 6.28.674.324 I slot get_availabl: id  0 | task -1 | selected slot by LCP similarity, f_sim_best = 0.222 (> 0.100 thold), f_keep = 0.164
+backend_ocr-1  | 6.28.674.467 W srv         alloc:  - making room for prompt cache entry, removing oldest entry (size = 987.638 MiB)
+backend_ocr-1  | 6.28.865.455 I slot launch_slot_: id  0 | task 20864 | processing task, is_child = 0
+backend_ocr-1  | 6.30.522.441 W find_slot: non-consecutive token position 1731 after 1730 for sequence 0 with 512 new tokens
+backend_ocr-1  | 6.30.522.444 W find_slot: non-consecutive token position 1731 after 1731 for sequence 0 with 512 new tokens
+backend_ocr-1  | 6.30.522.444 W find_slot: non-consecutive token position 1731 after 1731 for sequence 0 with 512 new tokens
+backend_ocr-1  | 6.30.522.444 W find_slot: non-consecutive token position 1731 after 1731 for sequence 0 with 512 new tokens
+backend_ocr-1  | 6.30.523.064 W find_slot: non-consecutive token position 1731 after 1730 for sequence 0 with 512 new tokens
+backend_ocr-1  | 6.30.605.151 W find_slot: non-consecutive token position 1731 after 1731 for sequence 0 with 512 new tokens
+backend_ocr-1  | 6.30.741.464 W find_slot: non-consecutive token position 1731 after 1731 for sequence 0 with 512 new tokens
+backend_ocr-1  | 6.30.878.699 W find_slot: non-consecutive token position 1731 after 1731 for sequence 0 with 512 new tokens
+backend_ocr-1  | 6.31.018.802 W find_slot: non-consecutive token position 1731 after 1731 for sequence 0 with 512 new tokens
+backend_ocr-1  | 6.31.018.803 W find_slot: non-consecutive token position 1731 after 1731 for sequence 0 with 512 new tokens
+backend_ocr-1  | 6.31.018.804 W find_slot: non-consecutive token position 1731 after 1731 for sequence 0 with 512 new tokens
+backend_ocr-1  | 6.31.018.804 W find_slot: non-consecutive token position 1731 after 1731 for sequence 0 with 431 new tokens
+backend_ocr-1  | 6.31.019.368 W find_slot: non-consecutive token position 1731 after 1731 for sequence 0 with 512 new tokens
+backend_ocr-1  | 6.31.155.159 W find_slot: non-consecutive token position 1731 after 1731 for sequence 0 with 512 new tokens
+backend_ocr-1  | 6.31.294.321 W find_slot: non-consecutive token position 1731 after 1731 for sequence 0 with 512 new tokens
+backend_ocr-1  | 6.31.434.059 W find_slot: non-consecutive token position 1731 after 1731 for sequence 0 with 431 new tokens
+backend_ocr-1  | 6.31.565.636 W find_slot: non-consecutive token position 1809 after 1731 for sequence 0 with 6 new tokens
+backend_ocr-1  | 6.31.565.650 W find_slot: non-consecutive token position 1809 after 1731 for sequence 0 with 6 new tokens
+backend_ocr-1  | 6.34.702.388 I slot print_timing: id  0 | task 20864 | n_gen =    198, tg =  65.46 t/s, tg_3s =  65.79 t/s
+backend_ocr-1  | 6.37.716.888 I slot print_timing: id  0 | task 20864 | n_gen =    391, tg =  64.74 t/s, tg_3s =  64.02 t/s
+backend_ocr-1  | 6.40.727.983 I slot print_timing: id  0 | task 20864 | n_gen =    592, tg =  65.41 t/s, tg_3s =  66.75 t/s
+backend_ocr-1  | 6.43.730.620 I slot print_timing: id  0 | task 20864 | n_gen =    792, tg =  65.71 t/s, tg_3s =  66.61 t/s
+backend_ocr-1  | 6.46.734.825 I slot print_timing: id  0 | task 20864 | n_gen =    992, tg =  65.88 t/s, tg_3s =  66.57 t/s
+backend_ocr-1  | 6.49.740.500 I slot print_timing: id  0 | task 20864 | n_gen =   1192, tg =  65.99 t/s, tg_3s =  66.54 t/s
+backend_ocr-1  | 6.52.745.471 I slot print_timing: id  0 | task 20864 | n_gen =   1392, tg =  66.07 t/s, tg_3s =  66.56 t/s
+backend_ocr-1  | 6.55.759.798 I slot print_timing: id  0 | task 20864 | n_gen =   1592, tg =  66.11 t/s, tg_3s =  66.35 t/s
+backend_ocr-1  | 6.58.762.526 I slot print_timing: id  0 | task 20864 | n_gen =   1791, tg =  66.13 t/s, tg_3s =  66.27 t/s
+backend_ocr-1  | 7.01.768.517 I slot print_timing: id  0 | task 20864 | n_gen =   1990, tg =  66.13 t/s, tg_3s =  66.20 t/s
+backend_ocr-1  | 7.04.773.902 I slot print_timing: id  0 | task 20864 | n_gen =   2189, tg =  66.14 t/s, tg_3s =  66.21 t/s
+backend_ocr-1  | 7.06.438.697 I slot print_timing: id  0 | task 20864 | prompt eval time =    2827.22 ms /  5756 tokens (    0.49 ms per token,  2035.93 tokens per second)
+backend_ocr-1  | 7.06.438.699 I slot print_timing: id  0 | task 20864 |        eval time =   34746.01 ms /  2300 tokens (   15.11 ms per token,    66.17 tokens per second)
+backend_ocr-1  | 7.06.438.700 I slot print_timing: id  0 | task 20864 |       total time =   37573.23 ms /  8056 tokens
+backend_ocr-1  | 7.06.438.701 I slot print_timing: id  0 | task 20864 |    graphs reused =      23000
+backend_ocr-1  | 7.06.438.764 I slot      release: id  0 | task 20864 | stop processing: n_tokens = 8055, truncated = 0
+backend_ocr-1  | 7.08.831.173 I slot get_availabl: id  0 | task -1 | selected slot by LCP similarity, f_sim_best = 0.220 (> 0.100 thold), f_keep = 0.159
+backend_ocr-1  | 7.08.831.321 W srv         alloc:  - making room for prompt cache entry, removing oldest entry (size = 899.731 MiB)
+backend_ocr-1  | 7.08.991.353 I slot launch_slot_: id  0 | task 23168 | processing task, is_child = 0
+backend_ocr-1  | 7.10.204.487 W find_slot: non-consecutive token position 1778 after 1777 for sequence 0 with 512 new tokens
+backend_ocr-1  | 7.10.204.491 W find_slot: non-consecutive token position 1778 after 1778 for sequence 0 with 512 new tokens
+backend_ocr-1  | 7.10.204.491 W find_slot: non-consecutive token position 1778 after 1778 for sequence 0 with 512 new tokens
+backend_ocr-1  | 7.10.204.491 W find_slot: non-consecutive token position 1778 after 1778 for sequence 0 with 512 new tokens
+backend_ocr-1  | 7.10.205.082 W find_slot: non-consecutive token position 1778 after 1777 for sequence 0 with 512 new tokens
+backend_ocr-1  | 7.10.287.125 W find_slot: non-consecutive token position 1778 after 1778 for sequence 0 with 512 new tokens
+backend_ocr-1  | 7.10.423.149 W find_slot: non-consecutive token position 1778 after 1778 for sequence 0 with 512 new tokens
+backend_ocr-1  | 7.10.560.261 W find_slot: non-consecutive token position 1778 after 1778 for sequence 0 with 512 new tokens
+backend_ocr-1  | 7.10.700.264 W find_slot: non-consecutive token position 1778 after 1778 for sequence 0 with 512 new tokens
+backend_ocr-1  | 7.10.700.267 W find_slot: non-consecutive token position 1778 after 1778 for sequence 0 with 512 new tokens
+backend_ocr-1  | 7.10.700.267 W find_slot: non-consecutive token position 1778 after 1778 for sequence 0 with 512 new tokens
+backend_ocr-1  | 7.10.700.267 W find_slot: non-consecutive token position 1778 after 1778 for sequence 0 with 431 new tokens
+backend_ocr-1  | 7.10.700.815 W find_slot: non-consecutive token position 1778 after 1778 for sequence 0 with 512 new tokens
+backend_ocr-1  | 7.10.836.514 W find_slot: non-consecutive token position 1778 after 1778 for sequence 0 with 512 new tokens
+backend_ocr-1  | 7.10.975.569 W find_slot: non-consecutive token position 1778 after 1778 for sequence 0 with 512 new tokens
+backend_ocr-1  | 7.11.115.232 W find_slot: non-consecutive token position 1778 after 1778 for sequence 0 with 431 new tokens
+backend_ocr-1  | 7.11.246.714 W find_slot: non-consecutive token position 1856 after 1778 for sequence 0 with 6 new tokens
+backend_ocr-1  | 7.11.246.728 W find_slot: non-consecutive token position 1856 after 1778 for sequence 0 with 6 new tokens
+backend_ocr-1  | 7.14.381.175 I slot print_timing: id  0 | task 23168 | n_gen =    195, tg =  64.49 t/s, tg_3s =  64.82 t/s
+backend_ocr-1  | 7.17.392.642 I slot print_timing: id  0 | task 23168 | n_gen =    393, tg =  65.12 t/s, tg_3s =  65.75 t/s
+backend_ocr-1  | 7.20.404.247 I slot print_timing: id  0 | task 23168 | n_gen =    594, tg =  65.66 t/s, tg_3s =  66.74 t/s
+backend_ocr-1  | 7.23.407.435 I slot print_timing: id  0 | task 23168 | n_gen =    794, tg =  65.89 t/s, tg_3s =  66.60 t/s
+backend_ocr-1  | 7.26.411.636 I slot print_timing: id  0 | task 23168 | n_gen =    994, tg =  66.03 t/s, tg_3s =  66.57 t/s
+backend_ocr-1  | 7.29.416.534 I slot print_timing: id  0 | task 23168 | n_gen =   1194, tg =  66.12 t/s, tg_3s =  66.56 t/s
+backend_ocr-1  | 7.32.422.569 I slot print_timing: id  0 | task 23168 | n_gen =   1394, tg =  66.18 t/s, tg_3s =  66.53 t/s
+backend_ocr-1  | 7.35.430.625 I slot print_timing: id  0 | task 23168 | n_gen =   1594, tg =  66.22 t/s, tg_3s =  66.49 t/s
+backend_ocr-1  | 7.38.432.296 I slot print_timing: id  0 | task 23168 | n_gen =   1793, tg =  66.23 t/s, tg_3s =  66.30 t/s
+backend_ocr-1  | 7.41.434.785 I slot print_timing: id  0 | task 23168 | n_gen =   1992, tg =  66.23 t/s, tg_3s =  66.28 t/s
+backend_ocr-1  | 7.44.447.867 I slot print_timing: id  0 | task 23168 | n_gen =   2192, tg =  66.24 t/s, tg_3s =  66.38 t/s
+backend_ocr-1  | 7.47.448.370 I slot print_timing: id  0 | task 23168 | n_gen =   2392, tg =  66.28 t/s, tg_3s =  66.66 t/s
+backend_ocr-1  | 7.50.449.458 I slot print_timing: id  0 | task 23168 | n_gen =   2592, tg =  66.31 t/s, tg_3s =  66.64 t/s
+backend_ocr-1  | 7.53.454.440 I slot print_timing: id  0 | task 23168 | n_gen =   2792, tg =  66.32 t/s, tg_3s =  66.56 t/s
+backend_ocr-1  | 7.54.445.049 I slot print_timing: id  0 | task 23168 | prompt eval time =    2381.70 ms /  4049 tokens (    0.59 ms per token,  1700.05 tokens per second)
+backend_ocr-1  | 7.54.445.051 I slot print_timing: id  0 | task 23168 |        eval time =   43071.98 ms /  2858 tokens (   15.08 ms per token,    66.33 tokens per second)
+backend_ocr-1  | 7.54.445.051 I slot print_timing: id  0 | task 23168 |       total time =   45453.68 ms /  6907 tokens
+backend_ocr-1  | 7.54.445.052 I slot print_timing: id  0 | task 23168 |    graphs reused =      25845
+backend_ocr-1  | 7.54.445.116 I slot      release: id  0 | task 23168 | stop processing: n_tokens = 8660, truncated = 0
+backend_ocr-1  | 7.56.658.263 I slot get_availabl: id  0 | task -1 | selected slot by LCP similarity, f_sim_best = 0.222 (> 0.100 thold), f_keep = 0.148
+backend_ocr-1  | 7.56.843.246 I slot launch_slot_: id  0 | task 26029 | processing task, is_child = 0
+backend_ocr-1  | 7.58.503.008 W find_slot: non-consecutive token position 1731 after 1730 for sequence 0 with 512 new tokens
+backend_ocr-1  | 7.58.503.011 W find_slot: non-consecutive token position 1731 after 1731 for sequence 0 with 512 new tokens
+backend_ocr-1  | 7.58.503.012 W find_slot: non-consecutive token position 1731 after 1731 for sequence 0 with 512 new tokens
+backend_ocr-1  | 7.58.503.012 W find_slot: non-consecutive token position 1731 after 1731 for sequence 0 with 512 new tokens
+backend_ocr-1  | 7.58.503.609 W find_slot: non-consecutive token position 1731 after 1730 for sequence 0 with 512 new tokens
+backend_ocr-1  | 7.58.585.772 W find_slot: non-consecutive token position 1731 after 1731 for sequence 0 with 512 new tokens
+backend_ocr-1  | 7.58.721.973 W find_slot: non-consecutive token position 1731 after 1731 for sequence 0 with 512 new tokens
+backend_ocr-1  | 7.58.859.167 W find_slot: non-consecutive token position 1731 after 1731 for sequence 0 with 512 new tokens
+backend_ocr-1  | 7.58.999.312 W find_slot: non-consecutive token position 1731 after 1731 for sequence 0 with 512 new tokens
+backend_ocr-1  | 7.58.999.314 W find_slot: non-consecutive token position 1731 after 1731 for sequence 0 with 512 new tokens
+backend_ocr-1  | 7.58.999.314 W find_slot: non-consecutive token position 1731 after 1731 for sequence 0 with 512 new tokens
+backend_ocr-1  | 7.58.999.315 W find_slot: non-consecutive token position 1731 after 1731 for sequence 0 with 431 new tokens
+backend_ocr-1  | 7.58.999.864 W find_slot: non-consecutive token position 1731 after 1731 for sequence 0 with 512 new tokens
+backend_ocr-1  | 7.59.135.696 W find_slot: non-consecutive token position 1731 after 1731 for sequence 0 with 512 new tokens
+backend_ocr-1  | 7.59.274.940 W find_slot: non-consecutive token position 1731 after 1731 for sequence 0 with 512 new tokens
+backend_ocr-1  | 7.59.414.778 W find_slot: non-consecutive token position 1731 after 1731 for sequence 0 with 431 new tokens
+backend_ocr-1  | 7.59.546.429 W find_slot: non-consecutive token position 1809 after 1731 for sequence 0 with 6 new tokens
+backend_ocr-1  | 7.59.546.441 W find_slot: non-consecutive token position 1809 after 1731 for sequence 0 with 6 new tokens
+backend_ocr-1  | 8.02.683.190 I slot print_timing: id  0 | task 26029 | n_gen =    198, tg =  65.45 t/s, tg_3s =  65.79 t/s
+backend_ocr-1  | 8.05.697.179 I slot print_timing: id  0 | task 26029 | n_gen =    391, tg =  64.74 t/s, tg_3s =  64.03 t/s
+backend_ocr-1  | 8.08.707.691 I slot print_timing: id  0 | task 26029 | n_gen =    592, tg =  65.42 t/s, tg_3s =  66.77 t/s
+backend_ocr-1  | 8.11.720.802 I slot print_timing: id  0 | task 26029 | n_gen =    792, tg =  65.66 t/s, tg_3s =  66.38 t/s
+backend_ocr-1  | 8.14.725.543 I slot print_timing: id  0 | task 26029 | n_gen =    992, tg =  65.84 t/s, tg_3s =  66.56 t/s
+backend_ocr-1  | 8.17.730.262 I slot print_timing: id  0 | task 26029 | n_gen =   1192, tg =  65.96 t/s, tg_3s =  66.56 t/s
+backend_ocr-1  | 8.17.850.358 I slot print_timing: id  0 | task 26029 | prompt eval time =    2830.18 ms /  5756 tokens (    0.49 ms per token,  2033.79 tokens per second)
+backend_ocr-1  | 8.17.850.360 I slot print_timing: id  0 | task 26029 |        eval time =   18176.92 ms /  1200 tokens (   15.16 ms per token,    65.96 tokens per second)
+backend_ocr-1  | 8.17.850.360 I slot print_timing: id  0 | task 26029 |       total time =   21007.10 ms /  6956 tokens
+backend_ocr-1  | 8.17.850.361 I slot print_timing: id  0 | task 26029 |    graphs reused =      27038
+backend_ocr-1  | 8.17.850.424 I slot      release: id  0 | task 26029 | stop processing: n_tokens = 6955, truncated = 0
+backend_ocr-1  | 8.20.007.677 I slot get_availabl: id  0 | task -1 | selected slot by LCP similarity, f_sim_best = 0.301 (> 0.100 thold), f_keep = 0.249
+backend_ocr-1  | 8.20.007.931 W srv         alloc:  - making room for prompt cache entry, removing oldest entry (size = 803.321 MiB)
+backend_ocr-1  | 8.20.023.318 W srv         alloc:  - making room for prompt cache entry, removing oldest entry (size = 872.721 MiB)
+backend_ocr-1  | 8.20.185.912 I slot launch_slot_: id  0 | task 27233 | processing task, is_child = 0
+backend_ocr-1  | 8.21.399.307 W find_slot: non-consecutive token position 1731 after 1730 for sequence 0 with 512 new tokens
+backend_ocr-1  | 8.21.399.310 W find_slot: non-consecutive token position 1731 after 1731 for sequence 0 with 512 new tokens
+backend_ocr-1  | 8.21.399.310 W find_slot: non-consecutive token position 1731 after 1731 for sequence 0 with 512 new tokens
+backend_ocr-1  | 8.21.399.311 W find_slot: non-consecutive token position 1731 after 1731 for sequence 0 with 512 new tokens
+backend_ocr-1  | 8.21.399.927 W find_slot: non-consecutive token position 1731 after 1730 for sequence 0 with 512 new tokens
+backend_ocr-1  | 8.21.481.903 W find_slot: non-consecutive token position 1731 after 1731 for sequence 0 with 512 new tokens
+backend_ocr-1  | 8.21.617.846 W find_slot: non-consecutive token position 1731 after 1731 for sequence 0 with 512 new tokens
+backend_ocr-1  | 8.21.754.781 W find_slot: non-consecutive token position 1731 after 1731 for sequence 0 with 512 new tokens
+backend_ocr-1  | 8.21.894.720 W find_slot: non-consecutive token position 1731 after 1731 for sequence 0 with 512 new tokens
+backend_ocr-1  | 8.21.894.722 W find_slot: non-consecutive token position 1731 after 1731 for sequence 0 with 512 new tokens
+backend_ocr-1  | 8.21.894.722 W find_slot: non-consecutive token position 1731 after 1731 for sequence 0 with 512 new tokens
+backend_ocr-1  | 8.21.894.722 W find_slot: non-consecutive token position 1731 after 1731 for sequence 0 with 431 new tokens
+backend_ocr-1  | 8.21.895.264 W find_slot: non-consecutive token position 1731 after 1731 for sequence 0 with 512 new tokens
+backend_ocr-1  | 8.22.030.925 W find_slot: non-consecutive token position 1731 after 1731 for sequence 0 with 512 new tokens
+backend_ocr-1  | 8.22.169.941 W find_slot: non-consecutive token position 1731 after 1731 for sequence 0 with 512 new tokens
+backend_ocr-1  | 8.22.309.830 W find_slot: non-consecutive token position 1731 after 1731 for sequence 0 with 431 new tokens
+backend_ocr-1  | 8.22.441.210 W find_slot: non-consecutive token position 1809 after 1731 for sequence 0 with 6 new tokens
+backend_ocr-1  | 8.22.441.224 W find_slot: non-consecutive token position 1809 after 1731 for sequence 0 with 6 new tokens
+backend_ocr-1  | 8.25.576.553 I slot print_timing: id  0 | task 27233 | n_gen =    198, tg =  65.47 t/s, tg_3s =  65.80 t/s
+backend_ocr-1  | 8.28.592.051 I slot print_timing: id  0 | task 27233 | n_gen =    391, tg =  64.74 t/s, tg_3s =  64.00 t/s
+backend_ocr-1  | 8.31.605.636 I slot print_timing: id  0 | task 27233 | n_gen =    592, tg =  65.39 t/s, tg_3s =  66.70 t/s
+backend_ocr-1  | 8.34.609.155 I slot print_timing: id  0 | task 27233 | n_gen =    792, tg =  65.69 t/s, tg_3s =  66.59 t/s
+backend_ocr-1  | 8.37.553.816 I slot print_timing: id  0 | task 27233 | prompt eval time =    2381.67 ms /  4051 tokens (    0.59 ms per token,  1700.91 tokens per second)
+backend_ocr-1  | 8.37.553.818 I slot print_timing: id  0 | task 27233 |        eval time =   14986.22 ms /   987 tokens (   15.20 ms per token,    65.79 tokens per second)
+backend_ocr-1  | 8.37.553.818 I slot print_timing: id  0 | task 27233 |       total time =   17367.89 ms /  5038 tokens
+backend_ocr-1  | 8.37.553.819 I slot print_timing: id  0 | task 27233 |    graphs reused =      28019
+backend_ocr-1  | 8.37.553.880 I slot      release: id  0 | task 27233 | stop processing: n_tokens = 6742, truncated = 0
+backend_ocr-1  | 8.39.675.475 I slot get_availabl: id  0 | task -1 | selected slot by LCP similarity, f_sim_best = 0.301 (> 0.100 thold), f_keep = 0.257
+backend_ocr-1  | 8.39.675.765 W srv         alloc:  - making room for prompt cache entry, removing oldest entry (size = 907.422 MiB)
+backend_ocr-1  | 8.39.860.208 I slot launch_slot_: id  0 | task 28223 | processing task, is_child = 0
+backend_ocr-1  | 8.41.072.497 W find_slot: non-consecutive token position 1731 after 1730 for sequence 0 with 512 new tokens
+backend_ocr-1  | 8.41.072.501 W find_slot: non-consecutive token position 1731 after 1731 for sequence 0 with 512 new tokens
+backend_ocr-1  | 8.41.072.501 W find_slot: non-consecutive token position 1731 after 1731 for sequence 0 with 512 new tokens
+backend_ocr-1  | 8.41.072.501 W find_slot: non-consecutive token position 1731 after 1731 for sequence 0 with 512 new tokens
+backend_ocr-1  | 8.41.073.092 W find_slot: non-consecutive token position 1731 after 1730 for sequence 0 with 512 new tokens
+backend_ocr-1  | 8.41.155.252 W find_slot: non-consecutive token position 1731 after 1731 for sequence 0 with 512 new tokens
+backend_ocr-1  | 8.41.291.013 W find_slot: non-consecutive token position 1731 after 1731 for sequence 0 with 512 new tokens
+backend_ocr-1  | 8.41.427.921 W find_slot: non-consecutive token position 1731 after 1731 for sequence 0 with 512 new tokens
+backend_ocr-1  | 8.41.567.819 W find_slot: non-consecutive token position 1731 after 1731 for sequence 0 with 512 new tokens
+backend_ocr-1  | 8.41.567.822 W find_slot: non-consecutive token position 1731 after 1731 for sequence 0 with 512 new tokens
+backend_ocr-1  | 8.41.567.822 W find_slot: non-consecutive token position 1731 after 1731 for sequence 0 with 512 new tokens
+backend_ocr-1  | 8.41.567.823 W find_slot: non-consecutive token position 1731 after 1731 for sequence 0 with 431 new tokens
+backend_ocr-1  | 8.41.568.373 W find_slot: non-consecutive token position 1731 after 1731 for sequence 0 with 512 new tokens
+backend_ocr-1  | 8.41.703.819 W find_slot: non-consecutive token position 1731 after 1731 for sequence 0 with 512 new tokens
+backend_ocr-1  | 8.41.842.709 W find_slot: non-consecutive token position 1731 after 1731 for sequence 0 with 512 new tokens
+backend_ocr-1  | 8.41.982.238 W find_slot: non-consecutive token position 1731 after 1731 for sequence 0 with 431 new tokens
+backend_ocr-1  | 8.42.113.549 W find_slot: non-consecutive token position 1809 after 1731 for sequence 0 with 6 new tokens
+backend_ocr-1  | 8.42.113.563 W find_slot: non-consecutive token position 1809 after 1731 for sequence 0 with 6 new tokens
+backend_ocr-1  | 8.45.249.760 I slot print_timing: id  0 | task 28223 | n_gen =    198, tg =  65.44 t/s, tg_3s =  65.78 t/s
+backend_ocr-1  | 8.48.258.160 I slot print_timing: id  0 | task 28223 | n_gen =    392, tg =  64.96 t/s, tg_3s =  64.49 t/s
+backend_ocr-1  | 8.51.269.337 I slot print_timing: id  0 | task 28223 | n_gen =    593, tg =  65.56 t/s, tg_3s =  66.75 t/s
+backend_ocr-1  | 8.54.271.866 I slot print_timing: id  0 | task 28223 | n_gen =    793, tg =  65.82 t/s, tg_3s =  66.61 t/s
+backend_ocr-1  | 8.57.276.787 I slot print_timing: id  0 | task 28223 | n_gen =    993, tg =  65.97 t/s, tg_3s =  66.56 t/s
+backend_ocr-1  | 9.00.278.712 I slot print_timing: id  0 | task 28223 | n_gen =   1192, tg =  66.02 t/s, tg_3s =  66.29 t/s
+backend_ocr-1  | 9.03.282.944 I slot print_timing: id  0 | task 28223 | n_gen =   1392, tg =  66.10 t/s, tg_3s =  66.57 t/s
+backend_ocr-1  | 9.05.258.884 I slot print_timing: id  0 | task 28223 | prompt eval time =    2379.30 ms /  4051 tokens (    0.59 ms per token,  1702.60 tokens per second)
+backend_ocr-1  | 9.05.258.887 I slot print_timing: id  0 | task 28223 |        eval time =   23019.35 ms /  1523 tokens (   15.12 ms per token,    66.12 tokens per second)
+backend_ocr-1  | 9.05.258.888 I slot print_timing: id  0 | task 28223 |       total time =   25398.65 ms /  5574 tokens
+backend_ocr-1  | 9.05.258.889 I slot print_timing: id  0 | task 28223 |    graphs reused =      29534
+backend_ocr-1  | 9.05.258.952 I slot      release: id  0 | task 28223 | stop processing: n_tokens = 7278, truncated = 0
+backend_ocr-1  | 9.07.464.312 I slot get_availabl: id  0 | task -1 | selected slot by LCP similarity, f_sim_best = 0.220 (> 0.100 thold), f_keep = 0.176
+backend_ocr-1  | 9.07.464.606 W srv         alloc:  - making room for prompt cache entry, removing oldest entry (size = 897.606 MiB)
+backend_ocr-1  | 9.07.663.924 I slot launch_slot_: id  0 | task 29749 | processing task, is_child = 0
+backend_ocr-1  | 9.09.328.944 W find_slot: non-consecutive token position 1778 after 1777 for sequence 0 with 512 new tokens
+backend_ocr-1  | 9.09.328.947 W find_slot: non-consecutive token position 1778 after 1778 for sequence 0 with 512 new tokens
+backend_ocr-1  | 9.09.328.947 W find_slot: non-consecutive token position 1778 after 1778 for sequence 0 with 512 new tokens
+backend_ocr-1  | 9.09.328.948 W find_slot: non-consecutive token position 1778 after 1778 for sequence 0 with 512 new tokens
+backend_ocr-1  | 9.09.329.556 W find_slot: non-consecutive token position 1778 after 1777 for sequence 0 with 512 new tokens
+backend_ocr-1  | 9.09.411.790 W find_slot: non-consecutive token position 1778 after 1778 for sequence 0 with 512 new tokens
+backend_ocr-1  | 9.09.547.738 W find_slot: non-consecutive token position 1778 after 1778 for sequence 0 with 512 new tokens
+backend_ocr-1  | 9.09.684.736 W find_slot: non-consecutive token position 1778 after 1778 for sequence 0 with 512 new tokens
+backend_ocr-1  | 9.09.824.389 W find_slot: non-consecutive token position 1778 after 1778 for sequence 0 with 512 new tokens
+backend_ocr-1  | 9.09.824.390 W find_slot: non-consecutive token position 1778 after 1778 for sequence 0 with 512 new tokens
+backend_ocr-1  | 9.09.824.390 W find_slot: non-consecutive token position 1778 after 1778 for sequence 0 with 512 new tokens
+backend_ocr-1  | 9.09.824.390 W find_slot: non-consecutive token position 1778 after 1778 for sequence 0 with 431 new tokens
+backend_ocr-1  | 9.09.824.924 W find_slot: non-consecutive token position 1778 after 1778 for sequence 0 with 512 new tokens
+backend_ocr-1  | 9.09.960.805 W find_slot: non-consecutive token position 1778 after 1778 for sequence 0 with 512 new tokens
+backend_ocr-1  | 9.10.099.844 W find_slot: non-consecutive token position 1778 after 1778 for sequence 0 with 512 new tokens
+backend_ocr-1  | 9.10.239.508 W find_slot: non-consecutive token position 1778 after 1778 for sequence 0 with 431 new tokens
+backend_ocr-1  | 9.10.371.018 W find_slot: non-consecutive token position 1856 after 1778 for sequence 0 with 6 new tokens
+backend_ocr-1  | 9.10.371.032 W find_slot: non-consecutive token position 1856 after 1778 for sequence 0 with 6 new tokens
+backend_ocr-1  | 9.13.508.369 I slot print_timing: id  0 | task 29749 | n_gen =    196, tg =  64.76 t/s, tg_3s =  65.10 t/s
+backend_ocr-1  | 9.16.512.330 I slot print_timing: id  0 | task 29749 | n_gen =    394, tg =  65.34 t/s, tg_3s =  65.91 t/s
+backend_ocr-1  | 9.19.523.529 I slot print_timing: id  0 | task 29749 | n_gen =    595, tg =  65.81 t/s, tg_3s =  66.75 t/s
+backend_ocr-1  | 9.22.525.580 I slot print_timing: id  0 | task 29749 | n_gen =    795, tg =  66.01 t/s, tg_3s =  66.62 t/s
+backend_ocr-1  | 9.25.530.875 I slot print_timing: id  0 | task 29749 | n_gen =    995, tg =  66.12 t/s, tg_3s =  66.55 t/s
+backend_ocr-1  | 9.28.538.153 I slot print_timing: id  0 | task 29749 | n_gen =   1195, tg =  66.18 t/s, tg_3s =  66.51 t/s
+backend_ocr-1  | 9.31.547.041 I slot print_timing: id  0 | task 29749 | n_gen =   1395, tg =  66.22 t/s, tg_3s =  66.47 t/s
+backend_ocr-1  | 9.34.557.534 I slot print_timing: id  0 | task 29749 | n_gen =   1595, tg =  66.25 t/s, tg_3s =  66.43 t/s
+backend_ocr-1  | 9.37.561.594 I slot print_timing: id  0 | task 29749 | n_gen =   1794, tg =  66.25 t/s, tg_3s =  66.24 t/s
+backend_ocr-1  | 9.40.568.302 I slot print_timing: id  0 | task 29749 | n_gen =   1993, tg =  66.24 t/s, tg_3s =  66.19 t/s
+backend_ocr-1  | 9.43.571.000 I slot print_timing: id  0 | task 29749 | n_gen =   2192, tg =  66.25 t/s, tg_3s =  66.27 t/s
+backend_ocr-1  | 9.46.587.603 I slot print_timing: id  0 | task 29749 | n_gen =   2392, tg =  66.25 t/s, tg_3s =  66.30 t/s
+backend_ocr-1  | 9.47.398.002 I slot print_timing: id  0 | task 29749 | prompt eval time =    2833.53 ms /  5803 tokens (    0.49 ms per token,  2047.97 tokens per second)
+backend_ocr-1  | 9.47.398.004 I slot print_timing: id  0 | task 29749 |        eval time =   36900.53 ms /  2446 tokens (   15.09 ms per token,    66.26 tokens per second)
+backend_ocr-1  | 9.47.398.004 I slot print_timing: id  0 | task 29749 |       total time =   39734.06 ms /  8249 tokens
+backend_ocr-1  | 9.47.398.005 I slot print_timing: id  0 | task 29749 |    graphs reused =      31968
+backend_ocr-1  | 9.47.398.073 I slot      release: id  0 | task 29749 | stop processing: n_tokens = 8248, truncated = 0
+backend_ocr-1  | 9.49.652.933 I slot get_availabl: id  0 | task -1 | selected slot by LCP similarity, f_sim_best = 0.306 (> 0.100 thold), f_keep = 0.216
+backend_ocr-1  | 9.49.653.208 W srv         alloc:  - making room for prompt cache entry, removing oldest entry (size = 927.992 MiB)
+backend_ocr-1  | 9.49.863.385 I slot launch_slot_: id  0 | task 32199 | processing task, is_child = 0
+backend_ocr-1  | 9.51.076.457 W find_slot: non-consecutive token position 1778 after 1777 for sequence 0 with 512 new tokens
+backend_ocr-1  | 9.51.076.460 W find_slot: non-consecutive token position 1778 after 1778 for sequence 0 with 512 new tokens
+backend_ocr-1  | 9.51.076.460 W find_slot: non-consecutive token position 1778 after 1778 for sequence 0 with 512 new tokens
+backend_ocr-1  | 9.51.076.461 W find_slot: non-consecutive token position 1778 after 1778 for sequence 0 with 512 new tokens
+backend_ocr-1  | 9.51.077.287 W find_slot: non-consecutive token position 1778 after 1777 for sequence 0 with 512 new tokens
+backend_ocr-1  | 9.51.159.345 W find_slot: non-consecutive token position 1778 after 1778 for sequence 0 with 512 new tokens
+backend_ocr-1  | 9.51.295.499 W find_slot: non-consecutive token position 1778 after 1778 for sequence 0 with 512 new tokens
+backend_ocr-1  | 9.51.432.683 W find_slot: non-consecutive token position 1778 after 1778 for sequence 0 with 512 new tokens
+backend_ocr-1  | 9.51.573.007 W find_slot: non-consecutive token position 1778 after 1778 for sequence 0 with 512 new tokens
+backend_ocr-1  | 9.51.573.009 W find_slot: non-consecutive token position 1778 after 1778 for sequence 0 with 512 new tokens
+backend_ocr-1  | 9.51.573.009 W find_slot: non-consecutive token position 1778 after 1778 for sequence 0 with 512 new tokens
+backend_ocr-1  | 9.51.573.010 W find_slot: non-consecutive token position 1778 after 1778 for sequence 0 with 431 new tokens
+backend_ocr-1  | 9.51.573.558 W find_slot: non-consecutive token position 1778 after 1778 for sequence 0 with 512 new tokens
+backend_ocr-1  | 9.51.709.202 W find_slot: non-consecutive token position 1778 after 1778 for sequence 0 with 512 new tokens
+backend_ocr-1  | 9.51.848.428 W find_slot: non-consecutive token position 1778 after 1778 for sequence 0 with 512 new tokens
+backend_ocr-1  | 9.51.988.256 W find_slot: non-consecutive token position 1778 after 1778 for sequence 0 with 431 new tokens
+backend_ocr-1  | 9.52.119.804 W find_slot: non-consecutive token position 1856 after 1778 for sequence 0 with 6 new tokens
+backend_ocr-1  | 9.52.119.818 W find_slot: non-consecutive token position 1856 after 1778 for sequence 0 with 6 new tokens
+backend_ocr-1  | 9.55.260.645 I slot print_timing: id  0 | task 32199 | n_gen =    196, tg =  64.70 t/s, tg_3s =  65.03 t/s
+backend_ocr-1  | 9.58.273.707 I slot print_timing: id  0 | task 32199 | n_gen =    392, tg =  64.88 t/s, tg_3s =  65.05 t/s
+backend_ocr-1  | 10.01.283.367 I slot print_timing: id  0 | task 32199 | n_gen =    593, tg =  65.51 t/s, tg_3s =  66.78 t/s
+backend_ocr-1  | 10.04.285.385 I slot print_timing: id  0 | task 32199 | n_gen =    793, tg =  65.79 t/s, tg_3s =  66.62 t/s
+backend_ocr-1  | 10.07.290.893 I slot print_timing: id  0 | task 32199 | n_gen =    993, tg =  65.94 t/s, tg_3s =  66.54 t/s
+backend_ocr-1  | 10.10.297.957 I slot print_timing: id  0 | task 32199 | n_gen =   1193, tg =  66.03 t/s, tg_3s =  66.51 t/s
+backend_ocr-1  | 10.13.307.301 I slot print_timing: id  0 | task 32199 | n_gen =   1393, tg =  66.10 t/s, tg_3s =  66.46 t/s
+backend_ocr-1  | 10.16.317.534 I slot print_timing: id  0 | task 32199 | n_gen =   1593, tg =  66.14 t/s, tg_3s =  66.44 t/s
+backend_ocr-1  | 10.19.321.345 I slot print_timing: id  0 | task 32199 | n_gen =   1792, tg =  66.15 t/s, tg_3s =  66.25 t/s
+backend_ocr-1  | 10.19.893.862 I slot print_timing: id  0 | task 32199 | prompt eval time =    2383.40 ms /  4049 tokens (    0.59 ms per token,  1698.83 tokens per second)
+backend_ocr-1  | 10.19.893.864 I slot print_timing: id  0 | task 32199 |        eval time =   27647.06 ms /  1830 tokens (   15.12 ms per token,    66.16 tokens per second)
+backend_ocr-1  | 10.19.893.864 I slot print_timing: id  0 | task 32199 |       total time =   30030.46 ms /  5879 tokens
+backend_ocr-1  | 10.19.893.865 I slot print_timing: id  0 | task 32199 |    graphs reused =      33789
+backend_ocr-1  | 10.19.893.926 I slot      release: id  0 | task 32199 | stop processing: n_tokens = 7632, truncated = 0
+backend_ocr-1  | 10.22.017.051 I slot get_availabl: id  0 | task -1 | selected slot by LCP similarity, f_sim_best = 0.222 (> 0.100 thold), f_keep = 0.168
+backend_ocr-1  | 10.22.017.308 W srv         alloc:  - making room for prompt cache entry, removing oldest entry (size = 882.725 MiB)
+backend_ocr-1  | 10.22.259.728 I slot launch_slot_: id  0 | task 34032 | processing task, is_child = 0
+backend_ocr-1  | 10.23.478.053 W find_slot: non-consecutive token position 1731 after 1730 for sequence 0 with 512 new tokens
+backend_ocr-1  | 10.23.478.057 W find_slot: non-consecutive token position 1731 after 1731 for sequence 0 with 512 new tokens
+backend_ocr-1  | 10.23.478.057 W find_slot: non-consecutive token position 1731 after 1731 for sequence 0 with 512 new tokens
+backend_ocr-1  | 10.23.478.058 W find_slot: non-consecutive token position 1731 after 1731 for sequence 0 with 512 new tokens
+backend_ocr-1  | 10.23.478.646 W find_slot: non-consecutive token position 1731 after 1730 for sequence 0 with 512 new tokens
+backend_ocr-1  | 10.23.560.920 W find_slot: non-consecutive token position 1731 after 1731 for sequence 0 with 512 new tokens
+backend_ocr-1  | 10.23.697.237 W find_slot: non-consecutive token position 1731 after 1731 for sequence 0 with 512 new tokens
+backend_ocr-1  | 10.23.834.484 W find_slot: non-consecutive token position 1731 after 1731 for sequence 0 with 512 new tokens
+backend_ocr-1  | 10.23.974.760 W find_slot: non-consecutive token position 1731 after 1731 for sequence 0 with 512 new tokens
+backend_ocr-1  | 10.23.974.762 W find_slot: non-consecutive token position 1731 after 1731 for sequence 0 with 512 new tokens
+backend_ocr-1  | 10.23.974.763 W find_slot: non-consecutive token position 1731 after 1731 for sequence 0 with 512 new tokens
+backend_ocr-1  | 10.23.974.763 W find_slot: non-consecutive token position 1731 after 1731 for sequence 0 with 431 new tokens
+backend_ocr-1  | 10.23.975.309 W find_slot: non-consecutive token position 1731 after 1731 for sequence 0 with 512 new tokens
+backend_ocr-1  | 10.24.111.092 W find_slot: non-consecutive token position 1731 after 1731 for sequence 0 with 512 new tokens
+backend_ocr-1  | 10.24.250.271 W find_slot: non-consecutive token position 1731 after 1731 for sequence 0 with 512 new tokens
+backend_ocr-1  | 10.24.390.130 W find_slot: non-consecutive token position 1731 after 1731 for sequence 0 with 431 new tokens
+backend_ocr-1  | 10.24.521.800 W find_slot: non-consecutive token position 1809 after 1731 for sequence 0 with 6 new tokens
+backend_ocr-1  | 10.24.521.813 W find_slot: non-consecutive token position 1809 after 1731 for sequence 0 with 6 new tokens
+backend_ocr-1  | 10.27.660.126 I slot print_timing: id  0 | task 34032 | n_gen =    199, tg =  65.71 t/s, tg_3s =  66.04 t/s
+backend_ocr-1  | 10.30.674.675 I slot print_timing: id  0 | task 34032 | n_gen =    392, tg =  64.87 t/s, tg_3s =  64.02 t/s
+backend_ocr-1  | 10.33.686.900 I slot print_timing: id  0 | task 34032 | n_gen =    593, tg =  65.49 t/s, tg_3s =  66.73 t/s
+backend_ocr-1  | 10.36.691.013 I slot print_timing: id  0 | task 34032 | n_gen =    793, tg =  65.76 t/s, tg_3s =  66.58 t/s
+backend_ocr-1  | 10.39.695.378 I slot print_timing: id  0 | task 34032 | n_gen =    993, tg =  65.92 t/s, tg_3s =  66.57 t/s
+backend_ocr-1  | 10.42.701.145 I slot print_timing: id  0 | task 34032 | n_gen =   1193, tg =  66.02 t/s, tg_3s =  66.54 t/s
+backend_ocr-1  | 10.43.031.530 I slot print_timing: id  0 | task 34032 | prompt eval time =    2387.20 ms /  4051 tokens (    0.59 ms per token,  1696.96 tokens per second)
+backend_ocr-1  | 10.43.031.531 I slot print_timing: id  0 | task 34032 |        eval time =   18384.58 ms /  1215 tokens (   15.14 ms per token,    66.03 tokens per second)
+backend_ocr-1  | 10.43.031.532 I slot print_timing: id  0 | task 34032 |       total time =   20771.79 ms /  5266 tokens
+backend_ocr-1  | 10.43.031.533 I slot print_timing: id  0 | task 34032 |    graphs reused =      34997
+backend_ocr-1  | 10.43.031.596 I slot      release: id  0 | task 34032 | stop processing: n_tokens = 6970, truncated = 0
+backend_ocr-1  | 10.45.436.953 I slot get_availabl: id  0 | task -1 | selected slot by LCP similarity, f_sim_best = 0.220 (> 0.100 thold), f_keep = 0.184
+backend_ocr-1  | 10.45.599.429 I slot launch_slot_: id  0 | task 35250 | processing task, is_child = 0
+backend_ocr-1  | 10.47.262.526 W find_slot: non-consecutive token position 1778 after 1777 for sequence 0 with 512 new tokens
+backend_ocr-1  | 10.47.262.529 W find_slot: non-consecutive token position 1778 after 1778 for sequence 0 with 512 new tokens
+backend_ocr-1  | 10.47.262.529 W find_slot: non-consecutive token position 1778 after 1778 for sequence 0 with 512 new tokens
+backend_ocr-1  | 10.47.262.529 W find_slot: non-consecutive token position 1778 after 1778 for sequence 0 with 512 new tokens
+backend_ocr-1  | 10.47.263.123 W find_slot: non-consecutive token position 1778 after 1777 for sequence 0 with 512 new tokens
+backend_ocr-1  | 10.47.345.646 W find_slot: non-consecutive token position 1778 after 1778 for sequence 0 with 512 new tokens
+backend_ocr-1  | 10.47.481.626 W find_slot: non-consecutive token position 1778 after 1778 for sequence 0 with 512 new tokens
+backend_ocr-1  | 10.47.618.610 W find_slot: non-consecutive token position 1778 after 1778 for sequence 0 with 512 new tokens
+backend_ocr-1  | 10.47.758.286 W find_slot: non-consecutive token position 1778 after 1778 for sequence 0 with 512 new tokens
+backend_ocr-1  | 10.47.758.287 W find_slot: non-consecutive token position 1778 after 1778 for sequence 0 with 512 new tokens
+backend_ocr-1  | 10.47.758.288 W find_slot: non-consecutive token position 1778 after 1778 for sequence 0 with 512 new tokens
+backend_ocr-1  | 10.47.758.288 W find_slot: non-consecutive token position 1778 after 1778 for sequence 0 with 431 new tokens
+backend_ocr-1  | 10.47.758.829 W find_slot: non-consecutive token position 1778 after 1778 for sequence 0 with 512 new tokens
+backend_ocr-1  | 10.47.894.561 W find_slot: non-consecutive token position 1778 after 1778 for sequence 0 with 512 new tokens
+backend_ocr-1  | 10.48.033.499 W find_slot: non-consecutive token position 1778 after 1778 for sequence 0 with 512 new tokens
+backend_ocr-1  | 10.48.173.122 W find_slot: non-consecutive token position 1778 after 1778 for sequence 0 with 431 new tokens
+backend_ocr-1  | 10.48.304.615 W find_slot: non-consecutive token position 1856 after 1778 for sequence 0 with 6 new tokens
+backend_ocr-1  | 10.48.304.629 W find_slot: non-consecutive token position 1856 after 1778 for sequence 0 with 6 new tokens
+backend_ocr-1  | 10.51.434.534 I slot print_timing: id  0 | task 35250 | n_gen =    195, tg =  64.52 t/s, tg_3s =  64.85 t/s
+backend_ocr-1  | 10.54.443.371 I slot print_timing: id  0 | task 35250 | n_gen =    392, tg =  64.99 t/s, tg_3s =  65.47 t/s
+backend_ocr-1  | 10.57.455.171 I slot print_timing: id  0 | task 35250 | n_gen =    593, tg =  65.58 t/s, tg_3s =  66.74 t/s
+backend_ocr-1  | 10.59.618.253 I slot print_timing: id  0 | task 35250 | prompt eval time =    2828.05 ms /  5803 tokens (    0.49 ms per token,  2051.95 tokens per second)
+backend_ocr-1  | 10.59.618.255 I slot print_timing: id  0 | task 35250 |        eval time =   11190.76 ms /   737 tokens (   15.20 ms per token,    65.77 tokens per second)
+backend_ocr-1  | 10.59.618.256 I slot print_timing: id  0 | task 35250 |       total time =   14018.81 ms /  6540 tokens
+backend_ocr-1  | 10.59.618.257 I slot print_timing: id  0 | task 35250 |    graphs reused =      35729
+backend_ocr-1  | 10.59.618.320 I slot      release: id  0 | task 35250 | stop processing: n_tokens = 6539, truncated = 0
+backend_ocr-1  | 11.01.635.707 I slot get_availabl: id  0 | task -1 | selected slot by LCP similarity, f_sim_best = 0.233 (> 0.100 thold), f_keep = 0.196
+backend_ocr-1  | 11.01.635.841 W srv         alloc:  - making room for prompt cache entry, removing oldest entry (size = 937.870 MiB)
+backend_ocr-1  | 11.01.809.328 I slot launch_slot_: id  0 | task 35991 | processing task, is_child = 0
+backend_ocr-1  | 11.03.385.205 W find_slot: non-consecutive token position 1461 after 1460 for sequence 0 with 512 new tokens
+backend_ocr-1  | 11.03.385.208 W find_slot: non-consecutive token position 1461 after 1461 for sequence 0 with 512 new tokens
+backend_ocr-1  | 11.03.385.208 W find_slot: non-consecutive token position 1461 after 1461 for sequence 0 with 512 new tokens
+backend_ocr-1  | 11.03.385.208 W find_slot: non-consecutive token position 1461 after 1461 for sequence 0 with 512 new tokens
+backend_ocr-1  | 11.03.385.803 W find_slot: non-consecutive token position 1461 after 1460 for sequence 0 with 512 new tokens
+backend_ocr-1  | 11.03.467.870 W find_slot: non-consecutive token position 1461 after 1461 for sequence 0 with 512 new tokens
+backend_ocr-1  | 11.03.603.480 W find_slot: non-consecutive token position 1461 after 1461 for sequence 0 with 512 new tokens
+backend_ocr-1  | 11.03.740.127 W find_slot: non-consecutive token position 1461 after 1461 for sequence 0 with 512 new tokens
+backend_ocr-1  | 11.03.879.727 W find_slot: non-consecutive token position 1461 after 1461 for sequence 0 with 512 new tokens
+backend_ocr-1  | 11.03.879.728 W find_slot: non-consecutive token position 1461 after 1461 for sequence 0 with 512 new tokens
+backend_ocr-1  | 11.03.879.729 W find_slot: non-consecutive token position 1461 after 1461 for sequence 0 with 512 new tokens
+backend_ocr-1  | 11.03.879.729 W find_slot: non-consecutive token position 1461 after 1461 for sequence 0 with 431 new tokens
+backend_ocr-1  | 11.03.880.289 W find_slot: non-consecutive token position 1461 after 1461 for sequence 0 with 512 new tokens
+backend_ocr-1  | 11.04.015.668 W find_slot: non-consecutive token position 1461 after 1461 for sequence 0 with 512 new tokens
+backend_ocr-1  | 11.04.154.365 W find_slot: non-consecutive token position 1461 after 1461 for sequence 0 with 512 new tokens
+backend_ocr-1  | 11.04.293.724 W find_slot: non-consecutive token position 1461 after 1461 for sequence 0 with 431 new tokens
+backend_ocr-1  | 11.04.424.880 W find_slot: non-consecutive token position 1539 after 1461 for sequence 0 with 6 new tokens
+backend_ocr-1  | 11.04.424.895 W find_slot: non-consecutive token position 1539 after 1461 for sequence 0 with 6 new tokens
+backend_ocr-1  | 11.07.558.494 I slot print_timing: id  0 | task 35991 | n_gen =    200, tg =  66.09 t/s, tg_3s =  66.42 t/s
+backend_ocr-1  | 11.10.562.149 I slot print_timing: id  0 | task 35991 | n_gen =    395, tg =  65.50 t/s, tg_3s =  64.92 t/s
+backend_ocr-1  | 11.12.850.611 I slot print_timing: id  0 | task 35991 | prompt eval time =    2737.91 ms /  5486 tokens (    0.50 ms per token,  2003.71 tokens per second)
+backend_ocr-1  | 11.12.850.614 I slot print_timing: id  0 | task 35991 |        eval time =    8303.35 ms /   546 tokens (   15.24 ms per token,    65.64 tokens per second)
+backend_ocr-1  | 11.12.850.614 I slot print_timing: id  0 | task 35991 |       total time =   11041.26 ms /  6032 tokens
+backend_ocr-1  | 11.12.850.615 I slot print_timing: id  0 | task 35991 |    graphs reused =      36271
+backend_ocr-1  | 11.12.850.672 I slot      release: id  0 | task 35991 | stop processing: n_tokens = 6031, truncated = 0
+backend_ocr-1  | 11.14.908.391 I slot get_availabl: id  0 | task -1 | selected slot by LCP similarity, f_sim_best = 0.266 (> 0.100 thold), f_keep = 0.242
+backend_ocr-1  | 11.15.060.716 I slot launch_slot_: id  0 | task 36541 | processing task, is_child = 0
+backend_ocr-1  | 11.16.268.628 W find_slot: non-consecutive token position 1461 after 1460 for sequence 0 with 512 new tokens
+backend_ocr-1  | 11.16.268.631 W find_slot: non-consecutive token position 1461 after 1461 for sequence 0 with 512 new tokens
+backend_ocr-1  | 11.16.268.631 W find_slot: non-consecutive token position 1461 after 1461 for sequence 0 with 512 new tokens
+backend_ocr-1  | 11.16.268.632 W find_slot: non-consecutive token position 1461 after 1461 for sequence 0 with 512 new tokens
+backend_ocr-1  | 11.16.269.218 W find_slot: non-consecutive token position 1461 after 1460 for sequence 0 with 512 new tokens
+backend_ocr-1  | 11.16.351.289 W find_slot: non-consecutive token position 1461 after 1461 for sequence 0 with 512 new tokens
+backend_ocr-1  | 11.16.486.684 W find_slot: non-consecutive token position 1461 after 1461 for sequence 0 with 512 new tokens
+backend_ocr-1  | 11.16.623.147 W find_slot: non-consecutive token position 1461 after 1461 for sequence 0 with 512 new tokens
+backend_ocr-1  | 11.16.762.515 W find_slot: non-consecutive token position 1461 after 1461 for sequence 0 with 512 new tokens
+backend_ocr-1  | 11.16.762.517 W find_slot: non-consecutive token position 1461 after 1461 for sequence 0 with 512 new tokens
+backend_ocr-1  | 11.16.762.517 W find_slot: non-consecutive token position 1461 after 1461 for sequence 0 with 512 new tokens
+backend_ocr-1  | 11.16.762.518 W find_slot: non-consecutive token position 1461 after 1461 for sequence 0 with 431 new tokens
+backend_ocr-1  | 11.16.763.066 W find_slot: non-consecutive token position 1461 after 1461 for sequence 0 with 512 new tokens
+backend_ocr-1  | 11.16.898.188 W find_slot: non-consecutive token position 1461 after 1461 for sequence 0 with 512 new tokens
+backend_ocr-1  | 11.17.036.636 W find_slot: non-consecutive token position 1461 after 1461 for sequence 0 with 512 new tokens
+backend_ocr-1  | 11.17.175.627 W find_slot: non-consecutive token position 1461 after 1461 for sequence 0 with 431 new tokens
+backend_ocr-1  | 11.17.306.861 W find_slot: non-consecutive token position 1539 after 1461 for sequence 0 with 6 new tokens
+backend_ocr-1  | 11.17.306.890 W find_slot: non-consecutive token position 1539 after 1461 for sequence 0 with 6 new tokens
+backend_ocr-1  | 11.20.438.208 I slot print_timing: id  0 | task 36541 | n_gen =    199, tg =  65.85 t/s, tg_3s =  66.18 t/s
+backend_ocr-1  | 11.23.443.410 I slot print_timing: id  0 | task 36541 | n_gen =    394, tg =  65.37 t/s, tg_3s =  64.89 t/s
+backend_ocr-1  | 11.26.453.639 I slot print_timing: id  0 | task 36541 | n_gen =    595, tg =  65.84 t/s, tg_3s =  66.77 t/s
+backend_ocr-1  | 11.28.854.725 I slot print_timing: id  0 | task 36541 | prompt eval time =    2370.46 ms /  4049 tokens (    0.59 ms per token,  1708.11 tokens per second)
+backend_ocr-1  | 11.28.854.727 I slot print_timing: id  0 | task 36541 |        eval time =   11423.53 ms /   755 tokens (   15.15 ms per token,    66.00 tokens per second)
+backend_ocr-1  | 11.28.854.727 I slot print_timing: id  0 | task 36541 |       total time =   13793.99 ms /  4804 tokens
+backend_ocr-1  | 11.28.854.728 I slot print_timing: id  0 | task 36541 |    graphs reused =      37021
+backend_ocr-1  | 11.28.854.786 I slot      release: id  0 | task 36541 | stop processing: n_tokens = 6240, truncated = 0
+backend_ocr-1  | 11.30.999.543 I slot get_availabl: id  0 | task -1 | selected slot by LCP similarity, f_sim_best = 0.222 (> 0.100 thold), f_keep = 0.205
+backend_ocr-1  | 11.30.999.790 W srv         alloc:  - making room for prompt cache entry, removing oldest entry (size = 952.501 MiB)
+backend_ocr-1  | 11.31.103.792 I slot launch_slot_: id  0 | task 37299 | processing task, is_child = 0
+backend_ocr-1  | 11.32.758.052 W find_slot: non-consecutive token position 1731 after 1730 for sequence 0 with 512 new tokens
+backend_ocr-1  | 11.32.758.055 W find_slot: non-consecutive token position 1731 after 1731 for sequence 0 with 512 new tokens
+backend_ocr-1  | 11.32.758.056 W find_slot: non-consecutive token position 1731 after 1731 for sequence 0 with 512 new tokens
+backend_ocr-1  | 11.32.758.056 W find_slot: non-consecutive token position 1731 after 1731 for sequence 0 with 512 new tokens
+backend_ocr-1  | 11.32.758.647 W find_slot: non-consecutive token position 1731 after 1730 for sequence 0 with 512 new tokens
+backend_ocr-1  | 11.32.840.487 W find_slot: non-consecutive token position 1731 after 1731 for sequence 0 with 512 new tokens
+backend_ocr-1  | 11.32.976.426 W find_slot: non-consecutive token position 1731 after 1731 for sequence 0 with 512 new tokens
+backend_ocr-1  | 11.33.113.262 W find_slot: non-consecutive token position 1731 after 1731 for sequence 0 with 512 new tokens
+backend_ocr-1  | 11.33.252.959 W find_slot: non-consecutive token position 1731 after 1731 for sequence 0 with 512 new tokens
+backend_ocr-1  | 11.33.252.961 W find_slot: non-consecutive token position 1731 after 1731 for sequence 0 with 512 new tokens
+backend_ocr-1  | 11.33.252.961 W find_slot: non-consecutive token position 1731 after 1731 for sequence 0 with 512 new tokens
+backend_ocr-1  | 11.33.252.961 W find_slot: non-consecutive token position 1731 after 1731 for sequence 0 with 431 new tokens
+backend_ocr-1  | 11.33.253.499 W find_slot: non-consecutive token position 1731 after 1731 for sequence 0 with 512 new tokens
+backend_ocr-1  | 11.33.389.358 W find_slot: non-consecutive token position 1731 after 1731 for sequence 0 with 512 new tokens
+backend_ocr-1  | 11.33.528.155 W find_slot: non-consecutive token position 1731 after 1731 for sequence 0 with 512 new tokens
+backend_ocr-1  | 11.33.667.540 W find_slot: non-consecutive token position 1731 after 1731 for sequence 0 with 431 new tokens
+backend_ocr-1  | 11.33.798.796 W find_slot: non-consecutive token position 1809 after 1731 for sequence 0 with 6 new tokens
+backend_ocr-1  | 11.33.798.811 W find_slot: non-consecutive token position 1809 after 1731 for sequence 0 with 6 new tokens
+backend_ocr-1  | 11.36.936.180 I slot print_timing: id  0 | task 37299 | n_gen =    199, tg =  65.73 t/s, tg_3s =  66.06 t/s
+backend_ocr-1  | 11.39.942.340 I slot print_timing: id  0 | task 37299 | n_gen =    393, tg =  65.13 t/s, tg_3s =  64.53 t/s
+backend_ocr-1  | 11.42.951.328 I slot print_timing: id  0 | task 37299 | n_gen =    594, tg =  65.69 t/s, tg_3s =  66.80 t/s
+backend_ocr-1  | 11.45.952.953 I slot print_timing: id  0 | task 37299 | n_gen =    794, tg =  65.92 t/s, tg_3s =  66.63 t/s
+backend_ocr-1  | 11.48.956.373 I slot print_timing: id  0 | task 37299 | n_gen =    994, tg =  66.06 t/s, tg_3s =  66.59 t/s
+backend_ocr-1  | 11.51.962.162 I slot print_timing: id  0 | task 37299 | n_gen =   1194, tg =  66.14 t/s, tg_3s =  66.54 t/s
+backend_ocr-1  | 11.54.967.482 I slot print_timing: id  0 | task 37299 | n_gen =   1394, tg =  66.20 t/s, tg_3s =  66.55 t/s
+backend_ocr-1  | 11.57.979.447 I slot print_timing: id  0 | task 37299 | n_gen =   1594, tg =  66.22 t/s, tg_3s =  66.40 t/s
+backend_ocr-1  | 12.00.980.735 I slot print_timing: id  0 | task 37299 | n_gen =   1793, tg =  66.23 t/s, tg_3s =  66.30 t/s
+backend_ocr-1  | 12.03.984.928 I slot print_timing: id  0 | task 37299 | n_gen =   1992, tg =  66.23 t/s, tg_3s =  66.24 t/s
+backend_ocr-1  | 12.06.519.655 I slot print_timing: id  0 | task 37299 | prompt eval time =    2819.98 ms /  5756 tokens (    0.49 ms per token,  2041.15 tokens per second)
+backend_ocr-1  | 12.06.519.657 I slot print_timing: id  0 | task 37299 |        eval time =   32595.86 ms /  2160 tokens (   15.10 ms per token,    66.24 tokens per second)
+backend_ocr-1  | 12.06.519.658 I slot print_timing: id  0 | task 37299 |       total time =   35415.85 ms /  7916 tokens
+backend_ocr-1  | 12.06.519.659 I slot print_timing: id  0 | task 37299 |    graphs reused =      39171
+backend_ocr-1  | 12.06.519.720 I slot      release: id  0 | task 37299 | stop processing: n_tokens = 7915, truncated = 0
+backend_ocr-1  | 12.08.723.920 I slot get_availabl: id  0 | task -1 | selected slot by LCP similarity, f_sim_best = 0.301 (> 0.100 thold), f_keep = 0.219
+backend_ocr-1  | 12.08.724.185 W srv         alloc:  - making room for prompt cache entry, removing oldest entry (size = 990.327 MiB)
+backend_ocr-1  | 12.08.922.851 I slot launch_slot_: id  0 | task 39463 | processing task, is_child = 0
+backend_ocr-1  | 12.10.132.448 W find_slot: non-consecutive token position 1731 after 1730 for sequence 0 with 512 new tokens
+backend_ocr-1  | 12.10.132.451 W find_slot: non-consecutive token position 1731 after 1731 for sequence 0 with 512 new tokens
+backend_ocr-1  | 12.10.132.452 W find_slot: non-consecutive token position 1731 after 1731 for sequence 0 with 512 new tokens
+backend_ocr-1  | 12.10.132.452 W find_slot: non-consecutive token position 1731 after 1731 for sequence 0 with 512 new tokens
+backend_ocr-1  | 12.10.133.073 W find_slot: non-consecutive token position 1731 after 1730 for sequence 0 with 512 new tokens
+backend_ocr-1  | 12.10.215.182 W find_slot: non-consecutive token position 1731 after 1731 for sequence 0 with 512 new tokens
+backend_ocr-1  | 12.10.351.038 W find_slot: non-consecutive token position 1731 after 1731 for sequence 0 with 512 new tokens
+backend_ocr-1  | 12.10.487.892 W find_slot: non-consecutive token position 1731 after 1731 for sequence 0 with 512 new tokens
+backend_ocr-1  | 12.10.627.532 W find_slot: non-consecutive token position 1731 after 1731 for sequence 0 with 512 new tokens
+backend_ocr-1  | 12.10.627.533 W find_slot: non-consecutive token position 1731 after 1731 for sequence 0 with 512 new tokens
+backend_ocr-1  | 12.10.627.534 W find_slot: non-consecutive token position 1731 after 1731 for sequence 0 with 512 new tokens
+backend_ocr-1  | 12.10.627.534 W find_slot: non-consecutive token position 1731 after 1731 for sequence 0 with 431 new tokens
+backend_ocr-1  | 12.10.628.089 W find_slot: non-consecutive token position 1731 after 1731 for sequence 0 with 512 new tokens
+backend_ocr-1  | 12.10.763.839 W find_slot: non-consecutive token position 1731 after 1731 for sequence 0 with 512 new tokens
+backend_ocr-1  | 12.10.902.734 W find_slot: non-consecutive token position 1731 after 1731 for sequence 0 with 512 new tokens
+backend_ocr-1  | 12.11.042.295 W find_slot: non-consecutive token position 1731 after 1731 for sequence 0 with 431 new tokens
+backend_ocr-1  | 12.11.173.629 W find_slot: non-consecutive token position 1809 after 1731 for sequence 0 with 6 new tokens
+backend_ocr-1  | 12.11.173.643 W find_slot: non-consecutive token position 1809 after 1731 for sequence 0 with 6 new tokens
+backend_ocr-1  | 12.14.310.141 I slot print_timing: id  0 | task 39463 | n_gen =    199, tg =  65.74 t/s, tg_3s =  66.07 t/s
+backend_ocr-1  | 12.17.316.727 I slot print_timing: id  0 | task 39463 | n_gen =    393, tg =  65.13 t/s, tg_3s =  64.53 t/s
+backend_ocr-1  | 12.20.329.738 I slot print_timing: id  0 | task 39463 | n_gen =    594, tg =  65.66 t/s, tg_3s =  66.71 t/s
+backend_ocr-1  | 12.23.211.722 I slot print_timing: id  0 | task 39463 | prompt eval time =    2375.23 ms /  4051 tokens (    0.59 ms per token,  1705.52 tokens per second)
+backend_ocr-1  | 12.23.211.724 I slot print_timing: id  0 | task 39463 |        eval time =   11913.62 ms /   785 tokens (   15.20 ms per token,    65.81 tokens per second)
+backend_ocr-1  | 12.23.211.724 I slot print_timing: id  0 | task 39463 |       total time =   14288.85 ms /  4836 tokens
+backend_ocr-1  | 12.23.211.725 I slot print_timing: id  0 | task 39463 |    graphs reused =      39951
+backend_ocr-1  | 12.23.211.787 I slot      release: id  0 | task 39463 | stop processing: n_tokens = 6540, truncated = 0
+backend_ocr-1  | 12.25.531.740 I slot get_availabl: id  0 | task -1 | selected slot by LCP similarity, f_sim_best = 0.220 (> 0.100 thold), f_keep = 0.196
+backend_ocr-1  | 12.25.531.981 W srv         alloc:  - making room for prompt cache entry, removing oldest entry (size = 883.725 MiB)
+backend_ocr-1  | 12.25.737.709 I slot launch_slot_: id  0 | task 40251 | processing task, is_child = 0
+backend_ocr-1  | 12.26.944.534 W find_slot: non-consecutive token position 1778 after 1777 for sequence 0 with 512 new tokens
+backend_ocr-1  | 12.26.944.538 W find_slot: non-consecutive token position 1778 after 1778 for sequence 0 with 512 new tokens
+backend_ocr-1  | 12.26.944.539 W find_slot: non-consecutive token position 1778 after 1778 for sequence 0 with 512 new tokens
+backend_ocr-1  | 12.26.944.539 W find_slot: non-consecutive token position 1778 after 1778 for sequence 0 with 512 new tokens
+backend_ocr-1  | 12.26.945.127 W find_slot: non-consecutive token position 1778 after 1777 for sequence 0 with 512 new tokens
+backend_ocr-1  | 12.27.027.341 W find_slot: non-consecutive token position 1778 after 1778 for sequence 0 with 512 new tokens
+backend_ocr-1  | 12.27.163.113 W find_slot: non-consecutive token position 1778 after 1778 for sequence 0 with 512 new tokens
+backend_ocr-1  | 12.27.299.711 W find_slot: non-consecutive token position 1778 after 1778 for sequence 0 with 512 new tokens
+backend_ocr-1  | 12.27.439.445 W find_slot: non-consecutive token position 1778 after 1778 for sequence 0 with 512 new tokens
+backend_ocr-1  | 12.27.439.448 W find_slot: non-consecutive token position 1778 after 1778 for sequence 0 with 512 new tokens
+backend_ocr-1  | 12.27.439.448 W find_slot: non-consecutive token position 1778 after 1778 for sequence 0 with 512 new tokens
+backend_ocr-1  | 12.27.439.448 W find_slot: non-consecutive token position 1778 after 1778 for sequence 0 with 431 new tokens
+backend_ocr-1  | 12.27.440.019 W find_slot: non-consecutive token position 1778 after 1778 for sequence 0 with 512 new tokens
+backend_ocr-1  | 12.27.575.183 W find_slot: non-consecutive token position 1778 after 1778 for sequence 0 with 512 new tokens
+backend_ocr-1  | 12.27.713.828 W find_slot: non-consecutive token position 1778 after 1778 for sequence 0 with 512 new tokens
+backend_ocr-1  | 12.27.853.099 W find_slot: non-consecutive token position 1778 after 1778 for sequence 0 with 431 new tokens
+backend_ocr-1  | 12.27.984.300 W find_slot: non-consecutive token position 1856 after 1778 for sequence 0 with 6 new tokens
+backend_ocr-1  | 12.27.984.314 W find_slot: non-consecutive token position 1856 after 1778 for sequence 0 with 6 new tokens
+backend_ocr-1  | 12.31.121.668 I slot print_timing: id  0 | task 40251 | n_gen =    196, tg =  64.71 t/s, tg_3s =  65.04 t/s
+backend_ocr-1  | 12.34.134.163 I slot print_timing: id  0 | task 40251 | n_gen =    394, tg =  65.22 t/s, tg_3s =  65.73 t/s
+backend_ocr-1  | 12.37.145.290 I slot print_timing: id  0 | task 40251 | n_gen =    595, tg =  65.73 t/s, tg_3s =  66.75 t/s
+backend_ocr-1  | 12.40.147.848 I slot print_timing: id  0 | task 40251 | n_gen =    795, tg =  65.95 t/s, tg_3s =  66.61 t/s
+backend_ocr-1  | 12.43.151.111 I slot print_timing: id  0 | task 40251 | n_gen =    994, tg =  66.01 t/s, tg_3s =  66.26 t/s
+backend_ocr-1  | 12.43.436.368 I slot print_timing: id  0 | task 40251 | prompt eval time =    2370.49 ms /  4049 tokens (    0.59 ms per token,  1708.08 tokens per second)
+backend_ocr-1  | 12.43.436.370 I slot print_timing: id  0 | task 40251 |        eval time =   15328.15 ms /  1013 tokens (   15.15 ms per token,    66.02 tokens per second)
+backend_ocr-1  | 12.43.436.370 I slot print_timing: id  0 | task 40251 |       total time =   17698.64 ms /  5062 tokens
+backend_ocr-1  | 12.43.436.371 I slot print_timing: id  0 | task 40251 |    graphs reused =      40958
+backend_ocr-1  | 12.43.436.434 I slot      release: id  0 | task 40251 | stop processing: n_tokens = 6815, truncated = 0
+backend_ocr-1  | 12.45.658.629 I slot get_availabl: id  0 | task -1 | selected slot by LCP similarity, f_sim_best = 0.306 (> 0.100 thold), f_keep = 0.261
+backend_ocr-1  | 12.45.821.380 I slot launch_slot_: id  0 | task 41267 | processing task, is_child = 0
+backend_ocr-1  | 12.47.030.513 W find_slot: non-consecutive token position 1778 after 1777 for sequence 0 with 512 new tokens
+backend_ocr-1  | 12.47.030.517 W find_slot: non-consecutive token position 1778 after 1778 for sequence 0 with 512 new tokens
+backend_ocr-1  | 12.47.030.517 W find_slot: non-consecutive token position 1778 after 1778 for sequence 0 with 512 new tokens
+backend_ocr-1  | 12.47.030.517 W find_slot: non-consecutive token position 1778 after 1778 for sequence 0 with 512 new tokens
+backend_ocr-1  | 12.47.031.145 W find_slot: non-consecutive token position 1778 after 1777 for sequence 0 with 512 new tokens
+backend_ocr-1  | 12.47.113.344 W find_slot: non-consecutive token position 1778 after 1778 for sequence 0 with 512 new tokens
+backend_ocr-1  | 12.47.249.164 W find_slot: non-consecutive token position 1778 after 1778 for sequence 0 with 512 new tokens
+backend_ocr-1  | 12.47.385.983 W find_slot: non-consecutive token position 1778 after 1778 for sequence 0 with 512 new tokens
+backend_ocr-1  | 12.47.525.598 W find_slot: non-consecutive token position 1778 after 1778 for sequence 0 with 512 new tokens
+backend_ocr-1  | 12.47.525.600 W find_slot: non-consecutive token position 1778 after 1778 for sequence 0 with 512 new tokens
+backend_ocr-1  | 12.47.525.600 W find_slot: non-consecutive token position 1778 after 1778 for sequence 0 with 512 new tokens
+backend_ocr-1  | 12.47.525.600 W find_slot: non-consecutive token position 1778 after 1778 for sequence 0 with 431 new tokens
+backend_ocr-1  | 12.47.526.159 W find_slot: non-consecutive token position 1778 after 1778 for sequence 0 with 512 new tokens
+backend_ocr-1  | 12.47.661.523 W find_slot: non-consecutive token position 1778 after 1778 for sequence 0 with 512 new tokens
+backend_ocr-1  | 12.47.800.202 W find_slot: non-consecutive token position 1778 after 1778 for sequence 0 with 512 new tokens
+backend_ocr-1  | 12.47.939.507 W find_slot: non-consecutive token position 1778 after 1778 for sequence 0 with 431 new tokens
+backend_ocr-1  | 12.48.070.737 W find_slot: non-consecutive token position 1856 after 1778 for sequence 0 with 6 new tokens
+backend_ocr-1  | 12.48.070.750 W find_slot: non-consecutive token position 1856 after 1778 for sequence 0 with 6 new tokens
+backend_ocr-1  | 12.51.205.219 I slot print_timing: id  0 | task 41267 | n_gen =    196, tg =  64.75 t/s, tg_3s =  65.08 t/s
+backend_ocr-1  | 12.54.217.062 I slot print_timing: id  0 | task 41267 | n_gen =    394, tg =  65.24 t/s, tg_3s =  65.74 t/s
+backend_ocr-1  | 12.56.489.547 I slot print_timing: id  0 | task 41267 | prompt eval time =    2372.19 ms /  4049 tokens (    0.59 ms per token,  1706.86 tokens per second)
+backend_ocr-1  | 12.56.489.550 I slot print_timing: id  0 | task 41267 |        eval time =    8295.96 ms /   544 tokens (   15.28 ms per token,    65.45 tokens per second)
+backend_ocr-1  | 12.56.489.550 I slot print_timing: id  0 | task 41267 |       total time =   10668.15 ms /  4593 tokens
+backend_ocr-1  | 12.56.489.551 I slot print_timing: id  0 | task 41267 |    graphs reused =      41498
+backend_ocr-1  | 12.56.489.623 I slot      release: id  0 | task 41267 | stop processing: n_tokens = 6346, truncated = 0
+backend_ocr-1  | 12.58.831.803 I slot get_availabl: id  0 | task -1 | selected slot by LCP similarity, f_sim_best = 0.306 (> 0.100 thold), f_keep = 0.280
+backend_ocr-1  | 12.58.832.031 W srv         alloc:  - making room for prompt cache entry, removing oldest entry (size = 903.920 MiB)
+backend_ocr-1  | 12.59.022.409 I slot launch_slot_: id  0 | task 41814 | processing task, is_child = 0
+backend_ocr-1  | 13.00.227.967 W find_slot: non-consecutive token position 1778 after 1777 for sequence 0 with 512 new tokens
+backend_ocr-1  | 13.00.227.970 W find_slot: non-consecutive token position 1778 after 1778 for sequence 0 with 512 new tokens
+backend_ocr-1  | 13.00.227.970 W find_slot: non-consecutive token position 1778 after 1778 for sequence 0 with 512 new tokens
+backend_ocr-1  | 13.00.227.971 W find_slot: non-consecutive token position 1778 after 1778 for sequence 0 with 512 new tokens
+backend_ocr-1  | 13.00.228.571 W find_slot: non-consecutive token position 1778 after 1777 for sequence 0 with 512 new tokens
+backend_ocr-1  | 13.00.310.621 W find_slot: non-consecutive token position 1778 after 1778 for sequence 0 with 512 new tokens
+backend_ocr-1  | 13.00.446.096 W find_slot: non-consecutive token position 1778 after 1778 for sequence 0 with 512 new tokens
+backend_ocr-1  | 13.00.582.632 W find_slot: non-consecutive token position 1778 after 1778 for sequence 0 with 512 new tokens
+backend_ocr-1  | 13.00.722.101 W find_slot: non-consecutive token position 1778 after 1778 for sequence 0 with 512 new tokens
+backend_ocr-1  | 13.00.722.103 W find_slot: non-consecutive token position 1778 after 1778 for sequence 0 with 512 new tokens
+backend_ocr-1  | 13.00.722.103 W find_slot: non-consecutive token position 1778 after 1778 for sequence 0 with 512 new tokens
+backend_ocr-1  | 13.00.722.103 W find_slot: non-consecutive token position 1778 after 1778 for sequence 0 with 431 new tokens
+backend_ocr-1  | 13.00.722.658 W find_slot: non-consecutive token position 1778 after 1778 for sequence 0 with 512 new tokens
+backend_ocr-1  | 13.00.857.754 W find_slot: non-consecutive token position 1778 after 1778 for sequence 0 with 512 new tokens
+backend_ocr-1  | 13.00.996.212 W find_slot: non-consecutive token position 1778 after 1778 for sequence 0 with 512 new tokens
+backend_ocr-1  | 13.01.135.328 W find_slot: non-consecutive token position 1778 after 1778 for sequence 0 with 431 new tokens
+backend_ocr-1  | 13.01.266.391 W find_slot: non-consecutive token position 1856 after 1778 for sequence 0 with 6 new tokens
+backend_ocr-1  | 13.01.266.405 W find_slot: non-consecutive token position 1856 after 1778 for sequence 0 with 6 new tokens
+backend_ocr-1  | 13.04.394.274 I slot print_timing: id  0 | task 41814 | n_gen =    195, tg =  64.56 t/s, tg_3s =  64.89 t/s
+backend_ocr-1  | 13.07.405.177 I slot print_timing: id  0 | task 41814 | n_gen =    393, tg =  65.16 t/s, tg_3s =  65.76 t/s
+backend_ocr-1  | 13.10.413.969 I slot print_timing: id  0 | task 41814 | n_gen =    594, tg =  65.71 t/s, tg_3s =  66.80 t/s
+backend_ocr-1  | 13.13.416.052 I slot print_timing: id  0 | task 41814 | n_gen =    794, tg =  65.94 t/s, tg_3s =  66.62 t/s
+backend_ocr-1  | 13.16.418.213 I slot print_timing: id  0 | task 41814 | n_gen =    993, tg =  66.01 t/s, tg_3s =  66.29 t/s
+backend_ocr-1  | 13.16.868.583 I slot print_timing: id  0 | task 41814 | prompt eval time =    2366.89 ms /  4049 tokens (    0.58 ms per token,  1710.69 tokens per second)
+backend_ocr-1  | 13.16.868.585 I slot print_timing: id  0 | task 41814 |        eval time =   15479.27 ms /  1023 tokens (   15.15 ms per token,    66.02 tokens per second)
+backend_ocr-1  | 13.16.868.585 I slot print_timing: id  0 | task 41814 |       total time =   17846.16 ms /  5072 tokens
+backend_ocr-1  | 13.16.868.586 I slot print_timing: id  0 | task 41814 |    graphs reused =      42515
+backend_ocr-1  | 13.16.868.649 I slot      release: id  0 | task 41814 | stop processing: n_tokens = 6825, truncated = 0
+backend_ocr-1  | 13.19.134.940 I slot get_availabl: id  0 | task -1 | selected slot by LCP similarity, f_sim_best = 0.306 (> 0.100 thold), f_keep = 0.261
+backend_ocr-1  | 13.19.135.194 W srv         alloc:  - making room for prompt cache entry, removing oldest entry (size = 964.568 MiB)
+backend_ocr-1  | 13.19.329.574 I slot launch_slot_: id  0 | task 42840 | processing task, is_child = 0
+backend_ocr-1  | 13.20.535.021 W find_slot: non-consecutive token position 1778 after 1777 for sequence 0 with 512 new tokens
+backend_ocr-1  | 13.20.535.024 W find_slot: non-consecutive token position 1778 after 1778 for sequence 0 with 512 new tokens
+backend_ocr-1  | 13.20.535.025 W find_slot: non-consecutive token position 1778 after 1778 for sequence 0 with 512 new tokens
+backend_ocr-1  | 13.20.535.025 W find_slot: non-consecutive token position 1778 after 1778 for sequence 0 with 512 new tokens
+backend_ocr-1  | 13.20.535.630 W find_slot: non-consecutive token position 1778 after 1777 for sequence 0 with 512 new tokens
+backend_ocr-1  | 13.20.617.553 W find_slot: non-consecutive token position 1778 after 1778 for sequence 0 with 512 new tokens
+backend_ocr-1  | 13.20.753.247 W find_slot: non-consecutive token position 1778 after 1778 for sequence 0 with 512 new tokens
+backend_ocr-1  | 13.20.889.904 W find_slot: non-consecutive token position 1778 after 1778 for sequence 0 with 512 new tokens
+backend_ocr-1  | 13.21.029.335 W find_slot: non-consecutive token position 1778 after 1778 for sequence 0 with 512 new tokens
+backend_ocr-1  | 13.21.029.336 W find_slot: non-consecutive token position 1778 after 1778 for sequence 0 with 512 new tokens
+backend_ocr-1  | 13.21.029.336 W find_slot: non-consecutive token position 1778 after 1778 for sequence 0 with 512 new tokens
+backend_ocr-1  | 13.21.029.336 W find_slot: non-consecutive token position 1778 after 1778 for sequence 0 with 431 new tokens
+backend_ocr-1  | 13.21.029.878 W find_slot: non-consecutive token position 1778 after 1778 for sequence 0 with 512 new tokens
+backend_ocr-1  | 13.21.165.365 W find_slot: non-consecutive token position 1778 after 1778 for sequence 0 with 512 new tokens
+backend_ocr-1  | 13.21.303.986 W find_slot: non-consecutive token position 1778 after 1778 for sequence 0 with 512 new tokens
+backend_ocr-1  | 13.21.443.262 W find_slot: non-consecutive token position 1778 after 1778 for sequence 0 with 431 new tokens
+backend_ocr-1  | 13.21.574.445 W find_slot: non-consecutive token position 1856 after 1778 for sequence 0 with 6 new tokens
+backend_ocr-1  | 13.21.574.458 W find_slot: non-consecutive token position 1856 after 1778 for sequence 0 with 6 new tokens
+backend_ocr-1  | 13.24.721.086 I slot print_timing: id  0 | task 42840 | n_gen =    197, tg =  64.80 t/s, tg_3s =  65.14 t/s
+backend_ocr-1  | 13.27.735.565 I slot print_timing: id  0 | task 42840 | n_gen =    396, tg =  65.41 t/s, tg_3s =  66.01 t/s
+backend_ocr-1  | 13.30.070.810 I slot print_timing: id  0 | task 42840 | prompt eval time =    2367.02 ms /  4049 tokens (    0.58 ms per token,  1710.59 tokens per second)
+backend_ocr-1  | 13.30.070.812 I slot print_timing: id  0 | task 42840 |        eval time =    8374.19 ms /   552 tokens (   15.20 ms per token,    65.80 tokens per second)
+backend_ocr-1  | 13.30.070.813 I slot print_timing: id  0 | task 42840 |       total time =   10741.22 ms /  4601 tokens
+backend_ocr-1  | 13.30.070.813 I slot print_timing: id  0 | task 42840 |    graphs reused =      43063
+backend_ocr-1  | 13.30.070.876 I slot      release: id  0 | task 42840 | stop processing: n_tokens = 6354, truncated = 0
+backend_ocr-1  | 13.32.514.703 I slot get_availabl: id  0 | task -1 | selected slot by LCP similarity, f_sim_best = 0.306 (> 0.100 thold), f_keep = 0.280
+backend_ocr-1  | 13.32.514.831 W srv         alloc:  - making room for prompt cache entry, removing oldest entry (size = 926.053 MiB)
+backend_ocr-1  | 13.32.692.819 I slot launch_slot_: id  0 | task 43395 | processing task, is_child = 0
+backend_ocr-1  | 13.33.895.962 W find_slot: non-consecutive token position 1778 after 1777 for sequence 0 with 512 new tokens
+backend_ocr-1  | 13.33.895.964 W find_slot: non-consecutive token position 1778 after 1778 for sequence 0 with 512 new tokens
+backend_ocr-1  | 13.33.895.965 W find_slot: non-consecutive token position 1778 after 1778 for sequence 0 with 512 new tokens
+backend_ocr-1  | 13.33.895.965 W find_slot: non-consecutive token position 1778 after 1778 for sequence 0 with 512 new tokens
+backend_ocr-1  | 13.33.896.558 W find_slot: non-consecutive token position 1778 after 1777 for sequence 0 with 512 new tokens
+backend_ocr-1  | 13.33.978.331 W find_slot: non-consecutive token position 1778 after 1778 for sequence 0 with 512 new tokens
+backend_ocr-1  | 13.34.113.937 W find_slot: non-consecutive token position 1778 after 1778 for sequence 0 with 512 new tokens
+backend_ocr-1  | 13.34.250.400 W find_slot: non-consecutive token position 1778 after 1778 for sequence 0 with 512 new tokens
+backend_ocr-1  | 13.34.389.859 W find_slot: non-consecutive token position 1778 after 1778 for sequence 0 with 512 new tokens
+backend_ocr-1  | 13.34.389.860 W find_slot: non-consecutive token position 1778 after 1778 for sequence 0 with 512 new tokens
+backend_ocr-1  | 13.34.389.860 W find_slot: non-consecutive token position 1778 after 1778 for sequence 0 with 512 new tokens
+backend_ocr-1  | 13.34.389.860 W find_slot: non-consecutive token position 1778 after 1778 for sequence 0 with 431 new tokens
+backend_ocr-1  | 13.34.390.584 W find_slot: non-consecutive token position 1778 after 1778 for sequence 0 with 512 new tokens
+backend_ocr-1  | 13.34.525.314 W find_slot: non-consecutive token position 1778 after 1778 for sequence 0 with 512 new tokens
+backend_ocr-1  | 13.34.663.745 W find_slot: non-consecutive token position 1778 after 1778 for sequence 0 with 512 new tokens
+backend_ocr-1  | 13.34.802.702 W find_slot: non-consecutive token position 1778 after 1778 for sequence 0 with 431 new tokens
+backend_ocr-1  | 13.34.933.511 W find_slot: non-consecutive token position 1856 after 1778 for sequence 0 with 6 new tokens
+backend_ocr-1  | 13.34.933.523 W find_slot: non-consecutive token position 1856 after 1778 for sequence 0 with 6 new tokens
+backend_ocr-1  | 13.38.066.284 I slot print_timing: id  0 | task 43395 | n_gen =    196, tg =  64.77 t/s, tg_3s =  65.10 t/s
+backend_ocr-1  | 13.41.074.414 I slot print_timing: id  0 | task 43395 | n_gen =    393, tg =  65.13 t/s, tg_3s =  65.49 t/s
+backend_ocr-1  | 13.44.083.743 I slot print_timing: id  0 | task 43395 | n_gen =    594, tg =  65.68 t/s, tg_3s =  66.79 t/s
+backend_ocr-1  | 13.47.086.333 I slot print_timing: id  0 | task 43395 | n_gen =    794, tg =  65.91 t/s, tg_3s =  66.61 t/s
+backend_ocr-1  | 13.49.478.198 I slot print_timing: id  0 | task 43395 | prompt eval time =    2362.72 ms /  4049 tokens (    0.58 ms per token,  1713.70 tokens per second)
+backend_ocr-1  | 13.49.478.200 I slot print_timing: id  0 | task 43395 |        eval time =   14422.64 ms /   953 tokens (   15.15 ms per token,    66.01 tokens per second)
+backend_ocr-1  | 13.49.478.201 I slot print_timing: id  0 | task 43395 |       total time =   16785.36 ms /  5002 tokens
+backend_ocr-1  | 13.49.478.201 I slot print_timing: id  0 | task 43395 |    graphs reused =      44010
+backend_ocr-1  | 13.49.478.264 I slot      release: id  0 | task 43395 | stop processing: n_tokens = 6755, truncated = 0
+backend_ocr-1  | 13.51.743.874 I slot get_availabl: id  0 | task -1 | selected slot by LCP similarity, f_sim_best = 0.238 (> 0.100 thold), f_keep = 0.189
+backend_ocr-1  | 13.51.744.121 W srv         alloc:  - making room for prompt cache entry, removing oldest entry (size = 884.663 MiB)
+backend_ocr-1  | 13.51.918.807 I slot launch_slot_: id  0 | task 44351 | processing task, is_child = 0
+backend_ocr-1  | 13.53.458.149 W find_slot: non-consecutive token position 1332 after 1331 for sequence 0 with 512 new tokens
+backend_ocr-1  | 13.53.458.153 W find_slot: non-consecutive token position 1332 after 1332 for sequence 0 with 512 new tokens
+backend_ocr-1  | 13.53.458.154 W find_slot: non-consecutive token position 1332 after 1332 for sequence 0 with 512 new tokens
+backend_ocr-1  | 13.53.458.154 W find_slot: non-consecutive token position 1332 after 1332 for sequence 0 with 512 new tokens
+backend_ocr-1  | 13.53.458.754 W find_slot: non-consecutive token position 1332 after 1331 for sequence 0 with 512 new tokens
+backend_ocr-1  | 13.53.540.510 W find_slot: non-consecutive token position 1332 after 1332 for sequence 0 with 512 new tokens
+backend_ocr-1  | 13.53.675.785 W find_slot: non-consecutive token position 1332 after 1332 for sequence 0 with 512 new tokens
+backend_ocr-1  | 13.53.811.963 W find_slot: non-consecutive token position 1332 after 1332 for sequence 0 with 512 new tokens
+backend_ocr-1  | 13.53.951.043 W find_slot: non-consecutive token position 1332 after 1332 for sequence 0 with 512 new tokens
+backend_ocr-1  | 13.53.951.045 W find_slot: non-consecutive token position 1332 after 1332 for sequence 0 with 512 new tokens
+backend_ocr-1  | 13.53.951.045 W find_slot: non-consecutive token position 1332 after 1332 for sequence 0 with 512 new tokens
+backend_ocr-1  | 13.53.951.046 W find_slot: non-consecutive token position 1332 after 1332 for sequence 0 with 431 new tokens
+backend_ocr-1  | 13.53.951.587 W find_slot: non-consecutive token position 1332 after 1332 for sequence 0 with 512 new tokens
+backend_ocr-1  | 13.54.086.467 W find_slot: non-consecutive token position 1332 after 1332 for sequence 0 with 512 new tokens
+backend_ocr-1  | 13.54.224.610 W find_slot: non-consecutive token position 1332 after 1332 for sequence 0 with 512 new tokens
+backend_ocr-1  | 13.54.363.391 W find_slot: non-consecutive token position 1332 after 1332 for sequence 0 with 431 new tokens
+backend_ocr-1  | 13.54.493.967 W find_slot: non-consecutive token position 1410 after 1332 for sequence 0 with 6 new tokens
+backend_ocr-1  | 13.54.493.982 W find_slot: non-consecutive token position 1410 after 1332 for sequence 0 with 6 new tokens
+backend_ocr-1  | 13.57.640.172 I slot print_timing: id  0 | task 44351 | n_gen =    197, tg =  64.80 t/s, tg_3s =  65.13 t/s
+backend_ocr-1  | 14.00.647.184 I slot print_timing: id  0 | task 44351 | n_gen =    395, tg =  65.32 t/s, tg_3s =  65.85 t/s
+backend_ocr-1  | 14.03.654.111 I slot print_timing: id  0 | task 44351 | n_gen =    596, tg =  65.83 t/s, tg_3s =  66.85 t/s
+backend_ocr-1  | 14.06.663.271 I slot print_timing: id  0 | task 44351 | n_gen =    797, tg =  66.07 t/s, tg_3s =  66.80 t/s
+backend_ocr-1  | 14.09.671.460 I slot print_timing: id  0 | task 44351 | n_gen =    998, tg =  66.22 t/s, tg_3s =  66.82 t/s
+backend_ocr-1  | 14.12.684.215 I slot print_timing: id  0 | task 44351 | n_gen =   1198, tg =  66.25 t/s, tg_3s =  66.38 t/s
+backend_ocr-1  | 14.15.688.294 I slot print_timing: id  0 | task 44351 | n_gen =   1398, tg =  66.29 t/s, tg_3s =  66.58 t/s
+backend_ocr-1  | 14.18.692.620 I slot print_timing: id  0 | task 44351 | n_gen =   1598, tg =  66.33 t/s, tg_3s =  66.57 t/s
+backend_ocr-1  | 14.21.696.261 I slot print_timing: id  0 | task 44351 | n_gen =   1798, tg =  66.36 t/s, tg_3s =  66.59 t/s
+backend_ocr-1  | 14.24.704.190 I slot print_timing: id  0 | task 44351 | n_gen =   1997, tg =  66.34 t/s, tg_3s =  66.16 t/s
+backend_ocr-1  | 14.27.705.183 I slot print_timing: id  0 | task 44351 | n_gen =   2196, tg =  66.34 t/s, tg_3s =  66.31 t/s
+backend_ocr-1  | 14.30.709.768 I slot print_timing: id  0 | task 44351 | n_gen =   2395, tg =  66.33 t/s, tg_3s =  66.23 t/s
+backend_ocr-1  | 14.33.714.204 I slot print_timing: id  0 | task 44351 | n_gen =   2594, tg =  66.32 t/s, tg_3s =  66.24 t/s
+backend_ocr-1  | 14.36.728.653 I slot print_timing: id  0 | task 44351 | n_gen =   2795, tg =  66.35 t/s, tg_3s =  66.68 t/s
+backend_ocr-1  | 14.39.732.098 I slot print_timing: id  0 | task 44351 | n_gen =   2995, tg =  66.36 t/s, tg_3s =  66.59 t/s
+backend_ocr-1  | 14.40.931.939 I slot print_timing: id  0 | task 44351 | prompt eval time =    2696.80 ms /  5357 tokens (    0.50 ms per token,  1986.43 tokens per second)
+backend_ocr-1  | 14.40.931.941 I slot print_timing: id  0 | task 44351 |        eval time =   46316.31 ms /  3075 tokens (   15.07 ms per token,    66.37 tokens per second)
+backend_ocr-1  | 14.40.931.942 I slot print_timing: id  0 | task 44351 |       total time =   49013.11 ms /  8432 tokens
+backend_ocr-1  | 14.40.931.942 I slot print_timing: id  0 | task 44351 |    graphs reused =      47071
+backend_ocr-1  | 14.40.931.997 I slot      release: id  0 | task 44351 | stop processing: n_tokens = 8431, truncated = 0
+backend_ocr-1  | 14.43.443.385 I slot get_availabl: id  0 | task -1 | selected slot by LCP similarity, f_sim_best = 0.239 (> 0.100 thold), f_keep = 0.151
+backend_ocr-1  | 14.43.443.560 W srv         alloc:  - making room for prompt cache entry, removing oldest entry (size = 825.954 MiB)
+backend_ocr-1  | 14.43.640.298 I slot launch_slot_: id  0 | task 47430 | processing task, is_child = 0
+backend_ocr-1  | 14.45.171.184 W find_slot: non-consecutive token position 1299 after 1298 for sequence 0 with 512 new tokens
+backend_ocr-1  | 14.45.171.189 W find_slot: non-consecutive token position 1299 after 1299 for sequence 0 with 512 new tokens
+backend_ocr-1  | 14.45.171.189 W find_slot: non-consecutive token position 1299 after 1299 for sequence 0 with 512 new tokens
+backend_ocr-1  | 14.45.171.189 W find_slot: non-consecutive token position 1299 after 1299 for sequence 0 with 512 new tokens
+backend_ocr-1  | 14.45.171.770 W find_slot: non-consecutive token position 1299 after 1298 for sequence 0 with 512 new tokens
+backend_ocr-1  | 14.45.253.824 W find_slot: non-consecutive token position 1299 after 1299 for sequence 0 with 512 new tokens
+backend_ocr-1  | 14.45.389.738 W find_slot: non-consecutive token position 1299 after 1299 for sequence 0 with 512 new tokens
+backend_ocr-1  | 14.45.526.445 W find_slot: non-consecutive token position 1299 after 1299 for sequence 0 with 512 new tokens
+backend_ocr-1  | 14.45.666.205 W find_slot: non-consecutive token position 1299 after 1299 for sequence 0 with 512 new tokens
+backend_ocr-1  | 14.45.666.207 W find_slot: non-consecutive token position 1299 after 1299 for sequence 0 with 512 new tokens
+backend_ocr-1  | 14.45.666.207 W find_slot: non-consecutive token position 1299 after 1299 for sequence 0 with 512 new tokens
+backend_ocr-1  | 14.45.666.207 W find_slot: non-consecutive token position 1299 after 1299 for sequence 0 with 431 new tokens
+backend_ocr-1  | 14.45.666.749 W find_slot: non-consecutive token position 1299 after 1299 for sequence 0 with 512 new tokens
+backend_ocr-1  | 14.45.801.987 W find_slot: non-consecutive token position 1299 after 1299 for sequence 0 with 512 new tokens
+backend_ocr-1  | 14.45.940.582 W find_slot: non-consecutive token position 1299 after 1299 for sequence 0 with 512 new tokens
+backend_ocr-1  | 14.46.079.854 W find_slot: non-consecutive token position 1299 after 1299 for sequence 0 with 431 new tokens
+backend_ocr-1  | 14.46.210.847 W find_slot: non-consecutive token position 1377 after 1299 for sequence 0 with 6 new tokens
+backend_ocr-1  | 14.46.210.862 W find_slot: non-consecutive token position 1377 after 1299 for sequence 0 with 6 new tokens
+backend_ocr-1  | 14.49.340.712 I slot print_timing: id  0 | task 47430 | n_gen =    198, tg =  65.55 t/s, tg_3s =  65.88 t/s
+backend_ocr-1  | 14.52.056.033 I slot print_timing: id  0 | task 47430 | prompt eval time =    2694.88 ms /  5324 tokens (    0.51 ms per token,  1975.60 tokens per second)
+backend_ocr-1  | 14.52.056.034 I slot print_timing: id  0 | task 47430 |        eval time =    5720.83 ms /   371 tokens (   15.46 ms per token,    64.68 tokens per second)
+backend_ocr-1  | 14.52.056.035 I slot print_timing: id  0 | task 47430 |       total time =    8415.72 ms /  5695 tokens
+backend_ocr-1  | 14.52.056.036 I slot print_timing: id  0 | task 47430 |    graphs reused =      47438
+backend_ocr-1  | 14.52.056.087 I slot      release: id  0 | task 47430 | stop processing: n_tokens = 5694, truncated = 0

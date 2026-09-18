@@ -1,0 +1,101 @@
+{
+  "store": "COSTCO",
+  "branch": "Rego Park #1070",
+  "address": "61-35 Junction Blvd, Rego Park, NY 11374",
+  "country": null,
+  "currency": "USD",
+  "local_time": "2026-09-02 17:45:00",
+  "total": "61.94",
+  "lines": [
+    {
+      "name": "57554 BLUEBERRIES",
+      "standard_name": "57554 BLUEBERRIES",
+      "kind": "product",
+      "weight_g": null,
+      "quantity": null,
+      "quantity_unit": null,
+      "unit_price": null,
+      "amount": "7.99",
+      "confidence": null,
+      "discount_target_index": null,
+      "box": [
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "10579 SALMON",
+      "standard_name": "10579 SALMON",
+      "kind": "product",
+      "weight_g": null,
+      "quantity": null,
+      "quantity_unit": null,
+      "unit_price": null,
+      "amount": "36.96",
+      "confidence": null,
+      "discount_target_index": null,
+      "box": [
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "545345 KS PUSTACHIO",
+      "standard_name": "545345 KS PUSTACHIO",
+      "kind": "product",
+      "weight_g": null,
+      "quantity": null,
+      "quantity_unit": null,
+      "unit_price": null,
+      "amount": "16.99",
+      "confidence": null,
+      "discount_target_index": null,
+      "box": [
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "TAX",
+      "standard_name": "TAX",
+      "kind": "tax",
+      "weight_g": null,
+      "quantity": null,
+      "quantity_unit": null,
+      "unit_price": null,
+      "amount": "0.00",
+      "confidence": null,
+      "discount_target_index": null,
+      "box": [
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "TOTAL",
+      "standard_name": "TOTAL",
+      "kind": "tax",
+      "weight_g": null,
+      "quantity": null,
+      "quantity_unit": null,
+      "unit_price": null,
+      "amount": "61.94",
+      "confidence": null,
+      "discount_target_index": null,
+      "box": [
+        0,
+        0,
+        0,
+        0
+      ]
+    }
+  ]
+}

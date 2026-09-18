@@ -1,0 +1,211 @@
+[
+  {
+    "id": "e3843baa-904a-4bbf-bc21-278a1693d5c7",
+    "engines": [
+      {
+        "engine": "unlimited",
+        "status": 200,
+        "seconds": 8.92,
+        "finish_reason": "stop",
+        "word_count": null
+      },
+      {
+        "engine": "paddle",
+        "status": 200,
+        "seconds": 31.03,
+        "finish_reason": null,
+        "word_count": 41
+      }
+    ]
+  },
+  {
+    "id": "6d9da1ec-c0fc-4905-82b4-4ebd11716b1c",
+    "engines": [
+      {
+        "engine": "unlimited",
+        "status": 200,
+        "seconds": 16.81,
+        "finish_reason": "stop",
+        "word_count": null
+      },
+      {
+        "engine": "paddle",
+        "status": 200,
+        "seconds": 61.37,
+        "finish_reason": null,
+        "word_count": 44
+      }
+    ]
+  },
+  {
+    "id": "73953603-31f5-496a-9dd4-76fc845c8398",
+    "engines": [
+      {
+        "engine": "unlimited",
+        "status": 200,
+        "seconds": 7.55,
+        "finish_reason": "stop",
+        "word_count": null
+      },
+      {
+        "engine": "paddle",
+        "status": 200,
+        "seconds": 60.44,
+        "finish_reason": null,
+        "word_count": 41
+      }
+    ]
+  },
+  {
+    "id": "a31f7e6b-8bb1-49c8-a292-504d76d1a59c",
+    "engines": [
+      {
+        "engine": "unlimited",
+        "status": 200,
+        "seconds": 8.47,
+        "finish_reason": "stop",
+        "word_count": null
+      },
+      {
+        "engine": "paddle",
+        "status": 200,
+        "seconds": 59.78,
+        "finish_reason": null,
+        "word_count": 41
+      }
+    ]
+  },
+  {
+    "id": "3a8e3c19-e8d0-4ea8-8fa3-06e3cd5fcfd4",
+    "engines": [
+      {
+        "engine": "unlimited",
+        "status": 200,
+        "seconds": 8.27,
+        "finish_reason": "stop",
+        "word_count": null
+      },
+      {
+        "engine": "paddle",
+        "status": 200,
+        "seconds": 59.86,
+        "finish_reason": null,
+        "word_count": 50
+      }
+    ]
+  },
+  {
+    "id": "924e246e-c811-497a-a61b-6b5724f7bacd",
+    "engines": [
+      {
+        "engine": "unlimited",
+        "status": 200,
+        "seconds": 5.42,
+        "finish_reason": "stop",
+        "word_count": null
+      },
+      {
+        "engine": "paddle",
+        "status": 200,
+        "seconds": 64.81,
+        "finish_reason": null,
+        "word_count": 39
+      }
+    ]
+  },
+  {
+    "id": "a6618e05-1d59-453f-90e9-4bbf87a3830c",
+    "engines": [
+      {
+        "engine": "unlimited",
+        "status": 200,
+        "seconds": 6.47,
+        "finish_reason": "stop",
+        "word_count": null
+      },
+      {
+        "engine": "paddle",
+        "status": 200,
+        "seconds": 73.39,
+        "finish_reason": null,
+        "word_count": 32
+      }
+    ]
+  },
+  {
+    "id": "5331c892-9fb6-42b5-bdb3-5a205b1a0767",
+    "engines": [
+      {
+        "engine": "unlimited",
+        "status": 200,
+        "seconds": 8.63,
+        "finish_reason": "stop",
+        "word_count": null
+      },
+      {
+        "engine": "paddle",
+        "status": 200,
+        "seconds": 71.7,
+        "finish_reason": null,
+        "word_count": 38
+      }
+    ]
+  },
+  {
+    "id": "c5fdc978-8f74-43bf-a5c5-e22d28f5aea9",
+    "engines": [
+      {
+        "engine": "unlimited",
+        "status": 200,
+        "seconds": 8.49,
+        "finish_reason": "stop",
+        "word_count": null
+      },
+      {
+        "engine": "paddle",
+        "status": 200,
+        "seconds": 62.77,
+        "finish_reason": null,
+        "word_count": 37
+      }
+    ]
+  },
+  {
+    "id": "4fc6a91b-faba-4d3e-82a3-be4c78270e99",
+    "engines": [
+      {
+        "engine": "unlimited",
+        "status": 200,
+        "seconds": 9.71,
+        "finish_reason": "stop",
+        "word_count": null
+      },
+      {
+        "engine": "paddle",
+        "status": 200,
+        "seconds": 61.3,
+        "finish_reason": null,
+        "word_count": 47
+      }
+    ]
+  },
+  {
+    "id": "1b072114-24ee-4bb5-80a5-018ce442a512",
+    "engines": [
+      {
+        "engine": "unlimited",
+        "status": 200,
+        "seconds": 13.31,
+        "finish_reason": "stop",
+        "word_count": null
+      },
+      {
+        "engine": "paddle",
+        "status": 200,
+        "seconds": 64.94,
+        "finish_reason": null,
+        "word_count": 80
+      }
+    ]
+  }
+]

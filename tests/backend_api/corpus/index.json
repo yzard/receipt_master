@@ -1,0 +1,204 @@
+{
+  "version": 1,
+  "cases": [
+    {
+      "id": "391b3273",
+      "receipt_id": "391b3273-3605-43d8-b93e-3691f9d4f40d",
+      "images": [
+        {
+          "path": "images/391b3273-0.jpg",
+          "sha256": "cf29d526f3e74ddea18753ab55a9f7a7a50465a95a454874ec1b21fec5012432"
+        }
+      ],
+      "captured": "captured/391b3273.json",
+      "expected": "expected/391b3273.json"
+    },
+    {
+      "id": "b92bd0ff",
+      "receipt_id": "b92bd0ff-b536-41a9-9429-5d29b8a12e5b",
+      "images": [
+        {
+          "path": "images/b92bd0ff-0.jpg",
+          "sha256": "75f485bf0138e495bebe9c4906abaa83c906d5e451f218935266edaa692f1e82"
+        }
+      ],
+      "captured": "captured/b92bd0ff.json",
+      "expected": "expected/b92bd0ff.json"
+    },
+    {
+      "id": "f7cc0090",
+      "receipt_id": "f7cc0090-7be1-4e6f-8d07-844d601eb709",
+      "images": [
+        {
+          "path": "images/f7cc0090-0.jpg",
+          "sha256": "0bf2e9e11733babcf62890bcff46ed6f1677ab6e619f246daaef7eaba37dc0d3"
+        }
+      ],
+      "captured": "captured/f7cc0090.json",
+      "expected": "expected/f7cc0090.json"
+    },
+    {
+      "id": "efe47023",
+      "receipt_id": "efe47023-2e19-4642-bd49-aa218a6744f2",
+      "images": [
+        {
+          "path": "images/efe47023-0.jpg",
+          "sha256": "dc924bbafdf45fbd0499fcb8bfdcfe606f2535f97e553d55c759869fa981d226"
+        }
+      ],
+      "captured": "captured/efe47023.json",
+      "expected": "expected/efe47023.json"
+    },
+    {
+      "id": "bbbfe093",
+      "receipt_id": "bbbfe093-218d-4867-ba8c-c1df3976794d",
+      "images": [
+        {
+          "path": "images/bbbfe093-0.jpg",
+          "sha256": "682503d4af1ded857abcef9772f183f5089628fc639148b2ddcfefdcee149889"
+        }
+      ],
+      "captured": "captured/bbbfe093.json",
+      "expected": "expected/bbbfe093.json"
+    },
+    {
+      "id": "e8698610",
+      "receipt_id": "e8698610-b172-4894-ad8b-25c3dd5177aa",
+      "images": [
+        {
+          "path": "images/e8698610-0.jpg",
+          "sha256": "32d2bbcd77fd4a18b1d9897ca547032a0683f3e0b25a64957c767c86d9eaac3a"
+        }
+      ],
+      "captured": "captured/e8698610.json",
+      "expected": "expected/e8698610.json"
+    },
+    {
+      "id": "a730a1be",
+      "receipt_id": "a730a1be-06d4-4a14-95a8-b28739de7fa8",
+      "images": [
+        {
+          "path": "images/a730a1be-0.jpg",
+          "sha256": "8214940462206a96d1f2a2980282c4257aec0d0a018a3f64c1770b014c9f7287"
+        }
+      ],
+      "captured": "captured/a730a1be.json",
+      "expected": "expected/a730a1be.json"
+    },
+    {
+      "id": "2f083787",
+      "receipt_id": "2f083787-1c6f-4ecd-8033-4c82e8244b84",
+      "images": [
+        {
+          "path": "images/2f083787-0.jpg",
+          "sha256": "6d22710f88c2aad47594b11bc53ce323109305e9d42221689246a8f3dd704d44"
+        }
+      ],
+      "captured": "captured/2f083787.json",
+      "expected": "expected/2f083787.json"
+    },
+    {
+      "id": "5e4547ea",
+      "receipt_id": "5e4547ea-3747-4953-af42-38809a1ae21f",
+      "images": [
+        {
+          "path": "images/5e4547ea-0.jpg",
+          "sha256": "7150fc4a334348e638e8cbf8e6cfaa35f71e64e091f5724ef9e9c202d374ca01"
+        }
+      ],
+      "captured": "captured/5e4547ea.json",
+      "expected": "expected/5e4547ea.json"
+    },
+    {
+      "id": "3270f3c9",
+      "receipt_id": "3270f3c9-059f-4d7a-8ae2-c2352d52a14a",
+      "images": [
+        {
+          "path": "images/3270f3c9-0.jpg",
+          "sha256": "71dcc3680df8c34328c9f32f930a3b83560e0a432a82d32f3294da51924b6d65"
+        }
+      ],
+      "captured": "captured/3270f3c9.json",
+      "expected": "expected/3270f3c9.json"
+    },
+    {
+      "id": "2718947f",
+      "receipt_id": "2718947f-9db1-4012-92e8-dcf1d33bf7e2",
+      "images": [
+        {
+          "path": "images/2718947f-0.jpg",
+          "sha256": "b019201ddf7a7574afea8c76f81ac13b1294afa2c11b4d350cc1bab91dd91810"
+        }
+      ],
+      "captured": "captured/2718947f.json",
+      "expected": "expected/2718947f.json"
+    },
+    {
+      "id": "f3bca374",
+      "receipt_id": "f3bca374-4c8b-4f66-b519-89dd73d2d47e",
+      "images": [
+        {
+          "path": "images/f3bca374-0.jpg",
+          "sha256": "a3f1ceb235cf8f729a97a011baf74d009cb2bbbccb2898066398bf1e6fd7b154"
+        }
+      ],
+      "captured": "captured/f3bca374.json",
+      "expected": "expected/f3bca374.json"
+    },
+    {
+      "id": "00710190",
+      "receipt_id": "00710190-4b7a-43f9-b4ad-a4ecd7e51840",
+      "images": [
+        {
+          "path": "images/00710190-0.jpg",
+          "sha256": "3f0c97d5bbbf3741f888f15755dfd97a4af52b2d460263ea68a18beb61b6abd7"
+        }
+      ],
+      "expected": "expected/00710190.json"
+    },
+    {
+      "id": "00c86447",
+      "receipt_id": "00c86447-6405-4729-a8d7-b08c17938042",
+      "images": [
+        {
+          "path": "images/00c86447-0.jpg",
+          "sha256": "24def2952834bec7ca958875d1e4b5a15416083401335216d432e59876e24393"
+        }
+      ],
+      "expected": "expected/00c86447.json"
+    },
+    {
+      "id": "6fe7d01a",
+      "receipt_id": "6fe7d01a-9e99-417d-9c7e-c44f20fca578",
+      "images": [
+        {
+          "path": "images/6fe7d01a-0.jpg",
+          "sha256": "49e216653ccdcff89d5d26b4fb450c88f0d1fa31f46557995b7649e0bbbcca94"
+        }
+      ],
+      "expected": "expected/6fe7d01a.json"
+    },
+    {
+      "id": "b38d62dd",
+      "receipt_id": "b38d62dd-584c-4880-8e8c-4740bd2a48d9",
+      "images": [
+        {
+          "path": "images/b38d62dd-0.jpg",
+          "sha256": "f6f8f5cc7396738e9c3a62b1fb8ad04724f6c6e2669f4b13bf8e99f716fe0b8e"
+        }
+      ],
+      "expected": "expected/b38d62dd.json"
+    },
+    {
+      "id": "e1be8ec6",
+      "receipt_id": "e1be8ec6-6626-46bb-85fb-4696b32df86d",
+      "images": [
+        {
+          "path": "images/e1be8ec6-0.jpg",
+          "sha256": "301696f85b698535845fa9f0b31dc31822297d33677d66d74d0b4e44b4209aca"
+        }
+      ],
+      "expected": "expected/e1be8ec6.json"
+    }
+  ]
+}

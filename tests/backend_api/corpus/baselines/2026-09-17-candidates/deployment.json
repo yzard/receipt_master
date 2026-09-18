@@ -1,0 +1,40 @@
+{
+  "snapshot": "../../confirmed/2026-09-17-candidates/snapshot.json",
+  "snapshot_sha256": "a408ff0a0219162205137acd893b7aaef899bd222db7f43390e9fd67d226765d",
+  "confirmed_receipts": 24,
+  "same_receipts_as_previous_run": true,
+  "models": {
+    "numind/NuExtract3": {
+      "revision": "c99dc8f5641b866aa0192b6ea78f84bf9f3535f1",
+      "weight_precision": "BF16",
+      "kv_cache_dtype": "auto"
+    },
+    "numind/NuExtract-2.0-8B": {
+      "revision": "a470f0b5dd0b42fa7182cdbe7c6113a232f671e4",
+      "weight_precision": "BF16",
+      "kv_cache_dtype": "auto"
+    },
+    "OpenGVLab/InternVL3_5-8B": {
+      "revision": "9bb6a56ad9cc69db95e2d4eeb15a52bbcac4ef79",
+      "weight_precision": "BF16",
+      "kv_cache_dtype": "auto"
+    }
+  },
+  "temperature": 0,
+  "output_tokens": 8192,
+  "context_length": 32768,
+  "concurrency": 2,
+  "prompt_version": "vision-v7",
+  "evaluation_started_utc": "2026-09-17T03:45:08.377436+00:00",
+  "status": "cancelled_by_user",
+  "image_ids": {
+    "nuextract3-evaluated": "sha256:31208427a5828cee6e09afd86cc7fea963f900736ff852a38d8c632ced776ee7",
+    "nuextract2-evaluated": "sha256:f562c6e4e1627efd0109097166718a758a0124054a11626d8c74caead2042739",
+    "local": "sha256:45646db30c93ce21a8770df1574680ad9b8afd7ec5814f49be883cc1fc983a8f"
+  },
+  "wall_seconds": {
+    "nuextract3": 207.71,
+    "nuextract2": 202.98
+  },
+  "reason": "Restore dual text OCR and deterministic per-store parsing"
+}

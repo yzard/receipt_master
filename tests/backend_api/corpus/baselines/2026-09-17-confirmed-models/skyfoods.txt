@@ -1,0 +1,9 @@
+MERCHANT PROFILE: SKYFOODS
+
+Read the aligned description, quantity, unit price and amount columns. A Chinese line directly under an English product is that product's standard_name. Preserve printed Chinese exactly. Two separately priced identical tofu packages are two products; do not merge them.
+
+Qty Spl Disc. / Qty Pkg Disc. rows belong to the preceding product block. Copy that product's full name and standard_name, not the discount label. The displayed product amount in these quantity-special layouts is normally the NET price ALREADY INCLUDING the displayed savings. Set that product's amount_basis=net_including_item_discounts, preserve the printed net amount, and emit the negative discount separately with its product's FINAL lines index. Do not subtract the savings twice or compute gross in the model. Verify against subtotal to distinguish a layout which actually prints gross.
+
+For repeated tofu rows, each discount must point to its own preceding tofu product, not the first/second product on the whole receipt. Build the complete lines array, then check each target index against that row's name. Discount rows count when calculating indices. A discount must never target an unrelated pepper or chive row just because it is product number 0 or 1.
+
+Produce names may include (1POUNDS), a generic description, not measured weight. Extract actual scale quantity from the quantity column or associated detail and its unit price. Do not copy (1POUNDS) as package_weight when a measured quantity is printed. BOK CHOY TIPS is a product, never gratuity. Retain a printed TAX 0.00 row. Read footer date/time with its exact seconds.

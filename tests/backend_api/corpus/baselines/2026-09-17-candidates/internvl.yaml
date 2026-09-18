@@ -1,0 +1,27 @@
+host: 0.0.0.0
+port: 8000
+served_model: internvl3.5-8b
+api_key_file: /run/secrets/ocr_api_key
+data_dir: /data
+apk_path: /artifacts/receipt_master.apk
+timeout_seconds: 600
+job_workers: 2
+logos:
+  enabled: true
+  similarity_threshold: 0.60
+  margin: 0.08
+ocr:
+  protocol: chat
+  url: http://backend_ocr:8000
+  model: internvl3.5-8b
+  output_tokens: 8192
+  max_images: 16
+# Optional USD price estimates. Decimal strings; null means unknown.
+pricing:
+  input_usd_per_million_tokens: null
+  output_usd_per_million_tokens: null
+# Reminder only: reaching the budget never prevents recognition.
+budget:
+  monthly_usd: null
+  alert_percent: 80
+  timezone: America/New_York

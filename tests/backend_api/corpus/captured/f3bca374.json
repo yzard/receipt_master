@@ -1,0 +1,101 @@
+{
+  "store": "skyFOODS",
+  "branch": "B超超级市场",
+  "address": "40-24 COLLEGE POINT BLVD\nFLUSHING,NY 11355",
+  "country": null,
+  "currency": "USD",
+  "local_time": "2026-09-15 19:27:36",
+  "total": "9.74",
+  "lines": [
+    {
+      "name": "BOK CHOY",
+      "standard_name": "白菜菇",
+      "kind": "product",
+      "weight_g": null,
+      "quantity": "1.86",
+      "quantity_unit": "lb",
+      "unit_price": "2.49",
+      "amount": "4.63",
+      "confidence": null,
+      "discount_target_index": null,
+      "box": [
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "CHIVES",
+      "standard_name": "韭菜",
+      "kind": "product",
+      "weight_g": null,
+      "quantity": "0.76",
+      "quantity_unit": "lb",
+      "unit_price": "1.99",
+      "amount": "1.51",
+      "confidence": null,
+      "discount_target_index": null,
+      "box": [
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "LONG HOT PEPPER",
+      "standard_name": "牛角椒",
+      "kind": "product",
+      "weight_g": null,
+      "quantity": "0.81",
+      "quantity_unit": "lb",
+      "unit_price": "1.99",
+      "amount": "1.61",
+      "confidence": null,
+      "discount_target_index": null,
+      "box": [
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "KL FIRM TOFU",
+      "standard_name": "康绿 老豆腐",
+      "kind": "product",
+      "weight_g": null,
+      "quantity": null,
+      "quantity_unit": null,
+      "unit_price": null,
+      "amount": "1.99",
+      "confidence": null,
+      "discount_target_index": null,
+      "box": [
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "TIPS",
+      "standard_name": null,
+      "kind": "tip",
+      "weight_g": null,
+      "quantity": null,
+      "quantity_unit": null,
+      "unit_price": null,
+      "amount": "4.63",
+      "confidence": null,
+      "discount_target_index": null,
+      "box": [
+        0,
+        0,
+        0,
+        0
+      ]
+    }
+  ]
+}

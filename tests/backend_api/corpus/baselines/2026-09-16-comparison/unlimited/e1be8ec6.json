@@ -1,0 +1,33 @@
+{
+  "id": "e1be8ec6",
+  "images": [
+    {
+      "path": "images/e1be8ec6-0.jpg",
+      "sha256": "301696f85b698535845fa9f0b31dc31822297d33677d66d74d0b4e44b4209aca"
+    }
+  ],
+  "provider": "unlimited",
+  "raw": {
+    "id": "chatcmpl-10ac1fb711e041dfb64e929a79437cdd",
+    "object": "chat.completion",
+    "created": 1789567931,
+    "model": "unlimited-ocr",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "<|det|>title [354, 48, 631, 101]<|/det|>skyFOODS\n<|det|>title [444, 95, 631, 123]<|/det|>[Unreadable]\n<|det|>text [461, 153, 554, 171]<|/det|>Sky Foods\n<|det|>text [382, 171, 627, 188]<|/det|>40-24 COLLEGE POINT BLVD\n<|det|>text [423, 188, 595, 205]<|/det|>FLUSHING,NY 11355\n<|det|>text [444, 205, 574, 223]<|/det|>(718)939-6688\n<|det|>text [295, 230, 408, 250]<|/det|>Station 05\n<|det|>text [295, 250, 543, 270]<|/det|>08/27/2026 15:19:45\n<|det|>text [295, 270, 432, 290]<|/det|>Cashier # 105\n<|det|>text [293, 304, 692, 330]<|/det|>1 LONG HOT PEPPER (1POUNDS) $1.29 F\n<|det|>text [293, 326, 435, 345]<|/det|>牛角椒 (1磅)\n<|det|>text [312, 345, 504, 365]<|/det|>0.65 lb 0 $1.99/lb\n<|det|>text [293, 361, 692, 386]<|/det|>1 CHIVES (1POUNDS) $2.15 F\n<|det|>text [290, 382, 387, 400]<|/det|>韭菜（1磅）\n<|det|>text [310, 400, 506, 419]<|/det|>0.54 lb 0 $3.99/lb\n<|det|>text [290, 415, 692, 440]<|/det|>1 BOOK CHOY TIPS (1POUNDS) $4.91 F\n<|det|>text [290, 435, 421, 453]<|/det|>白菜苗（1磅）\n<|det|>text [310, 453, 510, 473]<|/det|>1.97 lb 0 $2.49/lb\n<|det|>text [289, 472, 692, 493]<|/det|>1 MAPLEHILL WHOLE MILK $9.99 F\n<|det|>text [286, 492, 488, 512]<|/det|>MAPLEHILL 金眉牛=5/5\n<|det|>text [288, 512, 696, 533]<|/det|>1 KANGLV JUMBO DRIED TOFU $3.00 F\n<|det|>text [286, 532, 432, 550]<|/det|>康缘大豆腐电\n<|det|>text [307, 551, 528, 571]<|/det|>Qty Spl Disc. -$0.99\n<|det|>text [308, 571, 430, 590]<|/det|>1 0 2/$5.99\n<|det|>text [286, 590, 696, 610]<|/det|>1 KANGLV JUMBO DRIED TOFU $2.99 F\n<|det|>text [284, 611, 430, 630]<|/det|>康缘大豆腐电\n<|det|>text [305, 630, 525, 651]<|/det|>Qty Spl Disc. -$1.00\n<|det|>text [306, 651, 428, 670]<|/det|>1 0 2/$5.99\n<|det|>text [283, 669, 692, 689]<|/det|>1 L.K.K SUPEREME FIRST DRAW $ $5.99 F\n<|det|>text [283, 689, 501, 708]<|/det|>李命南己 页页道 原自牌页前由\n<|det|>text [402, 723, 553, 741]<|/det|>Item Count: 7\n<|det|>text [422, 743, 605, 763]<|/det|>Subtotal: $30.32\n<|det|>text [472, 763, 593, 782]<|/det|>Tax: $0.00\n<|det|>text [452, 782, 603, 802]<|/det|>Total: $30.32\n<|det|>text [430, 802, 603, 821]<|/det|>Payment: $30.32\n<|det|>text [385, 838, 593, 859]<|/det|>Cash Change: $0.00\n<|det|>text [402, 875, 590, 896]<|/det|>You Saved: $1.99\n<|det|>footer [275, 919, 395, 937]<|/det|>CREDIT SALE\n<|det|>footer [275, 937, 501, 955]<|/det|>M/C 512230****8475\n<|det|>footer [275, 955, 468, 973]<|/det|>ENTRY METHOD: CHIP\n<|det|>footer [275, 973, 457, 992]<|/det|>AUTH CODE: 870932"
+        },
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 1517,
+      "completion_tokens": 1017,
+      "total_tokens": 2534
+    }
+  },
+  "text": "<|det|>title [354, 48, 631, 101]<|/det|>skyFOODS\n<|det|>title [444, 95, 631, 123]<|/det|>[Unreadable]\n<|det|>text [461, 153, 554, 171]<|/det|>Sky Foods\n<|det|>text [382, 171, 627, 188]<|/det|>40-24 COLLEGE POINT BLVD\n<|det|>text [423, 188, 595, 205]<|/det|>FLUSHING,NY 11355\n<|det|>text [444, 205, 574, 223]<|/det|>(718)939-6688\n<|det|>text [295, 230, 408, 250]<|/det|>Station 05\n<|det|>text [295, 250, 543, 270]<|/det|>08/27/2026 15:19:45\n<|det|>text [295, 270, 432, 290]<|/det|>Cashier # 105\n<|det|>text [293, 304, 692, 330]<|/det|>1 LONG HOT PEPPER (1POUNDS) $1.29 F\n<|det|>text [293, 326, 435, 345]<|/det|>牛角椒 (1磅)\n<|det|>text [312, 345, 504, 365]<|/det|>0.65 lb 0 $1.99/lb\n<|det|>text [293, 361, 692, 386]<|/det|>1 CHIVES (1POUNDS) $2.15 F\n<|det|>text [290, 382, 387, 400]<|/det|>韭菜（1磅）\n<|det|>text [310, 400, 506, 419]<|/det|>0.54 lb 0 $3.99/lb\n<|det|>text [290, 415, 692, 440]<|/det|>1 BOOK CHOY TIPS (1POUNDS) $4.91 F\n<|det|>text [290, 435, 421, 453]<|/det|>白菜苗（1磅）\n<|det|>text [310, 453, 510, 473]<|/det|>1.97 lb 0 $2.49/lb\n<|det|>text [289, 472, 692, 493]<|/det|>1 MAPLEHILL WHOLE MILK $9.99 F\n<|det|>text [286, 492, 488, 512]<|/det|>MAPLEHILL 金眉牛=5/5\n<|det|>text [288, 512, 696, 533]<|/det|>1 KANGLV JUMBO DRIED TOFU $3.00 F\n<|det|>text [286, 532, 432, 550]<|/det|>康缘大豆腐电\n<|det|>text [307, 551, 528, 571]<|/det|>Qty Spl Disc. -$0.99\n<|det|>text [308, 571, 430, 590]<|/det|>1 0 2/$5.99\n<|det|>text [286, 590, 696, 610]<|/det|>1 KANGLV JUMBO DRIED TOFU $2.99 F\n<|det|>text [284, 611, 430, 630]<|/det|>康缘大豆腐电\n<|det|>text [305, 630, 525, 651]<|/det|>Qty Spl Disc. -$1.00\n<|det|>text [306, 651, 428, 670]<|/det|>1 0 2/$5.99\n<|det|>text [283, 669, 692, 689]<|/det|>1 L.K.K SUPEREME FIRST DRAW $ $5.99 F\n<|det|>text [283, 689, 501, 708]<|/det|>李命南己 页页道 原自牌页前由\n<|det|>text [402, 723, 553, 741]<|/det|>Item Count: 7\n<|det|>text [422, 743, 605, 763]<|/det|>Subtotal: $30.32\n<|det|>text [472, 763, 593, 782]<|/det|>Tax: $0.00\n<|det|>text [452, 782, 603, 802]<|/det|>Total: $30.32\n<|det|>text [430, 802, 603, 821]<|/det|>Payment: $30.32\n<|det|>text [385, 838, 593, 859]<|/det|>Cash Change: $0.00\n<|det|>text [402, 875, 590, 896]<|/det|>You Saved: $1.99\n<|det|>footer [275, 919, 395, 937]<|/det|>CREDIT SALE\n<|det|>footer [275, 937, 501, 955]<|/det|>M/C 512230****8475\n<|det|>footer [275, 955, 468, 973]<|/det|>ENTRY METHOD: CHIP\n<|det|>footer [275, 973, 457, 992]<|/det|>AUTH CODE: 870932",
+  "duration_ms": 8956
+}

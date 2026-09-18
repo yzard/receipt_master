@@ -1,0 +1,29 @@
+import hashlib,json,sys
+from pathlib import Path
+sys.path.insert(0,'tests/backend_api')
+from printed_name_evaluation import compare
+annotation=json.load(open('tests/backend_api/corpus/annotations/2026-09-18-printed-names.json'))
+models={
+ 'qwen3-vl-8b':'tests/backend_api/corpus/baselines/2026-09-17-confirmed-models/8b.json',
+ 'qwen3-vl-32b-awq':'tests/backend_api/corpus/baselines/2026-09-17-confirmed-models/32b.json',
+ 'nuextract3':'tests/backend_api/corpus/baselines/2026-09-17-candidates/nuextract3.json',
+ 'nuextract2':'tests/backend_api/corpus/baselines/2026-09-17-candidates/nuextract2.json',
+}
+reports={}
+ids=None
+for model,path in models.items():
+ d=json.load(open(path)); oldpath=Path(d['snapshot']);old={c['id']:c for c in json.load(open(oldpath))['cases']}
+ selected=[c for c in annotation['cases'] if c['id'] in old]
+ assert len(selected)==24
+ currentids={c['id'] for c in selected}
+ if ids is not None:assert currentids==ids
+ ids=currentids
+ for c in selected:
+  orig=old[c['id']]
+  assert [i['sha256'] for i in c['images']]==[i['sha256'] for i in orig['images']]
+  for i in orig['images']:assert hashlib.sha256((oldpath.parent/i['path']).read_bytes()).hexdigest()==i['sha256']
+  row=next(r for r in d['cases'] if r['id']==c['id']);row['images']=c['images']
+ reports[model]=compare({'cases':selected},d)
+ print(model,reports[model]['summary'])
+Path('build/qwen38/history-names.json').write_text(json.dumps(reports,ensure_ascii=False,indent=2))
+Path('build/qwen38/history-ids.json').write_text(json.dumps(sorted(ids)))

@@ -1,0 +1,369 @@
+(APIServer pid=57) INFO:     127.0.0.1:37220 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46912 - "GET /health HTTP/1.1" 200 OK
+(APIServer pid=57) INFO:     127.0.0.1:37234 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46934 - "GET /health HTTP/1.1" 200 OK
+(APIServer pid=57) INFO 09-17 15:38:05 [loggers.py:273] Engine 000: Avg prompt throughput: 151.7 tokens/s, Avg generation throughput: 64.1 tokens/s, Running: 1 reqs, Waiting: 0 reqs, GPU KV cache usage: 1.0%, Prefix cache hit rate: 0.0%
+(APIServer pid=57) INFO:     127.0.0.1:37220 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+[33mResized image size (3060x4080) exceeds max_side_limit of 4000. Resizing to fit within limit.[0m
+(APIServer pid=57) INFO:     127.0.0.1:46696 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39030 - "GET /health HTTP/1.1" 200 OK
+(APIServer pid=57) INFO 09-17 15:38:15 [loggers.py:273] Engine 000: Avg prompt throughput: 0.0 tokens/s, Avg generation throughput: 9.0 tokens/s, Running: 0 reqs, Waiting: 0 reqs, GPU KV cache usage: 0.0%, Prefix cache hit rate: 0.0%
+(APIServer pid=57) INFO:     127.0.0.1:57306 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:37994 - "GET /health HTTP/1.1" 200 OK
+(APIServer pid=57) INFO 09-17 15:38:25 [loggers.py:273] Engine 000: Avg prompt throughput: 0.0 tokens/s, Avg generation throughput: 0.0 tokens/s, Running: 0 reqs, Waiting: 0 reqs, GPU KV cache usage: 0.0%, Prefix cache hit rate: 0.0%
+(APIServer pid=57) INFO:     127.0.0.1:51314 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60530 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60326 - "POST /recognize HTTP/1.1" 200 OK
+INFO:     172.20.0.2:42640 - "POST /v1/ocr/recognize HTTP/1.1" 200 OK
+(APIServer pid=57) INFO:     127.0.0.1:58096 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36572 - "GET /health HTTP/1.1" 200 OK
+(APIServer pid=57) INFO 09-17 15:38:45 [loggers.py:273] Engine 000: Avg prompt throughput: 151.7 tokens/s, Avg generation throughput: 49.4 tokens/s, Running: 1 reqs, Waiting: 0 reqs, GPU KV cache usage: 1.0%, Prefix cache hit rate: 0.0%
+(APIServer pid=57) INFO:     127.0.0.1:58094 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+[33mResized image size (3060x4080) exceeds max_side_limit of 4000. Resizing to fit within limit.[0m
+(APIServer pid=57) INFO:     127.0.0.1:58094 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46338 - "GET /health HTTP/1.1" 200 OK
+(APIServer pid=57) INFO 09-17 15:38:55 [loggers.py:273] Engine 000: Avg prompt throughput: 0.0 tokens/s, Avg generation throughput: 39.5 tokens/s, Running: 0 reqs, Waiting: 0 reqs, GPU KV cache usage: 0.0%, Prefix cache hit rate: 0.0%
+(APIServer pid=57) INFO:     127.0.0.1:53844 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33570 - "GET /health HTTP/1.1" 200 OK
+(APIServer pid=57) INFO 09-17 15:39:05 [loggers.py:273] Engine 000: Avg prompt throughput: 0.0 tokens/s, Avg generation throughput: 0.0 tokens/s, Running: 0 reqs, Waiting: 0 reqs, GPU KV cache usage: 0.0%, Prefix cache hit rate: 0.0%
+(APIServer pid=57) INFO:     127.0.0.1:47668 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52220 - "GET /health HTTP/1.1" 200 OK
+(APIServer pid=57) INFO:     127.0.0.1:40668 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35380 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55444 - "POST /recognize HTTP/1.1" 200 OK
+INFO:     172.20.0.2:42640 - "POST /v1/ocr/recognize HTTP/1.1" 200 OK
+(APIServer pid=57) INFO:     127.0.0.1:49128 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54702 - "GET /health HTTP/1.1" 200 OK
+(APIServer pid=57) INFO:     127.0.0.1:40668 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+[33mResized image size (3060x4080) exceeds max_side_limit of 4000. Resizing to fit within limit.[0m
+(APIServer pid=57) INFO 09-17 15:39:35 [loggers.py:273] Engine 000: Avg prompt throughput: 151.7 tokens/s, Avg generation throughput: 81.1 tokens/s, Running: 0 reqs, Waiting: 0 reqs, GPU KV cache usage: 0.0%, Prefix cache hit rate: 0.0%
+(APIServer pid=57) INFO:     127.0.0.1:58444 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56144 - "GET /health HTTP/1.1" 200 OK
+(APIServer pid=57) INFO 09-17 15:39:45 [loggers.py:273] Engine 000: Avg prompt throughput: 0.0 tokens/s, Avg generation throughput: 0.0 tokens/s, Running: 0 reqs, Waiting: 0 reqs, GPU KV cache usage: 0.0%, Prefix cache hit rate: 0.0%
+(APIServer pid=57) INFO:     127.0.0.1:57406 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55374 - "GET /health HTTP/1.1" 200 OK
+(APIServer pid=57) INFO:     127.0.0.1:36738 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51090 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48206 - "POST /recognize HTTP/1.1" 200 OK
+INFO:     172.20.0.2:42640 - "POST /v1/ocr/recognize HTTP/1.1" 200 OK
+(APIServer pid=57) INFO:     127.0.0.1:38366 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55770 - "GET /health HTTP/1.1" 200 OK
+(APIServer pid=57) INFO:     127.0.0.1:38358 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+[33mResized image size (3060x4080) exceeds max_side_limit of 4000. Resizing to fit within limit.[0m
+(APIServer pid=57) INFO 09-17 15:40:15 [loggers.py:273] Engine 000: Avg prompt throughput: 151.7 tokens/s, Avg generation throughput: 65.0 tokens/s, Running: 0 reqs, Waiting: 0 reqs, GPU KV cache usage: 0.0%, Prefix cache hit rate: 0.0%
+(APIServer pid=57) INFO:     127.0.0.1:33406 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54112 - "GET /health HTTP/1.1" 200 OK
+(APIServer pid=57) INFO 09-17 15:40:25 [loggers.py:273] Engine 000: Avg prompt throughput: 0.0 tokens/s, Avg generation throughput: 0.0 tokens/s, Running: 0 reqs, Waiting: 0 reqs, GPU KV cache usage: 0.0%, Prefix cache hit rate: 0.0%
+(APIServer pid=57) INFO:     127.0.0.1:42810 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33086 - "GET /health HTTP/1.1" 200 OK
+(APIServer pid=57) INFO:     127.0.0.1:37420 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40046 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48262 - "POST /recognize HTTP/1.1" 200 OK
+INFO:     172.20.0.2:42640 - "POST /v1/ocr/recognize HTTP/1.1" 200 OK
+(APIServer pid=57) INFO:     127.0.0.1:56932 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50164 - "GET /health HTTP/1.1" 200 OK
+(APIServer pid=57) INFO:     127.0.0.1:56926 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+[33mResized image size (3060x4080) exceeds max_side_limit of 4000. Resizing to fit within limit.[0m
+(APIServer pid=57) INFO 09-17 15:40:55 [loggers.py:273] Engine 000: Avg prompt throughput: 151.7 tokens/s, Avg generation throughput: 92.8 tokens/s, Running: 0 reqs, Waiting: 0 reqs, GPU KV cache usage: 0.0%, Prefix cache hit rate: 0.0%
+(APIServer pid=57) INFO:     127.0.0.1:32992 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44588 - "GET /health HTTP/1.1" 200 OK
+(APIServer pid=57) INFO 09-17 15:41:05 [loggers.py:273] Engine 000: Avg prompt throughput: 0.0 tokens/s, Avg generation throughput: 0.0 tokens/s, Running: 0 reqs, Waiting: 0 reqs, GPU KV cache usage: 0.0%, Prefix cache hit rate: 0.0%
+(APIServer pid=57) INFO:     127.0.0.1:38028 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51758 - "GET /health HTTP/1.1" 200 OK
+(APIServer pid=57) INFO:     127.0.0.1:55938 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:37194 - "GET /health HTTP/1.1" 200 OK
+(APIServer pid=57) INFO:     127.0.0.1:40194 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39738 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35054 - "POST /recognize HTTP/1.1" 200 OK
+INFO:     172.20.0.2:42640 - "POST /v1/ocr/recognize HTTP/1.1" 200 OK
+(APIServer pid=57) INFO 09-17 15:41:35 [loggers.py:273] Engine 000: Avg prompt throughput: 151.7 tokens/s, Avg generation throughput: 10.0 tokens/s, Running: 1 reqs, Waiting: 0 reqs, GPU KV cache usage: 1.0%, Prefix cache hit rate: 0.0%
+(APIServer pid=57) INFO:     127.0.0.1:40194 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+[33mResized image size (3060x4080) exceeds max_side_limit of 4000. Resizing to fit within limit.[0m
+(APIServer pid=57) INFO:     127.0.0.1:40194 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48394 - "GET /health HTTP/1.1" 200 OK
+(APIServer pid=57) INFO 09-17 15:41:45 [loggers.py:273] Engine 000: Avg prompt throughput: 0.0 tokens/s, Avg generation throughput: 75.0 tokens/s, Running: 0 reqs, Waiting: 0 reqs, GPU KV cache usage: 0.0%, Prefix cache hit rate: 0.0%
+(APIServer pid=57) INFO:     127.0.0.1:33252 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:41704 - "GET /health HTTP/1.1" 200 OK
+(APIServer pid=57) INFO 09-17 15:41:55 [loggers.py:273] Engine 000: Avg prompt throughput: 0.0 tokens/s, Avg generation throughput: 0.0 tokens/s, Running: 0 reqs, Waiting: 0 reqs, GPU KV cache usage: 0.0%, Prefix cache hit rate: 0.0%
+(APIServer pid=57) INFO:     127.0.0.1:33184 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47848 - "GET /health HTTP/1.1" 200 OK
+(APIServer pid=57) INFO:     127.0.0.1:51262 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45106 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48168 - "POST /recognize HTTP/1.1" 200 OK
+INFO:     172.20.0.2:42640 - "POST /v1/ocr/recognize HTTP/1.1" 200 OK
+(APIServer pid=57) INFO:     127.0.0.1:56274 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58642 - "GET /health HTTP/1.1" 200 OK
+(APIServer pid=57) INFO 09-17 15:42:25 [loggers.py:273] Engine 000: Avg prompt throughput: 151.7 tokens/s, Avg generation throughput: 33.1 tokens/s, Running: 1 reqs, Waiting: 0 reqs, GPU KV cache usage: 1.0%, Prefix cache hit rate: 0.0%
+(APIServer pid=57) INFO:     127.0.0.1:56260 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+[33mResized image size (3060x4080) exceeds max_side_limit of 4000. Resizing to fit within limit.[0m
+(APIServer pid=57) INFO:     127.0.0.1:58010 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44664 - "GET /health HTTP/1.1" 200 OK
+(APIServer pid=57) INFO 09-17 15:42:35 [loggers.py:273] Engine 000: Avg prompt throughput: 0.0 tokens/s, Avg generation throughput: 37.8 tokens/s, Running: 0 reqs, Waiting: 0 reqs, GPU KV cache usage: 0.0%, Prefix cache hit rate: 0.0%
+(APIServer pid=57) INFO:     127.0.0.1:55876 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:37396 - "GET /health HTTP/1.1" 200 OK
+(APIServer pid=57) INFO 09-17 15:42:45 [loggers.py:273] Engine 000: Avg prompt throughput: 0.0 tokens/s, Avg generation throughput: 0.0 tokens/s, Running: 0 reqs, Waiting: 0 reqs, GPU KV cache usage: 0.0%, Prefix cache hit rate: 0.0%
+(APIServer pid=57) INFO:     127.0.0.1:50830 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46224 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55974 - "POST /recognize HTTP/1.1" 200 OK
+INFO:     172.20.0.2:42640 - "POST /v1/ocr/recognize HTTP/1.1" 200 OK
+(APIServer pid=57) INFO:     127.0.0.1:45220 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58190 - "GET /health HTTP/1.1" 200 OK
+(APIServer pid=57) INFO 09-17 15:43:05 [loggers.py:273] Engine 000: Avg prompt throughput: 151.7 tokens/s, Avg generation throughput: 27.7 tokens/s, Running: 1 reqs, Waiting: 0 reqs, GPU KV cache usage: 1.0%, Prefix cache hit rate: 0.0%
+(APIServer pid=57) INFO:     127.0.0.1:45210 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+[33mResized image size (3060x4080) exceeds max_side_limit of 4000. Resizing to fit within limit.[0m
+(APIServer pid=57) INFO:     127.0.0.1:50026 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39382 - "GET /health HTTP/1.1" 200 OK
+(APIServer pid=57) INFO 09-17 15:43:15 [loggers.py:273] Engine 000: Avg prompt throughput: 0.0 tokens/s, Avg generation throughput: 39.9 tokens/s, Running: 0 reqs, Waiting: 0 reqs, GPU KV cache usage: 0.0%, Prefix cache hit rate: 0.0%
+(APIServer pid=57) INFO:     127.0.0.1:43206 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48228 - "GET /health HTTP/1.1" 200 OK
+(APIServer pid=57) INFO 09-17 15:43:25 [loggers.py:273] Engine 000: Avg prompt throughput: 0.0 tokens/s, Avg generation throughput: 0.0 tokens/s, Running: 0 reqs, Waiting: 0 reqs, GPU KV cache usage: 0.0%, Prefix cache hit rate: 0.0%
+(APIServer pid=57) INFO:     127.0.0.1:47026 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51852 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35502 - "POST /recognize HTTP/1.1" 200 OK
+INFO:     172.20.0.2:42640 - "POST /v1/ocr/recognize HTTP/1.1" 200 OK
+(APIServer pid=57) INFO:     127.0.0.1:51438 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46840 - "GET /health HTTP/1.1" 200 OK
+(APIServer pid=57) INFO 09-17 15:43:45 [loggers.py:273] Engine 000: Avg prompt throughput: 151.7 tokens/s, Avg generation throughput: 29.3 tokens/s, Running: 1 reqs, Waiting: 0 reqs, GPU KV cache usage: 1.0%, Prefix cache hit rate: 0.0%
+(APIServer pid=57) INFO:     127.0.0.1:51428 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+[33mResized image size (3060x4080) exceeds max_side_limit of 4000. Resizing to fit within limit.[0m
+(APIServer pid=57) INFO:     127.0.0.1:51428 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43668 - "GET /health HTTP/1.1" 200 OK
+(APIServer pid=57) INFO 09-17 15:43:55 [loggers.py:273] Engine 000: Avg prompt throughput: 0.0 tokens/s, Avg generation throughput: 54.1 tokens/s, Running: 0 reqs, Waiting: 0 reqs, GPU KV cache usage: 0.0%, Prefix cache hit rate: 0.0%
+(APIServer pid=57) INFO:     127.0.0.1:48930 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47404 - "GET /health HTTP/1.1" 200 OK
+(APIServer pid=57) INFO 09-17 15:44:05 [loggers.py:273] Engine 000: Avg prompt throughput: 0.0 tokens/s, Avg generation throughput: 0.0 tokens/s, Running: 0 reqs, Waiting: 0 reqs, GPU KV cache usage: 0.0%, Prefix cache hit rate: 0.0%
+(APIServer pid=57) INFO:     127.0.0.1:33848 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:37232 - "GET /health HTTP/1.1" 200 OK
+(APIServer pid=57) INFO:     127.0.0.1:45026 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60378 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46444 - "POST /recognize HTTP/1.1" 200 OK
+INFO:     172.20.0.2:42640 - "POST /v1/ocr/recognize HTTP/1.1" 200 OK
+(APIServer pid=57) INFO 09-17 15:44:25 [loggers.py:273] Engine 000: Avg prompt throughput: 151.7 tokens/s, Avg generation throughput: 8.1 tokens/s, Running: 1 reqs, Waiting: 0 reqs, GPU KV cache usage: 1.0%, Prefix cache hit rate: 0.0%
+(APIServer pid=57) INFO:     127.0.0.1:45026 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+[33mResized image size (3060x4080) exceeds max_side_limit of 4000. Resizing to fit within limit.[0m
+(APIServer pid=57) INFO:     127.0.0.1:45026 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60004 - "GET /health HTTP/1.1" 200 OK
+(APIServer pid=57) INFO 09-17 15:44:35 [loggers.py:273] Engine 000: Avg prompt throughput: 0.0 tokens/s, Avg generation throughput: 69.0 tokens/s, Running: 0 reqs, Waiting: 0 reqs, GPU KV cache usage: 0.0%, Prefix cache hit rate: 0.0%
+(APIServer pid=57) INFO:     127.0.0.1:38136 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48874 - "GET /health HTTP/1.1" 200 OK
+(APIServer pid=57) INFO 09-17 15:44:45 [loggers.py:273] Engine 000: Avg prompt throughput: 0.0 tokens/s, Avg generation throughput: 0.0 tokens/s, Running: 0 reqs, Waiting: 0 reqs, GPU KV cache usage: 0.0%, Prefix cache hit rate: 0.0%
+(APIServer pid=57) INFO:     127.0.0.1:59214 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36832 - "GET /health HTTP/1.1" 200 OK
+(APIServer pid=57) INFO:     127.0.0.1:56460 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50906 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:37918 - "POST /recognize HTTP/1.1" 200 OK
+INFO:     172.20.0.2:42640 - "POST /v1/ocr/recognize HTTP/1.1" 200 OK
+(APIServer pid=57) INFO:     127.0.0.1:56460 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+[33mResized image size (3060x4080) exceeds max_side_limit of 4000. Resizing to fit within limit.[0m
+(APIServer pid=57) INFO:     127.0.0.1:56460 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60934 - "GET /health HTTP/1.1" 200 OK
+(APIServer pid=57) INFO 09-17 15:45:15 [loggers.py:273] Engine 000: Avg prompt throughput: 151.7 tokens/s, Avg generation throughput: 73.3 tokens/s, Running: 0 reqs, Waiting: 0 reqs, GPU KV cache usage: 0.0%, Prefix cache hit rate: 0.0%
+(APIServer pid=57) INFO:     127.0.0.1:44550 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45922 - "GET /health HTTP/1.1" 200 OK
+(APIServer pid=57) INFO 09-17 15:45:25 [loggers.py:273] Engine 000: Avg prompt throughput: 0.0 tokens/s, Avg generation throughput: 0.0 tokens/s, Running: 0 reqs, Waiting: 0 reqs, GPU KV cache usage: 0.0%, Prefix cache hit rate: 0.0%
+(APIServer pid=57) INFO:     127.0.0.1:52200 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49080 - "GET /health HTTP/1.1" 200 OK
+(APIServer pid=57) INFO:     127.0.0.1:58454 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39480 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43690 - "POST /recognize HTTP/1.1" 200 OK
+INFO:     172.20.0.2:42640 - "POST /v1/ocr/recognize HTTP/1.1" 200 OK
+(APIServer pid=57) INFO:     127.0.0.1:58454 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+[33mResized image size (3060x4080) exceeds max_side_limit of 4000. Resizing to fit within limit.[0m
+(APIServer pid=57) INFO:     127.0.0.1:58454 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55380 - "GET /health HTTP/1.1" 200 OK
+(APIServer pid=57) INFO 09-17 15:45:55 [loggers.py:273] Engine 000: Avg prompt throughput: 151.7 tokens/s, Avg generation throughput: 67.0 tokens/s, Running: 0 reqs, Waiting: 0 reqs, GPU KV cache usage: 0.0%, Prefix cache hit rate: 0.0%
+(APIServer pid=57) INFO:     127.0.0.1:40152 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53734 - "GET /health HTTP/1.1" 200 OK
+(APIServer pid=57) INFO 09-17 15:46:05 [loggers.py:273] Engine 000: Avg prompt throughput: 0.0 tokens/s, Avg generation throughput: 0.0 tokens/s, Running: 0 reqs, Waiting: 0 reqs, GPU KV cache usage: 0.0%, Prefix cache hit rate: 0.0%
+(APIServer pid=57) INFO:     127.0.0.1:34456 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43478 - "GET /health HTTP/1.1" 200 OK
+(APIServer pid=57) INFO:     127.0.0.1:39062 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:37308 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35778 - "POST /recognize HTTP/1.1" 200 OK
+INFO:     172.20.0.2:42640 - "POST /v1/ocr/recognize HTTP/1.1" 200 OK
+(APIServer pid=57) INFO:     127.0.0.1:39062 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+[33mResized image size (3060x4080) exceeds max_side_limit of 4000. Resizing to fit within limit.[0m
+(APIServer pid=57) INFO:     127.0.0.1:39062 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46700 - "GET /health HTTP/1.1" 200 OK
+(APIServer pid=57) INFO 09-17 15:46:35 [loggers.py:273] Engine 000: Avg prompt throughput: 151.7 tokens/s, Avg generation throughput: 50.9 tokens/s, Running: 0 reqs, Waiting: 0 reqs, GPU KV cache usage: 0.0%, Prefix cache hit rate: 0.0%
+(APIServer pid=57) INFO:     127.0.0.1:43596 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34850 - "GET /health HTTP/1.1" 200 OK
+(APIServer pid=57) INFO 09-17 15:46:45 [loggers.py:273] Engine 000: Avg prompt throughput: 0.0 tokens/s, Avg generation throughput: 0.0 tokens/s, Running: 0 reqs, Waiting: 0 reqs, GPU KV cache usage: 0.0%, Prefix cache hit rate: 0.0%
+(APIServer pid=57) INFO:     127.0.0.1:41902 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39958 - "GET /health HTTP/1.1" 200 OK
+(APIServer pid=57) INFO:     127.0.0.1:53878 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39722 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35778 - "POST /recognize HTTP/1.1" 200 OK
+INFO:     172.20.0.2:42640 - "POST /v1/ocr/recognize HTTP/1.1" 200 OK
+(APIServer pid=57) INFO 09-17 15:47:05 [loggers.py:273] Engine 000: Avg prompt throughput: 151.7 tokens/s, Avg generation throughput: 1.5 tokens/s, Running: 1 reqs, Waiting: 0 reqs, GPU KV cache usage: 0.9%, Prefix cache hit rate: 0.0%
+(APIServer pid=57) INFO:     127.0.0.1:53878 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+[33mResized image size (3060x4080) exceeds max_side_limit of 4000. Resizing to fit within limit.[0m
+(APIServer pid=57) INFO:     127.0.0.1:50710 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49432 - "GET /health HTTP/1.1" 200 OK
+(APIServer pid=57) INFO 09-17 15:47:15 [loggers.py:273] Engine 000: Avg prompt throughput: 0.0 tokens/s, Avg generation throughput: 57.9 tokens/s, Running: 0 reqs, Waiting: 0 reqs, GPU KV cache usage: 0.0%, Prefix cache hit rate: 0.0%
+(APIServer pid=57) INFO:     127.0.0.1:49144 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44830 - "GET /health HTTP/1.1" 200 OK
+(APIServer pid=57) INFO 09-17 15:47:25 [loggers.py:273] Engine 000: Avg prompt throughput: 0.0 tokens/s, Avg generation throughput: 0.0 tokens/s, Running: 0 reqs, Waiting: 0 reqs, GPU KV cache usage: 0.0%, Prefix cache hit rate: 0.0%
+(APIServer pid=57) INFO:     127.0.0.1:36856 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45748 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35778 - "POST /recognize HTTP/1.1" 200 OK
+INFO:     172.20.0.2:42640 - "POST /v1/ocr/recognize HTTP/1.1" 200 OK
+(APIServer pid=57) INFO:     127.0.0.1:43820 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36516 - "GET /health HTTP/1.1" 200 OK
+(APIServer pid=57) INFO 09-17 15:47:45 [loggers.py:273] Engine 000: Avg prompt throughput: 151.7 tokens/s, Avg generation throughput: 42.5 tokens/s, Running: 1 reqs, Waiting: 0 reqs, GPU KV cache usage: 1.0%, Prefix cache hit rate: 0.0%
+(APIServer pid=57) INFO:     127.0.0.1:43810 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+[33mResized image size (3060x4080) exceeds max_side_limit of 4000. Resizing to fit within limit.[0m
+(APIServer pid=57) INFO:     127.0.0.1:47268 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44856 - "GET /health HTTP/1.1" 200 OK
+(APIServer pid=57) INFO 09-17 15:47:55 [loggers.py:273] Engine 000: Avg prompt throughput: 0.0 tokens/s, Avg generation throughput: 17.5 tokens/s, Running: 0 reqs, Waiting: 0 reqs, GPU KV cache usage: 0.0%, Prefix cache hit rate: 0.0%
+(APIServer pid=57) INFO:     127.0.0.1:44632 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56512 - "GET /health HTTP/1.1" 200 OK
+(APIServer pid=57) INFO 09-17 15:48:05 [loggers.py:273] Engine 000: Avg prompt throughput: 0.0 tokens/s, Avg generation throughput: 0.0 tokens/s, Running: 0 reqs, Waiting: 0 reqs, GPU KV cache usage: 0.0%, Prefix cache hit rate: 0.0%
+(APIServer pid=57) INFO:     127.0.0.1:44420 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51796 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35778 - "POST /recognize HTTP/1.1" 200 OK
+INFO:     172.20.0.2:42640 - "POST /v1/ocr/recognize HTTP/1.1" 200 OK
+(APIServer pid=57) INFO:     127.0.0.1:54736 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45880 - "GET /health HTTP/1.1" 200 OK
+(APIServer pid=57) INFO 09-17 15:48:25 [loggers.py:273] Engine 000: Avg prompt throughput: 151.7 tokens/s, Avg generation throughput: 65.9 tokens/s, Running: 1 reqs, Waiting: 0 reqs, GPU KV cache usage: 1.0%, Prefix cache hit rate: 0.0%
+(APIServer pid=57) INFO:     127.0.0.1:54732 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+[33mResized image size (3060x4080) exceeds max_side_limit of 4000. Resizing to fit within limit.[0m
+(APIServer pid=57) INFO:     127.0.0.1:55962 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40222 - "GET /health HTTP/1.1" 200 OK
+(APIServer pid=57) INFO 09-17 15:48:35 [loggers.py:273] Engine 000: Avg prompt throughput: 0.0 tokens/s, Avg generation throughput: 18.4 tokens/s, Running: 0 reqs, Waiting: 0 reqs, GPU KV cache usage: 0.0%, Prefix cache hit rate: 0.0%
+(APIServer pid=57) INFO:     127.0.0.1:46766 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52464 - "GET /health HTTP/1.1" 200 OK
+(APIServer pid=57) INFO 09-17 15:48:45 [loggers.py:273] Engine 000: Avg prompt throughput: 0.0 tokens/s, Avg generation throughput: 0.0 tokens/s, Running: 0 reqs, Waiting: 0 reqs, GPU KV cache usage: 0.0%, Prefix cache hit rate: 0.0%
+(APIServer pid=57) INFO:     127.0.0.1:47982 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52920 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33526 - "POST /recognize HTTP/1.1" 200 OK
+INFO:     172.20.0.2:42640 - "POST /v1/ocr/recognize HTTP/1.1" 200 OK
+(APIServer pid=57) INFO 09-17 15:49:05 [loggers.py:273] Engine 000: Avg prompt throughput: 151.7 tokens/s, Avg generation throughput: 62.5 tokens/s, Running: 1 reqs, Waiting: 0 reqs, GPU KV cache usage: 1.0%, Prefix cache hit rate: 0.0%
+(APIServer pid=57) INFO:     127.0.0.1:41716 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47230 - "GET /health HTTP/1.1" 200 OK
+(APIServer pid=57) INFO:     127.0.0.1:41712 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+[33mResized image size (3060x4080) exceeds max_side_limit of 4000. Resizing to fit within limit.[0m
+(APIServer pid=57) INFO 09-17 15:49:15 [loggers.py:273] Engine 000: Avg prompt throughput: 0.0 tokens/s, Avg generation throughput: 7.2 tokens/s, Running: 0 reqs, Waiting: 0 reqs, GPU KV cache usage: 0.0%, Prefix cache hit rate: 0.0%
+(APIServer pid=57) INFO:     127.0.0.1:45874 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:41566 - "GET /health HTTP/1.1" 200 OK
+(APIServer pid=57) INFO 09-17 15:49:25 [loggers.py:273] Engine 000: Avg prompt throughput: 0.0 tokens/s, Avg generation throughput: 0.0 tokens/s, Running: 0 reqs, Waiting: 0 reqs, GPU KV cache usage: 0.0%, Prefix cache hit rate: 0.0%
+(APIServer pid=57) INFO:     127.0.0.1:37116 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54116 - "GET /health HTTP/1.1" 200 OK
+(APIServer pid=57) INFO:     127.0.0.1:42324 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38224 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40266 - "POST /recognize HTTP/1.1" 200 OK
+INFO:     172.20.0.2:42640 - "POST /v1/ocr/recognize HTTP/1.1" 200 OK
+(APIServer pid=57) INFO 09-17 15:49:45 [loggers.py:273] Engine 000: Avg prompt throughput: 151.7 tokens/s, Avg generation throughput: 62.7 tokens/s, Running: 1 reqs, Waiting: 0 reqs, GPU KV cache usage: 1.0%, Prefix cache hit rate: 0.0%
+(APIServer pid=57) INFO:     127.0.0.1:44578 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:42780 - "GET /health HTTP/1.1" 200 OK
+(APIServer pid=57) INFO:     127.0.0.1:44574 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+[33mResized image size (3060x4080) exceeds max_side_limit of 4000. Resizing to fit within limit.[0m
+(APIServer pid=57) INFO 09-17 15:49:55 [loggers.py:273] Engine 000: Avg prompt throughput: 0.0 tokens/s, Avg generation throughput: 15.8 tokens/s, Running: 0 reqs, Waiting: 0 reqs, GPU KV cache usage: 0.0%, Prefix cache hit rate: 0.0%
+(APIServer pid=57) INFO:     127.0.0.1:42806 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44616 - "GET /health HTTP/1.1" 200 OK
+(APIServer pid=57) INFO 09-17 15:50:05 [loggers.py:273] Engine 000: Avg prompt throughput: 0.0 tokens/s, Avg generation throughput: 0.0 tokens/s, Running: 0 reqs, Waiting: 0 reqs, GPU KV cache usage: 0.0%, Prefix cache hit rate: 0.0%
+(APIServer pid=57) INFO:     127.0.0.1:44492 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45574 - "GET /health HTTP/1.1" 200 OK
+(APIServer pid=57) INFO:     127.0.0.1:33076 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53042 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33060 - "POST /recognize HTTP/1.1" 200 OK
+INFO:     172.20.0.2:42640 - "POST /v1/ocr/recognize HTTP/1.1" 200 OK
+(APIServer pid=57) INFO 09-17 15:50:25 [loggers.py:273] Engine 000: Avg prompt throughput: 151.7 tokens/s, Avg generation throughput: 58.3 tokens/s, Running: 1 reqs, Waiting: 0 reqs, GPU KV cache usage: 1.0%, Prefix cache hit rate: 0.0%
+(APIServer pid=57) INFO:     127.0.0.1:45994 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52138 - "GET /health HTTP/1.1" 200 OK
+(APIServer pid=57) INFO:     127.0.0.1:45980 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+[33mResized image size (3060x4080) exceeds max_side_limit of 4000. Resizing to fit within limit.[0m
+(APIServer pid=57) INFO 09-17 15:50:35 [loggers.py:273] Engine 000: Avg prompt throughput: 0.0 tokens/s, Avg generation throughput: 9.1 tokens/s, Running: 0 reqs, Waiting: 0 reqs, GPU KV cache usage: 0.0%, Prefix cache hit rate: 0.0%
+(APIServer pid=57) INFO:     127.0.0.1:45054 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53132 - "GET /health HTTP/1.1" 200 OK
+(APIServer pid=57) INFO 09-17 15:50:45 [loggers.py:273] Engine 000: Avg prompt throughput: 0.0 tokens/s, Avg generation throughput: 0.0 tokens/s, Running: 0 reqs, Waiting: 0 reqs, GPU KV cache usage: 0.0%, Prefix cache hit rate: 0.0%
+(APIServer pid=57) INFO:     127.0.0.1:43134 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43472 - "GET /health HTTP/1.1" 200 OK
+(APIServer pid=57) INFO:     127.0.0.1:40162 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49690 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:37148 - "POST /recognize HTTP/1.1" 200 OK
+INFO:     172.20.0.2:42640 - "POST /v1/ocr/recognize HTTP/1.1" 200 OK
+(APIServer pid=57) INFO:     127.0.0.1:40162 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+[33mResized image size (3060x4080) exceeds max_side_limit of 4000. Resizing to fit within limit.[0m
+(APIServer pid=57) INFO 09-17 15:51:05 [loggers.py:273] Engine 000: Avg prompt throughput: 151.7 tokens/s, Avg generation throughput: 69.5 tokens/s, Running: 0 reqs, Waiting: 0 reqs, GPU KV cache usage: 0.0%, Prefix cache hit rate: 0.0%
+(APIServer pid=57) INFO:     127.0.0.1:40162 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43026 - "GET /health HTTP/1.1" 200 OK
+(APIServer pid=57) INFO 09-17 15:51:15 [loggers.py:273] Engine 000: Avg prompt throughput: 0.0 tokens/s, Avg generation throughput: 0.0 tokens/s, Running: 0 reqs, Waiting: 0 reqs, GPU KV cache usage: 0.0%, Prefix cache hit rate: 0.0%
+(APIServer pid=57) INFO:     127.0.0.1:52588 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40956 - "GET /health HTTP/1.1" 200 OK
+(APIServer pid=57) INFO:     127.0.0.1:42330 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54914 - "GET /health HTTP/1.1" 200 OK
+(APIServer pid=57) INFO:     127.0.0.1:58722 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46770 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51404 - "POST /recognize HTTP/1.1" 200 OK
+INFO:     172.20.0.2:42640 - "POST /v1/ocr/recognize HTTP/1.1" 200 OK
+(APIServer pid=57) INFO 09-17 15:51:45 [loggers.py:273] Engine 000: Avg prompt throughput: 151.7 tokens/s, Avg generation throughput: 89.4 tokens/s, Running: 1 reqs, Waiting: 0 reqs, GPU KV cache usage: 1.0%, Prefix cache hit rate: 0.0%
+(APIServer pid=57) INFO:     127.0.0.1:58722 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+[33mResized image size (3060x4080) exceeds max_side_limit of 4000. Resizing to fit within limit.[0m
+(APIServer pid=57) INFO:     127.0.0.1:58722 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60710 - "GET /health HTTP/1.1" 200 OK
+(APIServer pid=57) INFO 09-17 15:51:55 [loggers.py:273] Engine 000: Avg prompt throughput: 0.0 tokens/s, Avg generation throughput: 2.5 tokens/s, Running: 0 reqs, Waiting: 0 reqs, GPU KV cache usage: 0.0%, Prefix cache hit rate: 0.0%
+(APIServer pid=57) INFO:     127.0.0.1:46124 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43908 - "GET /health HTTP/1.1" 200 OK
+(APIServer pid=57) INFO 09-17 15:52:05 [loggers.py:273] Engine 000: Avg prompt throughput: 0.0 tokens/s, Avg generation throughput: 0.0 tokens/s, Running: 0 reqs, Waiting: 0 reqs, GPU KV cache usage: 0.0%, Prefix cache hit rate: 0.0%
+(APIServer pid=57) INFO:     127.0.0.1:43834 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48388 - "GET /health HTTP/1.1" 200 OK
+(APIServer pid=57) INFO:     127.0.0.1:44528 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49262 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:41974 - "POST /recognize HTTP/1.1" 200 OK
+INFO:     172.20.0.2:42640 - "POST /v1/ocr/recognize HTTP/1.1" 200 OK
+(APIServer pid=57) INFO 09-17 15:52:25 [loggers.py:273] Engine 000: Avg prompt throughput: 151.7 tokens/s, Avg generation throughput: 54.1 tokens/s, Running: 1 reqs, Waiting: 0 reqs, GPU KV cache usage: 1.0%, Prefix cache hit rate: 0.0%
+(APIServer pid=57) INFO:     127.0.0.1:52896 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35362 - "GET /health HTTP/1.1" 200 OK
+(APIServer pid=57) INFO:     127.0.0.1:44528 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+[33mResized image size (3060x4080) exceeds max_side_limit of 4000. Resizing to fit within limit.[0m
+(APIServer pid=57) INFO 09-17 15:52:35 [loggers.py:273] Engine 000: Avg prompt throughput: 0.0 tokens/s, Avg generation throughput: 18.1 tokens/s, Running: 0 reqs, Waiting: 0 reqs, GPU KV cache usage: 0.0%, Prefix cache hit rate: 0.0%
+(APIServer pid=57) INFO:     127.0.0.1:51756 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39766 - "GET /health HTTP/1.1" 200 OK
+(APIServer pid=57) INFO 09-17 15:52:45 [loggers.py:273] Engine 000: Avg prompt throughput: 0.0 tokens/s, Avg generation throughput: 0.0 tokens/s, Running: 0 reqs, Waiting: 0 reqs, GPU KV cache usage: 0.0%, Prefix cache hit rate: 0.0%
+(APIServer pid=57) INFO:     127.0.0.1:54134 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49016 - "GET /health HTTP/1.1" 200 OK
+(APIServer pid=57) INFO:     127.0.0.1:47098 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60432 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43984 - "POST /recognize HTTP/1.1" 200 OK
+INFO:     172.20.0.2:42640 - "POST /v1/ocr/recognize HTTP/1.1" 200 OK
+(APIServer pid=57) INFO 09-17 15:53:05 [loggers.py:273] Engine 000: Avg prompt throughput: 151.7 tokens/s, Avg generation throughput: 54.8 tokens/s, Running: 1 reqs, Waiting: 0 reqs, GPU KV cache usage: 1.0%, Prefix cache hit rate: 0.0%
+(APIServer pid=57) INFO:     127.0.0.1:40372 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45220 - "GET /health HTTP/1.1" 200 OK
+(APIServer pid=57) INFO:     127.0.0.1:47098 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+[33mResized image size (3060x4080) exceeds max_side_limit of 4000. Resizing to fit within limit.[0m
+(APIServer pid=57) INFO 09-17 15:53:15 [loggers.py:273] Engine 000: Avg prompt throughput: 0.0 tokens/s, Avg generation throughput: 78.1 tokens/s, Running: 0 reqs, Waiting: 0 reqs, GPU KV cache usage: 0.0%, Prefix cache hit rate: 0.0%
+(APIServer pid=57) INFO:     127.0.0.1:39442 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44736 - "GET /health HTTP/1.1" 200 OK
+(APIServer pid=57) INFO 09-17 15:53:25 [loggers.py:273] Engine 000: Avg prompt throughput: 0.0 tokens/s, Avg generation throughput: 0.0 tokens/s, Running: 0 reqs, Waiting: 0 reqs, GPU KV cache usage: 0.0%, Prefix cache hit rate: 0.0%
+(APIServer pid=57) INFO:     127.0.0.1:52324 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53160 - "GET /health HTTP/1.1" 200 OK
+(APIServer pid=57) INFO:     127.0.0.1:48274 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35752 - "GET /health HTTP/1.1" 200 OK
+(APIServer pid=57) INFO:     127.0.0.1:32946 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33774 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35348 - "POST /recognize HTTP/1.1" 200 OK
+INFO:     172.20.0.2:42640 - "POST /v1/ocr/recognize HTTP/1.1" 200 OK
+(APIServer pid=57) INFO 09-17 15:53:55 [loggers.py:273] Engine 000: Avg prompt throughput: 151.7 tokens/s, Avg generation throughput: 90.1 tokens/s, Running: 1 reqs, Waiting: 0 reqs, GPU KV cache usage: 1.0%, Prefix cache hit rate: 0.0%
+(APIServer pid=57) INFO:     127.0.0.1:32946 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+[33mResized image size (3060x4080) exceeds max_side_limit of 4000. Resizing to fit within limit.[0m
+(APIServer pid=57) INFO:     127.0.0.1:32946 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59196 - "GET /health HTTP/1.1" 200 OK
+(APIServer pid=57) INFO 09-17 15:54:05 [loggers.py:273] Engine 000: Avg prompt throughput: 0.0 tokens/s, Avg generation throughput: 2.0 tokens/s, Running: 0 reqs, Waiting: 0 reqs, GPU KV cache usage: 0.0%, Prefix cache hit rate: 0.0%
+(APIServer pid=57) INFO:     127.0.0.1:56100 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49640 - "GET /health HTTP/1.1" 200 OK
+(APIServer pid=57) INFO 09-17 15:54:15 [loggers.py:273] Engine 000: Avg prompt throughput: 0.0 tokens/s, Avg generation throughput: 0.0 tokens/s, Running: 0 reqs, Waiting: 0 reqs, GPU KV cache usage: 0.0%, Prefix cache hit rate: 0.0%
+(APIServer pid=57) INFO:     127.0.0.1:43614 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33800 - "GET /health HTTP/1.1" 200 OK
+(APIServer pid=57) INFO:     127.0.0.1:36818 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46374 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:42524 - "POST /recognize HTTP/1.1" 200 OK
+INFO:     172.20.0.2:42640 - "POST /v1/ocr/recognize HTTP/1.1" 200 OK
+(APIServer pid=57) INFO:     127.0.0.1:60438 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35770 - "GET /health HTTP/1.1" 200 OK
+(APIServer pid=57) INFO:     127.0.0.1:43012 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36584 - "GET /health HTTP/1.1" 200 OK
+(APIServer pid=57) INFO:     127.0.0.1:57278 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33912 - "GET /health HTTP/1.1" 200 OK
+(APIServer pid=57) INFO:     127.0.0.1:46598 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34696 - "GET /health HTTP/1.1" 200 OK

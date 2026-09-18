@@ -1,0 +1,83 @@
+{
+  "store": "COSTCO",
+  "branch": "Rego Park #1070",
+  "address": "61-35 Junction Blvd, Rego Park, NY 11374",
+  "country": null,
+  "currency": "USD",
+  "local_time": "2026-01-20 15:48:00",
+  "total": "96.42",
+  "lines": [
+    {
+      "name": "E 2338 WHITE PEACH",
+      "standard_name": "WHITE PEACH",
+      "kind": "product",
+      "weight_g": null,
+      "quantity": null,
+      "quantity_unit": null,
+      "unit_price": null,
+      "amount": "11.99",
+      "confidence": null,
+      "discount_target_index": null,
+      "box": [
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "E 96493 B/S ATL SALM",
+      "standard_name": "B/S ATL SALM",
+      "kind": "product",
+      "weight_g": null,
+      "quantity": null,
+      "quantity_unit": null,
+      "unit_price": null,
+      "amount": "41.21",
+      "confidence": null,
+      "discount_target_index": null,
+      "box": [
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "E 24070 SEABASS",
+      "standard_name": "SEABASS",
+      "kind": "product",
+      "weight_g": null,
+      "quantity": null,
+      "quantity_unit": null,
+      "unit_price": null,
+      "amount": "43.22",
+      "confidence": null,
+      "discount_target_index": null,
+      "box": [
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "TAX",
+      "standard_name": null,
+      "kind": "tax",
+      "weight_g": null,
+      "quantity": null,
+      "quantity_unit": null,
+      "unit_price": null,
+      "amount": "0.00",
+      "confidence": null,
+      "discount_target_index": null,
+      "box": [
+        0,
+        0,
+        0,
+        0
+      ]
+    }
+  ]
+}

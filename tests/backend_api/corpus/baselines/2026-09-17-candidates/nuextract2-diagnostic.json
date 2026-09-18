@@ -1,0 +1,50 @@
+{
+  "receipt_id": "4fc6a91b-faba-4d3e-82a3-be4c78270e99",
+  "purpose": "Raw schema-only diagnostic, bypasses receipt relation validation; NOT a benchmark pass",
+  "response": {
+    "id": "chatcmpl-a43cd9759c571d8d",
+    "object": "chat.completion",
+    "created": 1789617398,
+    "model": "nuextract2-8b",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "{\"store\": null, \"branch\": \"Rego Park #1070\", \"address\": \"61-35 Junction Blvd\", \"country\": \"US\", \"currency\": \"USD\", \"local_time\": \"2026-08-20T15:33:00\", \"total\": \"55.28\", \"lines\": [{\"name\": \"EXC GS DOWN\", \"standard_name\": null, \"kind\": \"product\", \"quantity\": \"50.77\", \"quantity_unit\": null, \"unit_price\": null, \"amount\": \"50.77\", \"confidence\": null, \"discount_target_index\": null, \"review_notes\": [], \"sku\": null, \"tax_code\": null, \"is_weighed\": false, \"evidence\": [], \"package_weight\": null, \"package_weight_unit\": null, \"amount_basis\": \"net_including_item_discounts\"}, {\"name\": \"SUBTOTAL\", \"standard_name\": null, \"kind\": \"product\", \"quantity\": \"50.77\", \"quantity_unit\": null, \"unit_price\": null, \"amount\": \"50.77\", \"confidence\": null, \"discount_target_index\": null, \"review_notes\": [], \"sku\": null, \"tax_code\": null, \"is_weighed\": false, \"evidence\": [], \"package_weight\": null, \"package_weight_unit\": null, \"amount_basis\": \"net_including_item_discounts\"}, {\"name\": \"TAX\", \"standard_name\": null, \"kind\": \"tax\", \"quantity\": \"4.51\", \"quantity_unit\": null, \"unit_price\": null, \"amount\": \"4.51\", \"confidence\": null, \"discount_target_index\": null, \"review_notes\": [], \"sku\": null, \"tax_code\": null, \"is_weighed\": false, \"evidence\": [], \"package_weight\": null, \"package_weight_unit\": null, \"amount_basis\": \"net_including_item_discounts\"}]}",
+          "refusal": null,
+          "annotations": null,
+          "audio": null,
+          "function_call": null,
+          "reasoning": null
+        },
+        "logprobs": null,
+        "finish_reason": "stop",
+        "stop_reason": null,
+        "token_ids": null,
+        "routed_experts": null
+      }
+    ],
+    "service_tier": null,
+    "system_fingerprint": "vllm-0.23.1rc1.dev541+g7aaf016a1-ea3ca977",
+    "usage": {
+      "prompt_tokens": 8110,
+      "completion_tokens": 433,
+      "total_tokens": 8543
+    },
+    "prompt_logprobs": null,
+    "prompt_token_ids": null,
+    "prompt_text": null,
+    "kv_transfer_params": null,
+    "receipt_vision": {
+      "model": "nuextract2-8b",
+      "protocol": "nuextract2",
+      "prompt_version": "vision-v7",
+      "prompt_profile": "costco",
+      "prompt_sha256": "7858fcc7a1dd53239905702ce9d891a2954b4640c6c22c3252db54d04ca25fca",
+      "image_count": 1,
+      "attempts": 1,
+      "arithmetic_mismatch": null
+    }
+  }
+}

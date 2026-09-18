@@ -1,0 +1,54 @@
+{
+  "id": "3a8e3c19",
+  "sha256": "6ed691ef1ce53bbe2bc6b3daffcae00997616334d50b9ba7361f33bb4ebe3971",
+  "duration_seconds": 49.2,
+  "response": {
+    "id": "chatcmpl-92773c858c1c2b1c",
+    "object": "chat.completion",
+    "created": 1789613236,
+    "model": "qwen3-vl-8b-instruct",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "{\n  \"store\": null,\n  \"branch\": \"Rego Park #1070\",\n  \"address\": \"61-35 Junction Blvd Rego Park, NY 11374\",\n  \"country\": \"US\",\n  \"currency\": \"USD\",\n  \"local_time\": \"2025-07-10 16:13:00\",\n  \"total\": \"256.70\",\n  \"lines\": [\n    {\n      \"name\": \"OMGA3 FSHOIL\",\n      \"standard_name\": null,\n      \"kind\": \"product\",\n      \"quantity\": null,\n      \"quantity_unit\": null,\n      \"unit_price\": null,\n      \"amount\": \"29.99\",\n      \"confidence\": null,\n      \"discount_target_index\": null,\n      \"review_notes\": [],\n      \"sku\": \"1683859\",\n      \"tax_code\": null,\n      \"is_weighed\": false,\n      \"evidence\": [],\n      \"package_weight\": null,\n      \"package_weight_unit\": null,\n      \"amount_basis\": \"gross\"\n    },\n    {\n      \"name\": \"KS B12 SUBL.\",\n      \"standard_name\": null,\n      \"kind\": \"product\",\n      \"quantity\": null,\n      \"quantity_unit\": null,\n      \"unit_price\": null,\n      \"amount\": \"18.99\",\n      \"confidence\": null,\n      \"discount_target_index\": null,\n      \"review_notes\": [],\n      \"sku\": \"690843\",\n      \"tax_code\": null,\n      \"is_weighed\": false,\n      \"evidence\": [],\n      \"package_weight\": null,\n      \"package_weight_unit\": null,\n      \"amount_basis\": \"gross\"\n    },\n    {\n      \"name\": \"NINJA CRISPI\",\n      \"standard_name\": null,\n      \"kind\": \"product\",\n      \"quantity\": null,\n      \"quantity_unit\": null,\n      \"unit_price\": null,\n      \"amount\": \"159.99\",\n      \"confidence\": null,\n      \"discount_target_index\": null,\n      \"review_notes\": [],\n      \"sku\": \"1898552\",\n      \"tax_code\": \"A\",\n      \"is_weighed\": false,\n      \"evidence\": [],\n      \"package_weight\": null,\n      \"package_weight_unit\": null,\n      \"amount_basis\": \"gross\"\n    },\n    {\n      \"name\": \"OCEAN MIST\",\n      \"standard_name\": null,\n      \"kind\": \"product\",\n      \"quantity\": null,\n      \"quantity_unit\": null,\n      \"unit_price\": null,\n      \"amount\": \"19.99\",\n      \"confidence\": null,\n      \"discount_target_index\": null,\n      \"review_notes\": [],\n      \"sku\": \"1121864\",\n      \"tax_code\": \"A\",\n      \"is_weighed\": false,\n      \"evidence\": [],\n      \"package_weight\": null,\n      \"package_weight_unit\": null,\n      \"amount_basis\": \"gross\"\n    },\n    {\n      \"name\": \"OCEAN MIST\",\n      \"standard_name\": null,\n      \"kind\": \"product\",\n      \"quantity\": null,\n      \"quantity_unit\": null,\n      \"unit_price\": null,\n      \"amount\": \"19.99\",\n      \"confidence\": null,\n      \"discount_target_index\": null,\n      \"review_notes\": [],\n      \"sku\": \"1121864\",\n      \"tax_code\": \"A\",\n      \"is_weighed\": false,\n      \"evidence\": [],\n      \"package_weight\": null,\n      \"package_weight_unit\": null,\n      \"amount_basis\": \"gross\"\n    },\n    {\n      \"name\": \"OCEAN MIST\",\n      \"standard_name\": null,\n      \"kind\": \"item_discount\",\n      \"quantity\": null,\n      \"quantity_unit\": null,\n      \"unit_price\": null,\n      \"amount\": \"5.00\",\n      \"confidence\": null,\n      \"discount_target_index\": 3,\n      \"review_notes\": [],\n      \"sku\": null,\n      \"tax_code\": null,\n      \"is_weighed\": false,\n      \"evidence\": [],\n      \"package_weight\": null,\n      \"package_weight_unit\": null,\n      \"amount_basis\": \"gross\"\n    },\n    {\n      \"name\": \"OCEAN MIST\",\n      \"standard_name\": null,\n      \"kind\": \"item_discount\",\n      \"quantity\": null,\n      \"quantity_unit\": null,\n      \"unit_price\": null,\n      \"amount\": \"5.00\",\n      \"confidence\": null,\n      \"discount_target_index\": 4,\n      \"review_notes\": [],\n      \"sku\": null,\n      \"tax_code\": null,\n      \"is_weighed\": false,\n      \"evidence\": [],\n      \"package_weight\": null,\n      \"package_weight_unit\": null,\n      \"amount_basis\": \"gross\"\n    },\n    {\n      \"name\": \"TAX\",\n      \"standard_name\": null,\n      \"kind\": \"tax\",\n      \"quantity\": null,\n      \"quantity_unit\": null,\n      \"unit_price\": null,\n      \"amount\": \"17.75\",\n      \"confidence\": null,\n      \"discount_target_index\": null,\n      \"review_notes\": [],\n      \"sku\": null,\n      \"tax_code\": null,\n      \"is_weighed\": false,\n      \"evidence\": [],\n      \"package_weight\": null,\n      \"package_weight_unit\": null,\n      \"amount_basis\": \"gross\"\n    }\n  ]\n}",
+          "refusal": null,
+          "annotations": null,
+          "audio": null,
+          "function_call": null,
+          "reasoning": null
+        },
+        "logprobs": null,
+        "finish_reason": "stop",
+        "stop_reason": null,
+        "token_ids": null,
+        "routed_experts": null
+      }
+    ],
+    "service_tier": null,
+    "system_fingerprint": "vllm-0.23.1rc1.dev541+g7aaf016a1-d9f86fd0",
+    "usage": {
+      "prompt_tokens": 17874,
+      "completion_tokens": 2686,
+      "total_tokens": 20560
+    },
+    "prompt_logprobs": null,
+    "prompt_token_ids": null,
+    "prompt_text": null,
+    "kv_transfer_params": null,
+    "receipt_vision": {
+      "model": "qwen3-vl-8b-instruct",
+      "prompt_version": "vision-v7",
+      "prompt_profile": "costco",
+      "prompt_sha256": "7858fcc7a1dd53239905702ce9d891a2954b4640c6c22c3252db54d04ca25fca",
+      "image_count": 1,
+      "attempts": 2,
+      "arithmetic_mismatch": true
+    }
+  },
+  "errors": [
+    "sum of charges",
+    "individual discounts"
+  ]
+}
