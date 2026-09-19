@@ -4,70 +4,60 @@
     {
       "id": "8fc656c8-871e-4055-90c9-dd50d2df37af",
       "name": "99 Ranch",
-      "parser": "ranch99",
       "image": "8fc656c8-871e-4055-90c9-dd50d2df37af.png",
       "sha256": "a172e62e4b55084f93503d589d470321884bb4d6b1a41211248b9c69002af550"
     },
     {
       "id": "568fd6b3-1e5a-425f-bbb7-f28a6e746f73",
       "name": "Costco",
-      "parser": "costco",
       "image": "568fd6b3-1e5a-425f-bbb7-f28a6e746f73.png",
       "sha256": "8e4bcd3f85a271f2771f3e99061ef233e605355f137aea9a3d58e9a307cba8dc"
     },
     {
       "id": "d032dd1a-26e5-4a40-bcd0-a5b2d93a2a9f",
       "name": "Costco",
-      "parser": "costco",
       "image": "d032dd1a-26e5-4a40-bcd0-a5b2d93a2a9f.png",
       "sha256": "e3f5132bb2a21686fcd750f1d3441a703d0cdf6727b5111b89a9b24f872edc9a"
     },
     {
       "id": "dfbbab17-7d64-4bf4-bb04-eabec6f997db",
       "name": "Feilong",
-      "parser": "generic",
       "image": "dfbbab17-7d64-4bf4-bb04-eabec6f997db.png",
       "sha256": "e0024c757c2b6a02d0ec89e35c59f7d7472a30da387f61453d5d5a6bbfdfd038"
     },
     {
       "id": "b76ca143-1d0b-43ce-bbff-56170fb83ec4",
       "name": "H MART",
-      "parser": "hmart",
       "image": "b76ca143-1d0b-43ce-bbff-56170fb83ec4.png",
       "sha256": "f9846ac0d282163aa9424d6d381a0557c8f252451066e341fd4c3ce75c4edbaf"
     },
     {
       "id": "2785b7a4-2347-4172-98f6-17e59f15ccac",
       "name": "Hualian",
-      "parser": "hualian",
       "image": "2785b7a4-2347-4172-98f6-17e59f15ccac.png",
       "sha256": "46ed22bdcd5f6aa7a92e00f3d18b8e31d2bd38a853976d2c135462f96fd6fa1a"
     },
     {
       "id": "d497bf9c-58db-4672-bafc-1f8d3bddff8f",
       "name": "Hualian",
-      "parser": "hualian",
       "image": "d497bf9c-58db-4672-bafc-1f8d3bddff8f.png",
       "sha256": "b81c50949fbaa309b5e6a151be765aef5c46a1319aa079f5ac79d1b6cc309b47"
     },
     {
       "id": "6e9fed69-c50d-4140-8902-644d5f40581a",
       "name": "Target",
-      "parser": "generic",
       "image": "6e9fed69-c50d-4140-8902-644d5f40581a.png",
       "sha256": "c51a98cebcf4f1910819740e56d573eaaa49f0c487f104b06c17b8982e986c25"
     },
     {
       "id": "14911b95-ca00-4dd0-b08b-dc5ac3515fe8",
       "name": "skyFOODS",
-      "parser": "skyfoods",
       "image": "14911b95-ca00-4dd0-b08b-dc5ac3515fe8.png",
       "sha256": "244b4b493afa1f30a01a3f86cba69763daa3d42664d529ca6e936abb183889bf"
     },
     {
       "id": "95257097-8e3f-4c57-ad27-3d3d93292291",
       "name": "skyFOODS",
-      "parser": "skyfoods",
       "image": "95257097-8e3f-4c57-ad27-3d3d93292291.png",
       "sha256": "29326eb58444df4e760ecd00fbb3a97e3d1f06830a5ca25c0bbca7ac99cf6f64"
     }

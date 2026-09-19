@@ -1,0 +1,43 @@
+{
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "{\"reference_id\":\"r02\"}",
+        "reasoning_content": "The query shows the \"COSTCO WHOLESALE\" wordmark with the distinctive three horizontal lines to the left of \"WHOLESALE\". I need to compare against references.\n\nr03 and r02 both show the same COSTCO WHOLESALE logo with the three lines. r02 is a very clear match showing the full logo including the three lines and \"WHOLESALE\". r03 is also a match but slightly cropped at the bottom. Both are valid. The instruction says select any reference showing the same symbol/wordmark. r02 is the cleanest full match. I'll pick r02.\n\nLet me verify lettering: C-O-S-T-C-O with the bold rounded font, three lines, WHOLESALE. Yes r02 matches exactly.\n\nReturn r02.\n",
+        "refusal": null,
+        "role": "assistant"
+      }
+    }
+  ],
+  "created": 1789761907,
+  "id": "chatcmpl-b90dd52ce9f584fd",
+  "model": "qwen3.8-27b-ninfer-nvfp4",
+  "object": "chat.completion",
+  "timings": {
+    "cache_n": 0,
+    "draft_n": 183,
+    "draft_n_accepted": 125,
+    "predicted_ms": 1022.1618850000001,
+    "predicted_n": 186,
+    "predicted_per_second": 180.98894384033892,
+    "predicted_per_token_ms": 5.525199378378379,
+    "prompt_ms": 758.1435869999999,
+    "prompt_n": 3565,
+    "prompt_per_second": 4702.275480699938,
+    "prompt_per_token_ms": 0.2126629977559607
+  },
+  "usage": {
+    "completion_tokens": 186,
+    "completion_tokens_details": {
+      "reasoning_tokens": 176
+    },
+    "prompt_tokens": 3565,
+    "prompt_tokens_details": {
+      "cached_tokens": 0
+    },
+    "total_tokens": 3751
+  }
+}

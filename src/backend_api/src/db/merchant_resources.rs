@@ -28,7 +28,6 @@ pub(super) fn seed(store: &Store) -> Result<()> {
             || normalized(name) != name
             || name.is_empty()
             || media::hash(bytes) != text(sample, "sha256")?
-            || crate::parsing::profile(Some(name)) != text(sample, "parser")?
         {
             return Err(invalid());
         }

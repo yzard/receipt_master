@@ -1,0 +1,43 @@
+{
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "{\"reference_id\":\"r08\"}",
+        "reasoning_content": "The QUERY image shows a target-like symbol: a thick outer ring with a solid filled circle in the center, separated by a white gap. This is a distinctive concentric circle / bullseye mark.\n\nLooking at references:\n- r06: square bracket-like symbol, no.\n- r09: skyFOODS wordmark, no.\n- r07: hualian supermarket, no.\n- r01: 99 with laurel wreath, no.\n- r03: COSTCO, no.\n- r10: skyFOODS, no.\n- r04: Fei Long, no.\n- r08: same bullseye / concentric circle symbol with outer ring and center dot. Yes, matches.\n- r05: MART, no.\n- r02: COSTCO, no.\n\nSo r08 matches the query symbol exactly (concentric ring + center dot). Return r08.\n",
+        "refusal": null,
+        "role": "assistant"
+      }
+    }
+  ],
+  "created": 1789761956,
+  "id": "chatcmpl-bb9aea1aa1a64650",
+  "model": "qwen3.8-27b-ninfer-nvfp4",
+  "object": "chat.completion",
+  "timings": {
+    "cache_n": 0,
+    "draft_n": 204,
+    "draft_n_accepted": 155,
+    "predicted_ms": 1140.463336,
+    "predicted_n": 223,
+    "predicted_per_second": 194.65772637516864,
+    "predicted_per_token_ms": 5.137222234234234,
+    "prompt_ms": 813.997081,
+    "prompt_n": 3949,
+    "prompt_per_second": 4851.3687483358435,
+    "prompt_per_token_ms": 0.20612739453026083
+  },
+  "usage": {
+    "completion_tokens": 223,
+    "completion_tokens_details": {
+      "reasoning_tokens": 213
+    },
+    "prompt_tokens": 3949,
+    "prompt_tokens_details": {
+      "cached_tokens": 0
+    },
+    "total_tokens": 4172
+  }
+}

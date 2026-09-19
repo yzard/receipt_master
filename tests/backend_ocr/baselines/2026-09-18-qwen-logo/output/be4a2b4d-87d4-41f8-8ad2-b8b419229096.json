@@ -1,0 +1,43 @@
+{
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "{\"reference_id\":\"r08\"}",
+        "reasoning_content": "The query image shows a simple logo: a thick black ring (circle outline) with a solid black dot in the center. This is a concentric circle / target-like symbol.\n\nLooking at the references:\n- r08: Shows exactly the same symbol — a thick black ring with a solid black dot in the center. This matches the query perfectly.\n- r04: Fei Long Market text logo.\n- r03: Costco Wholesale.\n- r09: skyFOODS.\n- r06: A square-ish symbol.\n- r07: hualian supermarket.\n- r10: skyFOODS.\n- r05: MART.\n- r01: 99 with laurel wreath.\n- r02: Costco Wholesale.\n\nThe query matches r08 clearly. Both are the same concentric circle logo (a ring with a center dot). The differences are just paper texture, creases, and ink darkness, which we are told to ignore.\n\nThus the answer is r08.\n",
+        "refusal": null,
+        "role": "assistant"
+      }
+    }
+  ],
+  "created": 1789761373,
+  "id": "chatcmpl-cca487837825cb0e",
+  "model": "qwen3.8-27b-ninfer-nvfp4",
+  "object": "chat.completion",
+  "timings": {
+    "cache_n": 0,
+    "draft_n": 219,
+    "draft_n_accepted": 164,
+    "predicted_ms": 1747.743744,
+    "predicted_n": 238,
+    "predicted_per_second": 135.6034034243409,
+    "predicted_per_token_ms": 7.37444617721519,
+    "prompt_ms": 1156.780939,
+    "prompt_n": 4003,
+    "prompt_per_second": 3460.4650414282114,
+    "prompt_per_token_ms": 0.28897850087434424
+  },
+  "usage": {
+    "completion_tokens": 238,
+    "completion_tokens_details": {
+      "reasoning_tokens": 228
+    },
+    "prompt_tokens": 4003,
+    "prompt_tokens_details": {
+      "cached_tokens": 0
+    },
+    "total_tokens": 4241
+  }
+}

@@ -148,10 +148,11 @@ pub fn extract(body: Value, model: &str) -> Result<Input, AppError> {
         validator,
     })
 }
-async fn raw_call(state: &State, url: &str, body: Value) -> Result<Value, AppError> {
+pub(crate) async fn raw_call(state: &State, url: &str, body: Value) -> Result<Value, AppError> {
+    let _guard = state.lock.acquire().await.expect("inference semaphore");
     let result: Value = state
         .client
-        .post(format!("{}/v1/ocr/recognize", url.trim_end_matches('/')))
+        .post(format!("{}/v1/chat/completions", url.trim_end_matches('/')))
         .json(&body)
         .send()
         .await
@@ -166,34 +167,65 @@ async fn raw_call(state: &State, url: &str, body: Value) -> Result<Value, AppErr
         })?;
     Ok(result)
 }
-/// Read all photos using both OCR engines; no receipt interpretation happens upstream.
-pub async fn read_ocr(state: &State, images: &[String]) -> Result<Value, AppError> {
-    let _guard = state.lock.acquire().await.expect("inference semaphore");
-    let content: Vec<_> = images
-        .iter()
-        .map(|image| json!({"type":"image_url","image_url":{"url":image}}))
-        .collect();
-    let result=raw_call(state,&state.config.ocr.url,json!({"model":state.config.ocr.model,"messages":[{"role":"user","content":content}],"max_tokens":state.config.ocr.output_tokens})).await?;
-    let pages = result["pages"]
-        .as_array()
-        .ok_or_else(|| structured("Missing dual OCR pages"))?;
-    if pages.len() != images.len()
-        || pages
-            .iter()
-            .any(|p| !p["unlimited"].is_string() || !p["paddle"]["words"].is_array())
-    {
-        return Err(structured("Incomplete dual OCR pages"));
+/// Decode one complete JSON object; only a whole-response Markdown fence is tolerated.
+pub fn decode_content(raw: &Value) -> Result<Value, AppError> {
+    if raw["choices"][0]["finish_reason"] != "stop" {
+        return Err(structured("Incomplete model output"));
     }
-    Ok(result)
+    let content = raw["choices"][0]["message"]["content"]
+        .as_str()
+        .ok_or_else(|| structured("Missing model content"))?
+        .trim();
+    let content = if content.starts_with("```") {
+        let (header, rest) = content
+            .split_once('\n')
+            .ok_or_else(|| structured("Invalid JSON fence"))?;
+        if !matches!(header.trim(), "```" | "```json") {
+            return Err(structured("Invalid JSON fence"));
+        }
+        rest.strip_suffix("```")
+            .ok_or_else(|| structured("Invalid JSON fence"))?
+            .trim()
+    } else {
+        content
+    };
+    let value: Value =
+        serde_json::from_str(content).map_err(|_| structured("Invalid model JSON"))?;
+    if !value.is_object() {
+        return Err(structured("Model output must be an object"));
+    }
+    Ok(value)
+}
+/// Project extra metadata out of the model boundary, without changing recognized field values.
+/// Required fields, types, amounts, references and evidence are still strictly validated.
+pub fn normalize_output(raw: &Value) -> Result<(Value, Vec<String>), AppError> {
+    fn project(value: &mut Value, schema: &Value, path: &str, removed: &mut Vec<String>) {
+        if let (Some(object), Some(properties)) =
+            (value.as_object_mut(), schema["properties"].as_object())
+        {
+            object.retain(|key, _| {
+                let keep = properties.contains_key(key);
+                if !keep {
+                    removed.push(format!("{path}/{key}"));
+                }
+                keep
+            });
+            for (key, value) in object {
+                project(value, &properties[key], &format!("{path}/{key}"), removed);
+            }
+        } else if let Some(array) = value.as_array_mut() {
+            for (i, value) in array.iter_mut().enumerate() {
+                project(value, &schema["items"], &format!("{path}/{i}"), removed);
+            }
+        }
+    }
+    let mut data = decode_content(raw)?;
+    let schema: Value = serde_json::from_str(include_str!("receipt_schema.json")).unwrap();
+    let mut removed = Vec::new();
+    project(&mut data, &schema, "", &mut removed);
+    Ok((data, removed))
 }
 pub async fn recognize(state: Arc<State>, body: Value) -> Result<Value, AppError> {
-    recognize_with_ocr(state, body, None).await
-}
-pub async fn recognize_with_ocr(
-    state: Arc<State>,
-    body: Value,
-    cached: Option<Value>,
-) -> Result<Value, AppError> {
     let model = state.config.served_model.clone();
     let input = tokio::task::spawn_blocking(move || extract(body, &model))
         .await
@@ -203,47 +235,78 @@ pub async fn recognize_with_ocr(
             "Too many photos; no photos were dropped.",
         ));
     }
-    let raw = match cached {
-        Some(raw) => raw,
-        None => read_ocr(&state, &input.images).await?,
-    };
-    let pages = raw["pages"]
-        .as_array()
-        .ok_or_else(|| structured("Missing OCR pages"))?;
-    if pages.len() != input.images.len() {
-        return Err(structured("OCR page count mismatch"));
+    let (mut prompt, profile) = state.prompts.select(input.known_store.as_deref());
+    prompt.push_str("\nReturn exactly one JSON object matching this schema. No code fences or extra keys. Unknown fields must use the schema's null form, never invent a field.\n");
+    prompt.push_str(include_str!("receipt_schema.json"));
+    let mut content = vec![
+        json!({"type":"text","text":format!("Known store from image alias catalog: {}",input.known_store.as_deref().unwrap_or("unknown"))}),
+    ];
+    for message in &input.prompts {
+        content.push(json!({"type":"text","text":message["content"]}));
     }
-    let data = crate::parsing::parse(pages, input.known_store.as_deref());
-    validate_receipt(&data, pages.len())?;
-    if data["lines"]
-        .as_array()
-        .is_none_or(|lines| lines.is_empty())
-    {
-        return Err(AppError::new(
-            502,
-            "empty_output",
-            "No receipt items could be parsed; review the photos or enter the receipt manually.",
-        ));
-    }
-    if let Some(validator) = input.validator
-        && !validator.is_valid(&data)
-    {
-        return Err(structured("Receipt does not satisfy the requested schema"));
-    }
-    let content = if input.format.is_some() {
-        data.to_string()
-    } else {
-        pages
+    content.extend(
+        input
+            .images
             .iter()
-            .map(|p| p["unlimited"].as_str().unwrap_or(""))
-            .collect::<Vec<_>>()
-            .join("\n")
-    };
-    Ok(
-        json!({"id":format!("receipt-{}",uuid::Uuid::new_v4()),"object":"chat.completion","model":state.config.served_model,
-        "choices":[{"index":0,"message":{"role":"assistant","content":content},"finish_reason":"stop"}],
-        "usage":raw["usage"],"receipt_parsing":{"version":"dual-ocr-v1","profile":crate::parsing::profile(input.known_store.as_deref()),"image_count":pages.len(),"arithmetic_mismatch":arithmetic_difference(&data).is_some()},"ocr":raw}),
-    )
+            .map(|image| json!({"type":"image_url","image_url":{"url":image}})),
+    );
+    let mut messages = vec![
+        json!({"role":"system","content":prompt}),
+        json!({"role":"user","content":content}),
+    ];
+    let mut runs = Vec::new();
+    for attempt in 0..=state.config.ocr.repair_attempts {
+        let raw = raw_call(
+            &state,
+            &state.config.ocr.url,
+            json!({
+                "model":state.config.ocr.model,"messages":messages,"temperature":0,"seed":42,
+                "max_tokens":state.config.ocr.output_tokens,"response_format":{"type":"text"},
+                "chat_template_kwargs":{"enable_thinking":state.config.ocr.thinking}
+            }),
+        )
+        .await?;
+        let result = normalize_output(&raw).and_then(|(data, removed)| {
+            validate_receipt(&data, input.images.len())?;
+            if data["lines"].as_array().is_none_or(|v| v.is_empty()) {
+                return Err(structured("No receipt items extracted"));
+            }
+            if input.validator.as_ref().is_some_and(|v| !v.is_valid(&data)) {
+                return Err(structured("Receipt does not satisfy the requested schema"));
+            }
+            Ok((data, removed))
+        });
+        runs.push(raw);
+        match result {
+            Ok((mut data, removed)) => {
+                if let Some((sum, total)) = arithmetic_difference(&data) {
+                    let difference = (sum - total).abs();
+                    let note = format!(
+                        "明细合计与票面总额相差 {}.{:03} {}，请核对。",
+                        difference / 1000,
+                        difference % 1000,
+                        data["currency"].as_str().unwrap_or("")
+                    );
+                    data["lines"][0]["review_notes"]
+                        .as_array_mut()
+                        .unwrap()
+                        .push(json!(note));
+                }
+                let usages = runs.iter().map(|r| r["usage"].clone()).collect::<Vec<_>>();
+                return Ok(
+                    json!({"id":format!("receipt-{}",uuid::Uuid::new_v4()),"object":"chat.completion","model":state.config.served_model,
+                    "choices":[{"index":0,"message":{"role":"assistant","content":data.to_string()},"finish_reason":"stop"}],
+                    "usage":aggregate_usage(&usages),"receipt_parsing":{"version":"qwen3.8-ninfer-v1","profile":profile,"image_count":input.images.len(),"thinking":state.config.ocr.thinking,"arithmetic_mismatch":arithmetic_difference(&data).is_some(),"removed_fields":removed},"model_runs":runs}),
+                );
+            }
+            Err(error) if attempt < state.config.ocr.repair_attempts => {
+                // Retry the original photos with schema feedback, never fabricate replacement values.
+                messages.push(json!({"role":"user","content":format!("Your previous response failed validation: {}. Reread the original images and return a COMPLETE JSON object using exactly the supplied schema. Do not add explanatory fields. Keep all real rows. Do not invent values to satisfy arithmetic.",error.message)}));
+            }
+            Err(error) => return Err(error),
+        }
+    }
+    unreachable!("bounded inference loop always returns")
 }
 fn structured(message: &'static str) -> AppError {
     AppError::new(502, "invalid_structured_output", message)
@@ -323,10 +386,36 @@ pub fn aggregate_usage(runs: &[Value]) -> Value {
 }
 
 /// Localize only the top store wordmark/logo; identity remains the image alias match.
-pub async fn locate_logo(state: Arc<State>, image: String) -> Result<String, AppError> {
-    let raw = read_ocr(&state, &[image]).await?;
-    Ok(raw["pages"][0]["unlimited"]
-        .as_str()
-        .ok_or_else(|| structured("Missing OCR layout"))?
-        .to_owned())
+pub async fn locate_logo(state: Arc<State>, image: String) -> Result<Value, AppError> {
+    let (image, header_height) =
+        tokio::task::spawn_blocking(move || crate::logos::localization_input(&image))
+            .await
+            .map_err(crate::db::io_error)??;
+    let raw = raw_call(&state, &state.config.ocr.url,json!({
+        "model":state.config.ocr.model,"messages":[{"role":"system","content":"Locate the complete store logo/wordmark in this receipt header, including all tightly grouped lines of the same logo, even if it is plain bold text. Exclude street address, phone, branch and item rows. Do NOT identify or output the store name. Return only JSON {\"box\":[left,top,right,bottom]} with integer coordinates normalized to 0..1000 relative to this header image: top-left is [0,0], bottom-right is [1000,1000]. Return {\"box\":null} if no reliable logo region is visible."},{"role":"user","content":[{"type":"image_url","image_url":{"url":image}}]}],
+        "max_tokens":4096,"temperature":0,"seed":42,"response_format":{"type":"text"},"chat_template_kwargs":{"enable_thinking":state.config.ocr.thinking}
+    })).await?;
+    let mut data = decode_content(&raw)?;
+    if data.get("box").is_none() {
+        return Err(structured("Missing logo box"));
+    }
+    if !data["box"].is_null() {
+        let b = data["box"]
+            .as_array()
+            .filter(|b| b.len() == 4)
+            .ok_or_else(|| structured("Invalid logo box"))?;
+        if b.iter().any(|v| v.as_u64().is_none_or(|v| v > 1000))
+            || b[0].as_f64() >= b[2].as_f64()
+            || b[1].as_f64() >= b[3].as_f64()
+        {
+            return Err(structured("Invalid logo box"));
+        }
+        data["box"] = json!([
+            b[0].as_f64().unwrap() / 1000.0,
+            b[1].as_f64().unwrap() / 1000.0 * header_height,
+            b[2].as_f64().unwrap() / 1000.0,
+            b[3].as_f64().unwrap() / 1000.0 * header_height
+        ]);
+    }
+    Ok(json!({"evidence":data,"usage":raw["usage"],"model_response":raw}))
 }

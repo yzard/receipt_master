@@ -670,65 +670,6 @@ fn saved_predictions_benchmark() {
 
 /// Offline ablation: each engine uses the same parser and corrected gold, without
 /// changing the production requirement that every request runs both OCR models.
-#[test]
-#[ignore = "requires a complete dual OCR report and confirmed snapshot"]
-fn isolated_ocr_benchmark() {
-    let source = std::env::var("RECEIPT_BENCH_SOURCE").unwrap();
-    let snapshot_path = std::env::var("RECEIPT_BENCH_SNAPSHOT").unwrap();
-    let output = std::env::var("RECEIPT_BENCH_OUTPUT").unwrap();
-    let engine = std::env::var("RECEIPT_BENCH_ENGINE").unwrap();
-    assert!(matches!(engine.as_str(), "unlimited" | "paddle" | "both"));
-    let report: Value = serde_json::from_slice(&fs::read(&source).unwrap()).unwrap();
-    let snapshot_bytes = fs::read(&snapshot_path).unwrap();
-    let snapshot: Value = serde_json::from_slice(&snapshot_bytes).unwrap();
-    let cases = snapshot["cases"].as_array().unwrap();
-    assert_eq!(report["cases"].as_array().unwrap().len(), cases.len());
-    let mut results = Vec::new();
-    for case in cases {
-        let row = report["cases"]
-            .as_array()
-            .unwrap()
-            .iter()
-            .find(|r| r["id"] == case["id"])
-            .expect("Missing source receipt");
-        assert_eq!(row["images"], case["images"], "Source photos changed");
-        let mut pages = row["ocr"]["pages"]
-            .as_array()
-            .expect("Missing dual OCR evidence")
-            .clone();
-        assert_eq!(pages.len(), case["images"].as_array().unwrap().len());
-        for page in &mut pages {
-            assert!(page["unlimited"].is_string());
-            assert!(page["paddle"]["words"].is_array());
-            match engine.as_str() {
-                "unlimited" => page["paddle"]["words"] = json!([]),
-                "paddle" => page["unlimited"] = json!(""),
-                _ => {}
-            }
-        }
-        let prediction =
-            receipt_backend_api::parsing::parse(&pages, case["expected"]["store"].as_str());
-        if engine == "both" {
-            assert_eq!(
-                prediction, row["prediction"],
-                "Offline parser differs from live deployment"
-            );
-        }
-        let result = score_prediction(prediction, case);
-        results.push(result);
-    }
-    fs::write(
-        output,
-        serde_json::to_vec_pretty(&json!({
-            "engine":engine,"source":source,"snapshot":snapshot_path,
-            "snapshot_sha256":format!("{:x}",Sha256::digest(&snapshot_bytes)),
-            "scored_at":chrono::Utc::now().to_rfc3339(),"cases":results
-        }))
-        .unwrap(),
-    )
-    .unwrap();
-}
-
 fn score_prediction(prediction: Value, case: &Value) -> Value {
     let mut result = json!({"id":case["id"],"images":case["images"],"prediction":prediction});
     let valid = receipt_backend_api::pipeline::validate_receipt(
@@ -768,7 +709,7 @@ fn candidate_comparison_benchmark() {
         serde_json::from_slice(&fs::read(std::env::var("RECEIPT_BENCH_SOURCE").unwrap()).unwrap())
             .unwrap();
     let mode = std::env::var("RECEIPT_BENCH_ENGINE").unwrap();
-    assert!(matches!(mode.as_str(), "both" | "candidate"));
+    assert_eq!(mode, "candidate");
     let cases = snapshot["cases"].as_array().unwrap();
     assert_eq!(cases.len(), source["cases"].as_array().unwrap().len());
     let mut results = Vec::new();
@@ -780,14 +721,7 @@ fn candidate_comparison_benchmark() {
             .find(|r| r["id"] == case["id"])
             .unwrap();
         assert_eq!(row["images"], case["images"]);
-        let prediction = if mode == "both" {
-            receipt_backend_api::parsing::parse(
-                row["ocr"]["pages"].as_array().unwrap(),
-                case["expected"]["store"].as_str(),
-            )
-        } else {
-            row["prediction"].clone()
-        };
+        let prediction = row["prediction"].clone();
         let mut result = score_prediction(prediction, case);
         result["duration_ms"] = row["duration_ms"].clone();
         result["failure"] = row["failure"].clone();

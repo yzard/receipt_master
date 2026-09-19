@@ -33,6 +33,7 @@ services:
     ports: ["0.0.0.0:5000:8000"]
     volumes:
       - ../playground/backend_api/config.yaml:/config/config.yaml:ro
+      - ../playground/backend_api/prompts.toml:/config/prompts.toml:ro
       - ../build/mobile:/artifacts:ro
       - ../playground/data:/data
     secrets: [ocr_api_key]

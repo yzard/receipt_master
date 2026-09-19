@@ -1,0 +1,43 @@
+{
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "{\"reference_id\":\"r02\"}",
+        "reasoning_content": "The query shows a \"COSTCO WHOLESALE\" wordmark with three horizontal lines to the left of \"WHOLESALE\". I need to find matching references. r03 and r02 both show the same COSTCO WHOLESALE logo with identical lettering and the three-line element. r03 is a cropped version but matches. r02 is a full match. Both are valid. I'll select r02 as the clearest full match, but r03 also matches. The instruction says select any reference showing the same symbol. I'll pick r02.\n",
+        "refusal": null,
+        "role": "assistant"
+      }
+    }
+  ],
+  "created": 1789761947,
+  "id": "chatcmpl-f6231aee41f82923",
+  "model": "qwen3.8-27b-ninfer-nvfp4",
+  "object": "chat.completion",
+  "timings": {
+    "cache_n": 0,
+    "draft_n": 129,
+    "draft_n_accepted": 92,
+    "predicted_ms": 721.248686,
+    "predicted_n": 136,
+    "predicted_per_second": 187.17538433061353,
+    "predicted_per_token_ms": 5.3425828592592595,
+    "prompt_ms": 764.377381,
+    "prompt_n": 3541,
+    "prompt_per_second": 4632.528497072312,
+    "prompt_per_token_ms": 0.2158648350748376
+  },
+  "usage": {
+    "completion_tokens": 136,
+    "completion_tokens_details": {
+      "reasoning_tokens": 126
+    },
+    "prompt_tokens": 3541,
+    "prompt_tokens_details": {
+      "cached_tokens": 0
+    },
+    "total_tokens": 3677
+  }
+}

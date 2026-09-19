@@ -7,7 +7,7 @@
 - 计划与验收：[docs/2nd_plan.md](docs/2nd_plan.md)
 - 接口与持久化：[docs/backend_api_v2.md](docs/backend_api_v2.md)
 - OCR/模型部署：[docs/backend_ocr.md](docs/backend_ocr.md)
-- 镜像内置商店 Logo 样本和 parser，空数据库首次启动即可使用；现有 Alias 不会因重启被覆盖。
+- 镜像内置商店 Logo 样本和可配置提示词，空数据库首次启动即可使用；现有 Alias 不会因重启被覆盖。
 
 ### 构建和运行
 
@@ -22,7 +22,7 @@
 
 - 宿主 `playground/data/` → API 容器 `/data`，存放 SQLite、原始照片、衍生图、OCR JSON 和备份。
 - `0.0.0.0:5000` → API 容器 `8000`；启动脚本打印实际宿主网络地址。手机使用同一网络可达的 host 和 port。
-- OCR 只在 Docker 内部网络通信；Unlimited-OCR、PP-OCRv6 medium 和 SuperPoint/LightGlue Logo 匹配权重打包在 OCR 镜像中，API 不运行模型。
+- OCR 只在 Docker 内部网络通信；Qwen3.8-27B NVFP4 模型权重（同时负责 Logo 图片匹配）打包在 OCR 镜像中，API 不运行模型。
 - 下载 `/receipt_master.apk`。安装包预置后端地址和认证密钥；设置页“检查客户端更新”从同一服务检查版本和哈希，再交 Android 安装器确认。
 - 试用密钥可从 APK 提取，持有者共享这个个人工作区。不要把它当多用户身份隔离。
 
@@ -40,4 +40,6 @@ OCR 模型、价格与预算提醒统一配置在 [playground/backend_api/config
 
 [真实票据测试与运行方式](tests/backend_api/corpus/README.md) · [修正确认数据后的 OCR 对比](docs/corrected_ocr_comparison.md) · [旧标准模型比较](docs/confirmed_ocr_comparison.md)
 
-当前：[双 OCR 与按店铺解析架构](docs/backend_ocr.md)。历史对照：[Unlimited-OCR / PP-OCRv6](docs/ocr_model_comparison.md)。
+当前：[Qwen3.8 / NInfer 与可配置提示架构](docs/backend_ocr.md)。历史对照：[Unlimited-OCR / PP-OCRv6](docs/ocr_model_comparison.md)。
+
+通用及商店提示配置：[playground/backend_api/prompts.toml](playground/backend_api/prompts.toml)，采用 `[[general]]` / `[[store]]`，修改后重启 API。模型开启 thinking，旧双 OCR 与 parser 已移除。

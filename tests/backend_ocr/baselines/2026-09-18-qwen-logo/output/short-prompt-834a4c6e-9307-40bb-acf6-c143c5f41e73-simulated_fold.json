@@ -1,0 +1,43 @@
+{
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "{\"reference_id\":\"r10\"}",
+        "reasoning_content": "The query shows \"skyFOODS\" with a leaf accent on the first O, tagline \"everyday fresh at low prices\" and Chinese characters below. Reference r09 and r10 both show the same \"skyFOODS\" wordmark with the leaf on the O and the same tagline and Chinese text. r09 is a partial crop but matches; r10 is a fuller match including the Chinese line. Both are valid. I'll pick r10 as the most complete match, but r09 also matches. The instruction says select any reference showing the same symbol/wordmark. I'll choose r10.\n",
+        "refusal": null,
+        "role": "assistant"
+      }
+    }
+  ],
+  "created": 1789761969,
+  "id": "chatcmpl-6b3763c4a85cf2da",
+  "model": "qwen3.8-27b-ninfer-nvfp4",
+  "object": "chat.completion",
+  "timings": {
+    "cache_n": 0,
+    "draft_n": 132,
+    "draft_n_accepted": 103,
+    "predicted_ms": 738.4256660000001,
+    "predicted_n": 146,
+    "predicted_per_second": 196.36370548366068,
+    "predicted_per_token_ms": 5.092590800000001,
+    "prompt_ms": 765.319327,
+    "prompt_n": 3637,
+    "prompt_per_second": 4752.2646713454815,
+    "prompt_per_token_ms": 0.21042599037668408
+  },
+  "usage": {
+    "completion_tokens": 146,
+    "completion_tokens_details": {
+      "reasoning_tokens": 136
+    },
+    "prompt_tokens": 3637,
+    "prompt_tokens_details": {
+      "cached_tokens": 0
+    },
+    "total_tokens": 3783
+  }
+}

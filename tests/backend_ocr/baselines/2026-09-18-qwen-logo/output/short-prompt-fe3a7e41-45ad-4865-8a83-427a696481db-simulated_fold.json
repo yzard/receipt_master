@@ -1,0 +1,43 @@
+{
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "{\"reference_id\":\"r06\"}",
+        "reasoning_content": "The QUERY image shows a bold, blocky symbol resembling a stylized \"G\" or \"C\" with an inner notch, made of thick black strokes. Looking at the references, r07 contains a \"hualian\" logo with a similar blocky \"G\"-like symbol on the left. r06 shows the exact same symbol as the query, isolated. The query matches the symbol in r06 and r07. The instruction says select any reference showing the same printed symbol. r06 is the closest identical symbol. r07 also contains it. I'll pick r06 as it's the exact same symbol. Both are valid; r06 is the pure symbol match.\n",
+        "refusal": null,
+        "role": "assistant"
+      }
+    }
+  ],
+  "created": 1789761979,
+  "id": "chatcmpl-1051a9227205be39",
+  "model": "qwen3.8-27b-ninfer-nvfp4",
+  "object": "chat.completion",
+  "timings": {
+    "cache_n": 0,
+    "draft_n": 162,
+    "draft_n_accepted": 104,
+    "predicted_ms": 908.094333,
+    "predicted_n": 157,
+    "predicted_per_second": 171.78832014581022,
+    "predicted_per_token_ms": 5.82111751923077,
+    "prompt_ms": 797.959368,
+    "prompt_n": 3805,
+    "prompt_per_second": 4768.41322075938,
+    "prompt_per_token_ms": 0.20971336872536137
+  },
+  "usage": {
+    "completion_tokens": 157,
+    "completion_tokens_details": {
+      "reasoning_tokens": 147
+    },
+    "prompt_tokens": 3805,
+    "prompt_tokens_details": {
+      "cached_tokens": 0
+    },
+    "total_tokens": 3962
+  }
+}

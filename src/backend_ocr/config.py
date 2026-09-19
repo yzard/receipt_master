@@ -1,4 +1,4 @@
-"""Validated, explicit container configuration."""
+"""Explicit single-engine NInfer container configuration."""
 
 import tomllib
 from pathlib import Path
@@ -12,20 +12,11 @@ class EngineConfig(BaseModel):
     path: str
     model: str
     port: int = Field(gt=0, le=65535)
-    memory_fraction: float = Field(gt=0, lt=1)
-    context_length: int = Field(gt=0)
+    context_length: int = Field(ge=8192)
     max_images: int = Field(gt=0)
-    max_batched_tokens: int = Field(gt=0)
     max_sequences: Literal[1]
-
-
-class PaddleConfig(BaseModel):
-    model_config = ConfigDict(extra="forbid")
-    python: str
-    port: int = Field(gt=0, le=65535)
-    detection_path: str
-    recognition_path: str
-    threads: int = Field(gt=0)
+    image_pixel_budget: int = Field(ge=65536, le=16777216)
+    draft_tokens: int = Field(ge=1, le=8)
 
 
 class ServerConfig(BaseModel):
@@ -33,13 +24,12 @@ class ServerConfig(BaseModel):
     port: int = Field(gt=0, le=65535)
     max_requests: Literal[1]
     timeout_seconds: int = Field(gt=0)
-    logo_model_path: str
+    idle_timeout_seconds: int = Field(gt=0)
     engine: EngineConfig
-    paddle: PaddleConfig
 
     @model_validator(mode="after")
     def ports_differ(self):
-        if len({self.port, self.engine.port, self.paddle.port}) != 3:
+        if self.port == self.engine.port:
             raise ValueError("Public and engine ports must differ")
         return self
 

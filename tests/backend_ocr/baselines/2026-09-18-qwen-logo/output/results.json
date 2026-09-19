@@ -1,0 +1,6354 @@
+[
+  {
+    "id": "be4a2b4d-87d4-41f8-8ad2-b8b419229096",
+    "kind": "real_photo",
+    "expected": "Target",
+    "path": "images/be4a2b4d-87d4-41f8-8ad2-b8b419229096.png",
+    "sha256": "29c3313656ce3d13158be10e2425a0a43d7f2b9a98005b43f6758223c199efe0",
+    "qwen": "Target",
+    "valid": true,
+    "error": null,
+    "cpu": null,
+    "qwen_correct": true,
+    "cpu_correct": false,
+    "qwen_seconds": 3.6321634670021012,
+    "cpu_seconds": 2.2110559360007755,
+    "scores": [
+      {
+        "id": "r08",
+        "score": 0.14027472562269241,
+        "evidence": 0.4,
+        "inliers": 32,
+        "regions": 2,
+        "coverage": [
+          0.350686814056731,
+          0.3509188581997594
+        ],
+        "matches": 147
+      },
+      {
+        "id": "r04",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 5
+      },
+      {
+        "id": "r03",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 18
+      },
+      {
+        "id": "r09",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 3
+      },
+      {
+        "id": "r06",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 9
+      },
+      {
+        "id": "r07",
+        "score": 0.014019138146326545,
+        "evidence": 0.1875,
+        "inliers": 15,
+        "regions": 1,
+        "coverage": [
+          0.11300291951387878,
+          0.07476873678040824
+        ],
+        "matches": 45
+      },
+      {
+        "id": "r10",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 4
+      },
+      {
+        "id": "r05",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 18
+      },
+      {
+        "id": "r01",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 17
+      },
+      {
+        "id": "r02",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 13
+      }
+    ],
+    "reference_order": [
+      "r08",
+      "r04",
+      "r03",
+      "r09",
+      "r06",
+      "r07",
+      "r10",
+      "r05",
+      "r01",
+      "r02"
+    ],
+    "usage": {
+      "completion_tokens": 238,
+      "completion_tokens_details": {
+        "reasoning_tokens": 228
+      },
+      "prompt_tokens": 4003,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "total_tokens": 4241
+    }
+  },
+  {
+    "id": "57bb2995-1993-4ff0-863e-43764ee31526",
+    "kind": "real_photo",
+    "expected": "Costco",
+    "path": "images/57bb2995-1993-4ff0-863e-43764ee31526.png",
+    "sha256": "520aee2da70de02fe383581274eb5eb18ceda3fd68026af4236000b3dacbcb01",
+    "qwen": "Costco",
+    "valid": true,
+    "error": null,
+    "cpu": "Costco",
+    "qwen_correct": true,
+    "cpu_correct": true,
+    "qwen_seconds": 4.424864820000948,
+    "cpu_seconds": 2.2445598210033495,
+    "scores": [
+      {
+        "id": "r09",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 88
+      },
+      {
+        "id": "r02",
+        "score": 0.9712067810433719,
+        "evidence": 1.0,
+        "inliers": 334,
+        "regions": 2,
+        "coverage": [
+          0.9870560978388849,
+          0.9712067810433719
+        ],
+        "matches": 448
+      },
+      {
+        "id": "r06",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 27
+      },
+      {
+        "id": "r07",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 7
+      },
+      {
+        "id": "r10",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 62
+      },
+      {
+        "id": "r08",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 29
+      },
+      {
+        "id": "r04",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 12
+      },
+      {
+        "id": "r03",
+        "score": 0.7934672794257283,
+        "evidence": 1.0,
+        "inliers": 311,
+        "regions": 2,
+        "coverage": [
+          0.7934672794257283,
+          0.9375081116158339
+        ],
+        "matches": 409
+      },
+      {
+        "id": "r05",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 30
+      },
+      {
+        "id": "r01",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 59
+      }
+    ],
+    "reference_order": [
+      "r09",
+      "r02",
+      "r06",
+      "r07",
+      "r10",
+      "r08",
+      "r04",
+      "r03",
+      "r05",
+      "r01"
+    ],
+    "usage": {
+      "completion_tokens": 353,
+      "completion_tokens_details": {
+        "reasoning_tokens": 343
+      },
+      "prompt_tokens": 3619,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "total_tokens": 3972
+    }
+  },
+  {
+    "id": "834a4c6e-9307-40bb-acf6-c143c5f41e73",
+    "kind": "real_photo",
+    "expected": "skyFOODS",
+    "path": "images/834a4c6e-9307-40bb-acf6-c143c5f41e73.png",
+    "sha256": "c2030fa8ac0805919d5b8e2eb1fcb7ceb9397acde4485038345c6479eb038019",
+    "qwen": "skyFOODS",
+    "valid": true,
+    "error": null,
+    "cpu": "skyFOODS",
+    "qwen_correct": true,
+    "cpu_correct": true,
+    "qwen_seconds": 5.457440019003116,
+    "cpu_seconds": 2.404830604005838,
+    "scores": [
+      {
+        "id": "r05",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 42
+      },
+      {
+        "id": "r06",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 40
+      },
+      {
+        "id": "r01",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 9
+      },
+      {
+        "id": "r03",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 35
+      },
+      {
+        "id": "r10",
+        "score": 0.8489624238616332,
+        "evidence": 1.0,
+        "inliers": 336,
+        "regions": 2,
+        "coverage": [
+          0.8641416044392684,
+          0.8489624238616332
+        ],
+        "matches": 486
+      },
+      {
+        "id": "r04",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 4
+      },
+      {
+        "id": "r08",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 5
+      },
+      {
+        "id": "r02",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 42
+      },
+      {
+        "id": "r09",
+        "score": 0.6484123450023977,
+        "evidence": 1.0,
+        "inliers": 273,
+        "regions": 2,
+        "coverage": [
+          0.6484123450023977,
+          0.8406400542254715
+        ],
+        "matches": 412
+      },
+      {
+        "id": "r07",
+        "score": 0.10283063300678222,
+        "evidence": 0.35,
+        "inliers": 28,
+        "regions": 2,
+        "coverage": [
+          0.29380180859080635,
+          0.3387783185953467
+        ],
+        "matches": 79
+      }
+    ],
+    "reference_order": [
+      "r05",
+      "r06",
+      "r01",
+      "r03",
+      "r10",
+      "r04",
+      "r08",
+      "r02",
+      "r09",
+      "r07"
+    ],
+    "usage": {
+      "completion_tokens": 489,
+      "completion_tokens_details": {
+        "reasoning_tokens": 479
+      },
+      "prompt_tokens": 3691,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "total_tokens": 4180
+    }
+  },
+  {
+    "id": "560ccf19-b7af-4ad6-a512-1dd51853f4d8",
+    "kind": "real_photo",
+    "expected": "Costco",
+    "path": "images/560ccf19-b7af-4ad6-a512-1dd51853f4d8.png",
+    "sha256": "807afee9346e5f0bcaba2aec22f898d3d6679bbecb8ef370b3693c9c10d87bc3",
+    "qwen": "Costco",
+    "valid": true,
+    "error": null,
+    "cpu": "Costco",
+    "qwen_correct": true,
+    "cpu_correct": true,
+    "qwen_seconds": 4.939137133012991,
+    "cpu_seconds": 1.9987513680243865,
+    "scores": [
+      {
+        "id": "r02",
+        "score": 0.7218257551484082,
+        "evidence": 1.0,
+        "inliers": 240,
+        "regions": 2,
+        "coverage": [
+          0.7554500753204673,
+          0.7218257551484082
+        ],
+        "matches": 403
+      },
+      {
+        "id": "r04",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 5
+      },
+      {
+        "id": "r06",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 15
+      },
+      {
+        "id": "r10",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 67
+      },
+      {
+        "id": "r09",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 64
+      },
+      {
+        "id": "r01",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 6
+      },
+      {
+        "id": "r03",
+        "score": 0.6889691043970099,
+        "evidence": 1.0,
+        "inliers": 213,
+        "regions": 2,
+        "coverage": [
+          0.6889691043970099,
+          0.8519514230091777
+        ],
+        "matches": 377
+      },
+      {
+        "id": "r08",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 24
+      },
+      {
+        "id": "r07",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 32
+      },
+      {
+        "id": "r05",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 20
+      }
+    ],
+    "reference_order": [
+      "r02",
+      "r04",
+      "r06",
+      "r10",
+      "r09",
+      "r01",
+      "r03",
+      "r08",
+      "r07",
+      "r05"
+    ],
+    "usage": {
+      "completion_tokens": 458,
+      "completion_tokens_details": {
+        "reasoning_tokens": 448
+      },
+      "prompt_tokens": 3571,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "total_tokens": 4029
+    }
+  },
+  {
+    "id": "74356ee7-d2e7-42e4-aea1-8fa567dec8ea",
+    "kind": "real_photo",
+    "expected": "skyFOODS",
+    "path": "images/74356ee7-d2e7-42e4-aea1-8fa567dec8ea.png",
+    "sha256": "6d9cd9ed12a0012d38029c08b5595a150d28495ebb439534e6fb325f97d026bb",
+    "qwen": "skyFOODS",
+    "valid": true,
+    "error": null,
+    "cpu": "skyFOODS",
+    "qwen_correct": true,
+    "cpu_correct": true,
+    "qwen_seconds": 5.16807425400475,
+    "cpu_seconds": 2.3276835059805308,
+    "scores": [
+      {
+        "id": "r04",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 23
+      },
+      {
+        "id": "r08",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 13
+      },
+      {
+        "id": "r03",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 51
+      },
+      {
+        "id": "r06",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 26
+      },
+      {
+        "id": "r10",
+        "score": 0.9970155505523849,
+        "evidence": 1.0,
+        "inliers": 361,
+        "regions": 2,
+        "coverage": [
+          0.9972963623784729,
+          0.9970155505523849
+        ],
+        "matches": 494
+      },
+      {
+        "id": "r09",
+        "score": 0.7360266540436223,
+        "evidence": 1.0,
+        "inliers": 285,
+        "regions": 2,
+        "coverage": [
+          0.7360266540436223,
+          0.9932581277687671
+        ],
+        "matches": 386
+      },
+      {
+        "id": "r05",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 41
+      },
+      {
+        "id": "r01",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 69
+      },
+      {
+        "id": "r07",
+        "score": 0.06389363166076298,
+        "evidence": 0.1875,
+        "inliers": 15,
+        "regions": 1,
+        "coverage": [
+          0.3456377671776572,
+          0.3407660355240692
+        ],
+        "matches": 92
+      },
+      {
+        "id": "r02",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 56
+      }
+    ],
+    "reference_order": [
+      "r04",
+      "r08",
+      "r03",
+      "r06",
+      "r10",
+      "r09",
+      "r05",
+      "r01",
+      "r07",
+      "r02"
+    ],
+    "usage": {
+      "completion_tokens": 448,
+      "completion_tokens_details": {
+        "reasoning_tokens": 438
+      },
+      "prompt_tokens": 3667,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "total_tokens": 4115
+    }
+  },
+  {
+    "id": "78f63611-ad9f-4982-86aa-7b16450f46a7",
+    "kind": "real_photo",
+    "expected": "99 Ranch",
+    "path": "images/78f63611-ad9f-4982-86aa-7b16450f46a7.png",
+    "sha256": "65f7ca937ae1dc582814f291d1e9de815f6895d027d0c319ffd782f7afdb9d01",
+    "qwen": "99 Ranch",
+    "valid": true,
+    "error": null,
+    "cpu": "99 Ranch",
+    "qwen_correct": true,
+    "cpu_correct": true,
+    "qwen_seconds": 4.55398475000402,
+    "cpu_seconds": 2.9632463449961506,
+    "scores": [
+      {
+        "id": "r01",
+        "score": 0.8842559615221242,
+        "evidence": 1.0,
+        "inliers": 202,
+        "regions": 2,
+        "coverage": [
+          0.9221899372992812,
+          0.8842559615221242
+        ],
+        "matches": 369
+      },
+      {
+        "id": "r10",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 28
+      },
+      {
+        "id": "r09",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 6
+      },
+      {
+        "id": "r03",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 3
+      },
+      {
+        "id": "r08",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 28
+      },
+      {
+        "id": "r04",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 6
+      },
+      {
+        "id": "r05",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 10
+      },
+      {
+        "id": "r07",
+        "score": 0.02435988506918784,
+        "evidence": 0.1625,
+        "inliers": 13,
+        "regions": 1,
+        "coverage": [
+          0.2465737046253945,
+          0.14990698504115593
+        ],
+        "matches": 41
+      },
+      {
+        "id": "r02",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 4
+      },
+      {
+        "id": "r06",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 52
+      }
+    ],
+    "reference_order": [
+      "r01",
+      "r10",
+      "r09",
+      "r03",
+      "r08",
+      "r04",
+      "r05",
+      "r07",
+      "r02",
+      "r06"
+    ],
+    "usage": {
+      "completion_tokens": 299,
+      "completion_tokens_details": {
+        "reasoning_tokens": 289
+      },
+      "prompt_tokens": 3979,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "total_tokens": 4278
+    }
+  },
+  {
+    "id": "2f97fc50-4cf3-47e1-bd44-ea6de95c774c",
+    "kind": "real_photo",
+    "expected": "99 Ranch",
+    "path": "images/2f97fc50-4cf3-47e1-bd44-ea6de95c774c.png",
+    "sha256": "94e8eeab4eab4163854ff2caad57ee23090fbae25efce7a803776f2988825cfb",
+    "qwen": "99 Ranch",
+    "valid": true,
+    "error": null,
+    "cpu": "99 Ranch",
+    "qwen_correct": true,
+    "cpu_correct": true,
+    "qwen_seconds": 3.562916138995206,
+    "cpu_seconds": 2.8619494310114533,
+    "scores": [
+      {
+        "id": "r02",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 11
+      },
+      {
+        "id": "r01",
+        "score": 0.8986263502872117,
+        "evidence": 1.0,
+        "inliers": 253,
+        "regions": 2,
+        "coverage": [
+          0.9658257144761316,
+          0.8986263502872117
+        ],
+        "matches": 396
+      },
+      {
+        "id": "r04",
+        "score": 0.03361703171371808,
+        "evidence": 0.175,
+        "inliers": 14,
+        "regions": 1,
+        "coverage": [
+          0.31917407346820076,
+          0.19209732407838906
+        ],
+        "matches": 42
+      },
+      {
+        "id": "r08",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 58
+      },
+      {
+        "id": "r07",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 20
+      },
+      {
+        "id": "r10",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 38
+      },
+      {
+        "id": "r05",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 51
+      },
+      {
+        "id": "r03",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 5
+      },
+      {
+        "id": "r06",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 46
+      },
+      {
+        "id": "r09",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 16
+      }
+    ],
+    "reference_order": [
+      "r02",
+      "r01",
+      "r04",
+      "r08",
+      "r07",
+      "r10",
+      "r05",
+      "r03",
+      "r06",
+      "r09"
+    ],
+    "usage": {
+      "completion_tokens": 230,
+      "completion_tokens_details": {
+        "reasoning_tokens": 220
+      },
+      "prompt_tokens": 3931,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "total_tokens": 4161
+    }
+  },
+  {
+    "id": "fe3a7e41-45ad-4865-8a83-427a696481db",
+    "kind": "real_photo",
+    "expected": "Hualian",
+    "path": "images/fe3a7e41-45ad-4865-8a83-427a696481db.png",
+    "sha256": "e19e61b32aaa55424a57e42dcd5ab933109fd79f3ab0c722c8a8596245209e99",
+    "qwen": null,
+    "valid": false,
+    "error": "length",
+    "cpu": "Hualian",
+    "qwen_correct": false,
+    "cpu_correct": true,
+    "qwen_seconds": 38.476927864016034,
+    "cpu_seconds": 2.7464286430040374,
+    "scores": [
+      {
+        "id": "r10",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 50
+      },
+      {
+        "id": "r04",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 31
+      },
+      {
+        "id": "r09",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 31
+      },
+      {
+        "id": "r08",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 50
+      },
+      {
+        "id": "r05",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 56
+      },
+      {
+        "id": "r03",
+        "score": 0.01679313062019097,
+        "evidence": 0.225,
+        "inliers": 18,
+        "regions": 1,
+        "coverage": [
+          0.3638218030659987,
+          0.07463613608973765
+        ],
+        "matches": 58
+      },
+      {
+        "id": "r01",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 31
+      },
+      {
+        "id": "r07",
+        "score": 0.32847022247139473,
+        "evidence": 1.0,
+        "inliers": 135,
+        "regions": 1,
+        "coverage": [
+          0.9985960063363484,
+          0.32847022247139473
+        ],
+        "matches": 139
+      },
+      {
+        "id": "r06",
+        "score": 1.0,
+        "evidence": 1.0,
+        "inliers": 672,
+        "regions": 1,
+        "coverage": [
+          1.0,
+          1.0
+        ],
+        "matches": 674
+      },
+      {
+        "id": "r02",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 4
+      }
+    ],
+    "reference_order": [
+      "r10",
+      "r04",
+      "r09",
+      "r08",
+      "r05",
+      "r03",
+      "r01",
+      "r07",
+      "r06",
+      "r02"
+    ],
+    "usage": {
+      "completion_tokens": 4096,
+      "completion_tokens_details": {
+        "reasoning_tokens": 4096
+      },
+      "prompt_tokens": 3859,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "total_tokens": 7955
+    }
+  },
+  {
+    "id": "e3843baa-904a-4bbf-bc21-278a1693d5c7",
+    "kind": "real_photo",
+    "expected": "H MART",
+    "path": "images/e3843baa-904a-4bbf-bc21-278a1693d5c7.png",
+    "sha256": "fdf80988994a5d9d0b53501f3bbdaf72c7ba669e9c982bb6609ad0ecc7b62d0b",
+    "qwen": "H MART",
+    "valid": true,
+    "error": null,
+    "cpu": "H MART",
+    "qwen_correct": true,
+    "cpu_correct": true,
+    "qwen_seconds": 3.521750907006208,
+    "cpu_seconds": 3.0367456679814495,
+    "scores": [
+      {
+        "id": "r09",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 14
+      },
+      {
+        "id": "r07",
+        "score": 0.04994903289926352,
+        "evidence": 0.3,
+        "inliers": 24,
+        "regions": 2,
+        "coverage": [
+          0.36243874713897295,
+          0.16649677633087842
+        ],
+        "matches": 65
+      },
+      {
+        "id": "r01",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 10
+      },
+      {
+        "id": "r03",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 22
+      },
+      {
+        "id": "r04",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 11
+      },
+      {
+        "id": "r02",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 41
+      },
+      {
+        "id": "r10",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 44
+      },
+      {
+        "id": "r06",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 85
+      },
+      {
+        "id": "r05",
+        "score": 0.9902551459539891,
+        "evidence": 1.0,
+        "inliers": 179,
+        "regions": 2,
+        "coverage": [
+          0.9926634817739136,
+          0.9902551459539891
+        ],
+        "matches": 298
+      },
+      {
+        "id": "r08",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 52
+      }
+    ],
+    "reference_order": [
+      "r09",
+      "r07",
+      "r01",
+      "r03",
+      "r04",
+      "r02",
+      "r10",
+      "r06",
+      "r05",
+      "r08"
+    ],
+    "usage": {
+      "completion_tokens": 231,
+      "completion_tokens_details": {
+        "reasoning_tokens": 221
+      },
+      "prompt_tokens": 4003,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "total_tokens": 4234
+    }
+  },
+  {
+    "id": "199fc34a-4857-4aac-873c-8c55f8b223a9",
+    "kind": "real_photo",
+    "expected": "H MART",
+    "path": "images/199fc34a-4857-4aac-873c-8c55f8b223a9.png",
+    "sha256": "edcd96167af7c208a8fa8da2210c60fd026a8321a1b07bd94ca074c7e4675272",
+    "qwen": "H MART",
+    "valid": true,
+    "error": null,
+    "cpu": "H MART",
+    "qwen_correct": true,
+    "cpu_correct": true,
+    "qwen_seconds": 5.864731845998904,
+    "cpu_seconds": 3.0190758380049374,
+    "scores": [
+      {
+        "id": "r01",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 15
+      },
+      {
+        "id": "r10",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 36
+      },
+      {
+        "id": "r06",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 36
+      },
+      {
+        "id": "r08",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 26
+      },
+      {
+        "id": "r05",
+        "score": 0.9573476913724602,
+        "evidence": 1.0,
+        "inliers": 158,
+        "regions": 2,
+        "coverage": [
+          0.9573476913724602,
+          0.9633838568031627
+        ],
+        "matches": 294
+      },
+      {
+        "id": "r07",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 16
+      },
+      {
+        "id": "r02",
+        "score": 0.014203544172904954,
+        "evidence": 0.1625,
+        "inliers": 13,
+        "regions": 1,
+        "coverage": [
+          0.3268335499238573,
+          0.0874064256794151
+        ],
+        "matches": 50
+      },
+      {
+        "id": "r03",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 23
+      },
+      {
+        "id": "r09",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 38
+      },
+      {
+        "id": "r04",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 4
+      }
+    ],
+    "reference_order": [
+      "r01",
+      "r10",
+      "r06",
+      "r08",
+      "r05",
+      "r07",
+      "r02",
+      "r03",
+      "r09",
+      "r04"
+    ],
+    "usage": {
+      "completion_tokens": 516,
+      "completion_tokens_details": {
+        "reasoning_tokens": 506
+      },
+      "prompt_tokens": 3979,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "total_tokens": 4495
+    }
+  },
+  {
+    "id": "4e491343-7593-42b4-b5b5-01e5648557ee",
+    "kind": "real_photo",
+    "expected": "Costco",
+    "path": "images/4e491343-7593-42b4-b5b5-01e5648557ee.png",
+    "sha256": "120fb7efaecefb13cdfd9c30bc1adab858b22220a97822162f01be25ad418cff",
+    "qwen": "Costco",
+    "valid": true,
+    "error": null,
+    "cpu": "Costco",
+    "qwen_correct": true,
+    "cpu_correct": true,
+    "qwen_seconds": 4.960190762009006,
+    "cpu_seconds": 2.2234881469921675,
+    "scores": [
+      {
+        "id": "r02",
+        "score": 0.8877545075878943,
+        "evidence": 1.0,
+        "inliers": 346,
+        "regions": 2,
+        "coverage": [
+          0.9243417934243978,
+          0.8877545075878943
+        ],
+        "matches": 432
+      },
+      {
+        "id": "r06",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 13
+      },
+      {
+        "id": "r10",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 17
+      },
+      {
+        "id": "r09",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 34
+      },
+      {
+        "id": "r04",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 9
+      },
+      {
+        "id": "r03",
+        "score": 0.7735424656353687,
+        "evidence": 1.0,
+        "inliers": 293,
+        "regions": 2,
+        "coverage": [
+          0.7735424656353687,
+          0.903995550199314
+        ],
+        "matches": 397
+      },
+      {
+        "id": "r07",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 26
+      },
+      {
+        "id": "r08",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 21
+      },
+      {
+        "id": "r01",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 17
+      },
+      {
+        "id": "r05",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 10
+      }
+    ],
+    "reference_order": [
+      "r02",
+      "r06",
+      "r10",
+      "r09",
+      "r04",
+      "r03",
+      "r07",
+      "r08",
+      "r01",
+      "r05"
+    ],
+    "usage": {
+      "completion_tokens": 445,
+      "completion_tokens_details": {
+        "reasoning_tokens": 435
+      },
+      "prompt_tokens": 3595,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "total_tokens": 4040
+    }
+  },
+  {
+    "id": "c00860de-60e8-4892-8bc3-1e0b2c8314ab",
+    "kind": "real_photo",
+    "expected": "Costco",
+    "path": "images/c00860de-60e8-4892-8bc3-1e0b2c8314ab.png",
+    "sha256": "e5f0222189a2380356d372981a2256b001cfb0fb8d6413ea1dfa8c88b44e9cc4",
+    "qwen": "Costco",
+    "valid": true,
+    "error": null,
+    "cpu": "Costco",
+    "qwen_correct": true,
+    "cpu_correct": true,
+    "qwen_seconds": 5.207837421010481,
+    "cpu_seconds": 2.2077958479931112,
+    "scores": [
+      {
+        "id": "r01",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 17
+      },
+      {
+        "id": "r02",
+        "score": 0.9972692318895459,
+        "evidence": 1.0,
+        "inliers": 339,
+        "regions": 2,
+        "coverage": [
+          0.9996940720577968,
+          0.9972692318895459
+        ],
+        "matches": 448
+      },
+      {
+        "id": "r07",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 6
+      },
+      {
+        "id": "r03",
+        "score": 0.8003937841717589,
+        "evidence": 1.0,
+        "inliers": 272,
+        "regions": 2,
+        "coverage": [
+          0.8003937841717589,
+          0.9803652544729767
+        ],
+        "matches": 391
+      },
+      {
+        "id": "r09",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 23
+      },
+      {
+        "id": "r06",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 15
+      },
+      {
+        "id": "r05",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 35
+      },
+      {
+        "id": "r08",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 35
+      },
+      {
+        "id": "r04",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 12
+      },
+      {
+        "id": "r10",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 5
+      }
+    ],
+    "reference_order": [
+      "r01",
+      "r02",
+      "r07",
+      "r03",
+      "r09",
+      "r06",
+      "r05",
+      "r08",
+      "r04",
+      "r10"
+    ],
+    "usage": {
+      "completion_tokens": 480,
+      "completion_tokens_details": {
+        "reasoning_tokens": 470
+      },
+      "prompt_tokens": 3595,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "total_tokens": 4075
+    }
+  },
+  {
+    "id": "6d9da1ec-c0fc-4905-82b4-4ebd11716b1c",
+    "kind": "real_photo",
+    "expected": "skyFOODS",
+    "path": "images/6d9da1ec-c0fc-4905-82b4-4ebd11716b1c.png",
+    "sha256": "aeda146292dc196bf3b74f5973307c6af1a01796479c9594f4577c85ea4c5cbd",
+    "qwen": "skyFOODS",
+    "valid": true,
+    "error": null,
+    "cpu": "skyFOODS",
+    "qwen_correct": true,
+    "cpu_correct": true,
+    "qwen_seconds": 4.184007265022956,
+    "cpu_seconds": 2.4531885530159343,
+    "scores": [
+      {
+        "id": "r01",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 30
+      },
+      {
+        "id": "r10",
+        "score": 0.7644890218581915,
+        "evidence": 1.0,
+        "inliers": 129,
+        "regions": 2,
+        "coverage": [
+          0.7644890218581915,
+          0.7907133008709007
+        ],
+        "matches": 320
+      },
+      {
+        "id": "r09",
+        "score": 0.5757598051236777,
+        "evidence": 1.0,
+        "inliers": 110,
+        "regions": 2,
+        "coverage": [
+          0.5757598051236777,
+          0.8009997821298023
+        ],
+        "matches": 281
+      },
+      {
+        "id": "r02",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 15
+      },
+      {
+        "id": "r06",
+        "score": 0.010694161360390383,
+        "evidence": 0.1625,
+        "inliers": 13,
+        "regions": 1,
+        "coverage": [
+          0.34873379436624324,
+          0.06581022375624851
+        ],
+        "matches": 69
+      },
+      {
+        "id": "r07",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 71
+      },
+      {
+        "id": "r04",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 9
+      },
+      {
+        "id": "r05",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 26
+      },
+      {
+        "id": "r08",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 23
+      },
+      {
+        "id": "r03",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 10
+      }
+    ],
+    "reference_order": [
+      "r01",
+      "r10",
+      "r09",
+      "r02",
+      "r06",
+      "r07",
+      "r04",
+      "r05",
+      "r08",
+      "r03"
+    ],
+    "usage": {
+      "completion_tokens": 324,
+      "completion_tokens_details": {
+        "reasoning_tokens": 314
+      },
+      "prompt_tokens": 3667,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "total_tokens": 3991
+    }
+  },
+  {
+    "id": "e6c62f11-3b8d-4ac0-a860-1756df0efa55",
+    "kind": "real_photo",
+    "expected": "Costco",
+    "path": "images/e6c62f11-3b8d-4ac0-a860-1756df0efa55.png",
+    "sha256": "3bee3df56cbd348373e65a6d90e7eeba94bf4c933dfeafce4d217979375ca31e",
+    "qwen": "Costco",
+    "valid": true,
+    "error": null,
+    "cpu": "Costco",
+    "qwen_correct": true,
+    "cpu_correct": true,
+    "qwen_seconds": 5.182910866977181,
+    "cpu_seconds": 2.2570942449965514,
+    "scores": [
+      {
+        "id": "r07",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 32
+      },
+      {
+        "id": "r05",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 41
+      },
+      {
+        "id": "r09",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 42
+      },
+      {
+        "id": "r10",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 45
+      },
+      {
+        "id": "r01",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 31
+      },
+      {
+        "id": "r08",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 28
+      },
+      {
+        "id": "r06",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 34
+      },
+      {
+        "id": "r03",
+        "score": 0.771937975049885,
+        "evidence": 1.0,
+        "inliers": 291,
+        "regions": 2,
+        "coverage": [
+          0.771937975049885,
+          0.9471586168536201
+        ],
+        "matches": 384
+      },
+      {
+        "id": "r04",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 17
+      },
+      {
+        "id": "r02",
+        "score": 0.9888220558678745,
+        "evidence": 1.0,
+        "inliers": 346,
+        "regions": 2,
+        "coverage": [
+          0.9929399399856819,
+          0.9888220558678745
+        ],
+        "matches": 436
+      }
+    ],
+    "reference_order": [
+      "r07",
+      "r05",
+      "r09",
+      "r10",
+      "r01",
+      "r08",
+      "r06",
+      "r03",
+      "r04",
+      "r02"
+    ],
+    "usage": {
+      "completion_tokens": 474,
+      "completion_tokens_details": {
+        "reasoning_tokens": 464
+      },
+      "prompt_tokens": 3619,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "total_tokens": 4093
+    }
+  },
+  {
+    "id": "73953603-31f5-496a-9dd4-76fc845c8398",
+    "kind": "real_photo",
+    "expected": "skyFOODS",
+    "path": "images/73953603-31f5-496a-9dd4-76fc845c8398.png",
+    "sha256": "3d2e3e2e274866d62adfecdaaffc32a35dfa2b38a7ef30cd632fd5198dbbc919",
+    "qwen": "skyFOODS",
+    "valid": true,
+    "error": null,
+    "cpu": "skyFOODS",
+    "qwen_correct": true,
+    "cpu_correct": true,
+    "qwen_seconds": 3.9007514780096244,
+    "cpu_seconds": 2.351709738984937,
+    "scores": [
+      {
+        "id": "r02",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 67
+      },
+      {
+        "id": "r10",
+        "score": 0.9357947515790844,
+        "evidence": 1.0,
+        "inliers": 243,
+        "regions": 2,
+        "coverage": [
+          0.9357947515790844,
+          0.9386093512749358
+        ],
+        "matches": 461
+      },
+      {
+        "id": "r07",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 56
+      },
+      {
+        "id": "r04",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 9
+      },
+      {
+        "id": "r03",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 68
+      },
+      {
+        "id": "r05",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 26
+      },
+      {
+        "id": "r06",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 47
+      },
+      {
+        "id": "r08",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 28
+      },
+      {
+        "id": "r01",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 30
+      },
+      {
+        "id": "r09",
+        "score": 0.6130661680573772,
+        "evidence": 1.0,
+        "inliers": 227,
+        "regions": 2,
+        "coverage": [
+          0.6130661680573772,
+          0.8330630129027573
+        ],
+        "matches": 394
+      }
+    ],
+    "reference_order": [
+      "r02",
+      "r10",
+      "r07",
+      "r04",
+      "r03",
+      "r05",
+      "r06",
+      "r08",
+      "r01",
+      "r09"
+    ],
+    "usage": {
+      "completion_tokens": 407,
+      "completion_tokens_details": {
+        "reasoning_tokens": 397
+      },
+      "prompt_tokens": 3667,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "total_tokens": 4074
+    }
+  },
+  {
+    "id": "d7f8ff6d-6502-4eeb-8850-2f15b131988f",
+    "kind": "real_photo",
+    "expected": "skyFOODS",
+    "path": "images/d7f8ff6d-6502-4eeb-8850-2f15b131988f.png",
+    "sha256": "eaa8ce36a92e1aee378b2a3b3eceefcba46b42228162c1f184b9108d891681e3",
+    "qwen": "skyFOODS",
+    "valid": true,
+    "error": null,
+    "cpu": "skyFOODS",
+    "qwen_correct": true,
+    "cpu_correct": true,
+    "qwen_seconds": 7.832169708999572,
+    "cpu_seconds": 2.2957912889833096,
+    "scores": [
+      {
+        "id": "r08",
+        "score": 0.01016499778029892,
+        "evidence": 0.15,
+        "inliers": 12,
+        "regions": 1,
+        "coverage": [
+          0.06776665186865946,
+          0.08170587338131587
+        ],
+        "matches": 42
+      },
+      {
+        "id": "r09",
+        "score": 0.7448494713822983,
+        "evidence": 1.0,
+        "inliers": 336,
+        "regions": 2,
+        "coverage": [
+          0.7448494713822983,
+          0.9921929845796316
+        ],
+        "matches": 420
+      },
+      {
+        "id": "r07",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 79
+      },
+      {
+        "id": "r04",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 23
+      },
+      {
+        "id": "r03",
+        "score": 0.04404133576678341,
+        "evidence": 0.35,
+        "inliers": 28,
+        "regions": 2,
+        "coverage": [
+          0.12583238790509546,
+          0.1978678038379531
+        ],
+        "matches": 80
+      },
+      {
+        "id": "r05",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 63
+      },
+      {
+        "id": "r02",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 76
+      },
+      {
+        "id": "r10",
+        "score": 0.9541424507391312,
+        "evidence": 1.0,
+        "inliers": 380,
+        "regions": 2,
+        "coverage": [
+          0.9563869843305546,
+          0.9541424507391312
+        ],
+        "matches": 483
+      },
+      {
+        "id": "r06",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 13
+      },
+      {
+        "id": "r01",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 26
+      }
+    ],
+    "reference_order": [
+      "r08",
+      "r09",
+      "r07",
+      "r04",
+      "r03",
+      "r05",
+      "r02",
+      "r10",
+      "r06",
+      "r01"
+    ],
+    "usage": {
+      "completion_tokens": 1126,
+      "completion_tokens_details": {
+        "reasoning_tokens": 1116
+      },
+      "prompt_tokens": 3667,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "total_tokens": 4793
+    }
+  },
+  {
+    "id": "a31f7e6b-8bb1-49c8-a292-504d76d1a59c",
+    "kind": "real_photo",
+    "expected": "skyFOODS",
+    "path": "images/a31f7e6b-8bb1-49c8-a292-504d76d1a59c.png",
+    "sha256": "72a507b3d624027d7ce6fea4e6b7d288a7cbf8357a7cb8b05413f3dce6973cc6",
+    "qwen": "skyFOODS",
+    "valid": true,
+    "error": null,
+    "cpu": "skyFOODS",
+    "qwen_correct": true,
+    "cpu_correct": true,
+    "qwen_seconds": 6.027691166003933,
+    "cpu_seconds": 2.228667941992171,
+    "scores": [
+      {
+        "id": "r03",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 22
+      },
+      {
+        "id": "r05",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 24
+      },
+      {
+        "id": "r08",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 16
+      },
+      {
+        "id": "r01",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 38
+      },
+      {
+        "id": "r02",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 58
+      },
+      {
+        "id": "r07",
+        "score": 0.016472223781195047,
+        "evidence": 0.1625,
+        "inliers": 13,
+        "regions": 1,
+        "coverage": [
+          0.10136753096120028,
+          0.1287174129099666
+        ],
+        "matches": 72
+      },
+      {
+        "id": "r06",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 29
+      },
+      {
+        "id": "r09",
+        "score": 0.7267557151943728,
+        "evidence": 1.0,
+        "inliers": 310,
+        "regions": 2,
+        "coverage": [
+          0.7267557151943728,
+          0.9842165145609916
+        ],
+        "matches": 392
+      },
+      {
+        "id": "r04",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 11
+      },
+      {
+        "id": "r10",
+        "score": 0.9720578738851947,
+        "evidence": 1.0,
+        "inliers": 405,
+        "regions": 2,
+        "coverage": [
+          0.9821154637632357,
+          0.9720578738851947
+        ],
+        "matches": 481
+      }
+    ],
+    "reference_order": [
+      "r03",
+      "r05",
+      "r08",
+      "r01",
+      "r02",
+      "r07",
+      "r06",
+      "r09",
+      "r04",
+      "r10"
+    ],
+    "usage": {
+      "completion_tokens": 828,
+      "completion_tokens_details": {
+        "reasoning_tokens": 818
+      },
+      "prompt_tokens": 3667,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "total_tokens": 4495
+    }
+  },
+  {
+    "id": "8572dcef-7f7f-4d77-80c6-0ede75d45fa3",
+    "kind": "real_photo",
+    "expected": "Costco",
+    "path": "images/8572dcef-7f7f-4d77-80c6-0ede75d45fa3.png",
+    "sha256": "dc297cb997efe45f2881df72666b547462419e658d2f9626a9a21e60124e3b7c",
+    "qwen": "Costco",
+    "valid": true,
+    "error": null,
+    "cpu": "Costco",
+    "qwen_correct": true,
+    "cpu_correct": true,
+    "qwen_seconds": 6.6934127699933015,
+    "cpu_seconds": 2.085009237023769,
+    "scores": [
+      {
+        "id": "r06",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 6
+      },
+      {
+        "id": "r10",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 41
+      },
+      {
+        "id": "r05",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 15
+      },
+      {
+        "id": "r07",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 13
+      },
+      {
+        "id": "r03",
+        "score": 0.7668294467597747,
+        "evidence": 1.0,
+        "inliers": 264,
+        "regions": 2,
+        "coverage": [
+          0.7668294467597747,
+          0.9240196532863633
+        ],
+        "matches": 387
+      },
+      {
+        "id": "r09",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 24
+      },
+      {
+        "id": "r01",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 23
+      },
+      {
+        "id": "r08",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 3
+      },
+      {
+        "id": "r02",
+        "score": 0.9427703824531765,
+        "evidence": 1.0,
+        "inliers": 338,
+        "regions": 2,
+        "coverage": [
+          0.9582127063913721,
+          0.9427703824531765
+        ],
+        "matches": 427
+      },
+      {
+        "id": "r04",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 0
+      }
+    ],
+    "reference_order": [
+      "r06",
+      "r10",
+      "r05",
+      "r07",
+      "r03",
+      "r09",
+      "r01",
+      "r08",
+      "r02",
+      "r04"
+    ],
+    "usage": {
+      "completion_tokens": 972,
+      "completion_tokens_details": {
+        "reasoning_tokens": 962
+      },
+      "prompt_tokens": 3619,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "total_tokens": 4591
+    }
+  },
+  {
+    "id": "3a8e3c19-e8d0-4ea8-8fa3-06e3cd5fcfd4",
+    "kind": "real_photo",
+    "expected": "Costco",
+    "path": "images/3a8e3c19-e8d0-4ea8-8fa3-06e3cd5fcfd4.png",
+    "sha256": "62687945c2771551501fa04225e8e8c5fafe1c7eff8ddef5791f6a38c1f7c244",
+    "qwen": "Costco",
+    "valid": true,
+    "error": null,
+    "cpu": "Costco",
+    "qwen_correct": true,
+    "cpu_correct": true,
+    "qwen_seconds": 2.873304075008491,
+    "cpu_seconds": 2.0852862790052313,
+    "scores": [
+      {
+        "id": "r07",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 43
+      },
+      {
+        "id": "r01",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 21
+      },
+      {
+        "id": "r06",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 11
+      },
+      {
+        "id": "r09",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 35
+      },
+      {
+        "id": "r04",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 11
+      },
+      {
+        "id": "r02",
+        "score": 0.9860912877574204,
+        "evidence": 1.0,
+        "inliers": 335,
+        "regions": 2,
+        "coverage": [
+          0.9901005166601989,
+          0.9860912877574204
+        ],
+        "matches": 427
+      },
+      {
+        "id": "r08",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 18
+      },
+      {
+        "id": "r03",
+        "score": 0.8021168610800404,
+        "evidence": 1.0,
+        "inliers": 310,
+        "regions": 2,
+        "coverage": [
+          0.8021168610800404,
+          0.9673588578844906
+        ],
+        "matches": 379
+      },
+      {
+        "id": "r10",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 16
+      },
+      {
+        "id": "r05",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 18
+      }
+    ],
+    "reference_order": [
+      "r07",
+      "r01",
+      "r06",
+      "r09",
+      "r04",
+      "r02",
+      "r08",
+      "r03",
+      "r10",
+      "r05"
+    ],
+    "usage": {
+      "completion_tokens": 300,
+      "completion_tokens_details": {
+        "reasoning_tokens": 290
+      },
+      "prompt_tokens": 3619,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "total_tokens": 3919
+    }
+  },
+  {
+    "id": "e9ee06e0-f4aa-4c3c-812a-4e8abc21e3f0",
+    "kind": "real_photo",
+    "expected": "skyFOODS",
+    "path": "images/e9ee06e0-f4aa-4c3c-812a-4e8abc21e3f0.png",
+    "sha256": "0e37e9c94db604d06e8228819db6c5b7c36af7cdc0d83071f4520b2f7b23fd8e",
+    "qwen": "skyFOODS",
+    "valid": true,
+    "error": null,
+    "cpu": "skyFOODS",
+    "qwen_correct": true,
+    "cpu_correct": true,
+    "qwen_seconds": 5.497486589010805,
+    "cpu_seconds": 2.2153482860012446,
+    "scores": [
+      {
+        "id": "r02",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 33
+      },
+      {
+        "id": "r01",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 14
+      },
+      {
+        "id": "r10",
+        "score": 0.8827163725849521,
+        "evidence": 1.0,
+        "inliers": 313,
+        "regions": 2,
+        "coverage": [
+          0.8840206601565652,
+          0.8827163725849521
+        ],
+        "matches": 450
+      },
+      {
+        "id": "r05",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 51
+      },
+      {
+        "id": "r06",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 19
+      },
+      {
+        "id": "r09",
+        "score": 0.7142684206278751,
+        "evidence": 1.0,
+        "inliers": 265,
+        "regions": 2,
+        "coverage": [
+          0.7142684206278751,
+          0.9641603524655644
+        ],
+        "matches": 359
+      },
+      {
+        "id": "r07",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 66
+      },
+      {
+        "id": "r04",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 9
+      },
+      {
+        "id": "r03",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 57
+      },
+      {
+        "id": "r08",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 23
+      }
+    ],
+    "reference_order": [
+      "r02",
+      "r01",
+      "r10",
+      "r05",
+      "r06",
+      "r09",
+      "r07",
+      "r04",
+      "r03",
+      "r08"
+    ],
+    "usage": {
+      "completion_tokens": 754,
+      "completion_tokens_details": {
+        "reasoning_tokens": 744
+      },
+      "prompt_tokens": 3667,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "total_tokens": 4421
+    }
+  },
+  {
+    "id": "924e246e-c811-497a-a61b-6b5724f7bacd",
+    "kind": "real_photo",
+    "expected": "Costco",
+    "path": "images/924e246e-c811-497a-a61b-6b5724f7bacd.png",
+    "sha256": "5c5bbc8b94d03c719e21b5c7be5c9c490e152ad2fcdc5b44043c032bc661ac95",
+    "qwen": "Costco",
+    "valid": true,
+    "error": null,
+    "cpu": "Costco",
+    "qwen_correct": true,
+    "cpu_correct": true,
+    "qwen_seconds": 3.342828029009979,
+    "cpu_seconds": 2.0663401720230468,
+    "scores": [
+      {
+        "id": "r01",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 34
+      },
+      {
+        "id": "r06",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 9
+      },
+      {
+        "id": "r05",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 19
+      },
+      {
+        "id": "r09",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 46
+      },
+      {
+        "id": "r04",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 17
+      },
+      {
+        "id": "r08",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 26
+      },
+      {
+        "id": "r07",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 19
+      },
+      {
+        "id": "r02",
+        "score": 0.8516064198537765,
+        "evidence": 1.0,
+        "inliers": 344,
+        "regions": 2,
+        "coverage": [
+          0.8925582333366946,
+          0.8516064198537765
+        ],
+        "matches": 428
+      },
+      {
+        "id": "r03",
+        "score": 0.7542183456018285,
+        "evidence": 1.0,
+        "inliers": 303,
+        "regions": 2,
+        "coverage": [
+          0.7542183456018285,
+          0.8891999629183276
+        ],
+        "matches": 397
+      },
+      {
+        "id": "r10",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 24
+      }
+    ],
+    "reference_order": [
+      "r01",
+      "r06",
+      "r05",
+      "r09",
+      "r04",
+      "r08",
+      "r07",
+      "r02",
+      "r03",
+      "r10"
+    ],
+    "usage": {
+      "completion_tokens": 395,
+      "completion_tokens_details": {
+        "reasoning_tokens": 385
+      },
+      "prompt_tokens": 3595,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "total_tokens": 3990
+    }
+  },
+  {
+    "id": "e297a3d3-f9f1-4ba7-8e5e-a18e56fdecdd",
+    "kind": "real_photo",
+    "expected": "H MART",
+    "path": "images/e297a3d3-f9f1-4ba7-8e5e-a18e56fdecdd.png",
+    "sha256": "4e637a6536945e25b28651c3eec040c637f6595c004e8b7571572050129f7cc0",
+    "qwen": "H MART",
+    "valid": true,
+    "error": null,
+    "cpu": "H MART",
+    "qwen_correct": true,
+    "cpu_correct": true,
+    "qwen_seconds": 2.580018934997497,
+    "cpu_seconds": 2.7579438000102527,
+    "scores": [
+      {
+        "id": "r02",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 26
+      },
+      {
+        "id": "r09",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 14
+      },
+      {
+        "id": "r07",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 23
+      },
+      {
+        "id": "r06",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 61
+      },
+      {
+        "id": "r01",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 30
+      },
+      {
+        "id": "r04",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 10
+      },
+      {
+        "id": "r03",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 3
+      },
+      {
+        "id": "r05",
+        "score": 0.8823731928985106,
+        "evidence": 1.0,
+        "inliers": 127,
+        "regions": 2,
+        "coverage": [
+          0.8847551835721132,
+          0.8823731928985106
+        ],
+        "matches": 275
+      },
+      {
+        "id": "r10",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 28
+      },
+      {
+        "id": "r08",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 19
+      }
+    ],
+    "reference_order": [
+      "r02",
+      "r09",
+      "r07",
+      "r06",
+      "r01",
+      "r04",
+      "r03",
+      "r05",
+      "r10",
+      "r08"
+    ],
+    "usage": {
+      "completion_tokens": 209,
+      "completion_tokens_details": {
+        "reasoning_tokens": 199
+      },
+      "prompt_tokens": 3955,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "total_tokens": 4164
+    }
+  },
+  {
+    "id": "5331c892-9fb6-42b5-bdb3-5a205b1a0767",
+    "kind": "real_photo",
+    "expected": "skyFOODS",
+    "path": "images/5331c892-9fb6-42b5-bdb3-5a205b1a0767.png",
+    "sha256": "3262618a03fa076e05a402d6189b69da38cd6717aa1a490efda14efd1085d5be",
+    "qwen": "skyFOODS",
+    "valid": true,
+    "error": null,
+    "cpu": "skyFOODS",
+    "qwen_correct": true,
+    "cpu_correct": true,
+    "qwen_seconds": 4.288180998002645,
+    "cpu_seconds": 2.2692764090024866,
+    "scores": [
+      {
+        "id": "r03",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 82
+      },
+      {
+        "id": "r10",
+        "score": 0.9728175468329645,
+        "evidence": 1.0,
+        "inliers": 356,
+        "regions": 2,
+        "coverage": [
+          0.9728175468329645,
+          0.9781576696860219
+        ],
+        "matches": 466
+      },
+      {
+        "id": "r04",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 4
+      },
+      {
+        "id": "r09",
+        "score": 0.7135723041736255,
+        "evidence": 1.0,
+        "inliers": 298,
+        "regions": 2,
+        "coverage": [
+          0.7135723041736255,
+          0.971725289888402
+        ],
+        "matches": 393
+      },
+      {
+        "id": "r01",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 96
+      },
+      {
+        "id": "r06",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 30
+      },
+      {
+        "id": "r05",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 38
+      },
+      {
+        "id": "r07",
+        "score": 0.06776978831582325,
+        "evidence": 0.425,
+        "inliers": 34,
+        "regions": 2,
+        "coverage": [
+          0.15945832544899588,
+          0.2107489615453225
+        ],
+        "matches": 84
+      },
+      {
+        "id": "r02",
+        "score": 0.026688825082888386,
+        "evidence": 0.2,
+        "inliers": 16,
+        "regions": 1,
+        "coverage": [
+          0.13344412541444192,
+          0.1587923451108328
+        ],
+        "matches": 76
+      },
+      {
+        "id": "r08",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 12
+      }
+    ],
+    "reference_order": [
+      "r03",
+      "r10",
+      "r04",
+      "r09",
+      "r01",
+      "r06",
+      "r05",
+      "r07",
+      "r02",
+      "r08"
+    ],
+    "usage": {
+      "completion_tokens": 546,
+      "completion_tokens_details": {
+        "reasoning_tokens": 536
+      },
+      "prompt_tokens": 3667,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "total_tokens": 4213
+    }
+  },
+  {
+    "id": "20267232-d4d0-4540-9c14-b0e051b06445",
+    "kind": "real_photo",
+    "expected": "Costco",
+    "path": "images/20267232-d4d0-4540-9c14-b0e051b06445.png",
+    "sha256": "06a793a79013ac301e9c7f4acc0f4734462f24c4cbc0a28ac4f411b690269f28",
+    "qwen": "Costco",
+    "valid": true,
+    "error": null,
+    "cpu": "Costco",
+    "qwen_correct": true,
+    "cpu_correct": true,
+    "qwen_seconds": 4.021980626013828,
+    "cpu_seconds": 2.0849309810146224,
+    "scores": [
+      {
+        "id": "r01",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 43
+      },
+      {
+        "id": "r06",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 5
+      },
+      {
+        "id": "r03",
+        "score": 0.7511863491062987,
+        "evidence": 1.0,
+        "inliers": 284,
+        "regions": 2,
+        "coverage": [
+          0.7511863491062987,
+          0.8672290720311486
+        ],
+        "matches": 394
+      },
+      {
+        "id": "r10",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 14
+      },
+      {
+        "id": "r04",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 17
+      },
+      {
+        "id": "r02",
+        "score": 0.9012190148845067,
+        "evidence": 1.0,
+        "inliers": 323,
+        "regions": 2,
+        "coverage": [
+          0.9707532303813425,
+          0.9012190148845067
+        ],
+        "matches": 418
+      },
+      {
+        "id": "r08",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 4
+      },
+      {
+        "id": "r09",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 39
+      },
+      {
+        "id": "r05",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 19
+      },
+      {
+        "id": "r07",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 27
+      }
+    ],
+    "reference_order": [
+      "r01",
+      "r06",
+      "r03",
+      "r10",
+      "r04",
+      "r02",
+      "r08",
+      "r09",
+      "r05",
+      "r07"
+    ],
+    "usage": {
+      "completion_tokens": 547,
+      "completion_tokens_details": {
+        "reasoning_tokens": 537
+      },
+      "prompt_tokens": 3619,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "total_tokens": 4166
+    }
+  },
+  {
+    "id": "c5fdc978-8f74-43bf-a5c5-e22d28f5aea9",
+    "kind": "real_photo",
+    "expected": "Costco",
+    "path": "images/c5fdc978-8f74-43bf-a5c5-e22d28f5aea9.png",
+    "sha256": "09c06870ca90d907de61ae7da5bb3a55158b62db7ba733331582fef7ff8e2c41",
+    "qwen": "Costco",
+    "valid": true,
+    "error": null,
+    "cpu": "Costco",
+    "qwen_correct": true,
+    "cpu_correct": true,
+    "qwen_seconds": 4.0639704760105815,
+    "cpu_seconds": 2.1268906710029114,
+    "scores": [
+      {
+        "id": "r08",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 8
+      },
+      {
+        "id": "r01",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 19
+      },
+      {
+        "id": "r06",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 17
+      },
+      {
+        "id": "r09",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 61
+      },
+      {
+        "id": "r03",
+        "score": 0.7628807900383586,
+        "evidence": 1.0,
+        "inliers": 305,
+        "regions": 2,
+        "coverage": [
+          0.7628807900383586,
+          0.9257161397979049
+        ],
+        "matches": 404
+      },
+      {
+        "id": "r04",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 2
+      },
+      {
+        "id": "r10",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 44
+      },
+      {
+        "id": "r07",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 27
+      },
+      {
+        "id": "r05",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 29
+      },
+      {
+        "id": "r02",
+        "score": 0.9285776703271096,
+        "evidence": 1.0,
+        "inliers": 346,
+        "regions": 2,
+        "coverage": [
+          0.965717504950167,
+          0.9285776703271096
+        ],
+        "matches": 436
+      }
+    ],
+    "reference_order": [
+      "r08",
+      "r01",
+      "r06",
+      "r09",
+      "r03",
+      "r04",
+      "r10",
+      "r07",
+      "r05",
+      "r02"
+    ],
+    "usage": {
+      "completion_tokens": 500,
+      "completion_tokens_details": {
+        "reasoning_tokens": 490
+      },
+      "prompt_tokens": 3619,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "total_tokens": 4119
+    }
+  },
+  {
+    "id": "ca76c352-9601-498c-8324-0ef9bcf5ea3b",
+    "kind": "real_photo",
+    "expected": "Costco",
+    "path": "images/ca76c352-9601-498c-8324-0ef9bcf5ea3b.png",
+    "sha256": "18a741ad91bf0fe956f4a26efd76efb1be80365969812e1057ca8628badd16f7",
+    "qwen": "Costco",
+    "valid": true,
+    "error": null,
+    "cpu": "Costco",
+    "qwen_correct": true,
+    "cpu_correct": true,
+    "qwen_seconds": 3.309787604986923,
+    "cpu_seconds": 2.123227472999133,
+    "scores": [
+      {
+        "id": "r01",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 51
+      },
+      {
+        "id": "r05",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 11
+      },
+      {
+        "id": "r09",
+        "score": 0.011708264346355727,
+        "evidence": 0.15,
+        "inliers": 12,
+        "regions": 1,
+        "coverage": [
+          0.07805509564237151,
+          0.10900772228812124
+        ],
+        "matches": 63
+      },
+      {
+        "id": "r06",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 23
+      },
+      {
+        "id": "r03",
+        "score": 0.7447246979251065,
+        "evidence": 1.0,
+        "inliers": 258,
+        "regions": 2,
+        "coverage": [
+          0.7447246979251065,
+          0.8610735144155002
+        ],
+        "matches": 390
+      },
+      {
+        "id": "r08",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 29
+      },
+      {
+        "id": "r04",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 23
+      },
+      {
+        "id": "r07",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 37
+      },
+      {
+        "id": "r10",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 60
+      },
+      {
+        "id": "r02",
+        "score": 0.8399842707756838,
+        "evidence": 1.0,
+        "inliers": 315,
+        "regions": 2,
+        "coverage": [
+          0.8812572656497693,
+          0.8399842707756838
+        ],
+        "matches": 430
+      }
+    ],
+    "reference_order": [
+      "r01",
+      "r05",
+      "r09",
+      "r06",
+      "r03",
+      "r08",
+      "r04",
+      "r07",
+      "r10",
+      "r02"
+    ],
+    "usage": {
+      "completion_tokens": 375,
+      "completion_tokens_details": {
+        "reasoning_tokens": 365
+      },
+      "prompt_tokens": 3595,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "total_tokens": 3970
+    }
+  },
+  {
+    "id": "4fc6a91b-faba-4d3e-82a3-be4c78270e99",
+    "kind": "real_photo",
+    "expected": "Costco",
+    "path": "images/4fc6a91b-faba-4d3e-82a3-be4c78270e99.png",
+    "sha256": "88cadce1505dfaa3124864c38eb801287f1fb189ee4523e4c41e8660a9631148",
+    "qwen": "Costco",
+    "valid": true,
+    "error": null,
+    "cpu": "Costco",
+    "qwen_correct": true,
+    "cpu_correct": true,
+    "qwen_seconds": 9.019737799011637,
+    "cpu_seconds": 2.0324467819882557,
+    "scores": [
+      {
+        "id": "r01",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 11
+      },
+      {
+        "id": "r03",
+        "score": 0.970622045054232,
+        "evidence": 1.0,
+        "inliers": 325,
+        "regions": 2,
+        "coverage": [
+          0.9852778413861537,
+          0.970622045054232
+        ],
+        "matches": 441
+      },
+      {
+        "id": "r06",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 11
+      },
+      {
+        "id": "r04",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 7
+      },
+      {
+        "id": "r10",
+        "score": 0.01785761034609142,
+        "evidence": 0.1875,
+        "inliers": 15,
+        "regions": 1,
+        "coverage": [
+          0.1107262804366079,
+          0.09524058851248757
+        ],
+        "matches": 64
+      },
+      {
+        "id": "r07",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 4
+      },
+      {
+        "id": "r05",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 3
+      },
+      {
+        "id": "r02",
+        "score": 0.8071932073053508,
+        "evidence": 1.0,
+        "inliers": 287,
+        "regions": 2,
+        "coverage": [
+          0.9733226471261736,
+          0.8071932073053508
+        ],
+        "matches": 403
+      },
+      {
+        "id": "r09",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 59
+      },
+      {
+        "id": "r08",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 24
+      }
+    ],
+    "reference_order": [
+      "r01",
+      "r03",
+      "r06",
+      "r04",
+      "r10",
+      "r07",
+      "r05",
+      "r02",
+      "r09",
+      "r08"
+    ],
+    "usage": {
+      "completion_tokens": 1319,
+      "completion_tokens_details": {
+        "reasoning_tokens": 1309
+      },
+      "prompt_tokens": 3571,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "total_tokens": 4890
+    }
+  },
+  {
+    "id": "be4a2b4d-87d4-41f8-8ad2-b8b419229096-rotate",
+    "kind": "synthetic_rotate",
+    "expected": "Target",
+    "path": "images/be4a2b4d-87d4-41f8-8ad2-b8b419229096-rotate.png",
+    "qwen": "Target",
+    "valid": true,
+    "error": null,
+    "cpu": null,
+    "qwen_correct": true,
+    "cpu_correct": false,
+    "qwen_seconds": 2.710240499000065,
+    "cpu_seconds": 2.7460145450022537,
+    "scores": [
+      {
+        "id": "r07",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 33
+      },
+      {
+        "id": "r09",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 6
+      },
+      {
+        "id": "r04",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 4
+      },
+      {
+        "id": "r06",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 8
+      },
+      {
+        "id": "r08",
+        "score": 0.23246984917592411,
+        "evidence": 0.725,
+        "inliers": 58,
+        "regions": 2,
+        "coverage": [
+          0.32064806782886085,
+          0.3633139418060508
+        ],
+        "matches": 162
+      },
+      {
+        "id": "r05",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 11
+      },
+      {
+        "id": "r10",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 4
+      },
+      {
+        "id": "r03",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 27
+      },
+      {
+        "id": "r02",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 25
+      },
+      {
+        "id": "r01",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 27
+      }
+    ],
+    "reference_order": [
+      "r07",
+      "r09",
+      "r04",
+      "r06",
+      "r08",
+      "r05",
+      "r10",
+      "r03",
+      "r02",
+      "r01"
+    ],
+    "usage": {
+      "completion_tokens": 241,
+      "completion_tokens_details": {
+        "reasoning_tokens": 231
+      },
+      "prompt_tokens": 4003,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "total_tokens": 4244
+    }
+  },
+  {
+    "id": "be4a2b4d-87d4-41f8-8ad2-b8b419229096-perspective",
+    "kind": "synthetic_perspective",
+    "expected": "Target",
+    "path": "images/be4a2b4d-87d4-41f8-8ad2-b8b419229096-perspective.png",
+    "qwen": "Target",
+    "valid": true,
+    "error": null,
+    "cpu": null,
+    "qwen_correct": true,
+    "cpu_correct": false,
+    "qwen_seconds": 3.1646781460149214,
+    "cpu_seconds": 2.814087250997545,
+    "scores": [
+      {
+        "id": "r06",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 35
+      },
+      {
+        "id": "r09",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 1
+      },
+      {
+        "id": "r07",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 28
+      },
+      {
+        "id": "r01",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 38
+      },
+      {
+        "id": "r03",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 26
+      },
+      {
+        "id": "r10",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 7
+      },
+      {
+        "id": "r04",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 18
+      },
+      {
+        "id": "r08",
+        "score": 0.3501175656733653,
+        "evidence": 0.7875,
+        "inliers": 63,
+        "regions": 2,
+        "coverage": [
+          0.4557596501699209,
+          0.4445937341884004
+        ],
+        "matches": 206
+      },
+      {
+        "id": "r05",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 35
+      },
+      {
+        "id": "r02",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 35
+      }
+    ],
+    "reference_order": [
+      "r06",
+      "r09",
+      "r07",
+      "r01",
+      "r03",
+      "r10",
+      "r04",
+      "r08",
+      "r05",
+      "r02"
+    ],
+    "usage": {
+      "completion_tokens": 330,
+      "completion_tokens_details": {
+        "reasoning_tokens": 320
+      },
+      "prompt_tokens": 4003,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "total_tokens": 4333
+    }
+  },
+  {
+    "id": "be4a2b4d-87d4-41f8-8ad2-b8b419229096-simulated_fold",
+    "kind": "synthetic_simulated_fold",
+    "expected": "Target",
+    "path": "images/be4a2b4d-87d4-41f8-8ad2-b8b419229096-simulated_fold.png",
+    "qwen": "Target",
+    "valid": true,
+    "error": null,
+    "cpu": null,
+    "qwen_correct": true,
+    "cpu_correct": false,
+    "qwen_seconds": 2.866468944994267,
+    "cpu_seconds": 2.798557291011093,
+    "scores": [
+      {
+        "id": "r05",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 26
+      },
+      {
+        "id": "r04",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 2
+      },
+      {
+        "id": "r08",
+        "score": 0.34117649194924793,
+        "evidence": 0.625,
+        "inliers": 50,
+        "regions": 2,
+        "coverage": [
+          0.584473687538732,
+          0.5458823871187967
+        ],
+        "matches": 193
+      },
+      {
+        "id": "r07",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 16
+      },
+      {
+        "id": "r10",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 17
+      },
+      {
+        "id": "r02",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 36
+      },
+      {
+        "id": "r03",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 21
+      },
+      {
+        "id": "r01",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 25
+      },
+      {
+        "id": "r09",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 14
+      },
+      {
+        "id": "r06",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 36
+      }
+    ],
+    "reference_order": [
+      "r05",
+      "r04",
+      "r08",
+      "r07",
+      "r10",
+      "r02",
+      "r03",
+      "r01",
+      "r09",
+      "r06"
+    ],
+    "usage": {
+      "completion_tokens": 254,
+      "completion_tokens_details": {
+        "reasoning_tokens": 244
+      },
+      "prompt_tokens": 4003,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "total_tokens": 4257
+    }
+  },
+  {
+    "id": "834a4c6e-9307-40bb-acf6-c143c5f41e73-rotate",
+    "kind": "synthetic_rotate",
+    "expected": "skyFOODS",
+    "path": "images/834a4c6e-9307-40bb-acf6-c143c5f41e73-rotate.png",
+    "qwen": "skyFOODS",
+    "valid": true,
+    "error": null,
+    "cpu": "skyFOODS",
+    "qwen_correct": true,
+    "cpu_correct": true,
+    "qwen_seconds": 3.184566611016635,
+    "cpu_seconds": 2.246669590997044,
+    "scores": [
+      {
+        "id": "r04",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 11
+      },
+      {
+        "id": "r01",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 13
+      },
+      {
+        "id": "r10",
+        "score": 0.8667818559435921,
+        "evidence": 1.0,
+        "inliers": 332,
+        "regions": 2,
+        "coverage": [
+          0.8685929867955877,
+          0.8667818559435921
+        ],
+        "matches": 472
+      },
+      {
+        "id": "r09",
+        "score": 0.6902647128633712,
+        "evidence": 1.0,
+        "inliers": 255,
+        "regions": 2,
+        "coverage": [
+          0.6902647128633712,
+          0.8935462005858288
+        ],
+        "matches": 401
+      },
+      {
+        "id": "r07",
+        "score": 0.13779372634261516,
+        "evidence": 0.4375,
+        "inliers": 35,
+        "regions": 2,
+        "coverage": [
+          0.31495708878312034,
+          0.35792920669707706
+        ],
+        "matches": 122
+      },
+      {
+        "id": "r05",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 36
+      },
+      {
+        "id": "r08",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 21
+      },
+      {
+        "id": "r06",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 17
+      },
+      {
+        "id": "r03",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 46
+      },
+      {
+        "id": "r02",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 42
+      }
+    ],
+    "reference_order": [
+      "r04",
+      "r01",
+      "r10",
+      "r09",
+      "r07",
+      "r05",
+      "r08",
+      "r06",
+      "r03",
+      "r02"
+    ],
+    "usage": {
+      "completion_tokens": 333,
+      "completion_tokens_details": {
+        "reasoning_tokens": 323
+      },
+      "prompt_tokens": 3691,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "total_tokens": 4024
+    }
+  },
+  {
+    "id": "834a4c6e-9307-40bb-acf6-c143c5f41e73-perspective",
+    "kind": "synthetic_perspective",
+    "expected": "skyFOODS",
+    "path": "images/834a4c6e-9307-40bb-acf6-c143c5f41e73-perspective.png",
+    "qwen": "skyFOODS",
+    "valid": true,
+    "error": null,
+    "cpu": "skyFOODS",
+    "qwen_correct": true,
+    "cpu_correct": true,
+    "qwen_seconds": 3.5005725670198444,
+    "cpu_seconds": 2.238414687977638,
+    "scores": [
+      {
+        "id": "r06",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 32
+      },
+      {
+        "id": "r01",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 19
+      },
+      {
+        "id": "r07",
+        "score": 0.053317462691527893,
+        "evidence": 0.2125,
+        "inliers": 17,
+        "regions": 1,
+        "coverage": [
+          0.2509057067836607,
+          0.2753115364032517
+        ],
+        "matches": 73
+      },
+      {
+        "id": "r03",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 31
+      },
+      {
+        "id": "r04",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 4
+      },
+      {
+        "id": "r09",
+        "score": 0.6134875527636521,
+        "evidence": 1.0,
+        "inliers": 257,
+        "regions": 2,
+        "coverage": [
+          0.6134875527636521,
+          0.9263840809508824
+        ],
+        "matches": 384
+      },
+      {
+        "id": "r10",
+        "score": 0.8650540167897097,
+        "evidence": 1.0,
+        "inliers": 329,
+        "regions": 2,
+        "coverage": [
+          0.8838922679784181,
+          0.8650540167897097
+        ],
+        "matches": 473
+      },
+      {
+        "id": "r08",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 29
+      },
+      {
+        "id": "r02",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 14
+      },
+      {
+        "id": "r05",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 50
+      }
+    ],
+    "reference_order": [
+      "r06",
+      "r01",
+      "r07",
+      "r03",
+      "r04",
+      "r09",
+      "r10",
+      "r08",
+      "r02",
+      "r05"
+    ],
+    "usage": {
+      "completion_tokens": 385,
+      "completion_tokens_details": {
+        "reasoning_tokens": 375
+      },
+      "prompt_tokens": 3691,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "total_tokens": 4076
+    }
+  },
+  {
+    "id": "834a4c6e-9307-40bb-acf6-c143c5f41e73-simulated_fold",
+    "kind": "synthetic_simulated_fold",
+    "expected": "skyFOODS",
+    "path": "images/834a4c6e-9307-40bb-acf6-c143c5f41e73-simulated_fold.png",
+    "qwen": "skyFOODS",
+    "valid": true,
+    "error": null,
+    "cpu": "skyFOODS",
+    "qwen_correct": true,
+    "cpu_correct": true,
+    "qwen_seconds": 5.458009797002887,
+    "cpu_seconds": 2.243067333009094,
+    "scores": [
+      {
+        "id": "r05",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 32
+      },
+      {
+        "id": "r04",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 5
+      },
+      {
+        "id": "r06",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 46
+      },
+      {
+        "id": "r08",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 7
+      },
+      {
+        "id": "r07",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 61
+      },
+      {
+        "id": "r01",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 34
+      },
+      {
+        "id": "r03",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 43
+      },
+      {
+        "id": "r02",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 33
+      },
+      {
+        "id": "r09",
+        "score": 0.667963069149776,
+        "evidence": 1.0,
+        "inliers": 237,
+        "regions": 2,
+        "coverage": [
+          0.667963069149776,
+          0.884589314677189
+        ],
+        "matches": 410
+      },
+      {
+        "id": "r10",
+        "score": 0.9279281637782083,
+        "evidence": 1.0,
+        "inliers": 305,
+        "regions": 2,
+        "coverage": [
+          0.9412713054606799,
+          0.9279281637782083
+        ],
+        "matches": 484
+      }
+    ],
+    "reference_order": [
+      "r05",
+      "r04",
+      "r06",
+      "r08",
+      "r07",
+      "r01",
+      "r03",
+      "r02",
+      "r09",
+      "r10"
+    ],
+    "usage": {
+      "completion_tokens": 754,
+      "completion_tokens_details": {
+        "reasoning_tokens": 744
+      },
+      "prompt_tokens": 3691,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "total_tokens": 4445
+    }
+  },
+  {
+    "id": "fe3a7e41-45ad-4865-8a83-427a696481db-rotate",
+    "kind": "synthetic_rotate",
+    "expected": "Hualian",
+    "path": "images/fe3a7e41-45ad-4865-8a83-427a696481db-rotate.png",
+    "qwen": "Hualian",
+    "valid": true,
+    "error": null,
+    "cpu": "Hualian",
+    "qwen_correct": true,
+    "cpu_correct": true,
+    "qwen_seconds": 10.664053988992237,
+    "cpu_seconds": 2.494245110981865,
+    "scores": [
+      {
+        "id": "r09",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 9
+      },
+      {
+        "id": "r02",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 8
+      },
+      {
+        "id": "r03",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 15
+      },
+      {
+        "id": "r04",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 6
+      },
+      {
+        "id": "r05",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 60
+      },
+      {
+        "id": "r06",
+        "score": 0.9513669446086727,
+        "evidence": 1.0,
+        "inliers": 507,
+        "regions": 1,
+        "coverage": [
+          0.9513669446086727,
+          0.9999404903594382
+        ],
+        "matches": 525
+      },
+      {
+        "id": "r01",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 28
+      },
+      {
+        "id": "r10",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 22
+      },
+      {
+        "id": "r07",
+        "score": 0.32847022247139473,
+        "evidence": 1.0,
+        "inliers": 139,
+        "regions": 1,
+        "coverage": [
+          0.9510815273898595,
+          0.32847022247139473
+        ],
+        "matches": 139
+      },
+      {
+        "id": "r08",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 22
+      }
+    ],
+    "reference_order": [
+      "r09",
+      "r02",
+      "r03",
+      "r04",
+      "r05",
+      "r06",
+      "r01",
+      "r10",
+      "r07",
+      "r08"
+    ],
+    "usage": {
+      "completion_tokens": 1431,
+      "completion_tokens_details": {
+        "reasoning_tokens": 1421
+      },
+      "prompt_tokens": 3859,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "total_tokens": 5290
+    }
+  },
+  {
+    "id": "fe3a7e41-45ad-4865-8a83-427a696481db-perspective",
+    "kind": "synthetic_perspective",
+    "expected": "Hualian",
+    "path": "images/fe3a7e41-45ad-4865-8a83-427a696481db-perspective.png",
+    "qwen": "Hualian",
+    "valid": true,
+    "error": null,
+    "cpu": "Hualian",
+    "qwen_correct": true,
+    "cpu_correct": true,
+    "qwen_seconds": 4.349202741985209,
+    "cpu_seconds": 2.5449701480101794,
+    "scores": [
+      {
+        "id": "r10",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 31
+      },
+      {
+        "id": "r09",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 1
+      },
+      {
+        "id": "r05",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 44
+      },
+      {
+        "id": "r04",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 22
+      },
+      {
+        "id": "r01",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 38
+      },
+      {
+        "id": "r03",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 27
+      },
+      {
+        "id": "r02",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 29
+      },
+      {
+        "id": "r07",
+        "score": 0.32847022247139473,
+        "evidence": 1.0,
+        "inliers": 131,
+        "regions": 1,
+        "coverage": [
+          0.9540966719857259,
+          0.32847022247139473
+        ],
+        "matches": 133
+      },
+      {
+        "id": "r08",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 50
+      },
+      {
+        "id": "r06",
+        "score": 0.9550163940457194,
+        "evidence": 1.0,
+        "inliers": 464,
+        "regions": 1,
+        "coverage": [
+          0.9550163940457194,
+          0.9999107355391573
+        ],
+        "matches": 484
+      }
+    ],
+    "reference_order": [
+      "r10",
+      "r09",
+      "r05",
+      "r04",
+      "r01",
+      "r03",
+      "r02",
+      "r07",
+      "r08",
+      "r06"
+    ],
+    "usage": {
+      "completion_tokens": 465,
+      "completion_tokens_details": {
+        "reasoning_tokens": 455
+      },
+      "prompt_tokens": 3859,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "total_tokens": 4324
+    }
+  },
+  {
+    "id": "fe3a7e41-45ad-4865-8a83-427a696481db-simulated_fold",
+    "kind": "synthetic_simulated_fold",
+    "expected": "Hualian",
+    "path": "images/fe3a7e41-45ad-4865-8a83-427a696481db-simulated_fold.png",
+    "qwen": "Hualian",
+    "valid": true,
+    "error": null,
+    "cpu": "Hualian",
+    "qwen_correct": true,
+    "cpu_correct": true,
+    "qwen_seconds": 16.7201595279912,
+    "cpu_seconds": 2.563365135982167,
+    "scores": [
+      {
+        "id": "r08",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 59
+      },
+      {
+        "id": "r10",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 15
+      },
+      {
+        "id": "r09",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 38
+      },
+      {
+        "id": "r03",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 36
+      },
+      {
+        "id": "r01",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 54
+      },
+      {
+        "id": "r07",
+        "score": 0.31776713131673506,
+        "evidence": 1.0,
+        "inliers": 124,
+        "regions": 2,
+        "coverage": [
+          0.96822630571311,
+          0.31776713131673506
+        ],
+        "matches": 137
+      },
+      {
+        "id": "r02",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 28
+      },
+      {
+        "id": "r04",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 38
+      },
+      {
+        "id": "r06",
+        "score": 0.9726672511585464,
+        "evidence": 1.0,
+        "inliers": 630,
+        "regions": 2,
+        "coverage": [
+          0.9726672511585464,
+          0.9984267138776481
+        ],
+        "matches": 633
+      },
+      {
+        "id": "r05",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 42
+      }
+    ],
+    "reference_order": [
+      "r08",
+      "r10",
+      "r09",
+      "r03",
+      "r01",
+      "r07",
+      "r02",
+      "r04",
+      "r06",
+      "r05"
+    ],
+    "usage": {
+      "completion_tokens": 2449,
+      "completion_tokens_details": {
+        "reasoning_tokens": 2439
+      },
+      "prompt_tokens": 3859,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "total_tokens": 6308
+    }
+  },
+  {
+    "id": "be4a2b4d-87d4-41f8-8ad2-b8b419229096-absent",
+    "kind": "missing_reference",
+    "expected": null,
+    "path": "images/be4a2b4d-87d4-41f8-8ad2-b8b419229096.png",
+    "sha256": "29c3313656ce3d13158be10e2425a0a43d7f2b9a98005b43f6758223c199efe0",
+    "exclude": "Target",
+    "qwen": null,
+    "valid": true,
+    "error": null,
+    "cpu": null,
+    "qwen_correct": true,
+    "cpu_correct": true,
+    "qwen_seconds": 16.424854628974572,
+    "cpu_seconds": 1.567590963008115,
+    "scores": [
+      {
+        "id": "r09",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 3
+      },
+      {
+        "id": "r05",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 18
+      },
+      {
+        "id": "r01",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 17
+      },
+      {
+        "id": "r10",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 4
+      },
+      {
+        "id": "r07",
+        "score": 0.014019138146326545,
+        "evidence": 0.1875,
+        "inliers": 15,
+        "regions": 1,
+        "coverage": [
+          0.11300291951387878,
+          0.07476873678040824
+        ],
+        "matches": 45
+      },
+      {
+        "id": "r06",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 9
+      },
+      {
+        "id": "r03",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 18
+      },
+      {
+        "id": "r02",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 13
+      },
+      {
+        "id": "r04",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 5
+      }
+    ],
+    "reference_order": [
+      "r09",
+      "r05",
+      "r01",
+      "r10",
+      "r07",
+      "r06",
+      "r03",
+      "r02",
+      "r04"
+    ],
+    "usage": {
+      "completion_tokens": 2503,
+      "completion_tokens_details": {
+        "reasoning_tokens": 2495
+      },
+      "prompt_tokens": 3444,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "total_tokens": 5947
+    }
+  },
+  {
+    "id": "fe3a7e41-45ad-4865-8a83-427a696481db-absent",
+    "kind": "missing_reference",
+    "expected": null,
+    "path": "images/fe3a7e41-45ad-4865-8a83-427a696481db.png",
+    "sha256": "e19e61b32aaa55424a57e42dcd5ab933109fd79f3ab0c722c8a8596245209e99",
+    "exclude": "Hualian",
+    "qwen": null,
+    "valid": true,
+    "error": null,
+    "cpu": null,
+    "qwen_correct": true,
+    "cpu_correct": true,
+    "qwen_seconds": 14.339493085019058,
+    "cpu_seconds": 1.4569432090211194,
+    "scores": [
+      {
+        "id": "r09",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 31
+      },
+      {
+        "id": "r08",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 50
+      },
+      {
+        "id": "r01",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 31
+      },
+      {
+        "id": "r02",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 4
+      },
+      {
+        "id": "r05",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 56
+      },
+      {
+        "id": "r10",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 50
+      },
+      {
+        "id": "r04",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 31
+      },
+      {
+        "id": "r03",
+        "score": 0.01679313062019097,
+        "evidence": 0.225,
+        "inliers": 18,
+        "regions": 1,
+        "coverage": [
+          0.3638218030659987,
+          0.07463613608973765
+        ],
+        "matches": 58
+      }
+    ],
+    "reference_order": [
+      "r09",
+      "r08",
+      "r01",
+      "r02",
+      "r05",
+      "r10",
+      "r04",
+      "r03"
+    ],
+    "usage": {
+      "completion_tokens": 2137,
+      "completion_tokens_details": {
+        "reasoning_tokens": 2129
+      },
+      "prompt_tokens": 3245,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "total_tokens": 5382
+    }
+  },
+  {
+    "id": "blank",
+    "kind": "negative_control",
+    "expected": null,
+    "path": "images/blank.png",
+    "qwen": null,
+    "valid": true,
+    "error": null,
+    "cpu": null,
+    "qwen_correct": true,
+    "cpu_correct": true,
+    "qwen_seconds": 2.711154954013182,
+    "cpu_seconds": 0.2524315650225617,
+    "scores": [
+      {
+        "id": "r06",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 0
+      },
+      {
+        "id": "r01",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 0
+      },
+      {
+        "id": "r02",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 0
+      },
+      {
+        "id": "r04",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 0
+      },
+      {
+        "id": "r10",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 0
+      },
+      {
+        "id": "r08",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 0
+      },
+      {
+        "id": "r03",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 0
+      },
+      {
+        "id": "r09",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 0
+      },
+      {
+        "id": "r07",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 0
+      },
+      {
+        "id": "r05",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 0
+      }
+    ],
+    "reference_order": [
+      "r06",
+      "r01",
+      "r02",
+      "r04",
+      "r10",
+      "r08",
+      "r03",
+      "r09",
+      "r07",
+      "r05"
+    ],
+    "usage": {
+      "completion_tokens": 233,
+      "completion_tokens_details": {
+        "reasoning_tokens": 225
+      },
+      "prompt_tokens": 3667,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "total_tokens": 3900
+    }
+  },
+  {
+    "id": "unregistered_text",
+    "kind": "negative_control",
+    "expected": null,
+    "path": "images/unregistered_text.png",
+    "qwen": null,
+    "valid": true,
+    "error": null,
+    "cpu": null,
+    "qwen_correct": true,
+    "cpu_correct": true,
+    "qwen_seconds": 3.7422903169936035,
+    "cpu_seconds": 1.1052790980029386,
+    "scores": [
+      {
+        "id": "r02",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 18
+      },
+      {
+        "id": "r03",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 31
+      },
+      {
+        "id": "r01",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 1
+      },
+      {
+        "id": "r10",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 3
+      },
+      {
+        "id": "r04",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 11
+      },
+      {
+        "id": "r07",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 1
+      },
+      {
+        "id": "r05",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 6
+      },
+      {
+        "id": "r06",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 3
+      },
+      {
+        "id": "r08",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 7
+      },
+      {
+        "id": "r09",
+        "score": 0.0,
+        "evidence": 0.0,
+        "inliers": 0,
+        "regions": 0,
+        "coverage": [
+          0.0,
+          0.0
+        ],
+        "matches": 1
+      }
+    ],
+    "reference_order": [
+      "r02",
+      "r03",
+      "r01",
+      "r10",
+      "r04",
+      "r07",
+      "r05",
+      "r06",
+      "r08",
+      "r09"
+    ],
+    "usage": {
+      "completion_tokens": 436,
+      "completion_tokens_details": {
+        "reasoning_tokens": 428
+      },
+      "prompt_tokens": 3667,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "total_tokens": 4103
+    }
+  }
+]

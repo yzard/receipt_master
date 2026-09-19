@@ -1,0 +1,43 @@
+{
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "{\"reference_id\":\"r02\"}",
+        "reasoning_content": "The query shows the \"COSTCO WHOLESALE\" wordmark with the distinctive three horizontal lines to the left of \"WHOLESALE\". I need to find matching references.\n\nLooking at the references:\n- r02: Shows \"COSTCO WHOLESALE\" with the three lines - exact match.\n- r03: Shows \"COSTCO\" with the lines and partial \"WHOLESALE\" - also a match, same logo.\n- Others are different brands (Hualian, 99, skyFoods, Fei Long, MART, etc.)\n\nThe instruction says select any reference showing the same printed symbol or wordmark. Both r02 and r03 match. I need to pick one. r02 is the cleanest full match. I'll return r02.\n",
+        "refusal": null,
+        "role": "assistant"
+      }
+    }
+  ],
+  "created": 1789761924,
+  "id": "chatcmpl-c3ab5ebc0a273f34",
+  "model": "qwen3.8-27b-ninfer-nvfp4",
+  "object": "chat.completion",
+  "timings": {
+    "cache_n": 0,
+    "draft_n": 177,
+    "draft_n_accepted": 128,
+    "predicted_ms": 990.1126489999999,
+    "predicted_n": 187,
+    "predicted_per_second": 187.8574121720972,
+    "predicted_per_token_ms": 5.323186284946236,
+    "prompt_ms": 752.364767,
+    "prompt_n": 3565,
+    "prompt_per_second": 4738.393072571937,
+    "prompt_per_token_ms": 0.21104201037868164
+  },
+  "usage": {
+    "completion_tokens": 187,
+    "completion_tokens_details": {
+      "reasoning_tokens": 177
+    },
+    "prompt_tokens": 3565,
+    "prompt_tokens_details": {
+      "cached_tokens": 0
+    },
+    "total_tokens": 3752
+  }
+}

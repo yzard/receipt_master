@@ -1,0 +1,43 @@
+{
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "{\"reference_id\":\"r02\"}",
+        "reasoning_content": "The query image shows the \"COSTCO WHOLESALE\" logo with the distinctive bold lettering and the three horizontal lines to the left of \"WHOLESALE\".\n\nLooking at the references:\n- r07: Hualian Supermarket - no match\n- r01: 99 with laurel wreath - no match\n- r06: A square symbol - no match\n- r09: skyFOODS - no match\n- r04: Fei Long Market - no match\n- r02: COSTCO WHOLESALE - exact match\n- r08: Target-like circle - no match\n- r03: COSTCO WHOLESALE - match (slightly cropped but same logo)\n- r10: skyFOODS - no match\n- r05: MART - no match\n\nBoth r02 and r03 show the Costco Wholesale logo. The query matches both. I need to pick one. r02 is a complete, clear match showing the full logo including the three lines and \"WHOLESALE\". r03 is also a match but slightly cropped at the bottom. Both are valid. The instruction says references can contain multiple samples of one brand. I should choose one reference ID. r02 is the cleanest full match.\n\nI'll return r02.\n",
+        "refusal": null,
+        "role": "assistant"
+      }
+    }
+  ],
+  "created": 1789761558,
+  "id": "chatcmpl-405155c79208990b",
+  "model": "qwen3.8-27b-ninfer-nvfp4",
+  "object": "chat.completion",
+  "timings": {
+    "cache_n": 0,
+    "draft_n": 264,
+    "draft_n_accepted": 212,
+    "predicted_ms": 1484.5171070000001,
+    "predicted_n": 300,
+    "predicted_per_second": 201.41229669238157,
+    "predicted_per_token_ms": 4.964940157190636,
+    "prompt_ms": 759.513598,
+    "prompt_n": 3619,
+    "prompt_per_second": 4764.891648457359,
+    "prompt_per_token_ms": 0.20986836087316937
+  },
+  "usage": {
+    "completion_tokens": 300,
+    "completion_tokens_details": {
+      "reasoning_tokens": 290
+    },
+    "prompt_tokens": 3619,
+    "prompt_tokens_details": {
+      "cached_tokens": 0
+    },
+    "total_tokens": 3919
+  }
+}

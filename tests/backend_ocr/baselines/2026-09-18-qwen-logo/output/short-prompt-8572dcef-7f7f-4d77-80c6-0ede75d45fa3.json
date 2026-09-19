@@ -1,0 +1,43 @@
+{
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "{\"reference_id\":\"r02\"}",
+        "reasoning_content": "The QUERY image shows the \"COSTCO WHOLESALE\" wordmark with the distinctive horizontal lines to the left of \"WHOLESALE\". I need to compare with references.\n\nr03 shows \"COSTCO\" with \"WHOLESALE\" partially visible and the horizontal lines - matches the layout and lettering.\nr02 shows \"COSTCO WHOLESALE\" with the horizontal lines - also matches.\n\nBoth r02 and r03 appear to be the same logo. The query has the lines on the left of WHOLESALE. r02 has the lines clearly. r03 also has the lines. Both match the wordmark.\n\nI need to pick one. The query's lettering matches both. r02 is a clean full match. r03 is also a match but slightly cropped. Both are valid. I'll select r02 as it's the clearest full match, but r03 also works. The instruction says select any reference showing the same symbol/wordmark. I'll choose r02.\n\nActually both are correct. Let me pick r02.\n",
+        "refusal": null,
+        "role": "assistant"
+      }
+    }
+  ],
+  "created": 1789761920,
+  "id": "chatcmpl-cfd78e14c25306a0",
+  "model": "qwen3.8-27b-ninfer-nvfp4",
+  "object": "chat.completion",
+  "timings": {
+    "cache_n": 0,
+    "draft_n": 240,
+    "draft_n_accepted": 171,
+    "predicted_ms": 1342.91509,
+    "predicted_n": 250,
+    "predicted_per_second": 185.4175307539362,
+    "predicted_per_token_ms": 5.393233293172691,
+    "prompt_ms": 760.2967189999999,
+    "prompt_n": 3565,
+    "prompt_per_second": 4688.958811618915,
+    "prompt_per_token_ms": 0.21326696185133237
+  },
+  "usage": {
+    "completion_tokens": 250,
+    "completion_tokens_details": {
+      "reasoning_tokens": 240
+    },
+    "prompt_tokens": 3565,
+    "prompt_tokens_details": {
+      "cached_tokens": 0
+    },
+    "total_tokens": 3815
+  }
+}

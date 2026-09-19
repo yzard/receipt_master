@@ -155,11 +155,18 @@ def main():
         else:
             raise AssertionError('Recognition did not finish')
         if args.scenario == 'parallel':
-            assert ('running', 'running') in seen, seen
+            assert ('running', 'queued') in seen, seen
+            assert ('running', 'running') not in seen, seen
         for rid in owned:
             receipt = call('receipts', 'get', {'id': rid})
             assert receipt['lines'] and receipt['revision'] > 2 and not receipt['posted']
             if args.scenario == 'logo':
+                if receipt['store'] != 'Costco':
+                    print('Logo diagnostics:', call('logos', 'match', {'receipt_id': rid}), flush=True)
+                    for run in call('recognition', 'runs', {}):
+                        if run['receipt_id'] == rid and run['status'] == 'succeeded':
+                            result = json.loads((args.data_directory / 'recognition' / (run['run_id'] + '.json')).read_text())
+                            print('Logo box:', result.get('logo_inference', {}).get('evidence'), flush=True)
                 assert receipt['store'] == 'Costco', receipt['store']
             if args.scenario == 'multi':
                 assert len(call('images', 'list', {'receipt_id': rid})) == 2
@@ -181,7 +188,7 @@ def main():
         assert len(runs) == len(owned), runs
         for run in runs:
             result = json.loads((args.data_directory / 'recognition' / (run['run_id'] + '.json')).read_text())
-            assert result['receipt_parsing']['version'] == 'dual-ocr-v1'
+            assert result['receipt_parsing']['version'] == 'qwen3.8-ninfer-v1'
             assert result['receipt_parsing']['image_count'] == (2 if args.scenario == 'multi' else 1)
         with urllib.request.urlopen(base + '/android-update.json') as reply:
             manifest = json.load(reply)
@@ -189,7 +196,7 @@ def main():
             digest = hashlib.sha256(reply.read()).hexdigest()
         assert digest == manifest['variants']['arm64-v8a']['sha256']
         print(
-            f'PASS: {args.scenario}, automatic drafts, dual OCR and store parsing, responsive API; APK build {manifest["build_number"]}',
+            f'PASS: {args.scenario}, automatic drafts, Qwen vision and store prompts, responsive API; APK build {manifest["build_number"]}',
             flush=True,
         )
     finally:

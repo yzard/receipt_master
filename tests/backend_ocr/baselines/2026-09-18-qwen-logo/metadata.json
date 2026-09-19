@@ -1,0 +1,16 @@
+{
+  "date": "2026-09-18",
+  "model": "qwen3.8-27b-ninfer-nvfp4",
+  "thinking": true,
+  "temperature": 0,
+  "seed": 42,
+  "image_longest_edge": 768,
+  "primary_max_tokens": 4096,
+  "retry_max_tokens": 8192,
+  "reference_samples": 10,
+  "query_real_crops": 27,
+  "synthetic_cases": 9,
+  "negative_cases": 4,
+  "production_modified": false,
+  "ocr_image": "sha256:871f391ec2f7d760b6c6d75ed53615074d84ba1e3c8ebc365de7463a07c885ea"
+}

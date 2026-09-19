@@ -1,0 +1,43 @@
+{
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "{\"reference_id\":\"r06\"}",
+        "reasoning_content": "The QUERY image shows a stylized symbol resembling a square \"G\" or \"C\" shape with a notch. Looking at the references, r06 shows an identical symbol: a thick black square-ish shape with an opening on the right and a horizontal bar in the middle, matching the query exactly. r07 also contains a similar \"G\" symbol but as part of \"hualian\" logo with text. The query is just the symbol alone. r06 is the same symbol alone, matching the query's distinctive shape precisely. So the match is r06.\n",
+        "refusal": null,
+        "role": "assistant"
+      }
+    }
+  ],
+  "created": 1789761975,
+  "id": "chatcmpl-30ddfbf879645747",
+  "model": "qwen3.8-27b-ninfer-nvfp4",
+  "object": "chat.completion",
+  "timings": {
+    "cache_n": 0,
+    "draft_n": 138,
+    "draft_n_accepted": 85,
+    "predicted_ms": 773.003948,
+    "predicted_n": 130,
+    "predicted_per_second": 166.88142451764037,
+    "predicted_per_token_ms": 5.9922786666666665,
+    "prompt_ms": 799.126084,
+    "prompt_n": 3805,
+    "prompt_per_second": 4761.451385686467,
+    "prompt_per_token_ms": 0.21001999579500658
+  },
+  "usage": {
+    "completion_tokens": 130,
+    "completion_tokens_details": {
+      "reasoning_tokens": 120
+    },
+    "prompt_tokens": 3805,
+    "prompt_tokens_details": {
+      "cached_tokens": 0
+    },
+    "total_tokens": 3935
+  }
+}

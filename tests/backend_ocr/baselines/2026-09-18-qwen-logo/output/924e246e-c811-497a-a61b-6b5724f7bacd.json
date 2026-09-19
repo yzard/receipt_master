@@ -1,0 +1,43 @@
+{
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "{\"reference_id\":\"r02\"}",
+        "reasoning_content": "The query image shows the \"COSTCO WHOLESALE\" logo with the distinctive bold lettering and the three horizontal lines to the left of \"WHOLESALE\".\n\nLooking at the references:\n- r01: \"99\" with laurel wreath - no match\n- r06: A \"G\" symbol - no match\n- r05: \"MART\" with H symbol - no match\n- r09: \"skyFOODS\" - no match\n- r04: \"Fei Long MARKET\" - no match\n- r08: A circle/dot symbol - no match\n- r07: \"hualian SUPERMARKET\" - no match\n- r02: \"COSTCO WHOLESALE\" - exact match\n- r03: \"COSTCO WHOLESALE\" - exact match\n- r10: \"skyFOODS\" - no match\n\nBoth r02 and r03 match the Costco logo. The query shows the full \"COSTCO WHOLESALE\" with the three lines. r02 shows the complete logo with \"WHOLESALE\" fully visible and the three lines. r03 shows \"COSTCO\" with \"WHOLESALE\" partially cut off at the bottom.\n\nThe query image shows the full logo including the three horizontal lines and \"WHOLESALE\". r02 is the closest match as it shows the complete logo with the three lines and full \"WHOLESALE\" text. r03 also matches but the bottom is cut off.\n\nBoth are valid matches for the same brand. I need to choose one. r02 is the most complete and matches the layout exactly (three lines + WHOLESALE). I'll go with r02.\n",
+        "refusal": null,
+        "role": "assistant"
+      }
+    }
+  ],
+  "created": 1789761573,
+  "id": "chatcmpl-45919a2a5e25b1f2",
+  "model": "qwen3.8-27b-ninfer-nvfp4",
+  "object": "chat.completion",
+  "timings": {
+    "cache_n": 0,
+    "draft_n": 345,
+    "draft_n_accepted": 280,
+    "predicted_ms": 1938.2657279999999,
+    "predicted_n": 395,
+    "predicted_per_second": 203.27450168896556,
+    "predicted_per_token_ms": 4.919456162436548,
+    "prompt_ms": 767.355959,
+    "prompt_n": 3595,
+    "prompt_per_second": 4684.9183326665225,
+    "prompt_per_token_ms": 0.2134508926286509
+  },
+  "usage": {
+    "completion_tokens": 395,
+    "completion_tokens_details": {
+      "reasoning_tokens": 385
+    },
+    "prompt_tokens": 3595,
+    "prompt_tokens_details": {
+      "cached_tokens": 0
+    },
+    "total_tokens": 3990
+  }
+}

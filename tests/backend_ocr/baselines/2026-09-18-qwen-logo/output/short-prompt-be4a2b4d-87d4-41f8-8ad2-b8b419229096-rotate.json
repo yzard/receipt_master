@@ -1,0 +1,43 @@
+{
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "{\"reference_id\":\"r08\"}",
+        "reasoning_content": "The QUERY image shows a circular symbol: a thick outer ring with a solid dot in the center, like a target or bullseye. Looking at the references, r08 shows exactly the same symbol: a thick outer ring with a central dot. The other references are wordmarks (Hualian, skyFoods, Fei Long, 7-Eleven style, MART, Costco, 99). r08 matches the distinctive shape perfectly.\n",
+        "refusal": null,
+        "role": "assistant"
+      }
+    }
+  ],
+  "created": 1789761953,
+  "id": "chatcmpl-adb2e0435ca2d25f",
+  "model": "qwen3.8-27b-ninfer-nvfp4",
+  "object": "chat.completion",
+  "timings": {
+    "cache_n": 0,
+    "draft_n": 111,
+    "draft_n_accepted": 70,
+    "predicted_ms": 620.628331,
+    "predicted_n": 105,
+    "predicted_per_second": 167.57211168950005,
+    "predicted_per_token_ms": 5.967580105769231,
+    "prompt_ms": 799.6644550000001,
+    "prompt_n": 3949,
+    "prompt_per_second": 4938.321286270001,
+    "prompt_per_token_ms": 0.2024979627753862
+  },
+  "usage": {
+    "completion_tokens": 105,
+    "completion_tokens_details": {
+      "reasoning_tokens": 95
+    },
+    "prompt_tokens": 3949,
+    "prompt_tokens_details": {
+      "cached_tokens": 0
+    },
+    "total_tokens": 4054
+  }
+}

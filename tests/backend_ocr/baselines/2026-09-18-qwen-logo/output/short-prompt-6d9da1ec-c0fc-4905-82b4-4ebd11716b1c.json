@@ -1,0 +1,43 @@
+{
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "{\"reference_id\":\"r10\"}",
+        "reasoning_content": "The query shows \"skyFOODS\" with a leaf accent on the first O, tagline \"everyday fresh at low prices\" and Chinese characters below. References r10 and r09 both show the same \"skyFOODS\" wordmark with identical leaf accent, tagline, and Chinese text. r10 is the clearest full match including the Chinese line. r09 also matches but is cropped. Both are valid; I'll pick r10 as the most complete match.\n",
+        "refusal": null,
+        "role": "assistant"
+      }
+    }
+  ],
+  "created": 1789761904,
+  "id": "chatcmpl-5dec699a32d0e6c4",
+  "model": "qwen3.8-27b-ninfer-nvfp4",
+  "object": "chat.completion",
+  "timings": {
+    "cache_n": 0,
+    "draft_n": 108,
+    "draft_n_accepted": 80,
+    "predicted_ms": 602.0484230000001,
+    "predicted_n": 116,
+    "predicted_per_second": 191.01453571949642,
+    "predicted_per_token_ms": 5.23520367826087,
+    "prompt_ms": 766.136038,
+    "prompt_n": 3613,
+    "prompt_per_second": 4715.872665945522,
+    "prompt_per_token_ms": 0.21204983061168003
+  },
+  "usage": {
+    "completion_tokens": 116,
+    "completion_tokens_details": {
+      "reasoning_tokens": 106
+    },
+    "prompt_tokens": 3613,
+    "prompt_tokens_details": {
+      "cached_tokens": 0
+    },
+    "total_tokens": 3729
+  }
+}

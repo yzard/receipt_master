@@ -7,8 +7,8 @@ pub mod error;
 pub mod jobs;
 pub mod logos;
 mod merchant_images;
-pub mod parsing;
 pub mod pipeline;
+pub mod prompts;
 pub mod receipt_lines;
 pub mod sku;
 pub mod weights;
@@ -37,6 +37,7 @@ use tower_http::services::ServeFile;
 
 pub struct State {
     pub config: Config,
+    pub prompts: prompts::Prompts,
     pub client: reqwest::Client,
     pub lock: tokio::sync::Semaphore,
     pub storage_lock: tokio::sync::Mutex<()>,
@@ -56,8 +57,10 @@ impl State {
             .timeout(Duration::from_secs(config.timeout_seconds))
             .build()?;
         let job_workers = config.job_workers;
+        let prompts = prompts::Prompts::parse(&std::fs::read_to_string(&config.ocr.prompts_file)?)?;
         Ok(Arc::new(Self {
             config,
+            prompts,
             client,
             lock: tokio::sync::Semaphore::new(job_workers),
             storage_lock: tokio::sync::Mutex::new(()),

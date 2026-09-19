@@ -1,0 +1,40 @@
+1/40 real_photo be4a2b4d-87d4-41f8-8 expected=Target Qwen=Target valid=True CPU=None 3.6s
+2/40 real_photo 57bb2995-1993-4ff0-8 expected=Costco Qwen=Costco valid=True CPU=Costco 4.4s
+3/40 real_photo 834a4c6e-9307-40bb-a expected=skyFOODS Qwen=skyFOODS valid=True CPU=skyFOODS 5.5s
+4/40 real_photo 560ccf19-b7af-4ad6-a expected=Costco Qwen=Costco valid=True CPU=Costco 4.9s
+5/40 real_photo 74356ee7-d2e7-42e4-a expected=skyFOODS Qwen=skyFOODS valid=True CPU=skyFOODS 5.2s
+6/40 real_photo 78f63611-ad9f-4982-8 expected=99 Ranch Qwen=99 Ranch valid=True CPU=99 Ranch 4.6s
+7/40 real_photo 2f97fc50-4cf3-47e1-b expected=99 Ranch Qwen=99 Ranch valid=True CPU=99 Ranch 3.6s
+8/40 real_photo fe3a7e41-45ad-4865-8 expected=Hualian Qwen=None valid=False CPU=Hualian 38.5s
+9/40 real_photo e3843baa-904a-4bbf-b expected=H MART Qwen=H MART valid=True CPU=H MART 3.5s
+10/40 real_photo 199fc34a-4857-4aac-8 expected=H MART Qwen=H MART valid=True CPU=H MART 5.9s
+11/40 real_photo 4e491343-7593-42b4-b expected=Costco Qwen=Costco valid=True CPU=Costco 5.0s
+12/40 real_photo c00860de-60e8-4892-8 expected=Costco Qwen=Costco valid=True CPU=Costco 5.2s
+13/40 real_photo 6d9da1ec-c0fc-4905-8 expected=skyFOODS Qwen=skyFOODS valid=True CPU=skyFOODS 4.2s
+14/40 real_photo e6c62f11-3b8d-4ac0-a expected=Costco Qwen=Costco valid=True CPU=Costco 5.2s
+15/40 real_photo 73953603-31f5-496a-9 expected=skyFOODS Qwen=skyFOODS valid=True CPU=skyFOODS 3.9s
+16/40 real_photo d7f8ff6d-6502-4eeb-8 expected=skyFOODS Qwen=skyFOODS valid=True CPU=skyFOODS 7.8s
+17/40 real_photo a31f7e6b-8bb1-49c8-a expected=skyFOODS Qwen=skyFOODS valid=True CPU=skyFOODS 6.0s
+18/40 real_photo 8572dcef-7f7f-4d77-8 expected=Costco Qwen=Costco valid=True CPU=Costco 6.7s
+19/40 real_photo 3a8e3c19-e8d0-4ea8-8 expected=Costco Qwen=Costco valid=True CPU=Costco 2.9s
+20/40 real_photo e9ee06e0-f4aa-4c3c-8 expected=skyFOODS Qwen=skyFOODS valid=True CPU=skyFOODS 5.5s
+21/40 real_photo 924e246e-c811-497a-a expected=Costco Qwen=Costco valid=True CPU=Costco 3.3s
+22/40 real_photo e297a3d3-f9f1-4ba7-8 expected=H MART Qwen=H MART valid=True CPU=H MART 2.6s
+23/40 real_photo 5331c892-9fb6-42b5-b expected=skyFOODS Qwen=skyFOODS valid=True CPU=skyFOODS 4.3s
+24/40 real_photo 20267232-d4d0-4540-9 expected=Costco Qwen=Costco valid=True CPU=Costco 4.0s
+25/40 real_photo c5fdc978-8f74-43bf-a expected=Costco Qwen=Costco valid=True CPU=Costco 4.1s
+26/40 real_photo ca76c352-9601-498c-8 expected=Costco Qwen=Costco valid=True CPU=Costco 3.3s
+27/40 real_photo 4fc6a91b-faba-4d3e-8 expected=Costco Qwen=Costco valid=True CPU=Costco 9.0s
+28/40 synthetic_rotate be4a2b4d-87d4-41f8-8 expected=Target Qwen=Target valid=True CPU=None 2.7s
+29/40 synthetic_perspective be4a2b4d-87d4-41f8-8 expected=Target Qwen=Target valid=True CPU=None 3.2s
+30/40 synthetic_simulated_fold be4a2b4d-87d4-41f8-8 expected=Target Qwen=Target valid=True CPU=None 2.9s
+31/40 synthetic_rotate 834a4c6e-9307-40bb-a expected=skyFOODS Qwen=skyFOODS valid=True CPU=skyFOODS 3.2s
+32/40 synthetic_perspective 834a4c6e-9307-40bb-a expected=skyFOODS Qwen=skyFOODS valid=True CPU=skyFOODS 3.5s
+33/40 synthetic_simulated_fold 834a4c6e-9307-40bb-a expected=skyFOODS Qwen=skyFOODS valid=True CPU=skyFOODS 5.5s
+34/40 synthetic_rotate fe3a7e41-45ad-4865-8 expected=Hualian Qwen=Hualian valid=True CPU=Hualian 10.7s
+35/40 synthetic_perspective fe3a7e41-45ad-4865-8 expected=Hualian Qwen=Hualian valid=True CPU=Hualian 4.3s
+36/40 synthetic_simulated_fold fe3a7e41-45ad-4865-8 expected=Hualian Qwen=Hualian valid=True CPU=Hualian 16.7s
+37/40 missing_reference be4a2b4d-87d4-41f8-8 expected=None Qwen=None valid=True CPU=None 16.4s
+38/40 missing_reference fe3a7e41-45ad-4865-8 expected=None Qwen=None valid=True CPU=None 14.3s
+39/40 negative_control blank expected=None Qwen=None valid=True CPU=None 2.7s
+40/40 negative_control unregistered_text expected=None Qwen=None valid=True CPU=None 3.7s

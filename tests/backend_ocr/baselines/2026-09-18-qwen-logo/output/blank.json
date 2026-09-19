@@ -1,0 +1,43 @@
+{
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "{\"reference_id\":null}",
+        "reasoning_content": "The user wants me to match a query receipt logo to reference logos. Let me look carefully at the query image.\n\nThe query image appears to be almost entirely blank/white. I need to look very carefully. The image is 1000x... it's a wide white image. I see no visible logo, no text, no symbol. It's essentially a blank white receipt or a blank image.\n\nLet me look again. The query image is described as a wide white rectangle. There's no discernible logo or text in it. It's just white/very light gray.\n\nThe instructions say: \"If none match, or the query lacks enough visible identity, return null.\"\n\nSince the query image lacks any visible logo identity (it's blank), I should return null.\n\nLet me double check by examining the query image more carefully. It's a white image with no content. There's no logo, no lettering, no symbol. Therefore there's not enough visible identity to match.\n\nThus the answer is null.\n\nI'll return {\"reference_id\":null}.\n",
+        "refusal": null,
+        "role": "assistant"
+      }
+    }
+  ],
+  "created": 1789761744,
+  "id": "chatcmpl-b7c85529f7457414",
+  "model": "qwen3.8-27b-ninfer-nvfp4",
+  "object": "chat.completion",
+  "timings": {
+    "cache_n": 0,
+    "draft_n": 237,
+    "draft_n_accepted": 154,
+    "predicted_ms": 1341.903692,
+    "predicted_n": 233,
+    "predicted_per_second": 172.88871130104914,
+    "predicted_per_token_ms": 5.7840676379310345,
+    "prompt_ms": 773.321618,
+    "prompt_n": 3667,
+    "prompt_per_second": 4741.882180254788,
+    "prompt_per_token_ms": 0.2108867242977911
+  },
+  "usage": {
+    "completion_tokens": 233,
+    "completion_tokens_details": {
+      "reasoning_tokens": 225
+    },
+    "prompt_tokens": 3667,
+    "prompt_tokens_details": {
+      "cached_tokens": 0
+    },
+    "total_tokens": 3900
+  }
+}

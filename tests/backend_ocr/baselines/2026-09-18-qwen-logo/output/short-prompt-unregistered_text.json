@@ -1,0 +1,43 @@
+{
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "{\"reference_id\":null}",
+        "reasoning_content": "The query image shows the wordmark \"FRESH GOODS\" in a clean sans-serif font. I need to compare this against the reference images.\n\nLooking at the references:\n- r02, r03: \"COSTCO WHOLESALE\" - no match\n- r01: \"99\" with laurel wreath - no match\n- r10, r09: \"skyFOODS\" with \"everyday fresh at low prices\" - no match\n- r04: \"Fei Long MARKET\" with Chinese characters - no match\n- r07: \"hualian SUPERMARKET\" - no match\n- r05: \"MART\" with logo - no match\n- r06: a square logo symbol - no match\n- r08: a circle/target symbol - no match\n\nNone of the references show \"FRESH GOODS\". The query is a distinct wordmark not present in any reference. Therefore, return null.\n",
+        "refusal": null,
+        "role": "assistant"
+      }
+    }
+  ],
+  "created": 1789761988,
+  "id": "chatcmpl-dcbfd76f7948377e",
+  "model": "qwen3.8-27b-ninfer-nvfp4",
+  "object": "chat.completion",
+  "timings": {
+    "cache_n": 0,
+    "draft_n": 189,
+    "draft_n_accepted": 154,
+    "predicted_ms": 1059.938867,
+    "predicted_n": 218,
+    "predicted_per_second": 204.72878838209448,
+    "predicted_per_token_ms": 4.884510907834102,
+    "prompt_ms": 775.943704,
+    "prompt_n": 3613,
+    "prompt_per_second": 4656.265630322067,
+    "prompt_per_token_ms": 0.2147643797398284
+  },
+  "usage": {
+    "completion_tokens": 218,
+    "completion_tokens_details": {
+      "reasoning_tokens": 210
+    },
+    "prompt_tokens": 3613,
+    "prompt_tokens_details": {
+      "cached_tokens": 0
+    },
+    "total_tokens": 3831
+  }
+}

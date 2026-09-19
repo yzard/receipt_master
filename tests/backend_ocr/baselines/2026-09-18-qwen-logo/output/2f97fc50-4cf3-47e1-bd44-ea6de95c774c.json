@@ -1,0 +1,43 @@
+{
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "{\"reference_id\":\"r01\"}",
+        "reasoning_content": "The query image shows a logo with the number \"99\" in the center, surrounded by a laurel wreath design, with a small ribbon/tie at the bottom. This is the classic 99 Cents Only Stores logo.\n\nLooking at the references:\n- r02: Costco Wholesale\n- r01: Same \"99\" with laurel wreath logo, with text \"Store 1607 Flushi...\" at the bottom\n- r04: Fei Long Market\n- r08: Target-like bullseye\n- r07: Hualian Supermarket\n- r10: skyFOODS\n- r05: MART\n- r03: Costco Wholesale\n- r06: Hualian symbol\n- r09: skyFOODS\n\nThe query matches r01 exactly - same \"99\" with laurel wreath, same layout, same bottom text fragment \"1607 Flushi...\".\n\nSo the answer is r01.\n",
+        "refusal": null,
+        "role": "assistant"
+      }
+    }
+  ],
+  "created": 1789761422,
+  "id": "chatcmpl-d882a985a87f119b",
+  "model": "qwen3.8-27b-ninfer-nvfp4",
+  "object": "chat.completion",
+  "timings": {
+    "cache_n": 0,
+    "draft_n": 219,
+    "draft_n_accepted": 159,
+    "predicted_ms": 1755.741971,
+    "predicted_n": 230,
+    "predicted_per_second": 130.4291882192523,
+    "predicted_per_token_ms": 7.666995506550218,
+    "prompt_ms": 1112.546993,
+    "prompt_n": 3931,
+    "prompt_per_second": 3533.3338948676665,
+    "prompt_per_token_ms": 0.2830188229458153
+  },
+  "usage": {
+    "completion_tokens": 230,
+    "completion_tokens_details": {
+      "reasoning_tokens": 220
+    },
+    "prompt_tokens": 3931,
+    "prompt_tokens_details": {
+      "cached_tokens": 0
+    },
+    "total_tokens": 4161
+  }
+}

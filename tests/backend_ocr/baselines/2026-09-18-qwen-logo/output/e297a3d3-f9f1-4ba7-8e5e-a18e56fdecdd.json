@@ -1,0 +1,43 @@
+{
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "{\"reference_id\":\"r05\"}",
+        "reasoning_content": "The query shows a logo with a stylized \"H\" inside a square/box shape, with the word \"MART\" below it. This is the H Mart logo.\n\nLooking at the references:\n- r02: Costco Wholesale\n- r09: skyFOODS\n- r07: Hualian Supermarket\n- r06: A square symbol (looks like a stylized H or box)\n- r01: 99 with laurel wreath\n- r04: Fei Long Market\n- r03: Costco Wholesale\n- r05: Same H Mart logo - stylized H in box with \"MART\" below\n- r10: skyFOODS\n- r08: Circle with dot (target-like)\n\nThe query matches r05 exactly - same H in box symbol and \"MART\" text.\n\nSo the answer is r05.\n",
+        "refusal": null,
+        "role": "assistant"
+      }
+    }
+  ],
+  "created": 1789761580,
+  "id": "chatcmpl-fdee1c268e8dce93",
+  "model": "qwen3.8-27b-ninfer-nvfp4",
+  "object": "chat.completion",
+  "timings": {
+    "cache_n": 0,
+    "draft_n": 195,
+    "draft_n_accepted": 143,
+    "predicted_ms": 1089.8942869999998,
+    "predicted_n": 209,
+    "predicted_per_second": 190.84419698403283,
+    "predicted_per_token_ms": 5.239876379807692,
+    "prompt_ms": 802.1730809999999,
+    "prompt_n": 3955,
+    "prompt_per_second": 4930.35741746612,
+    "prompt_per_token_ms": 0.2028250520859671
+  },
+  "usage": {
+    "completion_tokens": 209,
+    "completion_tokens_details": {
+      "reasoning_tokens": 199
+    },
+    "prompt_tokens": 3955,
+    "prompt_tokens_details": {
+      "cached_tokens": 0
+    },
+    "total_tokens": 4164
+  }
+}

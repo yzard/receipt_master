@@ -1,6 +1,6 @@
 > 本文件保留第一版历史方案。当前名称、分类、数据库与 API 以 [第二版设计](backend_api_v2.md) 和 `src/backend_api/schema.sql` 为准：仅有票面名称与商品名称两层，不保留店内映射或标准名称层。
 
-> 当前采用 Unlimited-OCR + PP-OCRv6 medium，backend_api 负责通用和按店铺解析；下文保留历史计划。现行设计见 [backend_ocr.md](backend_ocr.md)。
+> 当前采用 Qwen3.8 + NInfer + thinking，由 backend_api 组合通用和商店提示并校验结构化结果；下文保留历史计划。现行设计见 [backend_ocr.md](backend_ocr.md)。
 
 # Receipt Master 第一版技术方案与数据库设计
 

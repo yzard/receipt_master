@@ -1,0 +1,43 @@
+{
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "{\"reference_id\":\"r05\"}",
+        "reasoning_content": "The QUERY shows a square logo with a stylized \"H\" cut out in white, with the word \"MART\" below it. Looking at the references, r05 shows the exact same square logo with the stylized \"H\" and \"MART\" text below. This is a clear match. Other references show different logos (99, skyFoods, Costco, Hualian, Fei Long, a circle, a G-like symbol). So the match is r05.\n",
+        "refusal": null,
+        "role": "assistant"
+      }
+    }
+  ],
+  "created": 1789761894,
+  "id": "chatcmpl-5353834a60553915",
+  "model": "qwen3.8-27b-ninfer-nvfp4",
+  "object": "chat.completion",
+  "timings": {
+    "cache_n": 0,
+    "draft_n": 102,
+    "draft_n_accepted": 82,
+    "predicted_ms": 567.965034,
+    "predicted_n": 114,
+    "predicted_per_second": 198.9559096696083,
+    "predicted_per_token_ms": 5.026239238938053,
+    "prompt_ms": 805.4093829999999,
+    "prompt_n": 3925,
+    "prompt_per_second": 4873.298080263364,
+    "prompt_per_token_ms": 0.20519984280254774
+  },
+  "usage": {
+    "completion_tokens": 114,
+    "completion_tokens_details": {
+      "reasoning_tokens": 104
+    },
+    "prompt_tokens": 3925,
+    "prompt_tokens_details": {
+      "cached_tokens": 0
+    },
+    "total_tokens": 4039
+  }
+}

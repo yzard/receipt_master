@@ -1,0 +1,43 @@
+{
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "{\"reference_id\":\"r01\"}",
+        "reasoning_content": "The QUERY image shows a \"99\" enclosed in a laurel wreath with a small registered trademark symbol. Comparing to references: r01 shows the identical \"99\" in a laurel wreath with the same layout, including the small mark at bottom right and partial text below. Other references (Costco, Fei Long, Hualian, Mart, skyFoods, target-like circle, G symbol) do not match. So the match is r01.\n",
+        "refusal": null,
+        "role": "assistant"
+      }
+    }
+  ],
+  "created": 1789761887,
+  "id": "chatcmpl-0ad229912a404040",
+  "model": "qwen3.8-27b-ninfer-nvfp4",
+  "object": "chat.completion",
+  "timings": {
+    "cache_n": 0,
+    "draft_n": 114,
+    "draft_n_accepted": 75,
+    "predicted_ms": 634.5618020000001,
+    "predicted_n": 112,
+    "predicted_per_second": 174.92386029249204,
+    "predicted_per_token_ms": 5.716772990990991,
+    "prompt_ms": 791.64995,
+    "prompt_n": 3877,
+    "prompt_per_second": 4897.3665696561975,
+    "prompt_per_token_ms": 0.20419137219499614
+  },
+  "usage": {
+    "completion_tokens": 112,
+    "completion_tokens_details": {
+      "reasoning_tokens": 102
+    },
+    "prompt_tokens": 3877,
+    "prompt_tokens_details": {
+      "cached_tokens": 0
+    },
+    "total_tokens": 3989
+  }
+}

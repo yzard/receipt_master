@@ -1,3 +1,5 @@
+当前运行路径为 Qwen3.8/NInfer；旧双 OCR/parser 代码已删除。下文相关运行命令仅为历史记录；候选评分 `candidate_comparison_benchmark` 只支持 `candidate`。生产字段适配回归见 `tests/backend_api/api.rs`。
+
 最新复测：[Hualian/TOTAL 提示与 thinking](../../../docs/ninfer_prompt_thinking_evaluation.md)。注意 JSON 可解析与后端 schema 接受率分别计分。
 
 最新结果与图表：[NInfer / Qwen3.8 NVFP4，32 张同图比较](../../../docs/ninfer_evaluation.md)。原始 JSON 合规率与格式适配后的提取指标分开报告。
@@ -153,3 +155,7 @@ python3 -m unittest discover -s tests/backend_api -p 'test_*evaluation.py'
 模型输入由 `tests/backend_api/qwen38_evaluation.py` 构造，仅包含原图与已知商店、国家、币种；
 不提供商品名称、票面标准答案、金额标准答案或历史 OCR 输出。临时推理容器配置见
 `docker/qwen38_evaluation.compose.yaml`，只绑定本机回环地址。正常 playground 仍维持原来的两个容器。
+
+2026-09-18 清理：Dual OCR parser 的归档源码、副本执行器和专属 compare_corrected 脚本已删除，历史输出/图表保留。历史文档中的旧命令不再可执行；旧实现请从 Git 恢复。
+
+2026-09-18 Logo 切换清理：旧视觉模型/DINO 镜像构建配方、下载器和 llama.cpp 评测容器配置已删除；下文旧启动命令为历史记录，源码从 Git 恢复。当前 Logo 匹配通过生产 NInfer 的 Chat Completions 接口。

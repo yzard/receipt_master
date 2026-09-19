@@ -1,0 +1,43 @@
+{
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "{\"reference_id\":\"r05\"}",
+        "reasoning_content": "The QUERY shows a black square with a white stylized \"H\" inside, with \"MART\" below. Looking at references: r05 shows the exact same black square with white \"H\" and \"MART\" text below. This is a clear match. Other references (Costco, skyFoods, Hualian, 99, Fei Long, target-like circle, Hualian symbol) do not match. So the answer is r05.\n",
+        "refusal": null,
+        "role": "assistant"
+      }
+    }
+  ],
+  "created": 1789761891,
+  "id": "chatcmpl-72ce4b7f73e7e2be",
+  "model": "qwen3.8-27b-ninfer-nvfp4",
+  "object": "chat.completion",
+  "timings": {
+    "cache_n": 0,
+    "draft_n": 117,
+    "draft_n_accepted": 72,
+    "predicted_ms": 651.410869,
+    "predicted_n": 110,
+    "predicted_per_second": 167.32910853533824,
+    "predicted_per_token_ms": 5.976246504587157,
+    "prompt_ms": 801.389232,
+    "prompt_n": 3949,
+    "prompt_per_second": 4927.692864233544,
+    "prompt_per_token_ms": 0.20293472575335528
+  },
+  "usage": {
+    "completion_tokens": 110,
+    "completion_tokens_details": {
+      "reasoning_tokens": 100
+    },
+    "prompt_tokens": 3949,
+    "prompt_tokens_details": {
+      "cached_tokens": 0
+    },
+    "total_tokens": 4059
+  }
+}

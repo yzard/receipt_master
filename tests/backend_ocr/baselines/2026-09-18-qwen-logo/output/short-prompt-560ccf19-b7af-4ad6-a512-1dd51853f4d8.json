@@ -1,0 +1,43 @@
+{
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "{\"reference_id\":\"r02\"}",
+        "reasoning_content": "The query shows the \"COSTCO WHOLESALE\" wordmark with the distinctive three horizontal lines to the left of \"WHOLESALE\". I need to compare against references.\n\nr02: Shows \"COSTCO WHOLESALE\" with the three lines - matches exactly.\nr03: Also shows \"COSTCO WHOLESALE\" with the lines - matches.\nr04: Fei Long Market - no.\nr06: A symbol - no.\nr10, r09: skyFOODS - no.\nr01: 99 with laurel - no.\nr08: circle - no.\nr07: Hualian - no.\nr05: MART - no.\n\nBoth r02 and r03 match. The instruction says \"Select any reference showing the same printed symbol or wordmark.\" So I can pick either. r02 is a clear full match. I'll return r02.\n",
+        "refusal": null,
+        "role": "assistant"
+      }
+    }
+  ],
+  "created": 1789761877,
+  "id": "chatcmpl-312a559262bb54ef",
+  "model": "qwen3.8-27b-ninfer-nvfp4",
+  "object": "chat.completion",
+  "timings": {
+    "cache_n": 0,
+    "draft_n": 198,
+    "draft_n_accepted": 160,
+    "predicted_ms": 1102.314692,
+    "predicted_n": 225,
+    "predicted_per_second": 203.20875846586287,
+    "predicted_per_token_ms": 4.921047732142857,
+    "prompt_ms": 749.963123,
+    "prompt_n": 3517,
+    "prompt_per_second": 4689.563916064711,
+    "prompt_per_token_ms": 0.21323944355985214
+  },
+  "usage": {
+    "completion_tokens": 225,
+    "completion_tokens_details": {
+      "reasoning_tokens": 215
+    },
+    "prompt_tokens": 3517,
+    "prompt_tokens_details": {
+      "cached_tokens": 0
+    },
+    "total_tokens": 3742
+  }
+}

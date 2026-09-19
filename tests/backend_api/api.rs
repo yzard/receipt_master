@@ -4,6 +4,7 @@ use axum::{
     http::Request,
     routing::{get, post},
 };
+use base64::Engine;
 use receipt_backend_api::{State, application, config::Config};
 use serde_json::{Value, json};
 use std::sync::{Arc, Mutex};
@@ -25,6 +26,7 @@ struct Mock {
     calls: Vec<Value>,
     events: Vec<String>,
     bad_json: bool,
+    invalid_responses: usize,
     finish: bool,
     arithmetic_failures: usize,
     fail: bool,
@@ -43,36 +45,27 @@ impl Drop for Fixture {
         self.task.abort();
     }
 }
-async fn fixture() -> Fixture {
+async fn fixture(repair_attempts: usize) -> Fixture {
     let mock = Arc::new(Mutex::new(Mock::default()));
     let m = mock.clone();
     let h = mock.clone();
-    let engine=Router::new().route("/health",get(move||{let h=h.clone();async move{if h.lock().unwrap().fail{axum::http::StatusCode::SERVICE_UNAVAILABLE}else{axum::http::StatusCode::OK}}})).route("/v1/ocr/recognize",post(move|Json(v):Json<Value>|{let m=m.clone();async move{
- let (response, delay) = {
- let mut m=m.lock().unwrap();m.calls.push(v.clone());m.events.push("ocr".into());
- let count=v["messages"][0]["content"].as_array().unwrap().len();
- let total=if m.arithmetic_failures>0 {"6.50"}else{"5.50"};
- let text=format!("<|det|>title [50,20,950,150]<|/det|>LOGO\n<|det|>text [50,200,950,500]<|/det|>MILK 3.00\nMILK 3.00\nCOUPON -0.50\nTOTAL {total}");
- let pages:Vec<_>=(0..count).map(|_|json!({"unlimited":text,"paddle":{"words":[]}})).collect();
- ((if m.fail || m.finish {axum::http::StatusCode::SERVICE_UNAVAILABLE}else{axum::http::StatusCode::OK},Json(if m.bad_json {json!({})}else{json!({"pages":pages,"usage":{"prompt_tokens":10,"completion_tokens":20,"total_tokens":30}})})),m.delay_ms)
- };
- tokio::time::sleep(std::time::Duration::from_millis(delay)).await;
- response
- }}));
-    let logo_mock = mock.clone();
-    let engine = engine.route("/v1/logo/match",post(move |Json(v):Json<Value>| {
-        let logo_mock=logo_mock.clone();
-        async move {
-            let (scores,delay)={
-                let mut m=logo_mock.lock().unwrap();
-                m.events.push("logo".into());
-                let scores=v["references"].as_array().unwrap().iter().map(|r|json!({"id":r["id"],"score":if r["id"].as_str()==m.logo_id.as_deref(){0.95}else{0.01},"evidence":1.0})).collect::<Vec<_>>();
-                (scores,m.logo_delay_ms)
-            };
-            tokio::time::sleep(std::time::Duration::from_millis(delay)).await;
-            Json(json!({"model":receipt_backend_api::logos::MATCH_MODEL,"scores":scores}))
-        }
-    }));
+    let engine=Router::new().route("/health",get(move||{let h=h.clone();async move{if h.lock().unwrap().fail{axum::http::StatusCode::SERVICE_UNAVAILABLE}else{axum::http::StatusCode::OK}}})).route("/v1/chat/completions",post(move|Json(v):Json<Value>|{let m=m.clone();async move{
+        let (response,delay)={
+            let mut m=m.lock().unwrap();m.calls.push(v.clone());
+            let logo=v["messages"][0]["content"].as_str().unwrap_or("").starts_with("Locate the complete store logo");
+            let matching=v["messages"][0]["content"].as_str().unwrap_or("").starts_with("Compare the QUERY");
+            m.events.push(if logo {"locate"}else if matching {"logo"}else{"vision"}.into());
+            let selected=v["messages"][1]["content"].as_array().and_then(|parts|parts.iter().enumerate().skip(2).find(|(_,p)|p["image_url"]["url"].as_str().is_some_and(|url|Some(url)==m.logo_id.as_deref())).map(|(i,_)|format!("r{:02}",(i-1)/2)));
+            let total=if m.arithmetic_failures>0 {"6.50"}else{"5.50"};
+            let line=|kind:&str,amount:&str,target:Value|json!({"name":"MILK","product_name":null,"kind":kind,"quantity":null,"quantity_unit":null,"unit_price":null,"amount":amount,"confidence":null,"discount_target_index":target,"review_notes":[],"sku":null,"tax_code":null,"is_weighed":false,"evidence":[],"package_weight":null,"package_weight_unit":null,"amount_basis":"gross"});
+            let prediction=if matching {json!({"reference_id":selected})}else if logo {json!({"box":[50,20,950,500]})}else{json!({"store":null,"branch":null,"address":null,"country":"US","currency":"USD","local_time":null,"total":total,"lines":[line("product","3.00",Value::Null),line("product","3.00",Value::Null),line("item_discount","-0.50",json!(1))]})};
+            let invalid=m.bad_json || m.invalid_responses>0;
+            m.invalid_responses=m.invalid_responses.saturating_sub(1);
+            let raw=json!({"choices":[{"finish_reason":if m.finish {"length"}else{"stop"},"message":{"content":if invalid {"not json".into()}else{prediction.to_string()},"reasoning_content":"private inference"}}],"usage":{"prompt_tokens":10,"completion_tokens":20,"total_tokens":30}});
+            ((if m.fail {axum::http::StatusCode::SERVICE_UNAVAILABLE}else{axum::http::StatusCode::OK},Json(raw)),if matching {m.logo_delay_ms}else{m.delay_ms})
+        };
+        tokio::time::sleep(std::time::Duration::from_millis(delay)).await; response
+    }}));
     let engine = engine.layer(axum::extract::DefaultBodyLimit::max(80 * 1024 * 1024));
     let listener = tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();
     let port = listener.local_addr().unwrap().port();
@@ -81,6 +74,10 @@ async fn fixture() -> Fixture {
     });
     let dir = tempfile::tempdir().unwrap();
     let mut c = Config::parse(include_str!("../../playground/backend_api/config.yaml")).unwrap();
+    c.ocr.prompts_file = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
+        .join("../../playground/backend_api/prompts.toml");
+    c.ocr.repair_attempts = repair_attempts;
+    c.ocr.max_images = 4; // Exercise multi-batch reference matching.
     c.ocr.url = format!("http://127.0.0.1:{port}");
     c.ocr.model = "ocr".into();
     c.served_model = "test-vision".into();
@@ -123,7 +120,7 @@ async fn request(
 }
 #[tokio::test]
 async fn mobile_round_trip() {
-    let f = fixture().await;
+    let f = fixture(0).await;
     let (status, v) = request(&f, "POST", "/v1/chat/completions", Some(body()), true).await;
     assert_eq!(status, 200, "{v}");
     let parsed: Value =
@@ -140,7 +137,8 @@ async fn mobile_round_trip() {
     assert_eq!(v["usage"]["total_tokens"], 30);
     let calls = &f.mock.lock().unwrap().calls;
     assert_eq!(calls.len(), 1);
-    assert!(calls[0]["response_format"].is_null());
+    assert_eq!(calls[0]["response_format"]["type"], "text");
+    assert_eq!(calls[0]["chat_template_kwargs"]["enable_thinking"], true);
     assert!(
         calls[0]["messages"]
             .to_string()
@@ -148,16 +146,16 @@ async fn mobile_round_trip() {
     );
 }
 #[tokio::test]
-async fn store_alias_routes_only_its_parser() {
-    let f = fixture().await;
+async fn store_alias_routes_only_its_prompt() {
+    let f = fixture(0).await;
     for (store, profile) in [
-        (Value::Null, "generic"),
-        (json!("Unknown Market"), "generic"),
-        (json!("Not Costco"), "generic"),
-        (json!(" COSTCO Wholesale "), "costco"),
-        (json!("skyFOODS"), "skyfoods"),
-        (json!("Sky Foods"), "skyfoods"),
-        (json!("H-Mart"), "hmart"),
+        (Value::Null, "general"),
+        (json!("Unknown Market"), "general"),
+        (json!("Not Costco"), "general"),
+        (json!(" COSTCO Wholesale "), "Costco"),
+        (json!("skyFOODS"), "skyFOODS"),
+        (json!("Sky Foods"), "skyFOODS"),
+        (json!("H-Mart"), "H MART"),
     ] {
         let mut b = body();
         b["receipt_context"] = json!({"known_store":store});
@@ -169,7 +167,10 @@ async fn store_alias_routes_only_its_parser() {
         let (status, result) = request(&f, "POST", "/v1/chat/completions", Some(b), true).await;
         assert_eq!(status, 200, "{result}");
         assert_eq!(result["receipt_parsing"]["profile"], profile);
-        assert!(f.mock.lock().unwrap().calls.last().unwrap()["response_format"].is_null());
+        assert_eq!(
+            f.mock.lock().unwrap().calls.last().unwrap()["response_format"]["type"],
+            "text"
+        );
     }
     for context in [json!("Costco"), json!({"known_store":42})] {
         let mut b = body();
@@ -185,7 +186,7 @@ async fn store_alias_routes_only_its_parser() {
 
 #[tokio::test]
 async fn invalid_requests_never_run_inference() {
-    let f = fixture().await;
+    let f = fixture(0).await;
     assert_eq!(
         request(&f, "POST", "/v1/chat/completions", Some(body()), false)
             .await
@@ -226,12 +227,12 @@ async fn invalid_requests_never_run_inference() {
 }
 #[tokio::test]
 async fn inference_failures_and_readiness() {
-    let f = fixture().await;
+    let f = fixture(0).await;
     assert_eq!(request(&f, "GET", "/health", None, false).await.0, 200);
     f.mock.lock().unwrap().finish = true;
     let (s, v) = request(&f, "POST", "/v1/chat/completions", Some(body()), true).await;
     assert_eq!(s, 502);
-    assert_eq!(v["error"]["code"], "inference_error");
+    assert_eq!(v["error"]["code"], "invalid_structured_output");
     assert_eq!(f.mock.lock().unwrap().calls.len(), 1);
     {
         let mut m = f.mock.lock().unwrap();
@@ -261,7 +262,7 @@ async fn inference_failures_and_readiness() {
 }
 #[tokio::test]
 async fn raw_ocr() {
-    let f = fixture().await;
+    let f = fixture(0).await;
     let mut b = body();
     b.as_object_mut().unwrap().remove("response_format");
     assert_eq!(
@@ -274,7 +275,7 @@ async fn raw_ocr() {
 }
 #[tokio::test]
 async fn public_apk_download_and_auth() {
-    let f = fixture().await;
+    let f = fixture(0).await;
     std::fs::write(
         f.dir.path().join("receipt_master.apk"),
         b"synthetic-apk-content",
@@ -343,7 +344,7 @@ fn schema_property_order_is_preserved_for_generation() {
 
 #[tokio::test]
 async fn update_manifest_and_immutable_download_are_public_and_scoped() {
-    let f = fixture().await;
+    let f = fixture(0).await;
     std::fs::write(
         f.dir.path().join("android-update.json"),
         r#"{"schema_version":1}"#,
@@ -388,7 +389,7 @@ fn domain_receipt() -> Value {
 }
 #[tokio::test]
 async fn data_api_auth_idempotency_and_conflict() {
-    let f = fixture().await;
+    let f = fixture(0).await;
     let r = domain_receipt();
     let body = json!({"request_key":"create-1","input":{"receipt":r}});
     assert_eq!(
@@ -459,7 +460,7 @@ async fn data_api_auth_idempotency_and_conflict() {
 }
 #[tokio::test]
 async fn persistent_job_auto_applies_without_client_polling_or_apply() {
-    let f = fixture().await;
+    let f = fixture(0).await;
     let s = receipt_backend_api::db::Store::open(&f.dir.path().join("data")).unwrap();
     let r = s.transaction(|| s.save(domain_receipt(), false)).unwrap();
     let mut image = std::io::Cursor::new(Vec::new());
@@ -558,7 +559,7 @@ async fn persistent_job_auto_applies_without_client_polling_or_apply() {
 
 #[tokio::test]
 async fn clients_cannot_configure_ocr_or_pricing() {
-    let f = fixture().await;
+    let f = fixture(0).await;
     let (status, reply) = request(
         &f,
         "POST",
@@ -590,7 +591,7 @@ async fn clients_cannot_configure_ocr_or_pricing() {
 
 #[tokio::test(flavor = "multi_thread", worker_threads = 2)]
 async fn two_jobs_are_queued_serially_and_receipt_queries_remain_responsive() {
-    let f = fixture().await;
+    let f = fixture(0).await;
     f.mock.lock().unwrap().delay_ms = 1000;
     let s = receipt_backend_api::db::Store::open(&f.dir.path().join("data")).unwrap();
     let mut photo = std::io::Cursor::new(Vec::new());
@@ -614,7 +615,13 @@ async fn two_jobs_are_queued_serially_and_receipt_queries_remain_responsive() {
     drop(s);
     for (i, id) in receipts.iter().enumerate() {
         if i > 0 {
-            tokio::time::sleep(std::time::Duration::from_millis(200)).await;
+            tokio::time::timeout(std::time::Duration::from_secs(5), async {
+                while f.mock.lock().unwrap().calls.is_empty() {
+                    tokio::time::sleep(std::time::Duration::from_millis(10)).await;
+                }
+            })
+            .await
+            .unwrap();
         }
         let result = tokio::time::timeout(std::time::Duration::from_millis(500), request(&f,"POST","/api/v1/recognition/start",Some(json!({"request_key":format!("parallel-{i}"),"input":{"receipt_id":id,"expected_version":2,"zone":"UTC"}})),true)).await.unwrap();
         assert_eq!(result.0, 200);
@@ -669,12 +676,12 @@ async fn two_jobs_are_queued_serially_and_receipt_queries_remain_responsive() {
     })
     .await
     .expect("Both queued jobs must finish");
-    assert_eq!(f.mock.lock().unwrap().calls.len(), 2);
+    assert_eq!(f.mock.lock().unwrap().calls.len(), 4);
 }
 
 #[tokio::test]
 async fn receipt_photos_and_logo_crops_are_downloadable_but_unreferenced_media_are_not() {
-    let f = fixture().await;
+    let f = fixture(0).await;
     let s = receipt_backend_api::db::Store::open(&f.dir.path().join("data")).unwrap();
     let r = s.transaction(|| s.save(domain_receipt(), false)).unwrap();
     let mut png = std::io::Cursor::new(Vec::new());
@@ -727,8 +734,8 @@ async fn receipt_photos_and_logo_crops_are_downloadable_but_unreferenced_media_a
 }
 
 #[tokio::test]
-async fn all_photos_reach_dual_ocr_and_incomplete_pages_fail() {
-    let f = fixture().await;
+async fn all_photos_reach_vision_together_and_invalid_output_fails() {
+    let f = fixture(0).await;
     let mut b = body();
     let photo = b["messages"][0]["content"][0].clone();
     b["messages"][0]["content"]
@@ -739,10 +746,12 @@ async fn all_photos_reach_dual_ocr_and_incomplete_pages_fail() {
     assert_eq!(status, 200, "{result}");
     assert_eq!(result["receipt_parsing"]["image_count"], 2);
     assert_eq!(
-        f.mock.lock().unwrap().calls[0]["messages"][0]["content"]
+        f.mock.lock().unwrap().calls[0]["messages"][1]["content"]
             .as_array()
             .unwrap()
-            .len(),
+            .iter()
+            .filter(|p| p["type"] == "image_url")
+            .count(),
         2
     );
     f.mock.lock().unwrap().bad_json = true;
@@ -756,7 +765,7 @@ async fn all_photos_reach_dual_ocr_and_incomplete_pages_fail() {
 
 #[tokio::test]
 async fn logo_alias_is_resolved_before_the_single_multiphoto_extraction() {
-    let f = fixture().await;
+    let f = fixture(0).await;
     let s = receipt_backend_api::db::Store::open(&f.dir.path().join("data")).unwrap();
     let mut draft = domain_receipt();
     draft["store"] = json!("");
@@ -781,7 +790,10 @@ async fn logo_alias_is_resolved_before_the_single_multiphoto_extraction() {
         .logo_action("list", &json!({"receipt_id":r["id"]}))
         .unwrap()[0]["logo_id"]
         .clone();
-    f.mock.lock().unwrap().logo_id = Some(logo.as_str().unwrap().to_owned());
+    f.mock.lock().unwrap().logo_id = Some(format!(
+        "data:image/png;base64,{}",
+        base64::engine::general_purpose::STANDARD.encode(png.get_ref())
+    ));
     let version = s
         .one("SELECT version FROM catalog_version WHERE id=1", &[])
         .unwrap()["version"]
@@ -804,7 +816,7 @@ async fn logo_alias_is_resolved_before_the_single_multiphoto_extraction() {
     let (status,started)=request(&f,"POST","/api/v1/recognition/start",Some(json!({"request_key":"logo-job","input":{"receipt_id":r["id"],"expected_version":3,"zone":"America/New_York"}})),true).await;
     assert_eq!(status, 200, "{started}");
     let mut done = false;
-    for _ in 0..200 {
+    for _ in 0..2000 {
         tokio::time::sleep(std::time::Duration::from_millis(10)).await;
         let s = receipt_backend_api::db::Store::open(&f.dir.path().join("data")).unwrap();
         let job = s
@@ -822,13 +834,23 @@ async fn logo_alias_is_resolved_before_the_single_multiphoto_extraction() {
     }
     assert!(done);
     let m = f.mock.lock().unwrap();
-    assert_eq!(m.events, vec!["ocr", "logo", "logo", "ocr"]);
-    assert_eq!(m.calls.len(), 2); // Each photo read once, shared with logo localization.
+    assert_eq!(m.events.first().unwrap(), "locate");
+    assert_eq!(m.events.last().unwrap(), "vision");
+    assert!(m.events.iter().filter(|event| *event == "logo").count() > 1);
+    for call in &m.calls {
+        let count = call["messages"][1]["content"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .filter(|p| p["type"] == "image_url")
+            .count();
+        assert!(count <= 4);
+    }
 }
 
 #[tokio::test]
 async fn arithmetic_mismatch_is_flagged_without_invented_items_or_model_retries() {
-    let f = fixture().await;
+    let f = fixture(0).await;
     f.mock.lock().unwrap().arithmetic_failures = 1;
     let (status, result) = request(&f, "POST", "/v1/chat/completions", Some(body()), true).await;
     assert_eq!(status, 200, "{result}");
@@ -846,7 +868,7 @@ async fn arithmetic_mismatch_is_flagged_without_invented_items_or_model_retries(
 
 #[tokio::test]
 async fn logo_match_rejects_reference_changes_during_inference() {
-    let f = fixture().await;
+    let f = fixture(0).await;
     let s = receipt_backend_api::db::Store::open(&f.dir.path().join("data")).unwrap();
     let r = s.transaction(|| s.save(domain_receipt(), false)).unwrap();
     let mut png = std::io::Cursor::new(Vec::new());
@@ -873,7 +895,7 @@ async fn logo_match_rejects_reference_changes_during_inference() {
         true,
     );
     let change = async {
-        for _ in 0..100 {
+        for _ in 0..2000 {
             if f.mock.lock().unwrap().events.contains(&"logo".to_owned()) {
                 break;
             }
@@ -885,4 +907,99 @@ async fn logo_match_rejects_reference_changes_during_inference() {
     };
     let ((status, _), _) = tokio::join!(matching, change);
     assert_eq!(status, 409);
+}
+
+#[test]
+fn configurable_prompts_validate_and_route_exact_merchant_names() {
+    use receipt_backend_api::prompts::Prompts;
+    let p=Prompts::parse("[[general]]\nprompt='common'\n[[general]]\nprompt='total'\n[[store]]\nname='Hualian'\nprompt='weight above'").unwrap();
+    assert_eq!(
+        p.select(Some(" HUALIAN ")),
+        ("common\n\ntotal\n\nweight above".into(), "Hualian".into())
+    );
+    assert_eq!(p.select(Some("Not Hualian")).0, "common\n\ntotal");
+    assert_eq!(p.select(None).1, "general");
+    for text in [
+        "general=[]",
+        "[[general]]\nprompt=''",
+        "[[general]]\nprompt='ok'\n[[store]]\nname='A'\nprompt='one'\n[[store]]\nname='a'\nprompt='two'",
+    ] {
+        assert!(Prompts::parse(text).is_err());
+    }
+}
+
+#[test]
+fn production_adapter_accepts_all_32_thinking_outputs_without_changing_receipt_fields() {
+    let root = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
+        .join("../../tests/backend_api/corpus/baselines/2026-09-18-ninfer-prompt-thinking");
+    let report: Value =
+        serde_json::from_slice(&std::fs::read(root.join("raw-report.json")).unwrap()).unwrap();
+    let mut removed_count = 0;
+    assert_eq!(report["cases"].as_array().unwrap().len(), 32);
+    for row in report["cases"].as_array().unwrap() {
+        let raw: Value = serde_json::from_slice(
+            &std::fs::read(root.join(format!("{}.response.json", row["id"].as_str().unwrap())))
+                .unwrap(),
+        )
+        .unwrap();
+        let (data, removed) = receipt_backend_api::pipeline::normalize_output(&raw).unwrap();
+        receipt_backend_api::pipeline::validate_receipt(
+            &data,
+            row["images"].as_array().unwrap().len(),
+        )
+        .unwrap();
+        assert_eq!(data["lines"], row["prediction"]["lines"]);
+        assert_eq!(data["total"], row["prediction"]["total"]);
+        removed_count += removed.len();
+    }
+    assert_eq!(removed_count, 2);
+}
+
+#[test]
+fn adapter_never_repairs_truncation_wrong_types_or_missing_required_fields() {
+    let envelope = |text: &str, finish: &str| json!({"choices":[{"finish_reason":finish,"message":{"content":text}}]});
+    for text in ["explanation {\"lines\":[]}", "[]", "{} {}", "{bad}"] {
+        assert!(receipt_backend_api::pipeline::normalize_output(&envelope(text, "stop")).is_err());
+    }
+    assert!(receipt_backend_api::pipeline::normalize_output(&envelope("{}", "length")).is_err());
+    let (data, _) = receipt_backend_api::pipeline::normalize_output(&envelope(
+        "```json\n{\"lines\": [], \"total\": 7}\n```",
+        "stop",
+    ))
+    .unwrap();
+    assert_eq!(data["total"], 7);
+    assert!(receipt_backend_api::pipeline::validate_receipt(&data, 1).is_err());
+}
+
+#[tokio::test]
+async fn schema_repair_is_bounded_preserves_all_images_and_accounts_for_all_runs() {
+    let f = fixture(1).await;
+    f.mock.lock().unwrap().invalid_responses = 1;
+    let (status, result) = request(&f, "POST", "/v1/chat/completions", Some(body()), true).await;
+    assert_eq!(status, 200, "{result}");
+    assert_eq!(result["model_runs"].as_array().unwrap().len(), 2);
+    assert_eq!(result["usage"]["total_tokens"], 60);
+    {
+        let m = f.mock.lock().unwrap();
+        assert_eq!(m.calls.len(), 2);
+        assert_eq!(m.calls[0]["messages"][1], m.calls[1]["messages"][1]);
+        assert!(
+            m.calls[1]["messages"].as_array().unwrap().last().unwrap()["content"]
+                .as_str()
+                .unwrap()
+                .contains("failed validation")
+        );
+    }
+    f.mock.lock().unwrap().bad_json = true;
+    assert_eq!(
+        request(&f, "POST", "/v1/chat/completions", Some(body()), true)
+            .await
+            .0,
+        502
+    );
+    assert_eq!(
+        f.mock.lock().unwrap().calls.len(),
+        4,
+        "A second failure must not trigger unlimited retries"
+    );
 }

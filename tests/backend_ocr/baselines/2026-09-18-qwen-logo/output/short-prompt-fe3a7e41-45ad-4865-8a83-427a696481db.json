@@ -1,0 +1,43 @@
+{
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "{\"reference_id\":\"r06\"}",
+        "reasoning_content": "The QUERY image shows a stylized blocky symbol resembling a \"G\" or \"C\" with an inner notch, made of thick black strokes. Looking at the references, r06 is an identical image to the query — same shape, same texture, same layout. r07 contains a similar \"G\" symbol as part of \"hualian\" logo, but the query is just the symbol alone. The query matches r06 exactly (same printed symbol). r07's symbol is similar but the query image is identical to r06. The instruction: select any reference showing the same printed symbol. r06 is the exact same symbol. So reference_id r06.\n\nLet me double check r07's symbol: it's a \"G\" shape with a horizontal bar, similar but the query's symbol has a specific notch pattern. r06 is pixel-identical to query. So answer r06.\n",
+        "refusal": null,
+        "role": "assistant"
+      }
+    }
+  ],
+  "created": 1789761846,
+  "id": "chatcmpl-f6fa05e37fbd50b4",
+  "model": "qwen3.8-27b-ninfer-nvfp4",
+  "object": "chat.completion",
+  "timings": {
+    "cache_n": 0,
+    "draft_n": 210,
+    "draft_n_accepted": 135,
+    "predicted_ms": 1174.067464,
+    "predicted_n": 206,
+    "predicted_per_second": 174.60666127444955,
+    "predicted_per_token_ms": 5.72715836097561,
+    "prompt_ms": 791.012936,
+    "prompt_n": 3805,
+    "prompt_per_second": 4810.287957161803,
+    "prompt_per_token_ms": 0.2078877624178712
+  },
+  "usage": {
+    "completion_tokens": 206,
+    "completion_tokens_details": {
+      "reasoning_tokens": 196
+    },
+    "prompt_tokens": 3805,
+    "prompt_tokens_details": {
+      "cached_tokens": 0
+    },
+    "total_tokens": 4011
+  }
+}

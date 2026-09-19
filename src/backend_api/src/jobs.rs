@@ -315,9 +315,8 @@ async fn process(state: Arc<State>, job: Value) -> Result<Value> {
     let settings: Value = serde_json::from_str(text(&job, "result_json")?).map_err(db::io_error)?;
     let mut source = settings.get("source").cloned().unwrap_or(current);
     let mut image_ids = Vec::new();
+    let mut logo_run = None;
     let mut content = Vec::new();
-    let mut ocr_pages = Vec::new();
-    let mut ocr_usage = Vec::new();
     for (index, img) in images.iter().enumerate() {
         let path = db::media::safe_path(&state.config.data_dir, text(img, "relative_path")?)?;
         let bytes = tokio::fs::read(path).await.map_err(db::io_error)?;
@@ -326,16 +325,12 @@ async fn process(state: Arc<State>, job: Value) -> Result<Value> {
             text(img, "mime")?,
             base64::engine::general_purpose::STANDARD.encode(&bytes)
         );
-        let raw = pipeline::read_ocr(&state, std::slice::from_ref(&image)).await?;
-        ocr_pages.push(raw["pages"][0].clone());
-        ocr_usage.push(raw["usage"].clone());
         if index == 0 && state.config.logos.enabled {
             let result = async {
-                let layout = raw["pages"][0]["unlimited"]
-                    .as_str()
-                    .ok_or_else(invalid)?
-                    .to_owned();
-                crate::logos::capture(state.clone(), img.clone(), bytes, layout).await
+                let layout = pipeline::locate_logo(state.clone(), image.clone()).await?;
+                let evidence = layout["evidence"].to_string();
+                logo_run = Some(layout);
+                crate::logos::capture(state.clone(), img.clone(), bytes, evidence).await
             }
             .await;
             if let Err(error) = result {
@@ -350,6 +345,13 @@ async fn process(state: Arc<State>, job: Value) -> Result<Value> {
                     text(&job, "receipt_id")?.to_owned(),
                 )
                 .await?;
+                if let Some(logo) = logo_run.as_mut() {
+                    logo["usage"] = pipeline::aggregate_usage(&[
+                        logo["usage"].clone(),
+                        matched["usage"].clone(),
+                    ]);
+                    logo["matching"] = matched.clone();
+                }
                 source["store"] = json!(matched["selected"].as_str().unwrap_or(""));
                 let name = source["store"].as_str().unwrap_or("").to_owned();
                 let jid = job_id.clone();
@@ -390,9 +392,14 @@ async fn process(state: Arc<State>, job: Value) -> Result<Value> {
     database(&state,move|s|{s.exec("INSERT INTO recognition_run(run_id,receipt_id,input_revision,provider,model,status,started_at_utc_ms) VALUES (?,?,?,'local',?,'running',?)",&[json!(run_copy),receipt,version,json!(model),json!(now())])?;Ok(())}).await?;
     let schema: Value =
         serde_json::from_str(include_str!("receipt_schema.json")).map_err(db::io_error)?;
-    let response=pipeline::recognize_with_ocr(state.clone(),json!({"model":state.config.served_model,"receipt_context":{"known_store":source["store"]},"messages":[{"role":"user","content":content}],"response_format":{"type":"json_schema","json_schema":{"name":"receipt","strict":true,"schema":schema}}}),Some(json!({"pages":ocr_pages,"usage":pipeline::aggregate_usage(&ocr_usage)}))).await;
+    let response=pipeline::recognize(state.clone(),json!({"model":state.config.served_model,"receipt_context":{"known_store":source["store"]},"messages":[{"role":"user","content":content}],"response_format":{"type":"json_schema","json_schema":{"name":"receipt","strict":true,"schema":schema}}})).await;
     let result = match response {
-        Ok(response) => {
+        Ok(mut response) => {
+            if let Some(logo) = logo_run {
+                response["usage"] =
+                    pipeline::aggregate_usage(&[response["usage"].clone(), logo["usage"].clone()]);
+                response["logo_inference"] = logo;
+            }
             let result: Value = serde_json::from_str(
                 response["choices"][0]["message"]["content"]
                     .as_str()

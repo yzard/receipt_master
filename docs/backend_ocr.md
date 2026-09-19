@@ -1,103 +1,99 @@
-# 双 OCR 与按商店解析
+# Qwen3.8 / NInfer 生产识别
 
-2026-09-17：停止端到端模型候选测试，生产路径恢复 Unlimited-OCR + PP-OCRv6 medium。历史模型比较保留归档，不代表当前实现。
+2026-09-18：生产使用 **Qwen3.8-27B NVFP4 + NInfer + thinking + 通用/商店提示配置**。Unlimited-OCR、PP-OCR、Paddle worker、Rust 通用及商店 parser 已删除；历史对比结果和原图仍保留，不是备用运行路径。
 
-## 当前架构
+## 两个容器
 
-| 容器 | 职责 |
-| --- | --- |
-| backend_api（Rust） | 鉴权、异步任务、Logo 图像 Alias 匹配、通用/店铺文字解析、JSON 校验、金额/重量/UTC 运算、SQLite/照片、报表与 APK 下载 |
-| backend_ocr（Python） | Unlimited-OCR 的文字/版面识别、PP-OCRv6 medium 的文字/坐标/置信度、DINOv2 Logo embedding；不解释商品、折扣或退款 |
+- `backend_api`：Rust API、认证、SQLite `/data`、照片、持久任务队列、Logo Alias 选择、提示组合、结构校验、单位换算、金额检查、报表和 APK。
+- `backend_ocr`：一个 NInfer 视觉模型；Logo 图片匹配也使用同一个 Qwen 模型。推理引擎只监听容器回环地址，内部 REST 代理只允许一个请求运行，其余排队。没有第三个服务，也没有第二个文字 OCR。
 
-仍为两个独立容器。OCR 内部用 GPU vLLM 跑 Unlimited-OCR，独立 Python 环境在 CPU 跑 Paddle，进程由同一个容器管理。固定 revision 的两个 OCR 模型和 Logo 权重全部包含在镜像中，运行时离线加载。
+模型文件固定 revision/SHA256，NInfer 固定 commit。模型权重都包含在 OCR 镜像里，运行时不下载。`build_docker.sh` 构建 Android APK 和两个镜像；`run_playground.sh` 保持前台 Compose、持续日志与 Ctrl+C 停止的原有契约。API 发布 `0.0.0.0:5000 -> 8000`，OCR 不发布宿主端口。
 
-API 对外监听 `0.0.0.0:5000 → 8000`。OCR 不发布宿主机端口；API 通过 Compose 内部网络调用 OCR。SQLite、原照片、Logo 裁剪、识别原始输出继续保存在 `playground/data:/data`。不清空数据，不需要数据库迁移。
+## 按需加载与空闲卸载
 
-## 识别流程
+`playground/backend_ocr.toml` 顶层配置 `idle_timeout_seconds = 300`（秒，必须大于零）。修改后重启 OCR 容器生效。
 
-1. 手机上传按顺序排列的照片并提交异步任务，可以继续做其他操作。
-2. 任务在 backend_api 的 SQLite 队列持久保存，单个 worker 依次处理；backend_ocr 的任务门禁和 vLLM 序列数固定为 1。每张照片先交给 Unlimited-OCR，完成后再交给 PP-OCRv6 medium；整张收据完成后才处理下一项。先统一 EXIF 方向，保留 Unlimited 布局以及 Paddle 字框和分数。任一引擎失败或输出截断，任务明确失败，不伪装成双模型成功。
-3. 首张照片的 Unlimited 布局复用于 Logo 合并裁剪；原有 DINOv2 embedding、图像 Alias 库、0.60 相似度和 0.08 候选差距保留。店名不从文字 OCR 猜测。
-4. API 用已保存店名或匹配到的 Logo Alias 选择 parser。文字消息中提到店名不会切换规则。
-5. 统一布局层组装名称/金额分列，两种结果交叉核验，匹配行包含中文时采用 PP-OCR 的结果（包括中文与金额同一行的情况），文字或金额冲突保留核对提示。HTML 表格行与非表格行共用后续解析。
-6. 按照片顺序合并连续重叠行：至少两行一致才折叠照片边界；同张照片内的重复商品保留。可忽略下一张重复页头。仅单行重叠或两次 OCR 文字不同仍可能需要人工核对。
-7. 解析结果经过原有 JSON Schema、引用与数值校验，再做精确重量/金额/UTC 转换。合计不一致显示差额，不编造小费或平衡费用。异步结果仍受删除、确认和编辑版本保护。
+- 容器启动只运行轻量 HTTP 服务，不启动 NInfer、不加载权重。
+- 有效任务进入串行队列后自动启动 NInfer，等待模型就绪，再进行推理；首个任务包含模型冷启动时间。加载与推理共用 `timeout_seconds` 上限。
+- 最后一个任务完成后开始空闲计时；排队、图像准备、模型加载及推理期间都不会卸载。到期终止并回收整个 NInfer 进程组，释放其显存和进程内存，保留镜像中的模型文件。
+- `/health` 在未加载时也返回 200，`engine_state` 表示 `unloaded` / `loading` / `ready` / `busy` / `stopping`。健康检查不会唤醒模型或延长保留时间。
+- 推理超时、取消或连接中断时终止原生进程，防止后台生成与下一个任务重叠；下一项任务可以重新启动模型。
+- HTTP 服务持续可接收任务；操作系统可回收的文件页缓存不等同于 NInfer 进程仍驻留。
 
-## 规则位置和扩展方式
+### 按需加载验证（2026-09-18）
 
-规则目录：`src/backend_api/src/parsing/`。
+- OCR 13 项测试通过，覆盖串行排队、首次启动等待、空闲卸载重载、启动失败/崩溃恢复、超时和取消的进程清理。重建时 API 101 项测试通过，另有 3 项既有忽略用例。
+- Playground 启动后 `engine_state=unloaded`，无 NInfer 进程；真实图片首个请求 8.27 秒返回正确的 `$12.34`（包含冷启动）。
+- 使用实际 `300` 秒配置并持续轮询健康检查，在约 302 秒的采样点确认进程退出、GPU 中无 NInfer 占用；卸载前约 23086 MiB 显存，卸载后 OCR 容器约 41 MiB 内存。
+- 随后第二次请求自动启动新的 NInfer PID，8.26 秒返回相同正确结果。以上耗时仅代表这张小型测试图片及本机配置，不是完整收据的速度基准。
+- 本轮在线验证没有更改现有收据。原始验证记录：`build/ocr-demand-live.log`、`build/ocr-demand-memory.log`。
 
-| 文件 | 处理内容 |
-| --- | --- |
-| `mod.rs` | 店铺注册、解析流程、照片边界重叠、字段关联 |
-| `generic.rs` | 通用金额、时间、地址、汇总/付款排除、重量和数值核验 |
-| `layout.rs` | 双 OCR 行布局、列组合、中文补充与冲突提示 |
-| `costco.rs` | 可选单字符税码、SKU、优惠按 SKU 关联最近商品、会员退款、瓶押金、预扫描小计核验；无目标 SKU 的描述优惠按相邻商品关联并黄标，价格末列的斜线小数点明确黄标 |
-| `skyfoods.rs` | 数量、中文标准名、Qty Spl/Pkg Disc 关联上一商品及已含优惠的净价 |
-| `hmart.rs` | WT 不进入名称，前置重量行归属 WT 商品，保留完整商品名 |
+## 提示配置
 
-已注册别名：Costco / Costco Wholesale、SkyFood / SkyFoods / Sky Foods、H Mart / H-Mart。匹配忽略大小写、空白和标点，不使用子串匹配。未知商店及未注册的自定义名称使用通用规则，并提示核对。
+服务设置仍由 `playground/backend_api/config.yaml` 管理。`ocr.prompts_file` 指向 `/config/prompts.toml`，Compose 挂载 [prompts.toml](../playground/backend_api/prompts.toml)。文件随 API 镜像提供一份默认资源，也可用挂载版本修改。修改后重启 API 即可，不需要重新构建模型。
 
-新增商店：
+```toml
+[[general]]
+prompt = '''
+通用的票面名称、金额、优惠、退款和多图重叠规则……
+'''
 
-1. 在 `parsing/` 新建店铺模块，仅放该店不同于通用行为的规则。
-2. 在 `profile()` 注册明确的店铺名称，并接入相应的商品、折扣或版面处理。
-3. 将原照片、两种 OCR 原始输出、人工确认结果加入语料；在 `tests/backend_api/parsing.rs` 添加该店回归断言。
-4. 检查未知店铺仍走通用路径，已有店铺、重复商品和多照片重叠测试仍通过。
+[[store]]
+name = "Hualian"
+aliases = ["華聯", "华联"]
+prompt = '''
+称重行属于下一条有独立价格的商品；后续无价格的文本属于同一商品……
+'''
+```
 
-结构协议仍为 `src/backend_api/src/receipt_schema.json`；客户端不需要 OCR 设置。每个识别结果保存 `receipt_parsing`（版本、profile、照片数、金额差异）和 `ocr`（两种原始输出及用量），便于定位规则问题。旧 `receipt_vision` 提示词元数据退出新识别路径，历史文件原样保留。
+`general` 至少一个，按配置顺序拼接。`store` 可为空；匹配到店名时仅附加该商店的一个提示。`aliases` 可省略。匹配忽略大小写、空白与标点，不能用子串猜商店；未知商店仅用通用提示。跨商店重复名称/别名、空提示、未知配置字段会阻止启动。
 
-## REST 和部署
+当前提供 Costco、skyFOODS、H MART、Hualian、99 Ranch 提示。其他店使用通用提示。添加商店只需添加 TOML 条目，不再编写 Rust parser。
 
-- 对外兼容入口仍是 backend_api `/v1/chat/completions`，服务名通过 `/v1/models` 获取；当前为 `receipt-dual-ocr`。
-- API → OCR 使用内部 `/v1/ocr/recognize`。请求包含 `model`、`messages` 中的 inline JPEG/PNG/WebP 和 `max_tokens`；返回 `pages:[{unlimited,paddle:{words:[{text,confidence,box}]}}]` 与 `usage`。`box` 基于 EXIF 方向修正后图像，归一化至 0..1。
-- `/v1/logo/embedding` 内部协议不变。
-- API 配置为 `playground/backend_api/config.yaml`；OCR 进程配置为 `playground/backend_ocr.toml`。费用预算只提醒，不限制识别。`max_images` 和输出 token 参数属于技术容量校验，不是消费额度。
-- Unlimited-OCR：`baidu/Unlimited-OCR@07dea832e22aefee32ad281d4b80551282e1c168`。
-- PP detection：`PaddlePaddle/PP-OCRv6_medium_det@8e0f56fb2ef86b461d99cfc7ac5c137738985f61`。
-- PP recognition：`PaddlePaddle/PP-OCRv6_medium_rec@e5a92bcbc5cc1b494628e458d267778f0704fd7c`。
-- Logo：`facebook/dinov2-small@ed25f3a31f01632728cabb09d1542f84ab7b0056`。
-- `./build_docker.sh` 执行服务检查、Docker Android 构建、两个运行镜像构建；`./run_playground.sh` 先构建再通过 Compose 前台启动，跟随日志，Ctrl+C 停止。
-- `/receipt_master.apk` 和 Android 更新元数据仍由同一个 API host/port 提供。
+通用提示明确独立 `TOTAL` 后的交易金额优先，排除付款、找零、奖励抵扣、SUBTOTAL/TOTAL SAVINGS 等。Hualian 提示明确称重行先暂存，关联下一条有价格商品，然后清空；中英文续行不拆成商品。
 
-## 验证范围
+## 识别顺序
 
-构建运行 API、存储、Logo、金额/重量、异步任务和 parser 回归测试。17 张历史双 OCR 输出检查结构、明细数和票面总额；另有针对 SKU、优惠关系、退款、完整 FAGE 名称、重量、中文、TIPS 和多图重叠的断言。这些是确定性解析回归，不是重新运行模型准确率比较，也不证明所有名称字符正确。新样本可能仍需补充规则或人工确认。
+1. 手机上传图片并提交持久任务；立即返回，后台处理，客户端不等待推理。
+2. Qwen 在首张照片应用 EXIF 方向后的顶部 30% 区域定位完整 Logo/文字商标。定位图片最长边为 1600 像素，使用 0–1000 整数坐标，再换算回原图归一化坐标；返回坐标，不返回店名。API 裁剪后提交查询图与参考图片，让 Qwen 返回参考编号，再从图片 Alias 库确定商店。原图库和用户 Alias 保留；已有确认店名优先。
+3. API 根据店名选择提示，附加固定的机器 JSON schema，并一次提交该收据全部有序照片。用户图片中的文字仅是证据，不决定商店提示路由。
+4. NInfer 开启 thinking。全部照片先应用 EXIF 方向；使用无损 PNG。为适配模型上下文，多图共享 `engine.image_pixel_budget`，按照片数量分配分辨率；不丢照片。原始照片仍完整保存在 `/data`。当前支持最多 16 张、32768 上下文、8192 总输出 token（思考与答案共用）；超限明确失败，不静默截断。
+5. API 只解码完整结束的输出，分离模型思考和最终 JSON；清理单个外层 Markdown 代码框，按 schema 投影删除额外字段，并在结果 `receipt_parsing.removed_fields` 记录路径。不会修正名称拼写、修改金额、猜测缺失字段或截取解释中的 JSON。
+6. 必填字段、类型、金额精度、优惠引用和证据框仍严格校验。结构错误按 `ocr.repair_attempts` 最多补充一次协议反馈、重新请求原图；失败即失败。`model_runs` 保留每次原始响应，费用 token 合计。金额不平不触发猜测性重试，只添加核对提示。
+7. 后端做单位换算和原有存储校验，识别结果自动进入可编辑草稿；确认后才维护商品目录。照片、商品名称、分类与数据库约束不改变。
 
-## 镜像内置商店样本（空库开箱即用）
+## 保留的 Logo 资源
 
-`src/backend_api/resources/merchants/manifest.json` 保存版本、店名、parser ID、Logo 图片文件名与 SHA256、DINOv2 模型标识和预计算 embedding。对应 PNG 是用户已确认的 Logo 裁剪，不包含整张收据或个人数据库。当前包含 7 家店的 10 个样本：Costco、skyFOODS、H MART、Target、99 Ranch、Hualian、Feilong。
+`src/backend_api/resources/merchants/` 与 `merchant_images.rs` 继续内置已审核 Logo 裁剪和店名。空库初始化可识别已有商店；已有库不会被内置样本覆盖。匹配使用已验证的简短提示词，只比较商标图形和文字，忽略纸张背景与拍摄变形。模型只返回本批次参考编号或 null，店名由对应图片 Alias 决定。无法定位时保存顶部候选区域供核对。
 
-Logo 图片与 manifest 通过 `include_bytes!` / `include_str!` 编译进 backend_api 可执行文件；Rust parser 同样编译进该文件。因此最终 Docker 镜像自带完整样本和解析规则，不依赖开发机、旧数据库或外部文件挂载。构建检查验证资源摘要、模型、embedding 维数和 parser 对应关系。
+## 接口与验证
 
-新建空库时，初始化事务把内置样本写入已有 merchant、logo_sample、media_blob 表及 `/data/media/derived`。这一阶段不需要 OCR 服务或 GPU，后续第一张收据即可和内置样本比较。首次识别仍需 OCR/embedding 服务就绪，匹配仍遵守阈值和候选差距，未知 Logo 不强制套用店名。
+对外仍是认证的 API、异步任务和 Chat Completions。`served_model` 为 `receipt-qwen3.8`；客户端从服务器查询服务信息，不配置模型或提示。内部只使用 `/v1/chat/completions`；旧 `/v1/logo/match` 已删除。
 
-内置样本初始化后与普通样本一样，可在 App 内修改/取消 Alias。只在新建数据库时导入；重启、升级镜像或恢复现有数据库不会重灌样本，不覆盖用户修改，也不会复活已删除关联。用户以后添加的样本继续只写入 `/data`，不会自动进入镜像。未增加 schema migration，已有 playground 数据保持原样。
+运行代码和测试不依赖旧 parser。保留历史模型评测归档；离线候选评分只接收已经生成的结构化预测。新回归覆盖 32 张 thinking 输出的字段投影、严格校验、错误/截断拒绝、商店提示隔离、Logo 先于商品识别、多图同请求、串行队列和 API 响应性。
 
-增加内置商店时：提交已确认的裁剪 PNG、对应同版本 embedding 和 manifest 条目，在 `src/backend_api/src/merchant_images.rs` 登记编译资源；登记/新增对应 parser（尚无专用规则时明确使用 `generic`），补充回归测试，再通过 `build_docker.sh` 构建。不要在普通构建中自动读取 playground 数据库或打包整张收据。新镜像的新增内置样本会用于之后创建的空库；既有数据库沿用自己的样本库。
+[模型实验结果](ninfer_prompt_thinking_evaluation.md) 是切换前基线；其中两张额外字段失败已由本次生产适配解决。它不代表所有字段都识别正确，仍应通过核对页确认。
 
-串行调度约定与故障证据：[OCR 失败诊断](ocr_serial_processing.md)。
+## 2026-09-18 部署验收
 
+- Docker 构建内 Rust 检查通过：API 22、语料回归 22、存储 56；另外 3 个显式在线评测保持忽略。格式、Clippy 和 release 构建通过。
+- OCR 服务 13 个测试及离线 SuperPoint/LightGlue Logo 回归通过；Android APK build 10036 下载内容与更新清单 SHA256 一致。
+- 真实 Hualian `fe3a7e41`：6 个商品，3 条称重关联正确，总额 $27.25；真实 Costco `8572dcef`：9 个商品，总额 $138.03。独立识别请求分别约 53.3 / 44.3 秒，仅为这两次现场观测，不是全库延迟统计。
+- Costco `3a8e3c19` 临时草稿完整通过 Logo 图片匹配及商品识别。发现并修复整图浮点定位偏移，新增 EXIF/顶部图片处理回归；匹配阈值未降低。
+- 两张重叠照片产生同一张收据：4 个商品加税行，总额 $14.00，无重复商品。多任务观测为 running/queued，识别时收据查询保持响应；提交约 10–17 ms。
+- 现场测试全部使用临时草稿并在结束后清理；原有 32 张 receipt 行按主键排序的完整内容 SHA256 与部署前一致，没有遗留 running/queued 任务。未重新识别或改写已确认的用户收据。
+- Dual OCR 的运行实现、旧 parser、测试归档中的 parser 源码副本及专属执行器均已删除。保留历史原图、输出和比较报告；需要旧实现时从 Git 恢复。
 
-## 99 Ranch 专用解析
+候选 Logo 匹配评测：[Qwen 图片匹配报告](qwen_logo_evaluation.md)。简短提示词在当前开发回归组中 40/40；仅为评测，生产 Logo 匹配现已切换为 Qwen。
 
-Logo / 店名 Alias 匹配为 `99 Ranch` 或 `99 Ranch Market` 时，选用 `ranch99`（随 API 镜像编译，预置商家资源也声明此解析器）。
-商品下方 `2.65 lb @ $2.99/lb` 作为上一商品的数量、计价单位与单价；复用通用重量换算及金额差异提示，不生成额外商品。没有前项或已经到达总额区的称重行不关联到后面的商品。多图分段可将下一张顶部称重行关联到上一张末尾商品。
-交易时间只取商品区之前、电话下方或带门店收银台编号的交易行；`Item count` 后面的付款时间不参与冲突判断。顶部时间缺失时留待确认，不用底部时间替代。不同照片的顶部交易时间确实冲突时仍需人工确认。
-真实双 OCR 样本 `2f97fc50` 应取 `2026-07-29T18:37:41`，`1b072114` 应取 `2026-08-17T16:08:07`（票面本地时间，后续统一转换为 UTC）。本次不改历史确认数据或旧评测结果；折扣与税行解析尚待分别完善。
+## Logo 匹配切换（2026-09-18）
 
+`playground/backend_api/config.yaml` 的 `logos.prompt` 使用评测通过的简短提示词，thinking 继承 OCR 设置。图片最长边 768，4096 输出 token，temperature=0、seed=42。每次最多 15 个参考（受配置的最大图片数量进一步限制），较大的库分批遍历；若不同批次/查询图选择了不同店名，返回未知。返回编号必须属于当前批次，拒绝额外字段、伪造编号、截断和错误类型。
 
-## Hualian 专用解析
+匹配过程保留图片/目录版本检查，过程中发生删除、旋转或 Alias 修改时拒绝过期结果。异步识别记录包含匹配响应和合计 token 用量。
 
-Hualian / Hualian Supermarket / 华联 / 華聯 使用 `hualian` 解析器，预置 Hualian Logo 资源随 API 镜像指向此规则。
-右侧金额标记商品首行，金额左侧作为票面名称。随后没有金额的名称行，无论中文或其他文字，都按顺序合并为同一商品的标准名称。
-称重信息位于商品首行之前：先暂存数量、单位与单价，再关联到下一商品首行，复用单位换算和金额核验。此规则优先于缩进，称重行不属于上一商品，不进入标准名称，也不生成新商品。
-其他行首至少两个额外空格（或制表符），以及 OCR 坐标显示右缩进的行，作为上一商品续行。税、总额、付款汇总优先处理，不并入名称。跨照片暂存称重与名称关联继续有效。
-真实样本 `fe3a7e41` 回归：CHINESE LEEK = 0.50 lb × $3.99/lb → $2.00；CHIVES = 0.76 lb × $4.49/lb → $3.41；CHINESE CABBAGE = 2.69 lb × $0.69/lb → $1.86。醋和蓝莓不继承下一商品的重量。英文、中文标准名称均保持，6 件商品加独立税行。
+删除 SuperPoint/LightGlue 实现、依赖、下载脚本、旧阈值、旧匹配测试和历史源码副本。SQLite 当前 schema 没有向量/特征专属表；`logo_sample` 和 `receipt_logo` 保存通用图片关系，继续使用，不重建用户数据库。
 
+切换验收：Docker 构建内 API 22、语料 22、存储 57、OCR 8 项检查通过（另有 3 项显式在线评测未运行）；已验证多批参考、未知/伪造编号、不同店名冲突及 Alias 变更的过期保护。最新 Target 原图创建临时草稿后完整识别出 Target，提交 19 ms，APK build 10036 校验通过。测试清理后原有 33 张 receipt 行的完整内容哈希与切换前一致，无待处理任务。
 
-## 全店铺中文双 OCR 合并提示
-
-中文采用 PP-OCR。判断为繁体中文时，不添加两模型文字不一致提示；简体中文或无法判定时保留提示。简繁混用按特有字形数量判断占优字形，数量相同时保留提示；例如「恒順香醋六年陳」按繁体处理。用内置 OpenCC 1.3.2 字典识别特有字形，不转换原始名称；繁简共用字参考本张照片 PP-OCR 的字形上下文。
-规则位于共同布局合并层，所有专用及通用解析器共享。商品首行和标准名称续行均适用。低置信度、两模型金额不一致、重量金额核验等独立问题仍保留提示。重新识别后应用新规则，不直接清除数据库既有历史提示。
-字典来源及许可证见 `src/backend_api/resources/chinese/README.md`。
+旧运行镜像及过时的 Receipt Master 实验镜像已移除；运行容器 `/models` 仅有 Qwen NInfer 文件，不再安装 torch、LightGlue、OpenCV、Kornia。旧 Logo/双 OCR 实验目录、特征缓存和测试数据库副本已清理，历史比较结果保留为报告证据。

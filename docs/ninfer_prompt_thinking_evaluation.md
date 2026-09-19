@@ -104,4 +104,4 @@
 
 6 个评测与名称计分单元测试通过；32 张结果通过同一 Rust 隔离评测流程，逐张记录接受或拒绝，并非全部 OCR 答案正确。临时推理容器已移除，原 backend_api 和 backend_ocr 均 healthy。没有修改确认收据或切换线上识别方案。
 
-新增 Hualian 提示在 [qwen38_hualian.txt](../tests/backend_api/prompts/qwen38_hualian.txt)，通用 TOTAL 规则在 [qwen38_receipt.txt](../tests/backend_api/prompts/qwen38_receipt.txt)。评测入口新增必选 `--thinking on|off`，本轮 `on`；原始响应、各样本完整提示、评分与运行配置均保留在本轮归档，旧基线保持不变。
+新增 Hualian 提示在 [qwen38_hualian.txt](../tests/backend_api/corpus/baselines/2026-09-18-ninfer-prompt-thinking/qwen38_hualian.txt)，通用 TOTAL 规则在 [qwen38_receipt.txt](../tests/backend_api/corpus/baselines/2026-09-18-ninfer-prompt-thinking/qwen38_receipt.txt)。评测入口新增必选 `--thinking on|off`，本轮 `on`；原始响应、各样本完整提示、评分与运行配置均保留在本轮归档，旧基线保持不变。

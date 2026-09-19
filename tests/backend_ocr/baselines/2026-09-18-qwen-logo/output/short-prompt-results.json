@@ -1,0 +1,802 @@
+[
+  {
+    "id": "be4a2b4d-87d4-41f8-8ad2-b8b419229096",
+    "expected": "Target",
+    "selected": "Target",
+    "valid": true,
+    "correct": true,
+    "finish_reason": "stop",
+    "seconds": 2.18049176200293,
+    "usage": {
+      "completion_tokens": 121,
+      "completion_tokens_details": {
+        "reasoning_tokens": 111
+      },
+      "prompt_tokens": 3949,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "total_tokens": 4070
+    }
+  },
+  {
+    "id": "834a4c6e-9307-40bb-acf6-c143c5f41e73",
+    "expected": "skyFOODS",
+    "selected": "skyFOODS",
+    "valid": true,
+    "correct": true,
+    "finish_reason": "stop",
+    "seconds": 1.9316040449775755,
+    "usage": {
+      "completion_tokens": 96,
+      "completion_tokens_details": {
+        "reasoning_tokens": 86
+      },
+      "prompt_tokens": 3637,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "total_tokens": 3733
+    }
+  },
+  {
+    "id": "fe3a7e41-45ad-4865-8a83-427a696481db",
+    "expected": "Hualian",
+    "selected": "Hualian",
+    "valid": true,
+    "correct": true,
+    "finish_reason": "stop",
+    "seconds": 2.6305801500275265,
+    "usage": {
+      "completion_tokens": 206,
+      "completion_tokens_details": {
+        "reasoning_tokens": 196
+      },
+      "prompt_tokens": 3805,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "total_tokens": 4011
+    }
+  },
+  {
+    "id": "fe3a7e41-45ad-4865-8a83-427a696481db-absent",
+    "expected": null,
+    "selected": null,
+    "valid": true,
+    "correct": true,
+    "finish_reason": "stop",
+    "seconds": 3.3997993530065287,
+    "usage": {
+      "completion_tokens": 382,
+      "completion_tokens_details": {
+        "reasoning_tokens": 374
+      },
+      "prompt_tokens": 3191,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "total_tokens": 3573
+    }
+  },
+  {
+    "id": "57bb2995-1993-4ff0-863e-43764ee31526",
+    "expected": "Costco",
+    "selected": "Costco",
+    "valid": true,
+    "correct": true,
+    "finish_reason": "stop",
+    "seconds": 2.2828316900122445,
+    "usage": {
+      "completion_tokens": 165,
+      "completion_tokens_details": {
+        "reasoning_tokens": 155
+      },
+      "prompt_tokens": 3565,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "total_tokens": 3730
+    }
+  },
+  {
+    "id": "560ccf19-b7af-4ad6-a512-1dd51853f4d8",
+    "expected": "Costco",
+    "selected": "Costco",
+    "valid": true,
+    "correct": true,
+    "finish_reason": "stop",
+    "seconds": 2.475963728997158,
+    "usage": {
+      "completion_tokens": 225,
+      "completion_tokens_details": {
+        "reasoning_tokens": 215
+      },
+      "prompt_tokens": 3517,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "total_tokens": 3742
+    }
+  },
+  {
+    "id": "74356ee7-d2e7-42e4-aea1-8fa567dec8ea",
+    "expected": "skyFOODS",
+    "selected": "skyFOODS",
+    "valid": true,
+    "correct": true,
+    "finish_reason": "stop",
+    "seconds": 2.059199475013884,
+    "usage": {
+      "completion_tokens": 122,
+      "completion_tokens_details": {
+        "reasoning_tokens": 112
+      },
+      "prompt_tokens": 3613,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "total_tokens": 3735
+    }
+  },
+  {
+    "id": "78f63611-ad9f-4982-86aa-7b16450f46a7",
+    "expected": "99 Ranch",
+    "selected": "99 Ranch",
+    "valid": true,
+    "correct": true,
+    "finish_reason": "stop",
+    "seconds": 2.3499371109937783,
+    "usage": {
+      "completion_tokens": 139,
+      "completion_tokens_details": {
+        "reasoning_tokens": 129
+      },
+      "prompt_tokens": 3925,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "total_tokens": 4064
+    }
+  },
+  {
+    "id": "2f97fc50-4cf3-47e1-bd44-ea6de95c774c",
+    "expected": "99 Ranch",
+    "selected": "99 Ranch",
+    "valid": true,
+    "correct": true,
+    "finish_reason": "stop",
+    "seconds": 2.1123225929914042,
+    "usage": {
+      "completion_tokens": 112,
+      "completion_tokens_details": {
+        "reasoning_tokens": 102
+      },
+      "prompt_tokens": 3877,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "total_tokens": 3989
+    }
+  },
+  {
+    "id": "e3843baa-904a-4bbf-bc21-278a1693d5c7",
+    "expected": "H MART",
+    "selected": "H MART",
+    "valid": true,
+    "correct": true,
+    "finish_reason": "stop",
+    "seconds": 2.1448845129925758,
+    "usage": {
+      "completion_tokens": 110,
+      "completion_tokens_details": {
+        "reasoning_tokens": 100
+      },
+      "prompt_tokens": 3949,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "total_tokens": 4059
+    }
+  },
+  {
+    "id": "199fc34a-4857-4aac-873c-8c55f8b223a9",
+    "expected": "H MART",
+    "selected": "H MART",
+    "valid": true,
+    "correct": true,
+    "finish_reason": "stop",
+    "seconds": 2.064846455992665,
+    "usage": {
+      "completion_tokens": 114,
+      "completion_tokens_details": {
+        "reasoning_tokens": 104
+      },
+      "prompt_tokens": 3925,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "total_tokens": 4039
+    }
+  },
+  {
+    "id": "4e491343-7593-42b4-b5b5-01e5648557ee",
+    "expected": "Costco",
+    "selected": "Costco",
+    "valid": true,
+    "correct": true,
+    "finish_reason": "stop",
+    "seconds": 2.1277039340056945,
+    "usage": {
+      "completion_tokens": 134,
+      "completion_tokens_details": {
+        "reasoning_tokens": 124
+      },
+      "prompt_tokens": 3541,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "total_tokens": 3675
+    }
+  },
+  {
+    "id": "c00860de-60e8-4892-8bc3-1e0b2c8314ab",
+    "expected": "Costco",
+    "selected": "Costco",
+    "valid": true,
+    "correct": true,
+    "finish_reason": "stop",
+    "seconds": 2.848442055983469,
+    "usage": {
+      "completion_tokens": 300,
+      "completion_tokens_details": {
+        "reasoning_tokens": 290
+      },
+      "prompt_tokens": 3541,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "total_tokens": 3841
+    }
+  },
+  {
+    "id": "6d9da1ec-c0fc-4905-82b4-4ebd11716b1c",
+    "expected": "skyFOODS",
+    "selected": "skyFOODS",
+    "valid": true,
+    "correct": true,
+    "finish_reason": "stop",
+    "seconds": 2.014556073991116,
+    "usage": {
+      "completion_tokens": 116,
+      "completion_tokens_details": {
+        "reasoning_tokens": 106
+      },
+      "prompt_tokens": 3613,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "total_tokens": 3729
+    }
+  },
+  {
+    "id": "e6c62f11-3b8d-4ac0-a860-1756df0efa55",
+    "expected": "Costco",
+    "selected": "Costco",
+    "valid": true,
+    "correct": true,
+    "finish_reason": "stop",
+    "seconds": 2.4124525919905864,
+    "usage": {
+      "completion_tokens": 186,
+      "completion_tokens_details": {
+        "reasoning_tokens": 176
+      },
+      "prompt_tokens": 3565,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "total_tokens": 3751
+    }
+  },
+  {
+    "id": "73953603-31f5-496a-9dd4-76fc845c8398",
+    "expected": "skyFOODS",
+    "selected": "skyFOODS",
+    "valid": true,
+    "correct": true,
+    "finish_reason": "stop",
+    "seconds": 2.8410454490222037,
+    "usage": {
+      "completion_tokens": 287,
+      "completion_tokens_details": {
+        "reasoning_tokens": 277
+      },
+      "prompt_tokens": 3613,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "total_tokens": 3900
+    }
+  },
+  {
+    "id": "d7f8ff6d-6502-4eeb-8850-2f15b131988f",
+    "expected": "skyFOODS",
+    "selected": "skyFOODS",
+    "valid": true,
+    "correct": true,
+    "finish_reason": "stop",
+    "seconds": 2.1732183839776553,
+    "usage": {
+      "completion_tokens": 143,
+      "completion_tokens_details": {
+        "reasoning_tokens": 133
+      },
+      "prompt_tokens": 3613,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "total_tokens": 3756
+    }
+  },
+  {
+    "id": "a31f7e6b-8bb1-49c8-a292-504d76d1a59c",
+    "expected": "skyFOODS",
+    "selected": "skyFOODS",
+    "valid": true,
+    "correct": true,
+    "finish_reason": "stop",
+    "seconds": 2.08471272198949,
+    "usage": {
+      "completion_tokens": 125,
+      "completion_tokens_details": {
+        "reasoning_tokens": 115
+      },
+      "prompt_tokens": 3613,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "total_tokens": 3738
+    }
+  },
+  {
+    "id": "8572dcef-7f7f-4d77-80c6-0ede75d45fa3",
+    "expected": "Costco",
+    "selected": "Costco",
+    "valid": true,
+    "correct": true,
+    "finish_reason": "stop",
+    "seconds": 2.7429421689885203,
+    "usage": {
+      "completion_tokens": 250,
+      "completion_tokens_details": {
+        "reasoning_tokens": 240
+      },
+      "prompt_tokens": 3565,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "total_tokens": 3815
+    }
+  },
+  {
+    "id": "3a8e3c19-e8d0-4ea8-8fa3-06e3cd5fcfd4",
+    "expected": "Costco",
+    "selected": "Costco",
+    "valid": true,
+    "correct": true,
+    "finish_reason": "stop",
+    "seconds": 2.374653215985745,
+    "usage": {
+      "completion_tokens": 187,
+      "completion_tokens_details": {
+        "reasoning_tokens": 177
+      },
+      "prompt_tokens": 3565,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "total_tokens": 3752
+    }
+  },
+  {
+    "id": "e9ee06e0-f4aa-4c3c-812a-4e8abc21e3f0",
+    "expected": "skyFOODS",
+    "selected": "skyFOODS",
+    "valid": true,
+    "correct": true,
+    "finish_reason": "stop",
+    "seconds": 2.164164988003904,
+    "usage": {
+      "completion_tokens": 146,
+      "completion_tokens_details": {
+        "reasoning_tokens": 136
+      },
+      "prompt_tokens": 3613,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "total_tokens": 3759
+    }
+  },
+  {
+    "id": "924e246e-c811-497a-a61b-6b5724f7bacd",
+    "expected": "Costco",
+    "selected": "Costco",
+    "valid": true,
+    "correct": true,
+    "finish_reason": "stop",
+    "seconds": 2.0914788790105376,
+    "usage": {
+      "completion_tokens": 136,
+      "completion_tokens_details": {
+        "reasoning_tokens": 126
+      },
+      "prompt_tokens": 3541,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "total_tokens": 3677
+    }
+  },
+  {
+    "id": "e297a3d3-f9f1-4ba7-8e5e-a18e56fdecdd",
+    "expected": "H MART",
+    "selected": "H MART",
+    "valid": true,
+    "correct": true,
+    "finish_reason": "stop",
+    "seconds": 2.050978938001208,
+    "usage": {
+      "completion_tokens": 98,
+      "completion_tokens_details": {
+        "reasoning_tokens": 88
+      },
+      "prompt_tokens": 3901,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "total_tokens": 3999
+    }
+  },
+  {
+    "id": "5331c892-9fb6-42b5-bdb3-5a205b1a0767",
+    "expected": "skyFOODS",
+    "selected": "skyFOODS",
+    "valid": true,
+    "correct": true,
+    "finish_reason": "stop",
+    "seconds": 2.0809124240186065,
+    "usage": {
+      "completion_tokens": 122,
+      "completion_tokens_details": {
+        "reasoning_tokens": 112
+      },
+      "prompt_tokens": 3613,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "total_tokens": 3735
+    }
+  },
+  {
+    "id": "20267232-d4d0-4540-9c14-b0e051b06445",
+    "expected": "Costco",
+    "selected": "Costco",
+    "valid": true,
+    "correct": true,
+    "finish_reason": "stop",
+    "seconds": 2.292996652016882,
+    "usage": {
+      "completion_tokens": 162,
+      "completion_tokens_details": {
+        "reasoning_tokens": 152
+      },
+      "prompt_tokens": 3565,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "total_tokens": 3727
+    }
+  },
+  {
+    "id": "c5fdc978-8f74-43bf-a5c5-e22d28f5aea9",
+    "expected": "Costco",
+    "selected": "Costco",
+    "valid": true,
+    "correct": true,
+    "finish_reason": "stop",
+    "seconds": 2.5233589359850157,
+    "usage": {
+      "completion_tokens": 201,
+      "completion_tokens_details": {
+        "reasoning_tokens": 191
+      },
+      "prompt_tokens": 3565,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "total_tokens": 3766
+    }
+  },
+  {
+    "id": "ca76c352-9601-498c-8324-0ef9bcf5ea3b",
+    "expected": "Costco",
+    "selected": "Costco",
+    "valid": true,
+    "correct": true,
+    "finish_reason": "stop",
+    "seconds": 2.132780505984556,
+    "usage": {
+      "completion_tokens": 136,
+      "completion_tokens_details": {
+        "reasoning_tokens": 126
+      },
+      "prompt_tokens": 3541,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "total_tokens": 3677
+    }
+  },
+  {
+    "id": "4fc6a91b-faba-4d3e-82a3-be4c78270e99",
+    "expected": "Costco",
+    "selected": "Costco",
+    "valid": true,
+    "correct": true,
+    "finish_reason": "stop",
+    "seconds": 2.283598643989535,
+    "usage": {
+      "completion_tokens": 158,
+      "completion_tokens_details": {
+        "reasoning_tokens": 148
+      },
+      "prompt_tokens": 3517,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "total_tokens": 3675
+    }
+  },
+  {
+    "id": "be4a2b4d-87d4-41f8-8ad2-b8b419229096-rotate",
+    "expected": "Target",
+    "selected": "Target",
+    "valid": true,
+    "correct": true,
+    "finish_reason": "stop",
+    "seconds": 2.092507907014806,
+    "usage": {
+      "completion_tokens": 105,
+      "completion_tokens_details": {
+        "reasoning_tokens": 95
+      },
+      "prompt_tokens": 3949,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "total_tokens": 4054
+    }
+  },
+  {
+    "id": "be4a2b4d-87d4-41f8-8ad2-b8b419229096-perspective",
+    "expected": "Target",
+    "selected": "Target",
+    "valid": true,
+    "correct": true,
+    "finish_reason": "stop",
+    "seconds": 2.633980225014966,
+    "usage": {
+      "completion_tokens": 223,
+      "completion_tokens_details": {
+        "reasoning_tokens": 213
+      },
+      "prompt_tokens": 3949,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "total_tokens": 4172
+    }
+  },
+  {
+    "id": "be4a2b4d-87d4-41f8-8ad2-b8b419229096-simulated_fold",
+    "expected": "Target",
+    "selected": "Target",
+    "valid": true,
+    "correct": true,
+    "finish_reason": "stop",
+    "seconds": 2.1281939040054567,
+    "usage": {
+      "completion_tokens": 105,
+      "completion_tokens_details": {
+        "reasoning_tokens": 95
+      },
+      "prompt_tokens": 3949,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "total_tokens": 4054
+    }
+  },
+  {
+    "id": "834a4c6e-9307-40bb-acf6-c143c5f41e73-rotate",
+    "expected": "skyFOODS",
+    "selected": "skyFOODS",
+    "valid": true,
+    "correct": true,
+    "finish_reason": "stop",
+    "seconds": 1.9766948239994235,
+    "usage": {
+      "completion_tokens": 107,
+      "completion_tokens_details": {
+        "reasoning_tokens": 97
+      },
+      "prompt_tokens": 3637,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "total_tokens": 3744
+    }
+  },
+  {
+    "id": "834a4c6e-9307-40bb-acf6-c143c5f41e73-perspective",
+    "expected": "skyFOODS",
+    "selected": "skyFOODS",
+    "valid": true,
+    "correct": true,
+    "finish_reason": "stop",
+    "seconds": 2.056204288994195,
+    "usage": {
+      "completion_tokens": 123,
+      "completion_tokens_details": {
+        "reasoning_tokens": 113
+      },
+      "prompt_tokens": 3637,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "total_tokens": 3760
+    }
+  },
+  {
+    "id": "834a4c6e-9307-40bb-acf6-c143c5f41e73-simulated_fold",
+    "expected": "skyFOODS",
+    "selected": "skyFOODS",
+    "valid": true,
+    "correct": true,
+    "finish_reason": "stop",
+    "seconds": 2.1572006169881206,
+    "usage": {
+      "completion_tokens": 146,
+      "completion_tokens_details": {
+        "reasoning_tokens": 136
+      },
+      "prompt_tokens": 3637,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "total_tokens": 3783
+    }
+  },
+  {
+    "id": "fe3a7e41-45ad-4865-8a83-427a696481db-rotate",
+    "expected": "Hualian",
+    "selected": "Hualian",
+    "valid": true,
+    "correct": true,
+    "finish_reason": "stop",
+    "seconds": 2.291948231024435,
+    "usage": {
+      "completion_tokens": 133,
+      "completion_tokens_details": {
+        "reasoning_tokens": 123
+      },
+      "prompt_tokens": 3805,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "total_tokens": 3938
+    }
+  },
+  {
+    "id": "fe3a7e41-45ad-4865-8a83-427a696481db-perspective",
+    "expected": "Hualian",
+    "selected": "Hualian",
+    "valid": true,
+    "correct": true,
+    "finish_reason": "stop",
+    "seconds": 2.2442457120050676,
+    "usage": {
+      "completion_tokens": 130,
+      "completion_tokens_details": {
+        "reasoning_tokens": 120
+      },
+      "prompt_tokens": 3805,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "total_tokens": 3935
+    }
+  },
+  {
+    "id": "fe3a7e41-45ad-4865-8a83-427a696481db-simulated_fold",
+    "expected": "Hualian",
+    "selected": "Hualian",
+    "valid": true,
+    "correct": true,
+    "finish_reason": "stop",
+    "seconds": 2.383828410995193,
+    "usage": {
+      "completion_tokens": 157,
+      "completion_tokens_details": {
+        "reasoning_tokens": 147
+      },
+      "prompt_tokens": 3805,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "total_tokens": 3962
+    }
+  },
+  {
+    "id": "be4a2b4d-87d4-41f8-8ad2-b8b419229096-absent",
+    "expected": null,
+    "selected": null,
+    "valid": true,
+    "correct": true,
+    "finish_reason": "stop",
+    "seconds": 2.696215003990801,
+    "usage": {
+      "completion_tokens": 275,
+      "completion_tokens_details": {
+        "reasoning_tokens": 267
+      },
+      "prompt_tokens": 3390,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "total_tokens": 3665
+    }
+  },
+  {
+    "id": "blank",
+    "expected": null,
+    "selected": null,
+    "valid": true,
+    "correct": true,
+    "finish_reason": "stop",
+    "seconds": 1.9329376380192116,
+    "usage": {
+      "completion_tokens": 94,
+      "completion_tokens_details": {
+        "reasoning_tokens": 86
+      },
+      "prompt_tokens": 3613,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "total_tokens": 3707
+    }
+  },
+  {
+    "id": "unregistered_text",
+    "expected": null,
+    "selected": null,
+    "valid": true,
+    "correct": true,
+    "finish_reason": "stop",
+    "seconds": 2.431473021977581,
+    "usage": {
+      "completion_tokens": 218,
+      "completion_tokens_details": {
+        "reasoning_tokens": 210
+      },
+      "prompt_tokens": 3613,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "total_tokens": 3831
+    }
+  }
+]

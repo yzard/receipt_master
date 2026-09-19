@@ -6,16 +6,38 @@ use crate::{
 use base64::Engine;
 use image::{GenericImageView, ImageDecoder};
 use serde_json::{Value, json};
-use std::{
-    io::Cursor,
-    sync::{Arc, LazyLock},
-};
-static HEADER: LazyLock<regex::Regex> = LazyLock::new(|| {
-    regex::Regex::new(
-        r"(?i)<\|det\|>(title|header|figure|image|logo|text)\s*\[(\d+),\s*(\d+),\s*(\d+),\s*(\d+)\]",
-    )
-    .unwrap()
-});
+use std::{io::Cursor, sync::Arc};
+/// Give the locator a focused, upright header; return its height in full-image coordinates.
+pub fn localization_input(data_url: &str) -> Result<(String, f64)> {
+    let (_, encoded) = data_url.split_once(',').ok_or_else(invalid)?;
+    let bytes = base64::engine::general_purpose::STANDARD
+        .decode(encoded)
+        .map_err(|_| invalid())?;
+    let mut decoder = image::ImageReader::new(Cursor::new(bytes))
+        .with_guessed_format()
+        .map_err(db::io_error)?
+        .into_decoder()
+        .map_err(|_| invalid())?;
+    let orientation = decoder.orientation().map_err(db::io_error)?;
+    let mut img = image::DynamicImage::from_decoder(decoder).map_err(|_| invalid())?;
+    img.apply_orientation(orientation);
+    let height = ((img.height() as f64 * 0.30).ceil() as u32).max(1);
+    let mut header = img.crop_imm(0, 0, img.width(), height);
+    if header.width() > 1600 || header.height() > 1600 {
+        header = header.resize(1600, 1600, image::imageops::FilterType::Lanczos3);
+    }
+    let mut out = Cursor::new(Vec::new());
+    header
+        .write_to(&mut out, image::ImageFormat::Png)
+        .map_err(db::io_error)?;
+    Ok((
+        format!(
+            "data:image/png;base64,{}",
+            base64::engine::general_purpose::STANDARD.encode(out.into_inner())
+        ),
+        height as f64 / img.height() as f64,
+    ))
+}
 
 pub fn crop(bytes: &[u8], evidence: &str) -> Result<(Vec<u8>, Value, String)> {
     let mut decoder = image::ImageReader::new(Cursor::new(bytes))
@@ -29,57 +51,31 @@ pub fn crop(bytes: &[u8], evidence: &str) -> Result<(Vec<u8>, Value, String)> {
     let (w, h) = img.dimensions();
     let mut bbox = [0.05, 0.0, 0.95, 0.22];
     let mut detection = "header_candidate";
-    let mut regions = HEADER
-        .captures_iter(evidence)
-        .filter_map(|c| {
-            let b = [2, 3, 4, 5].map(|i| c[i].parse::<f64>().unwrap_or(0.) / 1000.);
-            (b[1] < 0.25
-                && b[3] <= 0.35
-                && b[2] > b[0] + 0.08
-                && b[3] > b[1] + 0.01
-                && b.iter().all(|v| (0.0..=1.0).contains(v)))
-            .then(|| (c[1].to_ascii_lowercase(), b))
-        })
-        .collect::<Vec<_>>();
-    regions.sort_by(|a, b| a.1[1].total_cmp(&b.1[1]).then(a.1[0].total_cmp(&b.1[0])));
-    if let Some((_, first)) = regions.first() {
-        let mut bounds = *first;
-        let anchor_height = first[3] - first[1];
-        let mut merged = false;
-        for (kind, next) in regions.iter().skip(1) {
-            // Body text such as branch/address/phone must not expand the wordmark.
-            if kind == "text" {
-                continue;
+    {
+        let value: Value = serde_json::from_str(evidence).map_err(|_| invalid())?;
+        if !value["box"].is_null() {
+            let b = value["box"]
+                .as_array()
+                .filter(|b| b.len() == 4)
+                .ok_or_else(invalid)?;
+            let mut bounds = [0.0; 4];
+            for (i, v) in b.iter().enumerate() {
+                bounds[i] = v
+                    .as_f64()
+                    .filter(|v| (0.0..=1.0).contains(v))
+                    .ok_or_else(invalid)?;
             }
-            let overlap = (bounds[2].min(next[2]) - bounds[0].max(next[0])).max(0.);
-            let narrow_width = (bounds[2] - bounds[0]).min(next[2] - next[0]);
-            let gap = (next[1] - bounds[3]).max(0.);
-            let height = next[3].max(bounds[3]) - bounds[1];
-            if overlap >= narrow_width * 0.5
-                && gap <= (anchor_height * 0.2).min(0.012)
-                && next[3] - next[1] >= anchor_height * 0.22
-                && height <= (anchor_height * 2.5).min(0.18)
-            {
-                bounds = [
-                    bounds[0].min(next[0]),
-                    bounds[1],
-                    bounds[2].max(next[2]),
-                    bounds[3].max(next[3]),
-                ];
-                merged = true;
+            if bounds[0] >= bounds[2] || bounds[1] >= bounds[3] {
+                return Err(invalid());
             }
+            bbox = [
+                (bounds[0] - 0.012).max(0.0),
+                (bounds[1] - 0.008).max(0.0),
+                (bounds[2] + 0.012).min(1.0),
+                (bounds[3] + 0.008).min(1.0),
+            ];
+            detection = "vision_logo";
         }
-        bbox = [
-            (bounds[0] - 0.012).max(0.),
-            (bounds[1] - 0.008).max(0.),
-            (bounds[2] + 0.012).min(1.),
-            (bounds[3] + 0.008).min(1.),
-        ];
-        detection = if merged {
-            "ocr_header_merged"
-        } else {
-            "ocr_header"
-        };
     }
     let x = (bbox[0] * w as f64) as u32;
     let y = (bbox[1] * h as f64) as u32;
@@ -132,7 +128,13 @@ pub async fn extract_existing(state: Arc<State>, receipt: String) -> Result<Valu
         base64::engine::general_purpose::STANDARD.encode(&bytes)
     );
     let evidence = crate::pipeline::locate_logo(state.clone(), image_url).await?;
-    capture(state.clone(), image, bytes, evidence).await?;
+    capture(
+        state.clone(),
+        image,
+        bytes,
+        evidence["evidence"].to_string(),
+    )
+    .await?;
     let root = state.config.data_dir.clone();
     tokio::task::spawn_blocking(move||{
         let s=Store::open(&root)?;
@@ -140,44 +142,56 @@ pub async fn extract_existing(state: Arc<State>, receipt: String) -> Result<Valu
     }).await.map_err(db::io_error)?
 }
 
-pub const MATCH_MODEL: &str = "superpoint-lightglue-foreground-v1";
-
-/// This score describes verified foreground correspondence, never a probability.
-pub fn select_match(
-    scores: &[Value],
-    threshold: f64,
-    margin: f64,
-    evidence: f64,
-) -> Result<Option<String>> {
-    let mut by_name = std::collections::HashMap::<String, f64>::new();
-    for row in scores {
-        let score = row["score"]
-            .as_f64()
-            .filter(|n| n.is_finite() && (0.0..=1.0).contains(n))
-            .ok_or_else(invalid)?;
-        let support = row["evidence"]
-            .as_f64()
-            .filter(|n| n.is_finite() && (0.0..=1.0).contains(n))
-            .ok_or_else(invalid)?;
-        if support >= evidence {
-            let name = db::text(row, "name")?.to_owned();
-            by_name
-                .entry(name)
-                .and_modify(|v| *v = v.max(score))
-                .or_insert(score);
-        }
+/// Only IDs from this request may become a merchant identity; never accept generated names.
+pub fn matched_reference(data: &Value, references: &[Value]) -> Result<Option<Value>> {
+    let object = data
+        .as_object()
+        .filter(|o| o.len() == 1 && o.contains_key("reference_id"))
+        .ok_or_else(invalid)?;
+    if object["reference_id"].is_null() {
+        return Ok(None);
     }
-    let mut ranked = by_name.into_iter().collect::<Vec<_>>();
-    ranked.sort_by(|a, b| b.1.total_cmp(&a.1).then(a.0.cmp(&b.0)));
-    Ok(ranked
-        .first()
-        .filter(|(_, score)| {
-            *score >= threshold
-                && ranked
-                    .get(1)
-                    .is_none_or(|(_, second)| score - second >= margin && score > second)
-        })
-        .map(|(name, _)| name.clone()))
+    let id = object["reference_id"].as_str().ok_or_else(invalid)?;
+    let index = id
+        .strip_prefix('r')
+        .and_then(|s| s.parse::<usize>().ok())
+        .filter(|i| *i > 0)
+        .ok_or_else(invalid)?;
+    if format!("r{index:02}") != id {
+        return Err(invalid());
+    }
+    references
+        .get(index - 1)
+        .cloned()
+        .map(Some)
+        .ok_or_else(invalid)
+}
+
+fn matching_image(bytes: &[u8]) -> Result<String> {
+    let mut img = image::load_from_memory(bytes).map_err(db::io_error)?;
+    if img.width() > 768 || img.height() > 768 {
+        img = img.resize(768, 768, image::imageops::FilterType::Lanczos3);
+    }
+    let mut out = Cursor::new(Vec::new());
+    img.write_to(&mut out, image::ImageFormat::Png)
+        .map_err(db::io_error)?;
+    Ok(format!(
+        "data:image/png;base64,{}",
+        base64::engine::general_purpose::STANDARD.encode(out.into_inner())
+    ))
+}
+
+/// Conflicting identities across batches or photographs must never win by ordering.
+pub fn selected_merchant(matches: &[Value]) -> Option<String> {
+    let names = matches
+        .iter()
+        .filter_map(|v| v["name"].as_str())
+        .collect::<std::collections::BTreeSet<_>>();
+    if names.len() == 1 {
+        names.first().map(|s| (*s).to_owned())
+    } else {
+        None
+    }
 }
 
 pub async fn match_receipt(state: Arc<State>, receipt: String) -> Result<Value> {
@@ -187,67 +201,50 @@ pub async fn match_receipt(state: Arc<State>, receipt: String) -> Result<Value> 
         .await
         .map_err(db::io_error)??;
     let references = snapshot["references"].as_array().ok_or_else(invalid)?;
-    let mut scores = Vec::new();
+    let mut matches = Vec::new();
+    let mut runs = Vec::new();
+    let batch_size = (state.config.ocr.max_images - 1).min(15);
     for query in snapshot["candidates"].as_array().ok_or_else(invalid)? {
-        let bytes = tokio::fs::read(db::media::safe_path(
-            &state.config.data_dir,
-            db::text(query, "relative_path")?,
-        )?)
-        .await
-        .map_err(db::io_error)?;
-        let encoded = base64::engine::general_purpose::STANDARD.encode(bytes);
-        // Bound transport and OCR working memory; every registered sample is considered.
-        for chunk in references.chunks(8) {
-            let mut samples = Vec::new();
-            for reference in chunk {
-                let bytes = tokio::fs::read(db::media::safe_path(
-                    &state.config.data_dir,
-                    db::text(reference, "relative_path")?,
-                )?)
-                .await
-                .map_err(db::io_error)?;
-                samples.push(json!({"id":reference["logo_id"],"image":base64::engine::general_purpose::STANDARD.encode(bytes)}));
-            }
-            let response = state
-                .client
-                .post(format!(
-                    "{}/v1/logo/match",
-                    state.config.ocr.url.trim_end_matches('/')
-                ))
-                .json(&json!({"image":encoded,"references":samples}))
-                .send()
-                .await
-                .map_err(db::io_error)?
-                .error_for_status()
-                .map_err(db::io_error)?
-                .json::<Value>()
-                .await
-                .map_err(db::io_error)?;
-            if response["model"] != MATCH_MODEL {
-                return Err(invalid());
-            }
-            let matches = response["scores"]
-                .as_array()
-                .filter(|v| v.len() == chunk.len())
-                .ok_or_else(invalid)?;
-            let mut seen = std::collections::HashSet::new();
-            for result in matches {
-                let id = db::text(result, "id")?;
-                let reference = chunk
-                    .iter()
-                    .find(|r| r["logo_id"] == id)
-                    .ok_or_else(invalid)?;
-                if !seen.insert(id) {
-                    return Err(invalid());
+        for chunk in references.chunks(batch_size) {
+            let root = state.config.data_dir.clone();
+            let query = query.clone();
+            let samples = chunk.to_vec();
+            let query_id = query["logo_id"].clone();
+            let content = tokio::task::spawn_blocking(move || {
+                let mut parts = Vec::new();
+                for (index, sample) in std::iter::once(&query).chain(samples.iter()).enumerate() {
+                    let label = if index == 0 {
+                        "QUERY image:".to_owned()
+                    } else {
+                        format!("REFERENCE r{index:02}:")
+                    };
+                    let bytes = std::fs::read(db::media::safe_path(
+                        &root,
+                        db::text(sample, "relative_path")?,
+                    )?)
+                    .map_err(db::io_error)?;
+                    parts.push(json!({"type":"text","text":label}));
+                    parts.push(
+                        json!({"type":"image_url","image_url":{"url":matching_image(&bytes)?}}),
+                    );
                 }
-                let mut row = result.clone();
-                row["name"] = reference["name"].clone();
-                row["query_id"] = query["logo_id"].clone();
-                scores.push(row);
+                Ok::<_, crate::error::AppError>(parts)
+            })
+            .await
+            .map_err(db::io_error)??;
+            let raw = crate::pipeline::raw_call(&state, &state.config.ocr.url, json!({
+                "model":state.config.ocr.model,
+                "messages":[{"role":"system","content":state.config.logos.prompt},{"role":"user","content":content}],
+                "temperature":0,"seed":42,"max_tokens":4096,"response_format":{"type":"text"},
+                "chat_template_kwargs":{"enable_thinking":state.config.ocr.thinking}
+            })).await?;
+            let decoded = crate::pipeline::decode_content(&raw)?;
+            if let Some(reference) = matched_reference(&decoded, chunk)? {
+                matches.push(json!({"query_id":query_id,"reference_id":reference["logo_id"],"name":reference["name"]}));
             }
+            runs.push(json!({"query_id":query_id,"reference_ids":chunk.iter().map(|v|v["logo_id"].clone()).collect::<Vec<_>>(),"response":raw}));
         }
     }
-    // A renamed/deleted alias or rotated/deleted photograph invalidates the in-flight result.
     let root = state.config.data_dir.clone();
     let current =
         tokio::task::spawn_blocking(move || Store::open(&root)?.logo_match_inputs(&receipt))
@@ -256,20 +253,15 @@ pub async fn match_receipt(state: Arc<State>, receipt: String) -> Result<Value> 
     if current != snapshot {
         return Err(db::conflict());
     }
-    let config = &state.config.logos;
-    let selected = select_match(
-        &scores,
-        config.identity_threshold,
-        config.margin,
-        config.minimum_evidence,
-    )?;
-    scores.sort_by(|a, b| {
-        b["score"]
-            .as_f64()
-            .unwrap()
-            .total_cmp(&a["score"].as_f64().unwrap())
-    });
+    // Every batch is considered; conflicting merchant identities remain unknown.
+    let selected = selected_merchant(&matches);
+    let usage = crate::pipeline::aggregate_usage(
+        &runs
+            .iter()
+            .map(|r| r["response"]["usage"].clone())
+            .collect::<Vec<_>>(),
+    );
     Ok(
-        json!({"model":MATCH_MODEL,"selected":selected,"scores":scores,"catalog_version":snapshot["catalog_version"]}),
+        json!({"model":state.config.ocr.model,"selected":selected,"matches":matches,"inference":runs,"usage":usage,"catalog_version":snapshot["catalog_version"]}),
     )
 }

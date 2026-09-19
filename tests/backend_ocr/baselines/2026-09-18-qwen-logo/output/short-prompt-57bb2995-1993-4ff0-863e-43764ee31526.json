@@ -1,0 +1,43 @@
+{
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "{\"reference_id\":\"r02\"}",
+        "reasoning_content": "The QUERY image shows a \"COSTCO WHOLESALE\" wordmark with the distinctive bold lettering and three horizontal lines to the left of \"WHOLESALE\". I need to compare against references.\n\nr02 shows the exact same \"COSTCO WHOLESALE\" layout with the three lines. r03 also shows \"COSTCO WHOLESALE\" but partially cut off at the bottom. Both match the same wordmark. The instruction says select any reference showing the same printed symbol or wordmark. r02 is a complete clear match. r03 is also a match but cropped. I'll pick r02 as the cleanest full match. Both are valid; I'll return r02.\n",
+        "refusal": null,
+        "role": "assistant"
+      }
+    }
+  ],
+  "created": 1789761874,
+  "id": "chatcmpl-538cfb7654181574",
+  "model": "qwen3.8-27b-ninfer-nvfp4",
+  "object": "chat.completion",
+  "timings": {
+    "cache_n": 0,
+    "draft_n": 156,
+    "draft_n_accepted": 112,
+    "predicted_ms": 866.578801,
+    "predicted_n": 165,
+    "predicted_per_second": 189.2499560464092,
+    "predicted_per_token_ms": 5.284017079268293,
+    "prompt_ms": 766.087077,
+    "prompt_n": 3565,
+    "prompt_per_second": 4653.517996884315,
+    "prompt_per_token_ms": 0.21489118569424964
+  },
+  "usage": {
+    "completion_tokens": 165,
+    "completion_tokens_details": {
+      "reasoning_tokens": 155
+    },
+    "prompt_tokens": 3565,
+    "prompt_tokens_details": {
+      "cached_tokens": 0
+    },
+    "total_tokens": 3730
+  }
+}

@@ -1,0 +1,43 @@
+{
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "{\"reference_id\":\"r08\"}",
+        "reasoning_content": "The QUERY image shows a circular symbol: a thick outer ring with a solid filled circle in the center, like a target/bullseye. Looking at references, r08 shows the exact same symbol: outer ring with central filled dot. Other references are wordmarks (MART, Fei Long, Hualian, skyFOODS, COSTCO, 99, etc.) which don't match. So the match is r08.\n",
+        "refusal": null,
+        "role": "assistant"
+      }
+    }
+  ],
+  "created": 1789761960,
+  "id": "chatcmpl-61a27bfe1409af4b",
+  "model": "qwen3.8-27b-ninfer-nvfp4",
+  "object": "chat.completion",
+  "timings": {
+    "cache_n": 0,
+    "draft_n": 108,
+    "draft_n_accepted": 70,
+    "predicted_ms": 603.851704,
+    "predicted_n": 105,
+    "predicted_per_second": 172.2277163599757,
+    "predicted_per_token_ms": 5.806266384615385,
+    "prompt_ms": 821.092428,
+    "prompt_n": 3949,
+    "prompt_per_second": 4809.446373313773,
+    "prompt_per_token_ms": 0.20792413978222335
+  },
+  "usage": {
+    "completion_tokens": 105,
+    "completion_tokens_details": {
+      "reasoning_tokens": 95
+    },
+    "prompt_tokens": 3949,
+    "prompt_tokens_details": {
+      "cached_tokens": 0
+    },
+    "total_tokens": 4054
+  }
+}

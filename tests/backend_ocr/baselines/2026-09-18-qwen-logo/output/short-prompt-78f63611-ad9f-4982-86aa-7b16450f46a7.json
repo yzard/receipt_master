@@ -1,0 +1,43 @@
+{
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "{\"reference_id\":\"r01\"}",
+        "reasoning_content": "The QUERY image shows a circular emblem with a laurel wreath surrounding the number \"99\" in a stylized font, with text below reading \"1607 Flushing\". Looking at the references, r01 shows the exact same emblem: a laurel wreath circle with \"99\" inside and \"1607 Flushing\" text below. The shapes, lettering, and layout match precisely. Other references (skyFOODS, COSTCO, MART, Hualian, Fei Long, target-like circle, G symbol) do not match. Therefore the match is r01.\n",
+        "refusal": null,
+        "role": "assistant"
+      }
+    }
+  ],
+  "created": 1789761884,
+  "id": "chatcmpl-70cd5dc224a01d7f",
+  "model": "qwen3.8-27b-ninfer-nvfp4",
+  "object": "chat.completion",
+  "timings": {
+    "cache_n": 0,
+    "draft_n": 150,
+    "draft_n_accepted": 90,
+    "predicted_ms": 835.6156110000001,
+    "predicted_n": 139,
+    "predicted_per_second": 165.14770449878537,
+    "predicted_per_token_ms": 6.055185586956522,
+    "prompt_ms": 808.996491,
+    "prompt_n": 3925,
+    "prompt_per_second": 4851.689770802726,
+    "prompt_per_token_ms": 0.2061137556687898
+  },
+  "usage": {
+    "completion_tokens": 139,
+    "completion_tokens_details": {
+      "reasoning_tokens": 129
+    },
+    "prompt_tokens": 3925,
+    "prompt_tokens_details": {
+      "cached_tokens": 0
+    },
+    "total_tokens": 4064
+  }
+}

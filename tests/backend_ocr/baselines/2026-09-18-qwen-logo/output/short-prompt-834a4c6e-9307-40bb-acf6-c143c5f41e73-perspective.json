@@ -1,0 +1,43 @@
+{
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "{\"reference_id\":\"r10\"}",
+        "reasoning_content": "The query shows \"skyFOODS\" with a leaf accent on the F, tagline \"everyday fresh at low prices\" and Chinese characters below. Reference r09 and r10 both show the same \"skyFOODS\" wordmark with the leaf on the F and the tagline. r10 includes the full Chinese line matching the query. Both r09 and r10 match. I need to pick one. r10 is the most complete match including the Chinese characters. I'll select r10.\n",
+        "refusal": null,
+        "role": "assistant"
+      }
+    }
+  ],
+  "created": 1789761966,
+  "id": "chatcmpl-d8c3f26bab0102f5",
+  "model": "qwen3.8-27b-ninfer-nvfp4",
+  "object": "chat.completion",
+  "timings": {
+    "cache_n": 0,
+    "draft_n": 117,
+    "draft_n_accepted": 83,
+    "predicted_ms": 654.0726460000001,
+    "predicted_n": 123,
+    "predicted_per_second": 186.52362355480616,
+    "predicted_per_token_ms": 5.361251196721312,
+    "prompt_ms": 763.97755,
+    "prompt_n": 3637,
+    "prompt_per_second": 4760.611093873112,
+    "prompt_per_token_ms": 0.2100570662634039
+  },
+  "usage": {
+    "completion_tokens": 123,
+    "completion_tokens_details": {
+      "reasoning_tokens": 113
+    },
+    "prompt_tokens": 3637,
+    "prompt_tokens_details": {
+      "cached_tokens": 0
+    },
+    "total_tokens": 3760
+  }
+}

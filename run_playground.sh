@@ -29,7 +29,7 @@ if len(ports) != 1 or ports[0]["host_ip"] != "0.0.0.0" or ports[0]["protocol"] !
     raise SystemExit("backend_api must publish one TCP port on 0.0.0.0")
 port, target = ports[0]["published"], ports[0]["target"]
 print(f"\nAPI mapping: 0.0.0.0:{port} -> backend_api:{target}")
-print("Access URLs after startup (models may still be loading):")
+print("Access URLs (the model loads on the first task):")
 print(f"  Local health: http://localhost:{port}/health")
 addresses = os.environ["RECEIPT_HOST_IPS"].split()
 for address in addresses:

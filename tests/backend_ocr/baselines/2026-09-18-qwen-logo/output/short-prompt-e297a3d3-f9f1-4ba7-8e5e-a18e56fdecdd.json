@@ -1,0 +1,43 @@
+{
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "{\"reference_id\":\"r05\"}",
+        "reasoning_content": "The QUERY shows a square logo with a stylized \"H\" negative space and the word \"MART\" below. Looking at references, r05 is identical: same square with H cutout and \"MART\" text. r06 is just the H symbol without MART. The query includes MART, so r05 is the full match. Both r05 and query match exactly. Select r05.\n",
+        "refusal": null,
+        "role": "assistant"
+      }
+    }
+  ],
+  "created": 1789761934,
+  "id": "chatcmpl-d465b7e6022b4e6f",
+  "model": "qwen3.8-27b-ninfer-nvfp4",
+  "object": "chat.completion",
+  "timings": {
+    "cache_n": 0,
+    "draft_n": 102,
+    "draft_n_accepted": 63,
+    "predicted_ms": 569.421702,
+    "predicted_n": 98,
+    "predicted_per_second": 170.34826677540295,
+    "predicted_per_token_ms": 5.870326824742268,
+    "prompt_ms": 802.47709,
+    "prompt_n": 3901,
+    "prompt_per_second": 4861.19796890401,
+    "prompt_per_token_ms": 0.20571061009997435
+  },
+  "usage": {
+    "completion_tokens": 98,
+    "completion_tokens_details": {
+      "reasoning_tokens": 88
+    },
+    "prompt_tokens": 3901,
+    "prompt_tokens_details": {
+      "cached_tokens": 0
+    },
+    "total_tokens": 3999
+  }
+}

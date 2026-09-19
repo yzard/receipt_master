@@ -1,0 +1,43 @@
+{
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "{\"reference_id\":\"r10\"}",
+        "reasoning_content": "The query image shows a logo reading \"skyFOODS\" with a distinctive leaf/fruit stem on top of the first \"O\", a tagline \"everyday fresh at low prices\", and Chinese characters below.\n\nLooking at the references:\n- r01: \"99\" with laurel wreath - no match.\n- r10: \"skyFOODS\" with same leaf on O, tagline \"everyday fresh at low prices\", Chinese characters below - exact match.\n- r09: \"skyFOODS\" with same leaf on O, tagline \"everyday fresh at low prices\" - also a match, but r10 includes the full Chinese line which matches the query better. Both r09 and r10 are the same brand. The query shows the Chinese characters clearly. r10 shows them too. r09 is cut off at the bottom. Both are valid same-brand references.\n\nThe instruction says references can contain multiple samples of one brand. I need to pick one reference ID. Both r09 and r10 match. r10 is the most complete match including the Chinese line. I'll choose r10.\n\nLet me double check the Chinese characters. Query: \"晶 銀 超 級 市 場\" (roughly). r10: \"晶 銀 超 級 市 場\". Yes matches. r09 cut off.\n\nThus r10 is the best match.\n",
+        "refusal": null,
+        "role": "assistant"
+      }
+    }
+  ],
+  "created": 1789761505,
+  "id": "chatcmpl-49f3d2cf84a2aec1",
+  "model": "qwen3.8-27b-ninfer-nvfp4",
+  "object": "chat.completion",
+  "timings": {
+    "cache_n": 0,
+    "draft_n": 303,
+    "draft_n_accepted": 222,
+    "predicted_ms": 2446.028977,
+    "predicted_n": 324,
+    "predicted_per_second": 132.05076597095442,
+    "predicted_per_token_ms": 7.572845130030959,
+    "prompt_ms": 1087.3617390000002,
+    "prompt_n": 3667,
+    "prompt_per_second": 3372.3827761057532,
+    "prompt_per_token_ms": 0.296526244614126
+  },
+  "usage": {
+    "completion_tokens": 324,
+    "completion_tokens_details": {
+      "reasoning_tokens": 314
+    },
+    "prompt_tokens": 3667,
+    "prompt_tokens_details": {
+      "cached_tokens": 0
+    },
+    "total_tokens": 3991
+  }
+}

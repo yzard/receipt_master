@@ -21,9 +21,7 @@ pub struct Config {
 #[serde(deny_unknown_fields)]
 pub struct Logos {
     pub enabled: bool,
-    pub identity_threshold: f64,
-    pub margin: f64,
-    pub minimum_evidence: f64,
+    pub prompt: String,
 }
 #[derive(Clone, Deserialize)]
 #[serde(deny_unknown_fields)]
@@ -32,6 +30,9 @@ pub struct Ocr {
     pub model: String,
     pub output_tokens: u32,
     pub max_images: usize,
+    pub thinking: bool,
+    pub prompts_file: PathBuf,
+    pub repair_attempts: usize,
 }
 #[derive(Clone, Deserialize)]
 #[serde(deny_unknown_fields)]
@@ -63,11 +64,8 @@ impl Pricing {
 impl Config {
     pub fn parse(text: &str) -> Result<Self, Box<dyn std::error::Error + Send + Sync>> {
         let c: Self = serde_yaml_ng::from_str(text)?;
-        if !(0.0..=1.0).contains(&c.logos.identity_threshold)
-            || !(0.0..=1.0).contains(&c.logos.margin)
-            || !(0.0..=1.0).contains(&c.logos.minimum_evidence)
-        {
-            return Err("Invalid logo thresholds".into());
+        if c.logos.prompt.trim().is_empty() || c.ocr.max_images < 2 {
+            return Err("Logo matching requires a prompt and at least two images".into());
         }
         c.pricing
             .snapshot()
@@ -92,6 +90,8 @@ impl Config {
             || c.ocr.model.is_empty()
             || c.ocr.max_images == 0
             || c.ocr.output_tokens == 0
+            || c.ocr.prompts_file.as_os_str().is_empty()
+            || c.ocr.repair_attempts > 2
         {
             return Err("Invalid backend API configuration".into());
         }

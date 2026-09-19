@@ -983,61 +983,69 @@ fn logo_samples_match_only_confirmed_images_and_survive_receipt_deletion() {
 }
 
 #[test]
-fn logo_identity_requires_score_evidence_and_distinct_store_margin() {
-    use receipt_backend_api::logos::select_match;
-    let scores = json!([{"name":"skyFOODS","score":0.9,"evidence":1.0},{"name":"skyFOODS","score":0.89,"evidence":1.0},{"name":"Hualian","score":0.06,"evidence":0.5}]);
+fn logo_reference_ids_are_strict_and_unknown_is_explicit() {
+    use receipt_backend_api::logos::matched_reference;
+    let refs = vec![json!({"logo_id":"trusted","name":"Target"})];
     assert_eq!(
-        select_match(scores.as_array().unwrap(), 0.55, 0.05, 0.75).unwrap(),
-        Some("skyFOODS".into())
+        matched_reference(&json!({"reference_id":"r01"}), &refs).unwrap(),
+        Some(refs[0].clone())
     );
-    for scores in [
-        json!([{"name":"a","score":0.9,"evidence":0.3}]),
-        json!([{"name":"a","score":0.5,"evidence":1.0}]),
-        json!([{"name":"a","score":0.9,"evidence":1.0},{"name":"b","score":0.88,"evidence":1.0}]),
+    assert_eq!(
+        matched_reference(&json!({"reference_id":null}), &refs).unwrap(),
+        None
+    );
+    for bad in [
+        json!({}),
+        json!({"reference_id":"Target"}),
+        json!({"reference_id":"r02"}),
+        json!({"reference_id":"r00"}),
+        json!({"reference_id":1}),
+        json!({"reference_id":"r01","name":"fake"}),
     ] {
-        assert!(
-            select_match(scores.as_array().unwrap(), 0.55, 0.05, 0.75)
-                .unwrap()
-                .is_none()
-        );
+        assert!(matched_reference(&bad, &refs).is_err());
     }
-    assert!(
-        select_match(
-            &[json!({"name":"a","score":1.01,"evidence":1.0})],
-            0.55,
-            0.05,
-            0.75
-        )
-        .is_err()
+}
+
+#[test]
+fn different_merchant_votes_are_unknown_even_across_batches() {
+    use receipt_backend_api::logos::selected_merchant;
+    assert_eq!(selected_merchant(&[]), None);
+    assert_eq!(
+        selected_merchant(&[json!({"name":"Target"}), json!({"name":"Target"})]),
+        Some("Target".into())
+    );
+    assert_eq!(
+        selected_merchant(&[json!({"name":"skyFOODS"}), json!({"name":"Hualian"})]),
+        None
     );
 }
 
 #[test]
-fn logo_crop_uses_layout_boxes_not_ocr_characters() {
+fn logo_crop_uses_visual_box_not_model_store_text() {
     let bytes = photo();
-    let a = receipt_backend_api::logos::crop(
-        &bytes,
-        "<|det|>title [200, 50, 800, 150]<|/det|>WRONG OCR",
-    )
-    .unwrap();
-    let b = receipt_backend_api::logos::crop(
-        &bytes,
-        "<|det|>title [200, 50, 800, 150]<|/det|>OTHER NAME",
-    )
-    .unwrap();
+    let a =
+        receipt_backend_api::logos::crop(&bytes, r#"{"box":[0.2,0.05,0.8,0.15],"name":"WRONG"}"#)
+            .unwrap();
+    let b =
+        receipt_backend_api::logos::crop(&bytes, r#"{"box":[0.2,0.05,0.8,0.15],"name":"OTHER"}"#)
+            .unwrap();
     assert_eq!(a.0, b.0);
-    assert_eq!(a.1, b.1);
-    assert_eq!(a.2, "ocr_header");
-    let wordmark = receipt_backend_api::logos::crop(
-        &bytes,
-        "<|det|>text [200, 50, 800, 150]<|/det|>ANY UPPERCASE",
-    )
-    .unwrap();
-    assert_eq!(wordmark.0, a.0);
-    let fallback =
-        receipt_backend_api::logos::crop(&bytes, "<|det|>title [0, 700, 900, 950]").unwrap();
-    assert_eq!(fallback.2, "header_candidate");
-    assert!(receipt_backend_api::logos::crop(b"invalid", "").is_err());
+    assert_eq!(a.2, "vision_logo");
+    assert_eq!(
+        receipt_backend_api::logos::crop(&bytes, r#"{"box":null}"#)
+            .unwrap()
+            .2,
+        "header_candidate"
+    );
+    for evidence in [
+        r#"{"box":[0.8,0.2,0.1,0.3]}"#,
+        r#"{"box":[-1,0,1,1]}"#,
+        r#"{"box":[0,0,1]}"#,
+        "invalid",
+    ] {
+        assert!(receipt_backend_api::logos::crop(&bytes, evidence).is_err());
+    }
+    assert!(receipt_backend_api::logos::crop(b"invalid", r#"{"box":null}"#).is_err());
 }
 
 #[test]
@@ -1052,8 +1060,20 @@ fn logo_crop_respects_camera_exif_orientation() {
         ])
         .unwrap();
     encoder.encode_image(&img).unwrap();
+    use base64::Engine;
+    let url = format!(
+        "data:image/jpeg;base64,{}",
+        base64::engine::general_purpose::STANDARD.encode(&bytes)
+    );
+    let (header, height) = receipt_backend_api::logos::localization_input(&url).unwrap();
+    assert_eq!(height, 0.30);
+    let header = base64::engine::general_purpose::STANDARD
+        .decode(header.split_once(',').unwrap().1)
+        .unwrap();
+    let header = image::load_from_memory(&header).unwrap();
+    assert_eq!((header.width(), header.height()), (200, 30));
     let (result, _, _) =
-        receipt_backend_api::logos::crop(&bytes, "<|det|>title [200, 50, 800, 150]").unwrap();
+        receipt_backend_api::logos::crop(&bytes, r#"{"box":[0.2,0.05,0.8,0.15]}"#).unwrap();
     let crop = image::load_from_memory(&result).unwrap();
     assert!(crop.width() as f64 / crop.height() as f64 > 8.0);
 }
@@ -1247,22 +1267,13 @@ fn duplicate_ocr_warnings_can_be_saved_repeatedly_and_confirmed() {
 }
 
 #[test]
-fn logo_crop_merges_adjacent_brand_headers_but_excludes_address_and_receipt_title() {
-    let bytes = photo();
-    for evidence in [
-        "<|det|>header [286,27,732,94]<|/det|>COSTCO\n<|det|>header [421,97,718,125]<|/det|>WHOLESALE\n<|det|>text [325,126,690,149]<|/det|>ADDRESS\n<|det|>title [277,234,737,269]<|/det|>REFUND",
-        "<|det|>title [421,97,718,125]<|/det|>UNKNOWN\n<|det|>title [286,27,732,94]<|/det|>DIFFERENT OCR\n<|det|>header [325,150,690,173]<|/det|>UNRELATED",
-    ] {
-        let (_, bbox, detection) = receipt_backend_api::logos::crop(&bytes, evidence).unwrap();
-        assert_eq!(detection, "ocr_header_merged");
-        for (i, expected) in [0.274, 0.019, 0.744, 0.133].iter().enumerate() {
-            assert!((bbox[i].as_f64().unwrap() - expected).abs() < 1e-9);
-        }
+fn logo_crop_preserves_full_wordmark_box_with_small_padding() {
+    let (_, bbox, detection) =
+        receipt_backend_api::logos::crop(&photo(), r#"{"box":[0.286,0.027,0.732,0.125]}"#).unwrap();
+    assert_eq!(detection, "vision_logo");
+    for (i, expected) in [0.274, 0.019, 0.744, 0.133].iter().enumerate() {
+        assert!((bbox[i].as_f64().unwrap() - expected).abs() < 1e-9);
     }
-    let (_, bbox, detection) = receipt_backend_api::logos::crop(&bytes,
-        "<|det|>header [100,20,400,90]<|/det|>LOGO\n<|det|>header [600,92,900,120]<|/det|>SIDE NOTE").unwrap();
-    assert_eq!(detection, "ocr_header");
-    assert!(bbox[2].as_f64().unwrap() < 0.5);
 }
 
 #[test]
@@ -1630,10 +1641,6 @@ fn fresh_database_bundles_labelled_logo_images_without_ocr_or_prior_receipts() {
                 .unwrap()
                 .iter()
                 .any(|r| r["name"] == sample["name"] && r["content_sha256"] == sample["sha256"])
-        );
-        assert_eq!(
-            receipt_backend_api::parsing::profile(sample["name"].as_str()),
-            sample["parser"].as_str().unwrap()
         );
     }
 }

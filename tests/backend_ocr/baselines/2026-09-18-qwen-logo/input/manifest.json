@@ -1,0 +1,255 @@
+{
+  "references": [
+    {
+      "id": "r01",
+      "name": "99 Ranch",
+      "path": "images/ref-8fc656c8-871e-4055-90c9-dd50d2df37af.png",
+      "sha256": "a172e62e4b55084f93503d589d470321884bb4d6b1a41211248b9c69002af550"
+    },
+    {
+      "id": "r02",
+      "name": "Costco",
+      "path": "images/ref-568fd6b3-1e5a-425f-bbb7-f28a6e746f73.png",
+      "sha256": "8e4bcd3f85a271f2771f3e99061ef233e605355f137aea9a3d58e9a307cba8dc"
+    },
+    {
+      "id": "r03",
+      "name": "Costco",
+      "path": "images/ref-d032dd1a-26e5-4a40-bcd0-a5b2d93a2a9f.png",
+      "sha256": "e3f5132bb2a21686fcd750f1d3441a703d0cdf6727b5111b89a9b24f872edc9a"
+    },
+    {
+      "id": "r04",
+      "name": "Feilong",
+      "path": "images/ref-dfbbab17-7d64-4bf4-bb04-eabec6f997db.png",
+      "sha256": "e0024c757c2b6a02d0ec89e35c59f7d7472a30da387f61453d5d5a6bbfdfd038"
+    },
+    {
+      "id": "r05",
+      "name": "H MART",
+      "path": "images/ref-b76ca143-1d0b-43ce-bbff-56170fb83ec4.png",
+      "sha256": "f9846ac0d282163aa9424d6d381a0557c8f252451066e341fd4c3ce75c4edbaf"
+    },
+    {
+      "id": "r06",
+      "name": "Hualian",
+      "path": "images/ref-2785b7a4-2347-4172-98f6-17e59f15ccac.png",
+      "sha256": "46ed22bdcd5f6aa7a92e00f3d18b8e31d2bd38a853976d2c135462f96fd6fa1a"
+    },
+    {
+      "id": "r07",
+      "name": "Hualian",
+      "path": "images/ref-d497bf9c-58db-4672-bafc-1f8d3bddff8f.png",
+      "sha256": "b81c50949fbaa309b5e6a151be765aef5c46a1319aa079f5ac79d1b6cc309b47"
+    },
+    {
+      "id": "r08",
+      "name": "Target",
+      "path": "images/ref-6e9fed69-c50d-4140-8902-644d5f40581a.png",
+      "sha256": "c51a98cebcf4f1910819740e56d573eaaa49f0c487f104b06c17b8982e986c25"
+    },
+    {
+      "id": "r09",
+      "name": "skyFOODS",
+      "path": "images/ref-14911b95-ca00-4dd0-b08b-dc5ac3515fe8.png",
+      "sha256": "244b4b493afa1f30a01a3f86cba69763daa3d42664d529ca6e936abb183889bf"
+    },
+    {
+      "id": "r10",
+      "name": "skyFOODS",
+      "path": "images/ref-95257097-8e3f-4c57-ad27-3d3d93292291.png",
+      "sha256": "29326eb58444df4e760ecd00fbb3a97e3d1f06830a5ca25c0bbca7ac99cf6f64"
+    }
+  ],
+  "cases": [
+    {
+      "id": "be4a2b4d-87d4-41f8-8ad2-b8b419229096",
+      "kind": "real_photo",
+      "expected": "Target",
+      "path": "images/be4a2b4d-87d4-41f8-8ad2-b8b419229096.png",
+      "sha256": "29c3313656ce3d13158be10e2425a0a43d7f2b9a98005b43f6758223c199efe0"
+    },
+    {
+      "id": "57bb2995-1993-4ff0-863e-43764ee31526",
+      "kind": "real_photo",
+      "expected": "Costco",
+      "path": "images/57bb2995-1993-4ff0-863e-43764ee31526.png",
+      "sha256": "520aee2da70de02fe383581274eb5eb18ceda3fd68026af4236000b3dacbcb01"
+    },
+    {
+      "id": "834a4c6e-9307-40bb-acf6-c143c5f41e73",
+      "kind": "real_photo",
+      "expected": "skyFOODS",
+      "path": "images/834a4c6e-9307-40bb-acf6-c143c5f41e73.png",
+      "sha256": "c2030fa8ac0805919d5b8e2eb1fcb7ceb9397acde4485038345c6479eb038019"
+    },
+    {
+      "id": "560ccf19-b7af-4ad6-a512-1dd51853f4d8",
+      "kind": "real_photo",
+      "expected": "Costco",
+      "path": "images/560ccf19-b7af-4ad6-a512-1dd51853f4d8.png",
+      "sha256": "807afee9346e5f0bcaba2aec22f898d3d6679bbecb8ef370b3693c9c10d87bc3"
+    },
+    {
+      "id": "74356ee7-d2e7-42e4-aea1-8fa567dec8ea",
+      "kind": "real_photo",
+      "expected": "skyFOODS",
+      "path": "images/74356ee7-d2e7-42e4-aea1-8fa567dec8ea.png",
+      "sha256": "6d9cd9ed12a0012d38029c08b5595a150d28495ebb439534e6fb325f97d026bb"
+    },
+    {
+      "id": "78f63611-ad9f-4982-86aa-7b16450f46a7",
+      "kind": "real_photo",
+      "expected": "99 Ranch",
+      "path": "images/78f63611-ad9f-4982-86aa-7b16450f46a7.png",
+      "sha256": "65f7ca937ae1dc582814f291d1e9de815f6895d027d0c319ffd782f7afdb9d01"
+    },
+    {
+      "id": "2f97fc50-4cf3-47e1-bd44-ea6de95c774c",
+      "kind": "real_photo",
+      "expected": "99 Ranch",
+      "path": "images/2f97fc50-4cf3-47e1-bd44-ea6de95c774c.png",
+      "sha256": "94e8eeab4eab4163854ff2caad57ee23090fbae25efce7a803776f2988825cfb"
+    },
+    {
+      "id": "fe3a7e41-45ad-4865-8a83-427a696481db",
+      "kind": "real_photo",
+      "expected": "Hualian",
+      "path": "images/fe3a7e41-45ad-4865-8a83-427a696481db.png",
+      "sha256": "e19e61b32aaa55424a57e42dcd5ab933109fd79f3ab0c722c8a8596245209e99"
+    },
+    {
+      "id": "e3843baa-904a-4bbf-bc21-278a1693d5c7",
+      "kind": "real_photo",
+      "expected": "H MART",
+      "path": "images/e3843baa-904a-4bbf-bc21-278a1693d5c7.png",
+      "sha256": "fdf80988994a5d9d0b53501f3bbdaf72c7ba669e9c982bb6609ad0ecc7b62d0b"
+    },
+    {
+      "id": "199fc34a-4857-4aac-873c-8c55f8b223a9",
+      "kind": "real_photo",
+      "expected": "H MART",
+      "path": "images/199fc34a-4857-4aac-873c-8c55f8b223a9.png",
+      "sha256": "edcd96167af7c208a8fa8da2210c60fd026a8321a1b07bd94ca074c7e4675272"
+    },
+    {
+      "id": "4e491343-7593-42b4-b5b5-01e5648557ee",
+      "kind": "real_photo",
+      "expected": "Costco",
+      "path": "images/4e491343-7593-42b4-b5b5-01e5648557ee.png",
+      "sha256": "120fb7efaecefb13cdfd9c30bc1adab858b22220a97822162f01be25ad418cff"
+    },
+    {
+      "id": "c00860de-60e8-4892-8bc3-1e0b2c8314ab",
+      "kind": "real_photo",
+      "expected": "Costco",
+      "path": "images/c00860de-60e8-4892-8bc3-1e0b2c8314ab.png",
+      "sha256": "e5f0222189a2380356d372981a2256b001cfb0fb8d6413ea1dfa8c88b44e9cc4"
+    },
+    {
+      "id": "6d9da1ec-c0fc-4905-82b4-4ebd11716b1c",
+      "kind": "real_photo",
+      "expected": "skyFOODS",
+      "path": "images/6d9da1ec-c0fc-4905-82b4-4ebd11716b1c.png",
+      "sha256": "aeda146292dc196bf3b74f5973307c6af1a01796479c9594f4577c85ea4c5cbd"
+    },
+    {
+      "id": "e6c62f11-3b8d-4ac0-a860-1756df0efa55",
+      "kind": "real_photo",
+      "expected": "Costco",
+      "path": "images/e6c62f11-3b8d-4ac0-a860-1756df0efa55.png",
+      "sha256": "3bee3df56cbd348373e65a6d90e7eeba94bf4c933dfeafce4d217979375ca31e"
+    },
+    {
+      "id": "73953603-31f5-496a-9dd4-76fc845c8398",
+      "kind": "real_photo",
+      "expected": "skyFOODS",
+      "path": "images/73953603-31f5-496a-9dd4-76fc845c8398.png",
+      "sha256": "3d2e3e2e274866d62adfecdaaffc32a35dfa2b38a7ef30cd632fd5198dbbc919"
+    },
+    {
+      "id": "d7f8ff6d-6502-4eeb-8850-2f15b131988f",
+      "kind": "real_photo",
+      "expected": "skyFOODS",
+      "path": "images/d7f8ff6d-6502-4eeb-8850-2f15b131988f.png",
+      "sha256": "eaa8ce36a92e1aee378b2a3b3eceefcba46b42228162c1f184b9108d891681e3"
+    },
+    {
+      "id": "a31f7e6b-8bb1-49c8-a292-504d76d1a59c",
+      "kind": "real_photo",
+      "expected": "skyFOODS",
+      "path": "images/a31f7e6b-8bb1-49c8-a292-504d76d1a59c.png",
+      "sha256": "72a507b3d624027d7ce6fea4e6b7d288a7cbf8357a7cb8b05413f3dce6973cc6"
+    },
+    {
+      "id": "8572dcef-7f7f-4d77-80c6-0ede75d45fa3",
+      "kind": "real_photo",
+      "expected": "Costco",
+      "path": "images/8572dcef-7f7f-4d77-80c6-0ede75d45fa3.png",
+      "sha256": "dc297cb997efe45f2881df72666b547462419e658d2f9626a9a21e60124e3b7c"
+    },
+    {
+      "id": "3a8e3c19-e8d0-4ea8-8fa3-06e3cd5fcfd4",
+      "kind": "real_photo",
+      "expected": "Costco",
+      "path": "images/3a8e3c19-e8d0-4ea8-8fa3-06e3cd5fcfd4.png",
+      "sha256": "62687945c2771551501fa04225e8e8c5fafe1c7eff8ddef5791f6a38c1f7c244"
+    },
+    {
+      "id": "e9ee06e0-f4aa-4c3c-812a-4e8abc21e3f0",
+      "kind": "real_photo",
+      "expected": "skyFOODS",
+      "path": "images/e9ee06e0-f4aa-4c3c-812a-4e8abc21e3f0.png",
+      "sha256": "0e37e9c94db604d06e8228819db6c5b7c36af7cdc0d83071f4520b2f7b23fd8e"
+    },
+    {
+      "id": "924e246e-c811-497a-a61b-6b5724f7bacd",
+      "kind": "real_photo",
+      "expected": "Costco",
+      "path": "images/924e246e-c811-497a-a61b-6b5724f7bacd.png",
+      "sha256": "5c5bbc8b94d03c719e21b5c7be5c9c490e152ad2fcdc5b44043c032bc661ac95"
+    },
+    {
+      "id": "e297a3d3-f9f1-4ba7-8e5e-a18e56fdecdd",
+      "kind": "real_photo",
+      "expected": "H MART",
+      "path": "images/e297a3d3-f9f1-4ba7-8e5e-a18e56fdecdd.png",
+      "sha256": "4e637a6536945e25b28651c3eec040c637f6595c004e8b7571572050129f7cc0"
+    },
+    {
+      "id": "5331c892-9fb6-42b5-bdb3-5a205b1a0767",
+      "kind": "real_photo",
+      "expected": "skyFOODS",
+      "path": "images/5331c892-9fb6-42b5-bdb3-5a205b1a0767.png",
+      "sha256": "3262618a03fa076e05a402d6189b69da38cd6717aa1a490efda14efd1085d5be"
+    },
+    {
+      "id": "20267232-d4d0-4540-9c14-b0e051b06445",
+      "kind": "real_photo",
+      "expected": "Costco",
+      "path": "images/20267232-d4d0-4540-9c14-b0e051b06445.png",
+      "sha256": "06a793a79013ac301e9c7f4acc0f4734462f24c4cbc0a28ac4f411b690269f28"
+    },
+    {
+      "id": "c5fdc978-8f74-43bf-a5c5-e22d28f5aea9",
+      "kind": "real_photo",
+      "expected": "Costco",
+      "path": "images/c5fdc978-8f74-43bf-a5c5-e22d28f5aea9.png",
+      "sha256": "09c06870ca90d907de61ae7da5bb3a55158b62db7ba733331582fef7ff8e2c41"
+    },
+    {
+      "id": "ca76c352-9601-498c-8324-0ef9bcf5ea3b",
+      "kind": "real_photo",
+      "expected": "Costco",
+      "path": "images/ca76c352-9601-498c-8324-0ef9bcf5ea3b.png",
+      "sha256": "18a741ad91bf0fe956f4a26efd76efb1be80365969812e1057ca8628badd16f7"
+    },
+    {
+      "id": "4fc6a91b-faba-4d3e-82a3-be4c78270e99",
+      "kind": "real_photo",
+      "expected": "Costco",
+      "path": "images/4fc6a91b-faba-4d3e-82a3-be4c78270e99.png",
+      "sha256": "88cadce1505dfaa3124864c38eb801287f1fb189ee4523e4c41e8660a9631148"
+    }
+  ]
+}

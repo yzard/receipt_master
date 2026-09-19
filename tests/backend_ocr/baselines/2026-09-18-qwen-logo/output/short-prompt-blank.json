@@ -1,0 +1,43 @@
+{
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "{\"reference_id\":null}",
+        "reasoning_content": "The QUERY image appears to be blank/white with no visible logo. I need to compare it against the references. Since the query shows no printed symbol or wordmark, none of the references match. The instruction says if none match, return null.\n\nLet me look carefully at the query image - it's essentially a white/blank image. There's no logo present. Therefore no reference matches.\n\nReturn null.\n",
+        "refusal": null,
+        "role": "assistant"
+      }
+    }
+  ],
+  "created": 1789761985,
+  "id": "chatcmpl-1eb706f646f4230a",
+  "model": "qwen3.8-27b-ninfer-nvfp4",
+  "object": "chat.completion",
+  "timings": {
+    "cache_n": 0,
+    "draft_n": 99,
+    "draft_n_accepted": 63,
+    "predicted_ms": 567.002122,
+    "predicted_n": 94,
+    "predicted_per_second": 164.0205501735318,
+    "predicted_per_token_ms": 6.096797010752688,
+    "prompt_ms": 769.2453390000001,
+    "prompt_n": 3613,
+    "prompt_per_second": 4696.811039111151,
+    "prompt_per_token_ms": 0.2129104176584556
+  },
+  "usage": {
+    "completion_tokens": 94,
+    "completion_tokens_details": {
+      "reasoning_tokens": 86
+    },
+    "prompt_tokens": 3613,
+    "prompt_tokens_details": {
+      "cached_tokens": 0
+    },
+    "total_tokens": 3707
+  }
+}

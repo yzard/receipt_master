@@ -6,6 +6,7 @@ import hashlib
 import io
 import json
 import time
+import tomllib
 import urllib.error
 import urllib.parse
 import urllib.request
@@ -14,31 +15,20 @@ from pathlib import Path
 from PIL import Image, ImageOps
 
 ROOT = Path(__file__).resolve().parents[2]
-PROFILES = ROOT / "tests/backend_api/corpus/baselines/2026-09-17-store-prompts"
+PROMPTS = ROOT / "playground/backend_api/prompts.toml"
 
 
 def prompt_for(store):
-    common = (ROOT / "tests/backend_api/prompts/qwen38_receipt.txt").read_text()
-    name = "".join(c for c in store.lower() if c.isalnum())
-    profile = {
-        "costco": "costco",
-        "skyfoods": "skyfoods",
-        "skyfood": "skyfoods",
-        "hmart": "hmart",
-    }.get(name)
-    if profile:
-        common += "\n" + (PROFILES / (profile + ".txt")).read_text().replace(
-            "standard_name", "product_name"
-        )
-    if name in {"skyfoods", "skyfood"}:
-        common += "\nSkyFoods has multiple layouts. An unindented starting row may contain only scale weight/unit price/amount, or a multi-buy quantity/price/amount. Indented English and Chinese rows beneath it belong to THAT starting row, until the next unindented item. Do not attach that starting weight to the preceding item. Ordinary named product rows may instead have weight details beneath them. Use indentation and the printed amount to identify the layout.\n"
-    if name in {"hualian", "華聯", "华联"}:
-        common += (
-            "\n" + (ROOT / "tests/backend_api/prompts/qwen38_hualian.txt").read_text()
-        )
-    if name in {"99ranch", "99ranchmarket"}:
-        common += "\n99 Ranch: scale weight/unit price are BELOW their product. Use the transaction date beneath address/phone, not the later item-count/footer date.\n"
-    return common
+    config = tomllib.loads(PROMPTS.read_text())
+    normalize = lambda text: "".join(c for c in text.lower() if c.isalnum())
+    parts = [row["prompt"] for row in config["general"]]
+    for row in config.get("store", []):
+        if normalize(store) in {
+            normalize(name) for name in [row["name"], *row.get("aliases", [])]
+        }:
+            parts.append(row["prompt"])
+            break
+    return "\n\n".join(parts)
 
 
 def request_for(case, image_root, model, output_mode, thinking):

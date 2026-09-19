@@ -1,0 +1,22 @@
+[
+  {
+    "id": "fe3a7e41-45ad-4865-8a83-427a696481db",
+    "expected": "Hualian",
+    "selected": null,
+    "valid": false,
+    "correct": false,
+    "finish_reason": "length",
+    "seconds": 51.63899127100012,
+    "usage": {
+      "completion_tokens": 8192,
+      "completion_tokens_details": {
+        "reasoning_tokens": 8192
+      },
+      "prompt_tokens": 3859,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "total_tokens": 12051
+    }
+  }
+]

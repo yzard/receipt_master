@@ -1,4 +1,4 @@
-> 当前采用 Unlimited-OCR + PP-OCRv6 medium，backend_api 负责通用和按店铺解析；下文保留历史计划。现行设计见 [backend_ocr.md](backend_ocr.md)。
+> 当前采用 Qwen3.8 + NInfer + thinking，由 backend_api 组合通用和商店提示并校验结构化结果；下文保留历史计划。现行设计见 [backend_ocr.md](backend_ocr.md)。
 
 # 第二版统一数据 API
 

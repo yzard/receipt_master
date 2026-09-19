@@ -1,0 +1,43 @@
+{
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "{\"reference_id\":\"r02\"}",
+        "reasoning_content": "The query shows the \"COSTCO WHOLESALE\" wordmark with the distinctive three horizontal lines to the left of \"WHOLESALE\". I need to find references matching this exact symbol/wordmark.\n\nLooking at references:\n- r01: \"99\" with laurel wreath - no\n- r02: \"COSTCO WHOLESALE\" with three lines - match\n- r07: \"hualian SUPERMARKET\" - no\n- r03: \"COSTCO WHOLESALE\" (partially cut off but same wordmark) - match\n- r09: \"skyFOODS\" - no\n- r06: \"G\" symbol - no\n- r05: \"MART\" - no\n- r08: circle symbol - no\n- r04: \"Fei Long MARKET\" - no\n- r10: \"skyFOODS\" - no\n\nBoth r02 and r03 match. The instruction says \"Select any reference showing the same printed symbol or wordmark.\" I should pick one. r02 is a complete clear match. r03 is also a match but slightly cropped. I'll select r02 as the cleanest full match. Actually both are valid; the format allows one ID. I'll choose r02.\n",
+        "refusal": null,
+        "role": "assistant"
+      }
+    }
+  ],
+  "created": 1789761900,
+  "id": "chatcmpl-7e305b5cbf90af80",
+  "model": "qwen3.8-27b-ninfer-nvfp4",
+  "object": "chat.completion",
+  "timings": {
+    "cache_n": 0,
+    "draft_n": 261,
+    "draft_n_accepted": 212,
+    "predicted_ms": 1458.367361,
+    "predicted_n": 300,
+    "predicted_per_second": 205.02378755581597,
+    "predicted_per_token_ms": 4.87748281270903,
+    "prompt_ms": 755.626544,
+    "prompt_n": 3541,
+    "prompt_per_second": 4686.177355887064,
+    "prompt_per_token_ms": 0.21339354532617905
+  },
+  "usage": {
+    "completion_tokens": 300,
+    "completion_tokens_details": {
+      "reasoning_tokens": 290
+    },
+    "prompt_tokens": 3541,
+    "prompt_tokens_details": {
+      "cached_tokens": 0
+    },
+    "total_tokens": 3841
+  }
+}

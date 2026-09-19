@@ -1,0 +1,43 @@
+{
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "{\"reference_id\":\"r10\"}",
+        "reasoning_content": "The query shows \"skyFOODS\" with a leaf accent on the first O, tagline \"everyday fresh at low prices\" and Chinese characters below. Reference r09 and r10 both show the same \"skyFOODS\" wordmark with the leaf accent and tagline. r10 includes the full Chinese line matching the query exactly. r09 is cropped but same logo. Both match. I need to pick one reference ID. r10 is the closest full match including Chinese characters. I'll select r10.\n",
+        "refusal": null,
+        "role": "assistant"
+      }
+    }
+  ],
+  "created": 1789761917,
+  "id": "chatcmpl-ae5fb0a316a2bc9e",
+  "model": "qwen3.8-27b-ninfer-nvfp4",
+  "object": "chat.completion",
+  "timings": {
+    "cache_n": 0,
+    "draft_n": 123,
+    "draft_n_accepted": 83,
+    "predicted_ms": 686.575103,
+    "predicted_n": 125,
+    "predicted_per_second": 180.60660728619516,
+    "predicted_per_token_ms": 5.536895991935484,
+    "prompt_ms": 762.074258,
+    "prompt_n": 3613,
+    "prompt_per_second": 4741.007798219055,
+    "prompt_per_token_ms": 0.2109256180459452
+  },
+  "usage": {
+    "completion_tokens": 125,
+    "completion_tokens_details": {
+      "reasoning_tokens": 115
+    },
+    "prompt_tokens": 3613,
+    "prompt_tokens_details": {
+      "cached_tokens": 0
+    },
+    "total_tokens": 3738
+  }
+}

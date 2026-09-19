@@ -9,6 +9,7 @@
 !playground/backend_api/
 !playground/backend_api/config.yaml
 !docker/
-!docker/download_model.py
 **/__pycache__/
 **/target/
+
+!playground/backend_api/prompts.toml
