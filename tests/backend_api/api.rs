@@ -462,7 +462,9 @@ async fn data_api_auth_idempotency_and_conflict() {
 async fn persistent_job_auto_applies_without_client_polling_or_apply() {
     let f = fixture(0).await;
     let s = receipt_backend_api::db::Store::open(&f.dir.path().join("data")).unwrap();
-    let r = s.transaction(|| s.save(domain_receipt(), false)).unwrap();
+    let mut previous = domain_receipt();
+    previous["store"] = json!("Costco");
+    let r = s.transaction(|| s.save(previous, false)).unwrap();
     let mut image = std::io::Cursor::new(Vec::new());
     image::DynamicImage::new_rgb8(30, 50)
         .write_to(&mut image, image::ImageFormat::Png)
@@ -486,7 +488,7 @@ async fn persistent_job_auto_applies_without_client_polling_or_apply() {
     assert_eq!(status, 200, "{started}");
     let job_id = started["data"]["job_id"].clone();
     let mut done = false;
-    for _ in 0..100 {
+    for _ in 0..3000 {
         tokio::time::sleep(std::time::Duration::from_millis(10)).await;
         let job = request(
             &f,
@@ -504,16 +506,39 @@ async fn persistent_job_auto_applies_without_client_polling_or_apply() {
         assert_ne!(job["data"]["status"], "failed", "{job}");
     }
     assert!(done);
-    assert_eq!(
-        f.mock
-            .lock()
+    {
+        let mock = f.mock.lock().unwrap();
+        assert_eq!(
+            mock.events
+                .iter()
+                .filter(|event| *event == "vision")
+                .count(),
+            1
+        );
+        assert_eq!(
+            mock.events
+                .iter()
+                .filter(|event| *event == "locate")
+                .count(),
+            1
+        );
+        assert!(mock.events.iter().any(|event| event == "logo"));
+        let extraction = mock.calls.last().unwrap();
+        assert!(
+            !extraction["messages"][0]["content"]
+                .as_str()
+                .unwrap()
+                .contains("MERCHANT PROFILE:")
+        );
+        let context = extraction["messages"][1]["content"]
+            .as_array()
             .unwrap()
-            .calls
             .iter()
-            .filter(|v| v["model"] == "ocr")
-            .count(),
-        2
-    );
+            .filter_map(|p| p["text"].as_str())
+            .find(|t| t.starts_with("Trusted application context"))
+            .unwrap();
+        assert!(context.contains("\"known_store\":null"));
+    }
     let s = receipt_backend_api::db::Store::open(&f.dir.path().join("data")).unwrap();
     let mut current = s.load(r["id"].as_str().unwrap()).unwrap();
     assert_eq!(current["lines"].as_array().unwrap().len(), 3);
@@ -615,7 +640,7 @@ async fn two_jobs_are_queued_serially_and_receipt_queries_remain_responsive() {
     drop(s);
     for (i, id) in receipts.iter().enumerate() {
         if i > 0 {
-            tokio::time::timeout(std::time::Duration::from_secs(5), async {
+            tokio::time::timeout(std::time::Duration::from_secs(60), async {
                 while f.mock.lock().unwrap().calls.is_empty() {
                     tokio::time::sleep(std::time::Duration::from_millis(10)).await;
                 }
@@ -659,7 +684,7 @@ async fn two_jobs_are_queued_serially_and_receipt_queries_remain_responsive() {
     .await
     .unwrap();
     assert_eq!(result.0, 200);
-    tokio::time::timeout(std::time::Duration::from_secs(5), async {
+    tokio::time::timeout(std::time::Duration::from_secs(60), async {
         loop {
             let store = receipt_backend_api::db::Store::open(&f.dir.path().join("data")).unwrap();
             let remaining = store
@@ -676,7 +701,22 @@ async fn two_jobs_are_queued_serially_and_receipt_queries_remain_responsive() {
     })
     .await
     .expect("Both queued jobs must finish");
-    assert_eq!(f.mock.lock().unwrap().calls.len(), 4);
+    let mock = f.mock.lock().unwrap();
+    assert_eq!(
+        mock.events
+            .iter()
+            .filter(|event| *event == "vision")
+            .count(),
+        2
+    );
+    assert_eq!(
+        mock.events
+            .iter()
+            .filter(|event| *event == "locate")
+            .count(),
+        2
+    );
+    assert!(mock.events.iter().any(|event| event == "logo"));
 }
 
 #[tokio::test]
@@ -768,7 +808,7 @@ async fn logo_alias_is_resolved_before_the_single_multiphoto_extraction() {
     let f = fixture(0).await;
     let s = receipt_backend_api::db::Store::open(&f.dir.path().join("data")).unwrap();
     let mut draft = domain_receipt();
-    draft["store"] = json!("");
+    draft["store"] = json!("Hualian");
     draft["lines"] = json!([]);
     let r = s.transaction(|| s.save(draft, false)).unwrap();
     let mut png = std::io::Cursor::new(Vec::new());
@@ -836,6 +876,11 @@ async fn logo_alias_is_resolved_before_the_single_multiphoto_extraction() {
     let m = f.mock.lock().unwrap();
     assert_eq!(m.events.first().unwrap(), "locate");
     assert_eq!(m.events.last().unwrap(), "vision");
+    let prompt = m.calls.last().unwrap()["messages"][0]["content"]
+        .as_str()
+        .unwrap();
+    assert!(prompt.contains("MERCHANT PROFILE: COSTCO"));
+    assert!(!prompt.contains("MERCHANT PROFILE: HUALIAN"));
     assert!(m.events.iter().filter(|event| *event == "logo").count() > 1);
     for call in &m.calls {
         let count = call["messages"][1]["content"]

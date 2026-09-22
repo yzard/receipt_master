@@ -35,7 +35,9 @@ impl Store {
             return Ok(());
         }
         let mut current = self.load(text(job, "receipt_id")?)?;
-        if !current["store"].as_str().unwrap_or("").trim().is_empty()
+        let settings: Value =
+            serde_json::from_str(text(job, "result_json")?).map_err(db::io_error)?;
+        if current["store"] != settings["source"]["store"]
             || self
                 .merge_recognition_edits(job, &current, &current)?
                 .is_none()
@@ -316,6 +318,8 @@ async fn process(state: Arc<State>, job: Value) -> Result<Value> {
     let mut source = settings.get("source").cloned().unwrap_or(current);
     let mut image_ids = Vec::new();
     let mut logo_run = None;
+    // Parsing uses only this run's matched identity, never a previous display name.
+    let mut known_store: Option<String> = None;
     let mut content = Vec::new();
     for (index, img) in images.iter().enumerate() {
         let path = db::media::safe_path(&state.config.data_dir, text(img, "relative_path")?)?;
@@ -339,7 +343,9 @@ async fn process(state: Arc<State>, job: Value) -> Result<Value> {
                     "logo extraction unavailable; retaining confirmed store"
                 );
             }
-            if source["store"].as_str().unwrap_or("").trim().is_empty() {
+            {
+                // Re-recognition also revisits an existing draft name. Only edits made
+                // after submission are protected by the job snapshot merge.
                 let matched = crate::logos::match_receipt(
                     state.clone(),
                     text(&job, "receipt_id")?.to_owned(),
@@ -352,8 +358,11 @@ async fn process(state: Arc<State>, job: Value) -> Result<Value> {
                     ]);
                     logo["matching"] = matched.clone();
                 }
-                source["store"] = json!(matched["selected"].as_str().unwrap_or(""));
-                let name = source["store"].as_str().unwrap_or("").to_owned();
+                known_store = matched["selected"].as_str().map(str::to_owned);
+                let name = known_store.as_deref().unwrap_or("").to_owned();
+                if !name.is_empty() {
+                    source["store"] = json!(name);
+                }
                 let jid = job_id.clone();
                 database(&state, move |s| {
                     s.transaction(|| {
@@ -383,7 +392,7 @@ async fn process(state: Arc<State>, job: Value) -> Result<Value> {
     {
         return Err(conflict());
     }
-    content.insert(0,json!({"type":"text","text":format!("Trusted application context (not printed evidence): {}",json!({"known_store":source["store"],"country":source["country"],"currency":source["currency"]}))}));
+    content.insert(0,json!({"type":"text","text":format!("Trusted application context (not printed evidence): {}",json!({"known_store":known_store,"country":source["country"],"currency":source["currency"]}))}));
     let run = id();
     let run_copy = run.clone();
     let receipt = job["receipt_id"].clone();
@@ -392,7 +401,7 @@ async fn process(state: Arc<State>, job: Value) -> Result<Value> {
     database(&state,move|s|{s.exec("INSERT INTO recognition_run(run_id,receipt_id,input_revision,provider,model,status,started_at_utc_ms) VALUES (?,?,?,'local',?,'running',?)",&[json!(run_copy),receipt,version,json!(model),json!(now())])?;Ok(())}).await?;
     let schema: Value =
         serde_json::from_str(include_str!("receipt_schema.json")).map_err(db::io_error)?;
-    let response=pipeline::recognize(state.clone(),json!({"model":state.config.served_model,"receipt_context":{"known_store":source["store"]},"messages":[{"role":"user","content":content}],"response_format":{"type":"json_schema","json_schema":{"name":"receipt","strict":true,"schema":schema}}})).await;
+    let response=pipeline::recognize(state.clone(),json!({"model":state.config.served_model,"receipt_context":{"known_store":known_store},"messages":[{"role":"user","content":content}],"response_format":{"type":"json_schema","json_schema":{"name":"receipt","strict":true,"schema":schema}}})).await;
     let result = match response {
         Ok(mut response) => {
             if let Some(logo) = logo_run {

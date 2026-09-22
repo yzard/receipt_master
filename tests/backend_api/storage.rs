@@ -1327,6 +1327,7 @@ fn expanded_logo_crop_keeps_confirmed_alias_but_disjoint_crop_does_not() {
 fn early_logo_store_save_preserves_edits_and_rejects_stale_jobs() {
     for edit in [
         "none",
+        "existing",
         "header",
         "store",
         "lines",
@@ -1337,7 +1338,11 @@ fn early_logo_store_save_preserves_edits_and_rejects_stale_jobs() {
     ] {
         let (_dir, s) = setup();
         let mut initial = receipt();
-        initial["store"] = json!("");
+        initial["store"] = json!(if edit == "existing" {
+            "Old draft store"
+        } else {
+            ""
+        });
         initial["lines"] = json!([]);
         let r = s.transaction(|| s.save(initial, false)).unwrap();
         let rid = r["id"].as_str().unwrap();
@@ -1396,7 +1401,7 @@ fn early_logo_store_save_preserves_edits_and_rejects_stale_jobs() {
         s.transaction(|| s.persist_recognition_store(jid, "Costco"))
             .unwrap();
         let after = s.load(rid).unwrap();
-        if ["none", "header"].contains(&edit) {
+        if ["none", "header", "existing"].contains(&edit) {
             assert_eq!(after["store"], "Costco");
             for field in ["branch", "occurredAt", "lines", "totalMinor"] {
                 assert_eq!(after[field], before[field]);
