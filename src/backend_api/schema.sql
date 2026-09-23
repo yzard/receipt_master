@@ -186,10 +186,7 @@ CREATE TABLE recognition_run (
     started_at_utc_ms INTEGER NOT NULL,
     finished_at_utc_ms INTEGER,
     result_relative_path TEXT,
-    error_code TEXT,
-    estimated_cost_minor INTEGER CHECK (estimated_cost_minor IS NULL OR estimated_cost_minor >= 0),
-    cost_currency_code TEXT REFERENCES currency(code),
-    CHECK ((estimated_cost_minor IS NULL) = (cost_currency_code IS NULL))
+    error_code TEXT
 );
 
 CREATE TABLE review_issue (
@@ -202,14 +199,6 @@ CREATE TABLE review_issue (
     state TEXT NOT NULL CHECK (state IN ('open', 'accepted', 'resolved')),
     created_at_utc_ms INTEGER NOT NULL,
     resolved_at_utc_ms INTEGER
-);
-
-CREATE TABLE recognition_budget (
-    budget_id TEXT PRIMARY KEY,
-    currency_code TEXT NOT NULL REFERENCES currency(code),
-    monthly_amount_minor INTEGER NOT NULL CHECK (monthly_amount_minor > 0),
-    reminder_percent INTEGER NOT NULL CHECK (reminder_percent BETWEEN 1 AND 100),
-    enabled INTEGER NOT NULL CHECK (enabled IN (0, 1))
 );
 
 CREATE INDEX store_location_merchant_idx ON store_location(merchant_id);
@@ -338,14 +327,6 @@ CREATE TABLE job_image (
     revision_id TEXT NOT NULL REFERENCES image_revision(revision_id),
     PRIMARY KEY(job_id,position)
 );
-
-CREATE TABLE recognition_pricing (
-    id INTEGER PRIMARY KEY CHECK(id=1),
-    input_rate_micros INTEGER CHECK(input_rate_micros IS NULL OR input_rate_micros>=0),
-    output_rate_micros INTEGER CHECK(output_rate_micros IS NULL OR output_rate_micros>=0),
-    CHECK((input_rate_micros IS NULL)=(output_rate_micros IS NULL))
-);
-INSERT INTO recognition_pricing VALUES (1,NULL,NULL);
 
 CREATE TABLE app_preferences (
     id INTEGER PRIMARY KEY CHECK (id = 1),

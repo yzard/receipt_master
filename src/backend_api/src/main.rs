@@ -14,13 +14,12 @@ async fn main() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
         return Err("Usage: receipt-backend-api --config PATH".into());
     }
     let config = Config::parse(&tokio::fs::read_to_string(&args[2]).await?)?;
-    let key = tokio::fs::read_to_string(&config.api_key_file).await?;
-    let address = (config.host, config.port);
-    let root = config.data_dir.clone();
+    let address = (config.general.host, config.general.port);
+    let root = config.general.data_dir.clone();
     tokio::task::spawn_blocking(move || receipt_backend_api::db::Store::initialize(&root))
         .await?
         .map_err(|e| std::io::Error::other(e.message))?;
-    let state = State::new(config, &key)?;
+    let state = State::new(config)?;
     let listener = tokio::net::TcpListener::bind(address).await?;
     let (stop, rx) = watch::channel(false);
     let queue_state = state.clone();

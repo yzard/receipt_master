@@ -7,6 +7,8 @@ import json
 import time
 from pathlib import Path
 
+from api_auth import client_key
+
 import httpx
 from PIL import Image, ImageDraw, ImageFont
 
@@ -14,7 +16,7 @@ from PIL import Image, ImageDraw, ImageFont
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--url", required=True)
-    parser.add_argument("--key-file", required=True, type=Path)
+    parser.add_argument("--config", required=True, type=Path)
     parser.add_argument("--output-dir", required=True, type=Path)
     args = parser.parse_args()
     args.output_dir.mkdir(parents=True, exist_ok=True)
@@ -39,9 +41,12 @@ def main():
     photo.save(args.output_dir / "synthetic-receipt.jpg")
     buffer = io.BytesIO()
     photo.save(buffer, format="JPEG", quality=95)
+    headers = {"Authorization": "Bearer " + client_key(args.config)}
+    models = httpx.get(args.url + "/v1/models", headers=headers, timeout=15, trust_env=False)
+    models.raise_for_status()
     schema = json.loads(Path(__file__).with_name("receipt_schema.json").read_text())
     body = {
-        "model": "qwen3-vl-8b-instruct",
+        "model": models.json()["data"][0]["id"],
         "store": False,
         "messages": [
             {
@@ -67,7 +72,7 @@ def main():
     response = httpx.post(
         args.url + "/v1/chat/completions",
         json=body,
-        headers={"Authorization": "Bearer " + args.key_file.read_text().strip()},
+        headers=headers,
         timeout=600,
         trust_env=False,
     )

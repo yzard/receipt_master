@@ -2,6 +2,8 @@
 import argparse
 import json
 from pathlib import Path
+
+from api_auth import client_key
 import time
 import urllib.request
 import uuid
@@ -10,10 +12,10 @@ import uuid
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--url', required=True)
-    parser.add_argument('--key-file', type=Path, required=True)
+    parser.add_argument('--config', type=Path, required=True)
     parser.add_argument('--photo', type=Path, required=True)
     args = parser.parse_args()
-    key = args.key_file.read_text().strip()
+    key = client_key(args.config)
     base = args.url.rstrip('/')
     name = 'LOGO PROBE ' + uuid.uuid4().hex
     owned, sample = [], None

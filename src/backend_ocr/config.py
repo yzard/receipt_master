@@ -14,22 +14,41 @@ class EngineConfig(BaseModel):
     port: int = Field(gt=0, le=65535)
     context_length: int = Field(ge=8192)
     max_images: int = Field(gt=0)
+    receipt_output_tokens: int = Field(gt=0)
+    logo_output_tokens: int = Field(gt=0)
+    thinking: bool
+    temperature: float = Field(ge=0, le=2)
+    seed: int = Field(ge=0)
     max_sequences: Literal[1]
     image_pixel_budget: int = Field(ge=65536, le=16777216)
     draft_tokens: int = Field(ge=1, le=8)
 
 
-class ServerConfig(BaseModel):
+class GeneralConfig(BaseModel):
     model_config = ConfigDict(extra="forbid")
+    host: str
     port: int = Field(gt=0, le=65535)
+    api_key: str = Field(min_length=24)
     max_requests: Literal[1]
     timeout_seconds: int = Field(gt=0)
     idle_timeout_seconds: int = Field(gt=0)
+
+    @model_validator(mode="after")
+    def valid_host(self):
+        import ipaddress
+
+        ipaddress.ip_address(self.host)
+        return self
+
+
+class ServerConfig(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    general: GeneralConfig
     engine: EngineConfig
 
     @model_validator(mode="after")
     def ports_differ(self):
-        if self.port == self.engine.port:
+        if self.general.port == self.engine.port:
             raise ValueError("Public and engine ports must differ")
         return self
 

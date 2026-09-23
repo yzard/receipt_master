@@ -40,9 +40,7 @@ pub async fn execute(
         ));
     }
     let _guard = state.storage_lock.lock().await;
-    let root = state.config.data_dir.clone();
-    let pricing = state.config.pricing.snapshot()?;
-    let budget = state.config.budget.clone();
+    let root = state.config.general.data_dir.clone();
     let reply=tokio::task::spawn_blocking(move||{
   let store=Store::open(&root)?;
   let read=matches!(operation.as_str(),"get"|"list"|"runs"|"suggest"|"summary"|"details"|"check_duplicates"|"edit"|"display_line"|"prepare_line"|"time_candidates"|"range");
@@ -53,8 +51,7 @@ pub async fn execute(
    let request_hash=db::media::hash(serde_json::to_string(&json!([component,operation,body.input])).map_err(db::io_error)?.as_bytes());
    if !read {let key=body.request_key.as_ref().ok_or_else(db::invalid)?;if key.is_empty(){return Err(db::invalid());}
 if let Some(previous)=store.rows("SELECT * FROM idempotency_record WHERE request_key=?",&[json!(key)])?.first(){if previous["request_hash"]!=request_hash{return Err(db::conflict());}return serde_json::from_str(db::text(previous,"response_json")?).map_err(db::io_error);}}
-   let mut data=match component.as_str(){"receipts"=>store.receipt_action(&operation,&body.input)?,"categories"|"products"|"printed_names"|"product_names"|"config"=>store.catalog_action(&component,&operation,&body.input)?,"logos"=>store.logo_action(&operation,&body.input)?,"images"=>store.image_action(&operation,&body.input)?,"reports"=>store.report_action(&operation,&body.input)?,"recognition"=>{let mut input=body.input.clone();input["pricing"]=pricing.clone();store.recognition_action(&operation,&input)?},_=>return Err(db::missing())};
-   if component=="recognition" && operation=="get" && data["status"]=="succeeded" {data["notice"]=json!(budget.notice(&store)?);}
+   let mut data=match component.as_str(){"receipts"=>store.receipt_action(&operation,&body.input)?,"categories"|"products"|"printed_names"|"product_names"|"config"=>store.catalog_action(&component,&operation,&body.input)?,"logos"=>store.logo_action(&operation,&body.input)?,"images"=>store.image_action(&operation,&body.input)?,"reports"=>store.report_action(&operation,&body.input)?,"recognition"=>store.recognition_action(&operation,&body.input)?,_=>return Err(db::missing())};
    store.display_data(&mut data,2,body.input["currency"].as_str().unwrap_or("USD"))?;
    let result=json!({"data":data,"catalog_version":store.one("SELECT version FROM catalog_version WHERE id=1",&[])?["version"]});
    if !read {store.exec("INSERT INTO idempotency_record VALUES (?,?,?,?)",&[json!(body.request_key),json!(request_hash),json!(result.to_string()),json!(db::now())])?;}Ok(result)
@@ -71,7 +68,7 @@ pub async fn media(
     Path(id): Path<String>,
     req: Request,
 ) -> Result<Response, AppError> {
-    let root = state.config.data_dir.clone();
+    let root = state.config.general.data_dir.clone();
     let (path,mime)=tokio::task::spawn_blocking(move||{let s=Store::open(&root)?;let blob=s.one("SELECT b.* FROM media_blob b WHERE b.blob_id=? AND (EXISTS (SELECT 1 FROM receipt_image i WHERE i.original_blob_id=b.blob_id OR i.current_blob_id=b.blob_id) OR EXISTS (SELECT 1 FROM image_revision r WHERE r.blob_id=b.blob_id) OR EXISTS (SELECT 1 FROM logo_sample l WHERE l.blob_id=b.blob_id))",&[json!(id)])?;Ok::<_,AppError>((db::media::safe_path(&root,db::text(&blob,"relative_path")?)?,db::text(&blob,"mime")?.to_owned()))}).await.map_err(db::io_error)??;
     let mut response = ServeFile::new(path)
         .oneshot(req)
@@ -92,7 +89,7 @@ pub async fn upload(
     mut form: axum::extract::Multipart,
 ) -> Result<Json<Value>, AppError> {
     use tokio::io::AsyncWriteExt;
-    let staging = state.config.data_dir.join("staging");
+    let staging = state.config.general.data_dir.join("staging");
     let temporary = tokio::task::spawn_blocking(move || tempfile::NamedTempFile::new_in(staging))
         .await
         .map_err(db::io_error)?
@@ -127,7 +124,7 @@ pub async fn upload(
     let body = metadata.ok_or_else(db::invalid)?;
     let key = body.request_key.ok_or_else(db::invalid)?;
     let _guard = state.storage_lock.lock().await;
-    let root = state.config.data_dir.clone();
+    let root = state.config.general.data_dir.clone();
     let data = tokio::task::spawn_blocking(move || {
         let bytes = std::fs::read(temporary.path()).map_err(db::io_error)?;
         let s = Store::open(&root)?;

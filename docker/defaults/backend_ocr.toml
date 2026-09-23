@@ -1,0 +1,24 @@
+[general]
+host = "0.0.0.0"
+port = 8000
+api_key = ""
+max_requests = 1
+timeout_seconds = 600
+# Stop NInfer after this many idle seconds. The next job starts it on demand.
+idle_timeout_seconds = 300
+
+[engine]
+path = "/models/qwen3_8_27b_nvfp4.ninfer"
+model = "qwen3.8-27b-ninfer-nvfp4"
+port = 8002
+context_length = 32768
+max_images = 16
+max_sequences = 1
+receipt_output_tokens = 8192
+logo_output_tokens = 4096
+thinking = true
+temperature = 0
+seed = 42
+# Shared across every photo of one receipt; never silently drop a page.
+image_pixel_budget = 12582912
+draft_tokens = 3

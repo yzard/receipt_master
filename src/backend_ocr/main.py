@@ -4,6 +4,7 @@ import argparse
 import asyncio
 import base64
 import binascii
+import hmac
 import logging
 import os
 import signal
@@ -14,7 +15,7 @@ from pathlib import Path
 
 import httpx
 from config import ServerConfig, load_config
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Request
 from PIL import Image, ImageOps, UnidentifiedImageError
 from recipe import command_for
 
@@ -45,7 +46,7 @@ class EngineRuntime:
         self.client = client
         self.process = None
         self.state = "unloaded"
-        self.requests = asyncio.Semaphore(config.max_requests)
+        self.requests = asyncio.Semaphore(config.general.max_requests)
         self.pending = 0
         self.last_finished = time.monotonic()
 
@@ -74,7 +75,7 @@ class EngineRuntime:
         self.state = "loading"
         logging.getLogger(__name__).info("Starting NInfer and loading model on demand")
         try:
-            async with asyncio.timeout(self.config.timeout_seconds):
+            async with asyncio.timeout(self.config.general.timeout_seconds):
                 self.process = await asyncio.create_subprocess_exec(
                     *command_for(self.config.engine), start_new_session=True
                 )
@@ -98,15 +99,18 @@ class EngineRuntime:
 
     async def idle_watch(self):
         while True:
-            await asyncio.sleep(min(1, self.config.idle_timeout_seconds))
+            await asyncio.sleep(min(1, self.config.general.idle_timeout_seconds))
             async with self.requests:
-                if self.pending == 0 and time.monotonic() - self.last_finished >= self.config.idle_timeout_seconds:
+                if (
+                    self.pending == 0
+                    and time.monotonic() - self.last_finished >= self.config.general.idle_timeout_seconds
+                ):
                     await self.stop()
 
     async def infer(self, request):
         try:
             # Bound cold loading and inference together, rather than granting two timeouts.
-            async with asyncio.timeout(self.config.timeout_seconds):
+            async with asyncio.timeout(self.config.general.timeout_seconds):
                 await self.ensure_ready()
                 self.state = "busy"
                 reply = await self.client.post(
@@ -127,10 +131,12 @@ class EngineRuntime:
 
 
 def prepare_request(body: dict, config: ServerConfig) -> dict:
-    if body.get("model") != config.engine.model or body.get("stream", False):
-        raise HTTPException(400, "Invalid model or streaming request")
+    if (set(body) != {"profile", "messages"} or not isinstance(body["profile"], str)
+            or body["profile"] not in {"receipt", "logo"}):
+        raise HTTPException(400, "Expected a receipt or logo inference profile and messages")
     if not isinstance(body.get("messages"), list):
         raise HTTPException(400, "Invalid messages")
+    profile = body.pop("profile")
     photo_count = sum(
         1
         for message in body["messages"]
@@ -176,13 +182,23 @@ def prepare_request(body: dict, config: ServerConfig) -> dict:
     if not 1 <= images <= config.engine.max_images:
         raise HTTPException(400, "Image count outside configured model capacity")
     # Allocate the visual context across every photo; never silently discard a page.
+    body.update({
+        "model": config.engine.model,
+        "temperature": config.engine.temperature,
+        "seed": config.engine.seed,
+        "max_tokens": config.engine.receipt_output_tokens if profile == "receipt" else config.engine.logo_output_tokens,
+        "response_format": {"type": "text"},
+        "chat_template_kwargs": {"enable_thinking": config.engine.thinking},
+    })
     return body
 
 
 def create_application(config: ServerConfig):
+    expected_authorization = "Bearer " + config.general.api_key.strip()
+
     @asynccontextmanager
     async def lifespan(app):
-        async with httpx.AsyncClient(timeout=config.timeout_seconds, trust_env=False) as client:
+        async with httpx.AsyncClient(timeout=config.general.timeout_seconds, trust_env=False) as client:
             runtime = EngineRuntime(config, client)
             app.state.runtime = runtime
             monitor = asyncio.create_task(runtime.idle_watch())
@@ -194,6 +210,16 @@ def create_application(config: ServerConfig):
                 await runtime.stop()
 
     app = FastAPI(lifespan=lifespan)
+
+    @app.middleware("http")
+    async def authenticate_inference(request: Request, call_next):
+        if request.url.path in {"/capabilities", "/v1/chat/completions"} and not hmac.compare_digest(
+            request.headers.get("authorization", ""), expected_authorization
+        ):
+            from fastapi.responses import JSONResponse
+
+            return JSONResponse(status_code=401, content={"detail": "Invalid OCR API key"})
+        return await call_next(request)
 
     @app.exception_handler(httpx.HTTPError)
     async def upstream_error(_request, error):
@@ -218,6 +244,10 @@ def create_application(config: ServerConfig):
         # Health polling must neither load the model nor extend its idle deadline.
         return {"status": "ready", "models": [config.engine.model], "engine_state": state}
 
+    @app.get("/capabilities")
+    async def capabilities():
+        return {"max_images": config.engine.max_images}
+
     @app.post("/v1/chat/completions")
     async def completions(body: dict):
         runtime = app.state.runtime
@@ -235,7 +265,7 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--config", type=Path, required=True)
     config = load_config(parser.parse_args().config)
-    uvicorn.run(create_application(config), host="0.0.0.0", port=config.port, log_level="info")
+    uvicorn.run(create_application(config), host=config.general.host, port=config.general.port, log_level="info")
 
 
 if __name__ == "__main__":

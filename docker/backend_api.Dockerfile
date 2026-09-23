@@ -4,7 +4,7 @@ RUN rustup component add rustfmt clippy
 WORKDIR /workspace
 COPY src/backend_api/ src/backend_api/
 COPY tests/backend_api/ tests/backend_api/
-COPY playground/backend_api/ playground/backend_api/
+COPY docker/defaults/ docker/defaults/
 ENV CARGO_TARGET_DIR=/target
 RUN --mount=type=cache,target=/usr/local/cargo/registry --mount=type=cache,target=/target \
     cargo fmt --manifest-path src/backend_api/Cargo.toml --check \
@@ -17,6 +17,5 @@ FROM debian:bookworm-slim AS runtime
 RUN apt-get update && apt-get install -y --no-install-recommends ca-certificates curl && rm -rf /var/lib/apt/lists/*
 WORKDIR /app
 COPY --from=checks /receipt-backend-api /app/receipt-backend-api
-COPY playground/backend_api/prompts.toml /app/defaults/prompts.toml
 ENTRYPOINT ["/app/receipt-backend-api"]
-CMD ["--config", "/config/config.yaml"]
+CMD ["--config", "/data/backend_api.toml"]

@@ -13,6 +13,8 @@ from collections import Counter
 from decimal import Decimal
 from pathlib import Path
 
+from api_auth import client_key
+
 ROOT = Path(__file__).parent / 'corpus'
 
 
@@ -52,13 +54,13 @@ def differences(prediction, case):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--url', default='http://127.0.0.1:5000')
-    parser.add_argument('--key-file', type=Path)
+    parser.add_argument('--config', type=Path)
     parser.add_argument('--output-directory', type=Path, required=True)
     parser.add_argument('--score-only', action='store_true')
     args = parser.parse_args()
     if urllib.parse.urlparse(args.url).hostname not in {'127.0.0.1', 'localhost', '::1'}:
         raise ValueError('This evaluator sends private photos only to the local playground')
-    key = '' if args.score_only else args.key_file.read_text().strip()
+    key = '' if args.score_only else client_key(args.config)
     model = None
     if not args.score_only:
         request = urllib.request.Request(

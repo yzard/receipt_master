@@ -563,23 +563,10 @@ fn server_edits_preserve_sums_and_reject_lossy_currency_changes() {
 }
 
 #[test]
-fn server_budget_is_a_notice_and_yaml_prices_are_snapshotted() {
+fn recognition_job_has_no_billing_snapshot() {
     let (_dir, s) = setup();
+    assert!(s.rows("SELECT name FROM sqlite_master WHERE name IN ('recognition_budget','recognition_pricing')",&[]).unwrap().is_empty());
     let r = save(&s, receipt());
-    let mut config = receipt_backend_api::config::Config::parse(include_str!(
-        "../../playground/backend_api/config.yaml"
-    ))
-    .unwrap();
-    config.pricing.input_usd_per_million_tokens = Some("1.25".into());
-    config.pricing.output_usd_per_million_tokens = Some("5".into());
-    assert_eq!(
-        config.pricing.snapshot().unwrap()["input_rate_micros"],
-        1250000
-    );
-    config.budget.monthly_usd = Some("1.00".into());
-    assert!(config.budget.notice(&s).unwrap().is_none());
-    s.exec("INSERT INTO recognition_run(run_id,receipt_id,input_revision,provider,model,status,started_at_utc_ms,estimated_cost_minor,cost_currency_code) VALUES (?,?,1,'local','test','succeeded',?,80,'USD')",&[json!(db::id()),r["id"].clone(),json!(db::now())]).unwrap();
-    assert!(config.budget.notice(&s).unwrap().is_some());
     s.transaction(|| {
         s.upload(
             &json!({"receipt_id":r["id"],"expected_version":1}),
@@ -587,8 +574,22 @@ fn server_budget_is_a_notice_and_yaml_prices_are_snapshotted() {
         )
     })
     .unwrap();
-    let job=s.transaction(||s.recognition_action("start",&json!({"receipt_id":r["id"],"expected_version":2,"zone":"America/New_York","pricing":config.pricing.snapshot().unwrap()}))).unwrap();
+    let job = s
+        .transaction(|| {
+            s.recognition_action(
+                "start",
+                &json!({"receipt_id":r["id"],"expected_version":2,"zone":"America/New_York"}),
+            )
+        })
+        .unwrap();
     assert_eq!(job["status"], "queued");
+    let stored = s
+        .one(
+            "SELECT result_json FROM recognition_job WHERE job_id=?",
+            &[job["job_id"].clone()],
+        )
+        .unwrap();
+    assert!(!stored["result_json"].as_str().unwrap().contains("pricing"));
 }
 
 #[test]

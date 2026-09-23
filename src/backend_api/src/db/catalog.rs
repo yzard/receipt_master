@@ -123,7 +123,7 @@ if v["id"].is_null(){self.exec("INSERT INTO category VALUES (?,?,?,NULL)",&[json
                 &[],
             )?;
             // Catalog changes can change the effective contents of any open receipt editor.
-            if !["config", "budgets"].contains(&component) {
+            if component != "config" {
                 self.exec(
                     "UPDATE receipt SET version=version+1,updated_at_utc_ms=?",
                     &[json!(now())],

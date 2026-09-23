@@ -9,6 +9,8 @@ import urllib.request
 import uuid
 from pathlib import Path
 
+from api_auth import client_key
+
 
 def photo_groups(scenario):
     if scenario == 'logo':
@@ -51,10 +53,10 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--scenario', choices=['parallel', 'multi', 'logo'], required=True)
     parser.add_argument('--url', required=True)
-    parser.add_argument('--key-file', type=Path, required=True)
+    parser.add_argument('--config', type=Path, required=True)
     parser.add_argument('--data-directory', type=Path, required=True)
     args = parser.parse_args()
-    key = args.key_file.read_text().strip()
+    key = client_key(args.config)
     base = args.url.rstrip('/')
     request = urllib.request.Request(base + '/v1/models', headers={'Authorization': 'Bearer ' + key})
     with urllib.request.urlopen(request, timeout=15) as response:
@@ -188,7 +190,7 @@ def main():
         assert len(runs) == len(owned), runs
         for run in runs:
             result = json.loads((args.data_directory / 'recognition' / (run['run_id'] + '.json')).read_text())
-            assert result['receipt_parsing']['version'] == 'qwen3.8-ninfer-v1'
+            assert result['receipt_parsing']['version'] == 'structured-v2'
             assert result['receipt_parsing']['image_count'] == (2 if args.scenario == 'multi' else 1)
         with urllib.request.urlopen(base + '/android-update.json') as reply:
             manifest = json.load(reply)

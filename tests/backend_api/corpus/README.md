@@ -20,7 +20,7 @@
 
 ```bash
 python tests/backend_api/confirmed_snapshot.py --url http://127.0.0.1:5000 \
-  --key-file playground/secrets/ocr-api-key --output build/vision/confirmed-snapshot \
+  --config playground/data/backend_api.toml --output build/vision/confirmed-snapshot \
   --fallback-zone America/New_York
 ```
 
@@ -28,7 +28,7 @@ python tests/backend_api/confirmed_snapshot.py --url http://127.0.0.1:5000 \
 
 ```bash
 RECEIPT_BENCH_URL=http://127.0.0.1:5000 \
-RECEIPT_BENCH_KEY_FILE="$PWD/playground/secrets/ocr-api-key" \
+RECEIPT_BENCH_CONFIG="$PWD/playground/data/backend_api.toml" \
 RECEIPT_BENCH_SNAPSHOT="$PWD/tests/backend_api/corpus/confirmed/2026-09-17/snapshot.json" \
 RECEIPT_BENCH_OUTPUT="$PWD/build/vision/confirmed-model.json" \
 cargo test --manifest-path src/backend_api/Cargo.toml --test corpus live_image_benchmark -- --ignored --nocapture
@@ -75,7 +75,7 @@ cargo test --manifest-path src/backend_api/Cargo.toml
 
 ```bash
 RECEIPT_BENCH_URL=http://127.0.0.1:5000 \
-RECEIPT_BENCH_KEY_FILE="$PWD/playground/secrets/ocr-api-key" \
+RECEIPT_BENCH_CONFIG="$PWD/playground/data/backend_api.toml" \
 RECEIPT_BENCH_OUTPUT="$PWD/build/vision/real-receipts.json" \
 cargo test --manifest-path src/backend_api/Cargo.toml --test corpus live_image_benchmark -- --ignored --nocapture
 ```
@@ -86,7 +86,7 @@ cargo test --manifest-path src/backend_api/Cargo.toml --test corpus live_image_b
 
 ```bash
 python tests/backend_api/vision_reported.py --url http://127.0.0.1:5000 \
-  --key-file playground/secrets/ocr-api-key --output-directory build/vision/reported
+  --config playground/data/backend_api.toml --output-directory build/vision/reported
 ```
 
 `baselines/2026-09-17-qwen3-vl/` 保存 vision-v5 最终实测：17 张全字段通过 8 张，另外三张关键项通过 1 张。保存模型输出和失败结果，不以正确 JSON 的离线回归代替模型准确率。部署配置、提示词和 smoke 日志同目录存档；详细解释见 [评测报告](../../../docs/vision_evaluation.md)。

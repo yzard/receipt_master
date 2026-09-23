@@ -11,7 +11,7 @@
 
 ## 按需加载与空闲卸载
 
-`playground/backend_ocr.toml` 顶层配置 `idle_timeout_seconds = 300`（秒，必须大于零）。修改后重启 OCR 容器生效。
+`playground/data/backend_ocr.toml` 的 `[general]` 配置 `idle_timeout_seconds = 300`（秒，必须大于零）。修改后重启 OCR 容器生效。
 
 - 容器启动只运行轻量 HTTP 服务，不启动 NInfer、不加载权重。
 - 有效任务进入串行队列后自动启动 NInfer，等待模型就绪，再进行推理；首个任务包含模型冷启动时间。加载与推理共用 `timeout_seconds` 上限。
@@ -30,7 +30,7 @@
 
 ## 提示配置
 
-服务设置仍由 `playground/backend_api/config.yaml` 管理。`ocr.prompts_file` 指向 `/config/prompts.toml`，Compose 挂载 [prompts.toml](../playground/backend_api/prompts.toml)。文件随 API 镜像提供一份默认资源，也可用挂载版本修改。修改后重启 API 即可，不需要重新构建模型。
+推理设置由 [backend_ocr.toml](../playground/data/backend_ocr.toml) 管理：`[engine]` 包括模型、图片上限、收据与 Logo 各自的输出 token 上限、thinking、温度和随机种子。`[general]` 包括监听地址和内嵌的 OCR 专用 `api_key`。Backend API 的 `[ocr]` 只有 URL 和同一 `api_key`。Logo 定位、Logo 图片比对、收据通用和商店专用提示词都在 [prompt.toml](../playground/data/prompt.toml)；首次运行从 `docker/defaults/` 安装模板，以后保留 `/data` 内的修改。修改提示词重启 API，修改推理参数重启 OCR。
 
 ```toml
 [[general]]
@@ -59,7 +59,7 @@ prompt = '''
 3. API 根据店名选择提示，附加固定的机器 JSON schema，并一次提交该收据全部有序照片。用户图片中的文字仅是证据，不决定商店提示路由。
 4. NInfer 开启 thinking。全部照片先应用 EXIF 方向；使用无损 PNG。为适配模型上下文，多图共享 `engine.image_pixel_budget`，按照片数量分配分辨率；不丢照片。原始照片仍完整保存在 `/data`。当前支持最多 16 张、32768 上下文、8192 总输出 token（思考与答案共用）；超限明确失败，不静默截断。
 5. API 只解码完整结束的输出，分离模型思考和最终 JSON；清理单个外层 Markdown 代码框，按 schema 投影删除额外字段，并在结果 `receipt_parsing.removed_fields` 记录路径。不会修正名称拼写、修改金额、猜测缺失字段或截取解释中的 JSON。
-6. 必填字段、类型、金额精度、优惠引用和证据框仍严格校验。结构错误按 `ocr.repair_attempts` 最多补充一次协议反馈、重新请求原图；失败即失败。`model_runs` 保留每次原始响应，费用 token 合计。金额不平不触发猜测性重试，只添加核对提示。
+6. 必填字段、类型、金额精度、优惠引用和证据框仍严格校验。结构错误按 API 的 `general.repair_attempts` 最多补充一次协议反馈、重新请求原图；失败即失败。`model_runs` 保留每次原始响应与 token 用量。金额不平不触发猜测性重试，只添加核对提示。
 7. 后端做单位换算和原有存储校验，识别结果自动进入可编辑草稿；确认后才维护商品目录。照片、商品名称、分类与数据库约束不改变。
 
 ## 保留的 Logo 资源
@@ -68,7 +68,7 @@ prompt = '''
 
 ## 接口与验证
 
-对外仍是认证的 API、异步任务和 Chat Completions。`served_model` 为 `receipt-qwen3.8`；客户端从服务器查询服务信息，不配置模型或提示。内部只使用 `/v1/chat/completions`；旧 `/v1/logo/match` 已删除。
+对外仍是认证的 API、异步任务和 Chat Completions。API 对外使用固定的 `receipt-master` 标识；客户端从服务器查询服务信息，不配置实际 OCR 模型或提示。内部只使用受服务密钥保护的 `/v1/chat/completions` 和 `/capabilities`；旧 `/v1/logo/match` 已删除。
 
 运行代码和测试不依赖旧 parser。保留历史模型评测归档；离线候选评分只接收已经生成的结构化预测。新回归覆盖 32 张 thinking 输出的字段投影、严格校验、错误/截断拒绝、商店提示隔离、Logo 先于商品识别、多图同请求、串行队列和 API 响应性。
 
@@ -88,7 +88,7 @@ prompt = '''
 
 ## Logo 匹配切换（2026-09-18）
 
-`playground/backend_api/config.yaml` 的 `logos.prompt` 使用评测通过的简短提示词，thinking 继承 OCR 设置。图片最长边 768，4096 输出 token，temperature=0、seed=42。每次最多 15 个参考（受配置的最大图片数量进一步限制），较大的库分批遍历；若不同批次/查询图选择了不同店名，返回未知。返回编号必须属于当前批次，拒绝额外字段、伪造编号、截断和错误类型。
+`playground/data/prompt.toml` 的 `logo.match_reference` 使用评测通过的简短提示词，thinking 继承 OCR 设置。图片最长边 768，4096 输出 token，temperature=0、seed=42。每次最多 15 个参考（受配置的最大图片数量进一步限制），较大的库分批遍历；若不同批次/查询图选择了不同店名，返回未知。返回编号必须属于当前批次，拒绝额外字段、伪造编号、截断和错误类型。
 
 匹配过程保留图片/目录版本检查，过程中发生删除、旋转或 Alias 修改时拒绝过期结果。异步识别记录包含匹配响应和合计 token 用量。
 

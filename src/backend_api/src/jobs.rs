@@ -164,7 +164,7 @@ impl Store {
                     version
                 };
                 let job = id();
-                self.exec("INSERT INTO recognition_job(job_id,receipt_id,receipt_version,status,created_at_utc_ms,result_json) VALUES (?,?,?,'queued',?,?)",&[json!(job),json!(receipt),json!(version),json!(now()),json!(json!({"zone":zone,"pricing":v["pricing"],"source":self.load(receipt)?}).to_string())])?;
+                self.exec("INSERT INTO recognition_job(job_id,receipt_id,receipt_version,status,created_at_utc_ms,result_json) VALUES (?,?,?,'queued',?,?)",&[json!(job),json!(receipt),json!(version),json!(now()),json!(json!({"zone":zone,"source":self.load(receipt)?}).to_string())])?;
                 for (i, img) in images.iter().enumerate() {
                     self.exec(
                         "INSERT INTO job_image VALUES (?,?,?)",
@@ -235,11 +235,11 @@ impl Drop for WorkerSlot {
     }
 }
 pub fn wake(state: Arc<State>) {
-    for _ in 0..state.config.job_workers {
+    for _ in 0..state.config.general.job_workers {
         if state
             .active_job_workers
             .fetch_update(Ordering::SeqCst, Ordering::SeqCst, |active| {
-                (active < state.config.job_workers).then_some(active + 1)
+                (active < state.config.general.job_workers).then_some(active + 1)
             })
             .is_err()
         {
@@ -265,7 +265,7 @@ async fn database<T: Send + 'static>(
     f: impl FnOnce(&Store) -> Result<T> + Send + 'static,
 ) -> Result<T> {
     let _guard = state.storage_lock.lock().await;
-    let root = state.config.data_dir.clone();
+    let root = state.config.general.data_dir.clone();
     tokio::task::spawn_blocking(move || f(&Store::open(&root)?))
         .await
         .map_err(db::io_error)?
@@ -322,7 +322,8 @@ async fn process(state: Arc<State>, job: Value) -> Result<Value> {
     let mut known_store: Option<String> = None;
     let mut content = Vec::new();
     for (index, img) in images.iter().enumerate() {
-        let path = db::media::safe_path(&state.config.data_dir, text(img, "relative_path")?)?;
+        let path =
+            db::media::safe_path(&state.config.general.data_dir, text(img, "relative_path")?)?;
         let bytes = tokio::fs::read(path).await.map_err(db::io_error)?;
         let image = format!(
             "data:{};base64,{}",
@@ -366,8 +367,10 @@ async fn process(state: Arc<State>, job: Value) -> Result<Value> {
                 let jid = job_id.clone();
                 database(&state, move |s| {
                     s.transaction(|| {
-                        if s.one("SELECT version FROM catalog_version WHERE id=1", &[])?["version"]
-                            != matched["catalog_version"]
+                        let receipt = text(&matched, "receipt_id")?;
+                        let current = s.logo_match_inputs(receipt)?;
+                        if crate::logos::matching_fingerprint(&current)
+                            != text(&matched, "input_fingerprint")?
                         {
                             return Err(db::conflict());
                         }
@@ -392,16 +395,16 @@ async fn process(state: Arc<State>, job: Value) -> Result<Value> {
     {
         return Err(conflict());
     }
-    content.insert(0,json!({"type":"text","text":format!("Trusted application context (not printed evidence): {}",json!({"known_store":known_store,"country":source["country"],"currency":source["currency"]}))}));
+    content.insert(0,json!({"type":"text","text":format!("{} {}",state.prompts.receipt.trusted_context_prefix,json!({"known_store":known_store,"country":source["country"],"currency":source["currency"]}))}));
     let run = id();
     let run_copy = run.clone();
     let receipt = job["receipt_id"].clone();
     let version = job["receipt_version"].clone();
-    let model = state.config.served_model.clone();
+    let model = crate::PUBLIC_MODEL_ID;
     database(&state,move|s|{s.exec("INSERT INTO recognition_run(run_id,receipt_id,input_revision,provider,model,status,started_at_utc_ms) VALUES (?,?,?,'local',?,'running',?)",&[json!(run_copy),receipt,version,json!(model),json!(now())])?;Ok(())}).await?;
     let schema: Value =
         serde_json::from_str(include_str!("receipt_schema.json")).map_err(db::io_error)?;
-    let response=pipeline::recognize(state.clone(),json!({"model":state.config.served_model,"receipt_context":{"known_store":known_store},"messages":[{"role":"user","content":content}],"response_format":{"type":"json_schema","json_schema":{"name":"receipt","strict":true,"schema":schema}}})).await;
+    let response=pipeline::recognize(state.clone(),json!({"model":crate::PUBLIC_MODEL_ID,"receipt_context":{"known_store":known_store},"messages":[{"role":"user","content":content}],"response_format":{"type":"json_schema","json_schema":{"name":"receipt","strict":true,"schema":schema}}})).await;
     let result = match response {
         Ok(mut response) => {
             if let Some(logo) = logo_run {
@@ -415,29 +418,9 @@ async fn process(state: Arc<State>, job: Value) -> Result<Value> {
                     .ok_or_else(invalid)?,
             )
             .map_err(db::io_error)?;
-            let settings: Value =
-                serde_json::from_str(text(&job, "result_json")?).map_err(db::io_error)?;
-            let price = &settings["pricing"];
-            let cost = match (
-                price["input_rate_micros"].as_i64(),
-                price["output_rate_micros"].as_i64(),
-                response["usage"]["prompt_tokens"].as_i64(),
-                response["usage"]["completion_tokens"].as_i64(),
-            ) {
-                (Some(a), Some(b), Some(c), Some(d)) if c >= 0 && d >= 0 => Some(
-                    i64::try_from(
-                        (i128::from(a) * i128::from(c)
-                            + i128::from(b) * i128::from(d)
-                            + 9_999_999_999)
-                            / 10_000_000_000,
-                    )
-                    .map_err(|_| invalid())?,
-                ),
-                _ => None,
-            };
             let path = format!("recognition/{run}.json");
             let bytes = response.to_string().into_bytes();
-            database(&state,move|s|{if s.rows("SELECT run_id FROM recognition_run WHERE run_id=?", &[json!(run)])?.is_empty() {return Err(missing());} db::media::atomic_file(&s.root.join(&path),&bytes)?;s.exec("UPDATE recognition_run SET status='succeeded',result_relative_path=?,finished_at_utc_ms=?,estimated_cost_minor=?,cost_currency_code=? WHERE run_id=?",&[json!(path),json!(now()),json!(cost),if cost.is_some(){json!("USD")}else{Value::Null},json!(run)])?;Ok(())}).await?;
+            database(&state,move|s|{if s.rows("SELECT run_id FROM recognition_run WHERE run_id=?", &[json!(run)])?.is_empty() {return Err(missing());} db::media::atomic_file(&s.root.join(&path),&bytes)?;s.exec("UPDATE recognition_run SET status='succeeded',result_relative_path=?,finished_at_utc_ms=? WHERE run_id=?",&[json!(path),json!(now()),json!(run)])?;Ok(())}).await?;
             result
         }
         Err(e) => {

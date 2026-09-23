@@ -7,13 +7,15 @@ import urllib.parse
 import urllib.request
 from datetime import datetime, timezone
 from pathlib import Path
+
+from api_auth import client_key
 from zoneinfo import ZoneInfo
 
 
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--url', required=True)
-    parser.add_argument('--key-file', type=Path, required=True)
+    parser.add_argument('--config', type=Path, required=True)
     parser.add_argument('--output', type=Path, required=True)
     parser.add_argument('--fallback-zone', required=True)
     args = parser.parse_args()
@@ -22,7 +24,7 @@ def main():
     ZoneInfo(args.fallback_zone)
     if (args.output / 'snapshot.json').exists():
         raise ValueError('Snapshot already exists; use a new directory')
-    key = args.key_file.read_text().strip()
+    key = client_key(args.config)
     args.output.mkdir(parents=True, exist_ok=True)
     (args.output / 'images').mkdir(exist_ok=True)
 

@@ -475,10 +475,14 @@ async fn live_image_benchmark() {
         matches!(parsed.host_str(), Some("localhost" | "127.0.0.1" | "[::1]")),
         "Benchmark is restricted to localhost; do not send private originals to a new provider implicitly."
     );
-    let key = fs::read_to_string(
-        std::env::var("RECEIPT_BENCH_KEY_FILE").expect("set RECEIPT_BENCH_KEY_FILE"),
+    let config = fs::read_to_string(
+        std::env::var("RECEIPT_BENCH_CONFIG").expect("set RECEIPT_BENCH_CONFIG"),
     )
     .unwrap();
+    let key = config.parse::<toml::Value>().unwrap()["general"]["api_key"]
+        .as_str()
+        .unwrap()
+        .to_owned();
     let output =
         PathBuf::from(std::env::var("RECEIPT_BENCH_OUTPUT").expect("set RECEIPT_BENCH_OUTPUT"));
     let client = reqwest::Client::builder()

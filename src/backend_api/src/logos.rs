@@ -100,7 +100,7 @@ pub async fn capture(
         .await
         .map_err(db::io_error)??;
     let _lock = state.storage_lock.lock().await;
-    let root = state.config.data_dir.clone();
+    let root = state.config.general.data_dir.clone();
     tokio::task::spawn_blocking(move || {
         let s = Store::open(&root)?;
         s.transaction(|| s.save_logo(&image, &crop, &bbox, &detection))
@@ -111,7 +111,7 @@ pub async fn capture(
 
 /// Extract a candidate for an existing receipt without rerunning item recognition.
 pub async fn extract_existing(state: Arc<State>, receipt: String) -> Result<Value> {
-    let root = state.config.data_dir.clone();
+    let root = state.config.general.data_dir.clone();
     let receipt2 = receipt.clone();
     let (image, bytes) = {
         let _lock = state.storage_lock.lock().await;
@@ -135,11 +135,21 @@ pub async fn extract_existing(state: Arc<State>, receipt: String) -> Result<Valu
         evidence["evidence"].to_string(),
     )
     .await?;
-    let root = state.config.data_dir.clone();
+    let root = state.config.general.data_dir.clone();
     tokio::task::spawn_blocking(move||{
         let s=Store::open(&root)?;
         Ok(json!({"data":s.logo_action("list",&json!({"receipt_id":receipt}))?,"catalog_version":s.one("SELECT version FROM catalog_version WHERE id=1",&[])?["version"]}))
     }).await.map_err(db::io_error)?
+}
+
+/// Match inputs change only when the receipt crop or labelled logo references change.
+/// Product/catalog edits may advance catalog_version without affecting these images.
+pub fn matching_fingerprint(inputs: &Value) -> String {
+    db::media::hash(
+        json!({"candidates":inputs["candidates"],"references":inputs["references"]})
+            .to_string()
+            .as_bytes(),
+    )
 }
 
 /// Only IDs from this request may become a merchant identity; never accept generated names.
@@ -195,7 +205,7 @@ pub fn selected_merchant(matches: &[Value]) -> Option<String> {
 }
 
 pub async fn match_receipt(state: Arc<State>, receipt: String) -> Result<Value> {
-    let root = state.config.data_dir.clone();
+    let root = state.config.general.data_dir.clone();
     let rid = receipt.clone();
     let snapshot = tokio::task::spawn_blocking(move || Store::open(&root)?.logo_match_inputs(&rid))
         .await
@@ -203,10 +213,10 @@ pub async fn match_receipt(state: Arc<State>, receipt: String) -> Result<Value> 
     let references = snapshot["references"].as_array().ok_or_else(invalid)?;
     let mut matches = Vec::new();
     let mut runs = Vec::new();
-    let batch_size = (state.config.ocr.max_images - 1).min(15);
+    let batch_size = (crate::pipeline::image_capacity(&state).await? - 1).min(15);
     for query in snapshot["candidates"].as_array().ok_or_else(invalid)? {
         for chunk in references.chunks(batch_size) {
-            let root = state.config.data_dir.clone();
+            let root = state.config.general.data_dir.clone();
             let query = query.clone();
             let samples = chunk.to_vec();
             let query_id = query["logo_id"].clone();
@@ -232,11 +242,9 @@ pub async fn match_receipt(state: Arc<State>, receipt: String) -> Result<Value> 
             })
             .await
             .map_err(db::io_error)??;
-            let raw = crate::pipeline::raw_call(&state, &state.config.ocr.url, json!({
-                "model":state.config.ocr.model,
-                "messages":[{"role":"system","content":state.config.logos.prompt},{"role":"user","content":content}],
-                "temperature":0,"seed":42,"max_tokens":4096,"response_format":{"type":"text"},
-                "chat_template_kwargs":{"enable_thinking":state.config.ocr.thinking}
+            let raw = crate::pipeline::raw_call(&state, json!({
+                "profile":"logo",
+                "messages":[{"role":"system","content":state.prompts.logo.match_reference},{"role":"user","content":content}],
             })).await?;
             let decoded = crate::pipeline::decode_content(&raw)?;
             if let Some(reference) = matched_reference(&decoded, chunk)? {
@@ -245,12 +253,14 @@ pub async fn match_receipt(state: Arc<State>, receipt: String) -> Result<Value> 
             runs.push(json!({"query_id":query_id,"reference_ids":chunk.iter().map(|v|v["logo_id"].clone()).collect::<Vec<_>>(),"response":raw}));
         }
     }
-    let root = state.config.data_dir.clone();
-    let current =
-        tokio::task::spawn_blocking(move || Store::open(&root)?.logo_match_inputs(&receipt))
-            .await
-            .map_err(db::io_error)??;
-    if current != snapshot {
+    let root = state.config.general.data_dir.clone();
+    let receipt_for_check = receipt.clone();
+    let current = tokio::task::spawn_blocking(move || {
+        Store::open(&root)?.logo_match_inputs(&receipt_for_check)
+    })
+    .await
+    .map_err(db::io_error)??;
+    if matching_fingerprint(&current) != matching_fingerprint(&snapshot) {
         return Err(db::conflict());
     }
     // Every batch is considered; conflicting merchant identities remain unknown.
@@ -262,6 +272,6 @@ pub async fn match_receipt(state: Arc<State>, receipt: String) -> Result<Value> 
             .collect::<Vec<_>>(),
     );
     Ok(
-        json!({"model":state.config.ocr.model,"selected":selected,"matches":matches,"inference":runs,"usage":usage,"catalog_version":snapshot["catalog_version"]}),
+        json!({"selected":selected,"matches":matches,"inference":runs,"usage":usage,"catalog_version":snapshot["catalog_version"],"input_fingerprint":matching_fingerprint(&snapshot),"receipt_id":receipt}),
     )
 }

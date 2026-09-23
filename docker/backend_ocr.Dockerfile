@@ -59,4 +59,4 @@ COPY --from=checks /checks-passed /app/checks-passed
 COPY src/backend_ocr/ /app/
 ADD --checksum=sha256:74d2c57145e6ff11d1d2faa79594477f9bc903a611af1fb20218189fbbb77d82 https://huggingface.co/neroued/Qwen3.8-27B-nvfp4-NInfer/resolve/f0b43ad436b9fa8142c6ed6647c470a6fe409484/qwen3_8_27b_nvfp4.ninfer /models/qwen3_8_27b_nvfp4.ninfer
 ENTRYPOINT ["python3", "/app/main.py"]
-CMD ["--config", "/config/backend_ocr.toml"]
+CMD ["--config", "/data/backend_ocr.toml"]

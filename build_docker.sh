@@ -5,6 +5,8 @@ if (( $# != 0 )); then
   exit 2
 fi
 project_dir="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
+python3 -m unittest discover -s "$project_dir/tests" -p test_playground_config.py
+python3 "$project_dir/docker/prepare_playground_config.py" --root "$project_dir"
 # Each backend image includes its own mandatory checks; neither build needs a GPU.
 for component in backend_ocr backend_api; do
   docker buildx build --platform linux/amd64 --target checks \

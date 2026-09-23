@@ -112,7 +112,7 @@ Qwen3-VL-8B-Instruct 已通过 vLLM 部署；保留 Logo 图像 Alias，API 负�
 
 第二版业务存储和统一 API 已实现。Android/iOS 共用 HTTP repository，Rust 后端在 `/data` 保存 SQLite、原图、衍生图和 OCR 结果；宿主为 `playground/data/`。不迁移第一版测试数据。
 
-运行时 OCR、模型、价格和预算配置统一采用 `playground/backend_api/config.yaml`；客户端只配置后端连接与认证，以及重量显示等用户偏好。识别、重量转换、金额运算和报表统计由后端执行。最新检查结果见 `build/v2/playground-fixes-verification.json`。32 项 Rust 测试和 12 项 Flutter 测试通过；Docker 总构建通过，Android 模拟器安装 2.0.0（build 10009）后验证了直接选图、自动识别、报表、精简设置及整行左滑 Trash 删除。合成收据识别出带秒数时间和 1.86 lb，后端显示为 0.843682 kg；测试草稿已删除，下载 APK 的 SHA256 与发布清单一致。原生 iOS 编译/设备验证因当前 Linux 环境尚未执行。因此第二版计划尚未全部验收完成。详细进度见 [2nd_plan.md](2nd_plan.md)，接口见 [backend_api_v2.md](backend_api_v2.md)。下方为第一版历史记录，不代表当前数据仍保存在手机。
+运行时 API 连接和内嵌密钥采用 `playground/data/backend_api.toml`；OCR 模型和推理参数采用 `playground/data/backend_ocr.toml`，两份 TOML 均只允许所有者读取。当前本地模型的 token 费用估算和预算提醒已移除。客户端只配置后端连接与认证，以及重量显示等用户偏好。识别、重量转换、金额运算和报表统计由后端执行。最新检查结果见 `build/v2/playground-fixes-verification.json`。32 项 Rust 测试和 12 项 Flutter 测试通过；Docker 总构建通过，Android 模拟器安装 2.0.0（build 10009）后验证了直接选图、自动识别、报表、精简设置及整行左滑 Trash 删除。合成收据识别出带秒数时间和 1.86 lb，后端显示为 0.843682 kg；测试草稿已删除，下载 APK 的 SHA256 与发布清单一致。原生 iOS 编译/设备验证因当前 Linux 环境尚未执行。因此第二版计划尚未全部验收完成。详细进度见 [2nd_plan.md](2nd_plan.md)，接口见 [backend_api_v2.md](backend_api_v2.md)。下方为第一版历史记录，不代表当前数据仍保存在手机。
 
 ## 中文标准名称、退款及无法识别收据修复
 

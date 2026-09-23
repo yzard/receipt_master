@@ -66,16 +66,16 @@
 
 ```bash
 RECEIPT_BENCH_URL=http://127.0.0.1:5000 \
-RECEIPT_BENCH_KEY_FILE="$PWD/playground/secrets/ocr-api-key" \
+RECEIPT_BENCH_CONFIG="$PWD/playground/data/backend_api.toml" \
 RECEIPT_BENCH_OUTPUT="$PWD/build/vision/real-receipts.json" \
 cargo test --manifest-path src/backend_api/Cargo.toml --test corpus live_image_benchmark -- --ignored --nocapture
 
 python tests/backend_api/vision_reported.py \
-  --url http://127.0.0.1:5000 --key-file playground/secrets/ocr-api-key \
+  --url http://127.0.0.1:5000 --config playground/data/backend_api.toml \
   --output-directory build/vision/reported
 
 python tests/backend_api/smoke_async.py --scenario multi \
-  --url http://127.0.0.1:5000 --key-file playground/secrets/ocr-api-key \
+  --url http://127.0.0.1:5000 --config playground/data/backend_api.toml \
   --data-directory playground/data
 ```
 

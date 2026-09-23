@@ -18,9 +18,27 @@ pub struct Merchant {
 #[derive(Clone, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct Prompts {
+    pub logo: Logo,
+    pub receipt: Receipt,
     pub general: Vec<General>,
     #[serde(default)]
     pub store: Vec<Merchant>,
+}
+#[derive(Clone, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct Logo {
+    pub locate: String,
+    pub match_reference: String,
+}
+#[derive(Clone, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct Receipt {
+    pub schema_instruction: String,
+    pub known_store_prefix: String,
+    pub unknown_store: String,
+    pub trusted_context_prefix: String,
+    pub repair_prefix: String,
+    pub repair_suffix: String,
 }
 fn key(value: &str) -> String {
     value
@@ -34,6 +52,21 @@ impl Prompts {
         let config: Self = toml::from_str(text)?;
         if config.general.is_empty() || config.general.iter().any(|p| p.prompt.trim().is_empty()) {
             return Err("At least one nonempty general prompt is required".into());
+        }
+        if [
+            &config.logo.locate,
+            &config.logo.match_reference,
+            &config.receipt.schema_instruction,
+            &config.receipt.known_store_prefix,
+            &config.receipt.unknown_store,
+            &config.receipt.trusted_context_prefix,
+            &config.receipt.repair_prefix,
+            &config.receipt.repair_suffix,
+        ]
+        .iter()
+        .any(|value| value.trim().is_empty())
+        {
+            return Err("Logo and receipt prompts must be nonempty".into());
         }
         let mut names = HashSet::new();
         for store in &config.store {

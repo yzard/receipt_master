@@ -10,6 +10,12 @@ use serde_json::{Value, json};
 use std::sync::{Arc, Mutex};
 use tower::ServiceExt;
 const KEY: &str = "synthetic-test-key-not-a-real-secret";
+const OCR_KEY: &str = "synthetic-ocr-service-key-for-tests";
+fn configured_template() -> String {
+    include_str!("../../docker/defaults/backend_api.toml")
+        .replacen("api_key = \"\"", &format!("api_key = \"{KEY}\""), 1)
+        .replacen("api_key = \"\"", &format!("api_key = \"{OCR_KEY}\""), 1)
+}
 fn schema() -> Value {
     serde_json::from_str(include_str!("receipt_schema.json")).unwrap()
 }
@@ -19,7 +25,7 @@ fn body() -> Value {
     image::DynamicImage::new_rgb8(16, 16)
         .write_to(&mut bytes, image::ImageFormat::Png)
         .unwrap();
-    json!({"model":"test-vision","store":false,"messages":[{"role":"user","content":[{"type":"image_url","image_url":{"url":format!("data:image/png;base64,{}",base64::engine::general_purpose::STANDARD.encode(bytes.into_inner()))}}]}],"response_format":{"type":"json_schema","json_schema":{"name":"receipt","strict":true,"schema":schema()}}})
+    json!({"model":"receipt-master","store":false,"messages":[{"role":"user","content":[{"type":"image_url","image_url":{"url":format!("data:image/png;base64,{}",base64::engine::general_purpose::STANDARD.encode(bytes.into_inner()))}}]}],"response_format":{"type":"json_schema","json_schema":{"name":"receipt","strict":true,"schema":schema()}}})
 }
 #[derive(Default)]
 struct Mock {
@@ -49,7 +55,8 @@ async fn fixture(repair_attempts: usize) -> Fixture {
     let mock = Arc::new(Mutex::new(Mock::default()));
     let m = mock.clone();
     let h = mock.clone();
-    let engine=Router::new().route("/health",get(move||{let h=h.clone();async move{if h.lock().unwrap().fail{axum::http::StatusCode::SERVICE_UNAVAILABLE}else{axum::http::StatusCode::OK}}})).route("/v1/chat/completions",post(move|Json(v):Json<Value>|{let m=m.clone();async move{
+    let engine=Router::new().route("/health",get(move||{let h=h.clone();async move{if h.lock().unwrap().fail{axum::http::StatusCode::SERVICE_UNAVAILABLE}else{axum::http::StatusCode::OK}}})).route("/capabilities",get(|headers:axum::http::HeaderMap| async move {if headers.get("authorization").is_some_and(|v|v==format!("Bearer {OCR_KEY}").as_str()){(axum::http::StatusCode::OK,Json(json!({"max_images":4})))}else{(axum::http::StatusCode::UNAUTHORIZED,Json(json!({"error":"auth"})))}})).route("/v1/chat/completions",post(move|headers:axum::http::HeaderMap,Json(v):Json<Value>|{let m=m.clone();async move{
+        if !headers.get("authorization").is_some_and(|v|v==format!("Bearer {OCR_KEY}").as_str()) {return (axum::http::StatusCode::UNAUTHORIZED,Json(json!({"error":"auth"})));}
         let (response,delay)={
             let mut m=m.lock().unwrap();m.calls.push(v.clone());
             let logo=v["messages"][0]["content"].as_str().unwrap_or("").starts_with("Locate the complete store logo");
@@ -73,19 +80,19 @@ async fn fixture(repair_attempts: usize) -> Fixture {
         axum::serve(listener, engine).await.unwrap();
     });
     let dir = tempfile::tempdir().unwrap();
-    let mut c = Config::parse(include_str!("../../playground/backend_api/config.yaml")).unwrap();
-    c.ocr.prompts_file = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
-        .join("../../playground/backend_api/prompts.toml");
-    c.ocr.repair_attempts = repair_attempts;
-    c.ocr.max_images = 4; // Exercise multi-batch reference matching.
+    let mut c = Config::parse(&configured_template()).unwrap();
+    c.general.repair_attempts = repair_attempts;
     c.ocr.url = format!("http://127.0.0.1:{port}");
-    c.ocr.model = "ocr".into();
-    c.served_model = "test-vision".into();
-    c.apk_path = dir.path().join("receipt_master.apk");
-    c.data_dir = dir.path().join("data");
-    receipt_backend_api::db::Store::initialize(&c.data_dir).unwrap();
+    c.general.apk_path = dir.path().join("receipt_master.apk");
+    c.general.data_dir = dir.path().join("data");
+    receipt_backend_api::db::Store::initialize(&c.general.data_dir).unwrap();
+    std::fs::copy(
+        std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("../../docker/defaults/prompt.toml"),
+        c.general.data_dir.join("prompt.toml"),
+    )
+    .unwrap();
     Fixture {
-        app: application(State::new(c, KEY).unwrap()),
+        app: application(State::new(c).unwrap()),
         mock,
         dir,
         task,
@@ -137,13 +144,21 @@ async fn mobile_round_trip() {
     assert_eq!(v["usage"]["total_tokens"], 30);
     let calls = &f.mock.lock().unwrap().calls;
     assert_eq!(calls.len(), 1);
-    assert_eq!(calls[0]["response_format"]["type"], "text");
-    assert_eq!(calls[0]["chat_template_kwargs"]["enable_thinking"], true);
+    assert_eq!(calls[0]["profile"], "receipt");
+    assert!(calls[0].get("max_tokens").is_none());
+    assert!(calls[0].get("model").is_none());
     assert!(
         calls[0]["messages"]
             .to_string()
             .contains("data:image/png;base64,")
     );
+}
+#[tokio::test]
+async fn model_inference_is_not_limited_by_capabilities_timeout() {
+    let f = fixture(0).await;
+    f.mock.lock().unwrap().delay_ms = 5_200;
+    let (status, result) = request(&f, "POST", "/v1/chat/completions", Some(body()), true).await;
+    assert_eq!(status, 200, "{result}");
 }
 #[tokio::test]
 async fn store_alias_routes_only_its_prompt() {
@@ -168,8 +183,8 @@ async fn store_alias_routes_only_its_prompt() {
         assert_eq!(status, 200, "{result}");
         assert_eq!(result["receipt_parsing"]["profile"], profile);
         assert_eq!(
-            f.mock.lock().unwrap().calls.last().unwrap()["response_format"]["type"],
-            "text"
+            f.mock.lock().unwrap().calls.last().unwrap()["profile"],
+            "receipt"
         );
     }
     for context in [json!("Costco"), json!({"known_store":42})] {
@@ -319,10 +334,17 @@ async fn public_apk_download_and_auth() {
 }
 #[test]
 fn config_validation() {
-    let text = include_str!("../../playground/backend_api/config.yaml");
-    assert!(Config::parse(text).is_ok());
+    let text = configured_template();
+    assert!(Config::parse(&text).is_ok());
+    assert!(Config::parse(include_str!("../../docker/defaults/backend_api.toml")).is_err());
     assert!(Config::parse("").is_err());
-    assert!(Config::parse(&text.replace("max_images: 16", "max_images: 0")).is_err());
+    assert!(Config::parse(&text.replace("repair_attempts = 1", "repair_attempts = 9")).is_err());
+    assert!(
+        Config::parse(&format!(
+            "{text}\n[pricing]\ninput_usd_per_million_tokens = \"1\"\n"
+        ))
+        .is_err()
+    );
 }
 
 #[test]
@@ -913,51 +935,66 @@ async fn arithmetic_mismatch_is_flagged_without_invented_items_or_model_retries(
 
 #[tokio::test]
 async fn logo_match_rejects_reference_changes_during_inference() {
-    let f = fixture(0).await;
-    let s = receipt_backend_api::db::Store::open(&f.dir.path().join("data")).unwrap();
-    let r = s.transaction(|| s.save(domain_receipt(), false)).unwrap();
-    let mut png = std::io::Cursor::new(Vec::new());
-    image::DynamicImage::new_rgb8(32, 64)
-        .write_to(&mut png, image::ImageFormat::Png)
-        .unwrap();
-    let uploaded = s
-        .transaction(|| {
-            s.upload(
-                &json!({"receipt_id":r["id"],"expected_version":1}),
-                png.get_ref(),
-            )
-        })
-        .unwrap();
-    let img=s.one("SELECT b.*,i.image_id FROM receipt_image i JOIN media_blob b ON b.blob_id=i.current_blob_id WHERE i.image_id=?",&[uploaded["image_id"].clone()]).unwrap();
-    s.transaction(|| s.save_logo(&img, png.get_ref(), &json!([0, 0, 1, 0.2]), "header"))
-        .unwrap();
-    f.mock.lock().unwrap().logo_delay_ms = 100;
-    let matching = request(
-        &f,
-        "POST",
-        "/api/v1/logos/match",
-        Some(json!({"input":{"receipt_id":r["id"]}})),
-        true,
-    );
-    let change = async {
-        for _ in 0..2000 {
-            if f.mock.lock().unwrap().events.contains(&"logo".to_owned()) {
-                break;
+    for change_kind in ["logo", "catalog"] {
+        let f = fixture(0).await;
+        let s = receipt_backend_api::db::Store::open(&f.dir.path().join("data")).unwrap();
+        let r = s.transaction(|| s.save(domain_receipt(), false)).unwrap();
+        let mut png = std::io::Cursor::new(Vec::new());
+        image::DynamicImage::new_rgb8(32, 64)
+            .write_to(&mut png, image::ImageFormat::Png)
+            .unwrap();
+        let uploaded = s
+            .transaction(|| {
+                s.upload(
+                    &json!({"receipt_id":r["id"],"expected_version":1}),
+                    png.get_ref(),
+                )
+            })
+            .unwrap();
+        let img=s.one("SELECT b.*,i.image_id FROM receipt_image i JOIN media_blob b ON b.blob_id=i.current_blob_id WHERE i.image_id=?",&[uploaded["image_id"].clone()]).unwrap();
+        s.transaction(|| s.save_logo(&img, png.get_ref(), &json!([0, 0, 1, 0.2]), "header"))
+            .unwrap();
+        f.mock.lock().unwrap().logo_delay_ms = 100;
+        let matching = request(
+            &f,
+            "POST",
+            "/api/v1/logos/match",
+            Some(json!({"input":{"receipt_id":r["id"]}})),
+            true,
+        );
+        let change = async {
+            for _ in 0..2000 {
+                if f.mock.lock().unwrap().events.contains(&"logo".to_owned()) {
+                    break;
+                }
+                tokio::time::sleep(std::time::Duration::from_millis(10)).await;
             }
-            tokio::time::sleep(std::time::Duration::from_millis(10)).await;
-        }
-        assert!(f.mock.lock().unwrap().events.contains(&"logo".to_owned()));
-        let inputs = s.logo_match_inputs(r["id"].as_str().unwrap()).unwrap();
-        s.transaction(||s.logo_action("delete",&json!({"id":inputs["references"][0]["logo_id"],"expected_version":inputs["catalog_version"]}))).unwrap();
-    };
-    let ((status, _), _) = tokio::join!(matching, change);
-    assert_eq!(status, 409);
+            assert!(f.mock.lock().unwrap().events.contains(&"logo".to_owned()));
+            let inputs = s.logo_match_inputs(r["id"].as_str().unwrap()).unwrap();
+            if change_kind == "logo" {
+                s.transaction(||s.logo_action("delete",&json!({"id":inputs["references"][0]["logo_id"],"expected_version":inputs["catalog_version"]}))).unwrap();
+            } else {
+                // A product or category edit advances the global version without changing images.
+                s.exec(
+                    "UPDATE catalog_version SET version=version+1 WHERE id=1",
+                    &[],
+                )
+                .unwrap();
+            }
+        };
+        let ((status, _), _) = tokio::join!(matching, change);
+        assert_eq!(status, if change_kind == "logo" { 409 } else { 200 });
+    }
 }
 
 #[test]
 fn configurable_prompts_validate_and_route_exact_merchant_names() {
     use receipt_backend_api::prompts::Prompts;
-    let p=Prompts::parse("[[general]]\nprompt='common'\n[[general]]\nprompt='total'\n[[store]]\nname='Hualian'\nprompt='weight above'").unwrap();
+    let auxiliary = include_str!("../../docker/defaults/prompt.toml")
+        .split("[[general]]")
+        .next()
+        .unwrap();
+    let p=Prompts::parse(&format!("{auxiliary}[[general]]\nprompt='common'\n[[general]]\nprompt='total'\n[[store]]\nname='Hualian'\nprompt='weight above'")).unwrap();
     assert_eq!(
         p.select(Some(" HUALIAN ")),
         ("common\n\ntotal\n\nweight above".into(), "Hualian".into())
@@ -969,7 +1006,7 @@ fn configurable_prompts_validate_and_route_exact_merchant_names() {
         "[[general]]\nprompt=''",
         "[[general]]\nprompt='ok'\n[[store]]\nname='A'\nprompt='one'\n[[store]]\nname='a'\nprompt='two'",
     ] {
-        assert!(Prompts::parse(text).is_err());
+        assert!(Prompts::parse(&format!("{auxiliary}{text}")).is_err());
     }
 }
 

@@ -87,15 +87,15 @@ Compose 将宿主 `playground/data/` 绑定到 `/data`。其下包括 `database/
 
 ## 客户端职责与服务器配置
 
-`playground/backend_api/config.yaml` 是 OCR、结构化模型、价格估算和预算提醒的唯一运行配置，Compose 只读挂载到 `/config/config.yaml`。修改后重启 backend_api 生效。YAML 的 pricing 两项为带引号的 USD/百万 token 十进制字符串；同时设 null 表示费用未知。budget.monthly_usd 为带引号的 USD 金额或 null，alert_percent 为提醒比例，timezone 为预算月份时区。预算只产生提示，不拦截任务。
+`playground/data/backend_api.toml` 只配置 API 本身以及 `[ocr]` 的服务 URL 和独立认证密钥。模型名称、输出长度、thinking、图片上限等推理参数全部在同一 `/data` 根目录下的 `backend_ocr.toml`；提示词在 `prompt.toml`。客户端密钥内嵌在 API 的 `[general].api_key`，服务间密钥内嵌在 API 的 `[ocr].api_key` 和 OCR 的 `[general].api_key`，不另建密钥文件。两份配置仅允许所有者读取。API 通过受认证的 OCR capabilities 接口获取图片上限，不复制模型配置。修改对应 TOML 后重启相应服务。当前本地 NInfer 不按 token 收费，费用估算和预算提醒已移除。
 
-客户端不再显示或保存 OCR 模型、provider 地址、token 价格、预算和模型费用记录。安装包只预置后端 origin 与认证密钥；设置中的“连接并验证”验证后端认证。识别任务入口保留状态和可编辑结果。重量显示单位属于共享展示偏好，仍可在设置修改。
+客户端不显示或保存 OCR 模型、provider 地址或服务间密钥。安装包只预置后端 origin 与客户端认证密钥；设置中的“连接并验证”验证后端认证。识别任务入口保留状态和可编辑结果。重量显示单位属于共享展示偏好，仍可在设置修改。
 
 - `receipts/edit`：receipt/action，支持 preview、currency、split、merge、total_from_lines；可提供 total_text。后端返回转换后的 receipt 和 summary（knownTotal/difference）。客户端不再计算合计、差额、拆分合并金额或币种数值转换。
 - `receipts/time_candidates`：text/zone，服务器返回 UTC 候选毫秒；客户端仅展示 DST 歧义候选供用户选择。
 - `reports/range`：anchor/zone/period/period_offset，服务器返回 start/end/previous_start、label、unfinished；统计与时间边界都在后端。
-- `recognition/start` 的价格快照由服务器从 YAML 注入，客户端提交的价格无效；`recognition/get` 可返回服务器算出的 notice。
-- 旧的 config/save、budgets/get/save 不再提供。历史 SQLite 预算/价格表仅作为旧备份 schema 保留，不参与运行配置。
+- `recognition/start` 不接受或保存费用价格快照；识别费用和月度预算提醒不再计算。
+- 旧的 config/save、budgets/get/save 不提供。历史数据库可能仍有旧费用字段，新数据库不再创建。
 
 ### 识别置信度提示
 
@@ -151,7 +151,7 @@ PRE-SCANNED 段逐行提取。`26/18` 等疑似小数点误读，仅在按 `26.1
 - Android/iOS 共用后台提交队列；待上传照片和批次意图先落盘。创建草稿、上传、提交识别均保留幂等身份，网络失败可重试，重开 App 会恢复提交。上传期间可继续拍摄、浏览和编辑。
 - 这里的后台提交是在 App 进程内异步运行。手机系统终止/挂起 App 后，尚未上传完的照片要等 App 恢复；服务器已经接收的识别任务不依赖手机继续运行。
 - `recognition/start` 按当前统一接口约定立即返回 HTTP 200 + `job_id/status`，不等待推理；同一收据版本的 queued/running 任务自动去重。
-- `config.yaml` 的 `job_workers: 2` 控制并发任务数（1–8）。数据库领取任务为短事务，推理不占用数据库锁；后台每秒检查队列。模型尚未就绪时保留 queued。
+- `backend_api.toml` 的 `job_workers: 2` 控制并发任务数（1–8）。数据库领取任务为短事务，推理不占用数据库锁；后台每秒检查队列。模型尚未就绪时保留 queued。
 - 列表返回最新 `recognition_status`；手机有待处理工作时定时刷新。applied 表示已保存为待确认草稿；succeeded 表示保留候选结果；failed 可从编辑器重新发起。
 - 用户编辑导致版本变化时保留候选，标记 stale_input，绝不覆盖新编辑。正式收据需要用户确认候选。取消和永久删除之后，运行中的旧结果不能写回。
 - 每张图片同时交给 Unlimited-OCR 与 PP-OCRv6 medium。融合、金额/重量核验和结构化仍在 Rust backend_api；backend_ocr 只提供两份读图证据。融合规则见 `docs/backend_ocr.md`。
@@ -165,7 +165,7 @@ Docker 构建执行 Rust 单元/接口/语料回归、Flutter 分析与共享测
 ```bash
 python3 tests/backend_api/smoke_async.py --scenario parallel \
   --url http://127.0.0.1:5000 \
-  --key-file playground/secrets/ocr-api-key \
+  --config playground/data/backend_api.toml \
   --data-directory playground/data
 ```
 
@@ -197,7 +197,7 @@ python3 tests/backend_api/smoke_async.py --scenario parallel \
 - Logo 身份匹配使用 SuperPoint + LightGlue（固定代码提交 `eb42fee2d71449efb0aa5c10549752b5d75384d8`），CPU 运行。先估计纸张背景、归一化墨迹对比度，最长边保留至 1024 像素，前景附近提取最多 768 个局部特征；背景颜色、明暗和黑白排版不直接贡献匹配分数。
 - backend_api 负责裁剪、图像与人工店名映射、参考样本选择和最终阈值判定；backend_ocr 负责局部特征匹配及几何证据。`logo_sample` 只保存图像 blob、merchant 外键和创建时间，已移除旧 DINO model/embedding 字段；`receipt_logo` 保留原图片版本与裁剪框。只使用人工命名或预置审核过的样本；所有店铺样本都会参与比较，不做全局 embedding 提前筛除。
 - 最多拟合两个局部透视区域，每区至少 12 个内点并覆盖足够空间；第二个区域与主变换的偏移受限，避免任意扭曲不同 Logo。计分为双向前景覆盖的较小值乘以证据系数 `min(1, 内点数/80)`；只统计通过几何约束、投影后距对方墨迹小于 3 像素的前景，不把空白背景算成相似。分数不是概率，低分不区分严重损坏与不同身份，需同时查看 evidence/coverage。
-- `config.yaml` 的 `logos.identity_threshold=0.55`、`minimum_evidence=0.75` 和 `margin=0.05` 共同决定自动认店；同店多样本取最佳，比较不同店名的分差。新分数与旧余弦分数不具可比性。不足或模棱两可时不认店，不回退 OCR 猜店名。
+- `backend_api.toml` 的 `logos.identity_threshold=0.55`、`minimum_evidence=0.75` 和 `margin=0.05` 共同决定自动认店；同店多样本取最佳，比较不同店名的分差。新分数与旧余弦分数不具可比性。不足或模棱两可时不认店，不回退 OCR 猜店名。
 - API：保留 `logos/list/extract/save/delete`。新增受认证的 `logos/match`（receipt_id），只读返回 selected、各参考样本 score/evidence/coverage/inliers/regions，以及版本化模型标识。模型内部接口为 `/v1/logo/match`，每批最多 8 个参考图，API 自动分批；不得将任意远程图片 URL 传给模型。匹配前后校验样本列表、目录版本与原图片关联，改名、删除或旋转导致变化时拒绝旧结果。
 - 模型权重固定 SHA256 并打入 OCR 镜像；启动时核验本地权重，不联网下载。内容寻址 LRU 缓存最多 128 份局部特征，缓存不属于业务数据库；模型变更或容器重启后从持久裁剪图重新计算。Logo 匹配与两种 OCR 共用串行队列，保持两个容器。
 - “商店名称”仍是图像到店名的人工映射；删除原收据保留已确认样本，删除别名后该图不再作为参考。全新数据库直接安装镜像内审核过的裁剪图及标签；重启不覆盖用户改名或删除。
@@ -209,7 +209,7 @@ python3 tests/backend_api/smoke_async.py --scenario parallel \
 ```bash
 python3 tests/backend_api/smoke_logo_alias.py \
   --url http://127.0.0.1:5000 \
-  --key-file playground/secrets/ocr-api-key \
+  --config playground/data/backend_api.toml \
   --photo tests/backend_api/corpus/images/b38d62dd-0.jpg
 ```
 

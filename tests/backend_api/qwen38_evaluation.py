@@ -15,7 +15,7 @@ from pathlib import Path
 from PIL import Image, ImageOps
 
 ROOT = Path(__file__).resolve().parents[2]
-PROMPTS = ROOT / "playground/backend_api/prompts.toml"
+PROMPTS = ROOT / "docker/defaults/prompt.toml"
 
 
 def prompt_for(store):

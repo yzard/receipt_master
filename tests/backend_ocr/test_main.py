@@ -15,20 +15,25 @@ from main import EngineRuntime, create_application, prepare_request, stop_proces
 from PIL import Image
 from recipe import command_for
 
+OCR_KEY = 'synthetic-ocr-service-key-for-tests'
+AUTH = {'Authorization': f'Bearer {OCR_KEY}'}
+
 
 def config():
     return ServerConfig.model_validate(
         dict(
-            port=8000,
-            max_requests=1,
-            timeout_seconds=60,
-            idle_timeout_seconds=300,
+            general=dict(host='0.0.0.0', port=8000, api_key=OCR_KEY, max_requests=1, timeout_seconds=60, idle_timeout_seconds=300),
             engine=dict(
                 path='/models/vision',
                 model='vision',
                 port=8002,
                 context_length=32768,
                 max_images=16,
+                receipt_output_tokens=8192,
+                logo_output_tokens=4096,
+                thinking=True,
+                temperature=0,
+                seed=42,
                 image_pixel_budget=12582912,
                 draft_tokens=3,
                 max_sequences=1,
@@ -50,6 +55,22 @@ def photo():
 
 
 class VisionTest(unittest.TestCase):
+    def test_inference_and_capabilities_require_service_key(self):
+        import httpx
+
+        async def run():
+            app = create_application(config())
+            async with httpx.AsyncClient(transport=httpx.ASGITransport(app=app), base_url='http://test') as client:
+                for path, method in [('/capabilities', 'get'), ('/v1/chat/completions', 'post')]:
+                    response = await getattr(client, method)(path)
+                    self.assertEqual(response.status_code, 401)
+                    response = await getattr(client, method)(path, headers={'Authorization': 'Bearer wrong'})
+                    self.assertEqual(response.status_code, 401)
+                response = await client.get('/capabilities', headers=AUTH)
+                self.assertEqual(response.json(), {'max_images': 16})
+
+        asyncio.run(run())
+
     def test_recipe_requires_weights_and_has_one_multimodal_engine(self):
         with tempfile.TemporaryDirectory() as tmp:
             path = str(Path(tmp, 'model.ninfer'))
@@ -66,15 +87,17 @@ class VisionTest(unittest.TestCase):
 
     def test_all_images_and_schema_forwarded_with_exif_applied(self):
         body = {
-            'model': 'vision',
+            'profile': 'receipt',
             'messages': [
                 {'role': 'system', 'content': 'instructions'},
                 {'role': 'user', 'content': [{'type': 'text', 'text': 'same receipt'}, photo(), photo()]},
             ],
-            'response_format': {'type': 'json_schema', 'json_schema': {'name': 'receipt'}},
         }
         prepared = prepare_request(copy.deepcopy(body), config())
-        self.assertEqual(prepared['response_format'], body['response_format'])
+        self.assertEqual(prepared['response_format'], {'type': 'text'})
+        self.assertEqual(prepared['model'], 'vision')
+        self.assertEqual(prepared['max_tokens'], 8192)
+        self.assertTrue(prepared['chat_template_kwargs']['enable_thinking'])
         self.assertEqual(prepared['messages'][0], body['messages'][0])
         parts = prepared['messages'][1]['content']
         self.assertEqual(len(parts), 3)
@@ -91,7 +114,7 @@ class VisionTest(unittest.TestCase):
             [{'type': 'image_url', 'image_url': None}],
         ]:
             with self.assertRaises(HTTPException):
-                prepare_request({'model': 'vision', 'messages': [{'content': images}]}, config())
+                prepare_request({'profile': 'receipt', 'messages': [{'content': images}]}, config())
 
     def test_one_request_contains_all_images_and_preserves_thinking_and_prompt(self):
         import json
@@ -120,13 +143,13 @@ class VisionTest(unittest.TestCase):
                     response = await client.post(
                         "/v1/chat/completions",
                         json={
-                            "model": "vision",
+                            "profile": "receipt",
                             "messages": [
                                 {"role": "system", "content": "store rules"},
                                 {"role": "user", "content": [photo(), photo()]},
                             ],
-                            "chat_template_kwargs": {"enable_thinking": True},
                         },
+                        headers=AUTH,
                     )
                     self.assertEqual(response.status_code, 502 if fail else 200)
                     self.assertEqual(len(calls), 1)
@@ -147,7 +170,7 @@ class VisionTest(unittest.TestCase):
             'image_url': {'url': 'data:image/png;base64,' + base64.b64encode(data.getvalue()).decode()},
         }
         body = prepare_request(
-            {'model': 'vision', 'messages': [{'content': [copy.deepcopy(part), copy.deepcopy(part)]}]}, c
+            {'profile': 'receipt', 'messages': [{'content': [copy.deepcopy(part), copy.deepcopy(part)]}]}, c
         )
         images = [
             Image.open(BytesIO(base64.b64decode(p['image_url']['url'].split(',')[1])))
@@ -179,10 +202,10 @@ class VisionTest(unittest.TestCase):
                 app.state.runtime = EngineRuntime(config(), upstream)
                 app.state.runtime.ensure_ready = AsyncMock()
                 async with httpx.AsyncClient(transport=httpx.ASGITransport(app=app), base_url="http://test") as client:
-                    body = {"model": "vision", "messages": [{"content": [photo()]}]}
-                    first = asyncio.create_task(client.post("/v1/chat/completions", json=body))
+                    body = {"profile": "receipt", "messages": [{"content": [photo()]}]}
+                    first = asyncio.create_task(client.post("/v1/chat/completions", json=body, headers=AUTH))
                     await asyncio.wait_for(started.wait(), 2)
-                    second = asyncio.create_task(client.post("/v1/chat/completions", json=body))
+                    second = asyncio.create_task(client.post("/v1/chat/completions", json=body, headers=AUTH))
                     # A queued request must not reach either engine before the first completes.
                     await asyncio.sleep(0.05)
                     self.assertFalse(second.done())
@@ -197,7 +220,7 @@ class VisionTest(unittest.TestCase):
     def test_config_rejects_parallel_inference(self):
         from pydantic import ValidationError
 
-        for section, field in [(None, "max_requests"), ("engine", "max_sequences")]:
+        for section, field in [("general", "max_requests"), ("engine", "max_sequences")]:
             data = config().model_dump()
             (data if section is None else data[section])[field] = 2
             with self.assertRaises(ValidationError):
@@ -223,14 +246,14 @@ class LifecycleTest(unittest.IsolatedAsyncioTestCase):
                     for _ in range(3):
                         response = await client.get('/health')
                         self.assertEqual(response.json()['engine_state'], 'unloaded')
-                    response = await client.post('/v1/chat/completions', json={'model': 'invalid'})
+                    response = await client.post('/v1/chat/completions', json={'profile': 'invalid'}, headers=AUTH)
                     self.assertEqual(response.status_code, 400)
                 command.assert_not_called()
 
     async def test_cold_start_queue_idle_release_and_reload(self):
         import httpx
 
-        c = config().model_copy(update={'idle_timeout_seconds': 0.08})
+        c = config().model_copy(update={'general': config().general.model_copy(update={'idle_timeout_seconds': 0.08})})
         started = asyncio.Event()
         release = asyncio.Event()
         calls = []
@@ -311,7 +334,7 @@ class LifecycleTest(unittest.IsolatedAsyncioTestCase):
                 started.set()
                 await asyncio.Event().wait()
 
-            c = config().model_copy(update={'timeout_seconds': 0.2})
+            c = config().model_copy(update={'general': config().general.model_copy(update={'timeout_seconds': 0.2})})
             async with httpx.AsyncClient(transport=httpx.MockTransport(handler)) as client:
                 runtime = EngineRuntime(c, client)
                 with patch('main.command_for', return_value=['sh', '-c', 'sleep 300 & wait']):
@@ -332,7 +355,7 @@ class LifecycleTest(unittest.IsolatedAsyncioTestCase):
     async def test_loading_timeout_reaps_process(self):
         import httpx
 
-        c = config().model_copy(update={'timeout_seconds': 0.1})
+        c = config().model_copy(update={'general': config().general.model_copy(update={'timeout_seconds': 0.1})})
         async with httpx.AsyncClient(transport=httpx.MockTransport(lambda _: httpx.Response(503))) as client:
             runtime = EngineRuntime(c, client)
             with patch('main.command_for', return_value=['sh', '-c', 'sleep 300 & wait']):

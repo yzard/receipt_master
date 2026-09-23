@@ -13,6 +13,8 @@ pub mod receipt_lines;
 pub mod sku;
 pub mod weights;
 
+pub const PUBLIC_MODEL_ID: &str = "receipt-master";
+
 use axum::{
     Json, Router,
     body::Body,
@@ -43,21 +45,20 @@ pub struct State {
     pub storage_lock: tokio::sync::Mutex<()>,
     pub active_job_workers: std::sync::atomic::AtomicUsize,
     authorization: Vec<u8>,
+    pub(crate) ocr_authorization: String,
 }
 impl State {
-    pub fn new(
-        config: Config,
-        key: &str,
-    ) -> Result<Arc<Self>, Box<dyn std::error::Error + Send + Sync>> {
-        if key.trim().len() < 24 {
-            return Err("API key must have at least 24 characters".into());
-        }
+    pub fn new(config: Config) -> Result<Arc<Self>, Box<dyn std::error::Error + Send + Sync>> {
         let client = reqwest::Client::builder()
             .no_proxy()
-            .timeout(Duration::from_secs(config.timeout_seconds))
+            .timeout(Duration::from_secs(config.general.timeout_seconds))
             .build()?;
-        let job_workers = config.job_workers;
-        let prompts = prompts::Prompts::parse(&std::fs::read_to_string(&config.ocr.prompts_file)?)?;
+        let job_workers = config.general.job_workers;
+        let authorization = format!("Bearer {}", config.general.api_key.trim()).into_bytes();
+        let ocr_authorization = format!("Bearer {}", config.ocr.api_key.trim());
+        let prompts = prompts::Prompts::parse(&std::fs::read_to_string(
+            config.general.data_dir.join("prompt.toml"),
+        )?)?;
         Ok(Arc::new(Self {
             config,
             prompts,
@@ -65,7 +66,8 @@ impl State {
             lock: tokio::sync::Semaphore::new(job_workers),
             storage_lock: tokio::sync::Mutex::new(()),
             active_job_workers: std::sync::atomic::AtomicUsize::new(0),
-            authorization: format!("Bearer {}", key.trim()).into_bytes(),
+            authorization,
+            ocr_authorization,
         }))
     }
 }
@@ -114,15 +116,15 @@ async fn model_health(AxumState(state): AxumState<Arc<State>>) -> Response {
     Json(json!({"status":"ready"})).into_response()
 }
 async fn health(AxumState(state): AxumState<Arc<State>>) -> Result<Json<Value>, AppError> {
-    let root = state.config.data_dir.clone();
+    let root = state.config.general.data_dir.clone();
     tokio::task::spawn_blocking(move || db::Store::open(&root).map(|_| ()))
         .await
         .map_err(db::io_error)??;
     Ok(Json(json!({"status":"ready"})))
 }
-async fn models(AxumState(state): AxumState<Arc<State>>) -> Json<Value> {
+async fn models(AxumState(_state): AxumState<Arc<State>>) -> Json<Value> {
     Json(
-        json!({"object":"list","data":[{"id":state.config.served_model,"object":"model","created":0,"owned_by":"local"}]}),
+        json!({"object":"list","data":[{"id":PUBLIC_MODEL_ID,"object":"model","created":0,"owned_by":"local"}]}),
     )
 }
 async fn completions(
@@ -133,7 +135,7 @@ async fn completions(
     pipeline::recognize(state, body).await.map(Json)
 }
 async fn apk(AxumState(state): AxumState<Arc<State>>, req: Request) -> Response {
-    let file = ServeFile::new(&state.config.apk_path);
+    let file = ServeFile::new(&state.config.general.apk_path);
     let mut response = file
         .oneshot(req)
         .await
@@ -161,7 +163,11 @@ async fn apk(AxumState(state): AxumState<Arc<State>>, req: Request) -> Response 
     response
 }
 async fn update_manifest(AxumState(state): AxumState<Arc<State>>, req: Request) -> Response {
-    let path = state.config.apk_path.with_file_name("android-update.json");
+    let path = state
+        .config
+        .general
+        .apk_path
+        .with_file_name("android-update.json");
     serve_update_file(path, req).await
 }
 async fn update_apk(
@@ -178,7 +184,12 @@ async fn update_apk(
     if !valid {
         return AppError::new(404, "update_not_found", "Update not found.").into_response();
     }
-    let path = state.config.apk_path.with_file_name("updates").join(name);
+    let path = state
+        .config
+        .general
+        .apk_path
+        .with_file_name("updates")
+        .join(name);
     serve_update_file(path, req).await
 }
 async fn serve_update_file(path: std::path::PathBuf, req: Request) -> Response {

@@ -19,7 +19,7 @@ services:
     restart: unless-stopped
     image: receipt-master-backend-ocr:local
     volumes:
-      - ../playground/backend_ocr.toml:/config/backend_ocr.toml:ro
+      - ../playground/data/backend_ocr.toml:/data/backend_ocr.toml:ro
     networks: [inference]
   backend_api:
     init: true
@@ -32,15 +32,9 @@ services:
     image: receipt-master-backend-api:local
     ports: ["0.0.0.0:5000:8000"]
     volumes:
-      - ../playground/backend_api/config.yaml:/config/config.yaml:ro
-      - ../playground/backend_api/prompts.toml:/config/prompts.toml:ro
       - ../build/mobile:/artifacts:ro
       - ../playground/data:/data
-    secrets: [ocr_api_key]
     networks: [inference, ingress]
-secrets:
-  ocr_api_key:
-    file: ../playground/secrets/ocr-api-key
 networks:
   inference:
     internal: true

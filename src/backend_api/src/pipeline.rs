@@ -148,11 +148,15 @@ pub fn extract(body: Value, model: &str) -> Result<Input, AppError> {
         validator,
     })
 }
-pub(crate) async fn raw_call(state: &State, url: &str, body: Value) -> Result<Value, AppError> {
+pub(crate) async fn raw_call(state: &State, body: Value) -> Result<Value, AppError> {
     let _guard = state.lock.acquire().await.expect("inference semaphore");
     let result: Value = state
         .client
-        .post(format!("{}/v1/chat/completions", url.trim_end_matches('/')))
+        .post(format!(
+            "{}/v1/chat/completions",
+            state.config.ocr.url.trim_end_matches('/')
+        ))
+        .header(reqwest::header::AUTHORIZATION, &state.ocr_authorization)
         .json(&body)
         .send()
         .await
@@ -166,6 +170,35 @@ pub(crate) async fn raw_call(state: &State, url: &str, body: Value) -> Result<Va
             AppError::new(502, "invalid_model_response", "Invalid model response.")
         })?;
     Ok(result)
+}
+pub(crate) async fn image_capacity(state: &State) -> Result<usize, AppError> {
+    let result: Value = state
+        .client
+        .get(format!(
+            "{}/capabilities",
+            state.config.ocr.url.trim_end_matches('/')
+        ))
+        .header(reqwest::header::AUTHORIZATION, &state.ocr_authorization)
+        .timeout(std::time::Duration::from_secs(5))
+        .send()
+        .await
+        .map_err(AppError::inference)?
+        .error_for_status()
+        .map_err(AppError::inference)?
+        .json()
+        .await
+        .map_err(AppError::inference)?;
+    result["max_images"]
+        .as_u64()
+        .filter(|n| *n >= 2 && *n <= 256)
+        .map(|n| n as usize)
+        .ok_or_else(|| {
+            AppError::new(
+                502,
+                "invalid_ocr_capabilities",
+                "Invalid OCR image capacity.",
+            )
+        })
 }
 /// Decode one complete JSON object; only a whole-response Markdown fence is tolerated.
 pub fn decode_content(raw: &Value) -> Result<Value, AppError> {
@@ -226,20 +259,21 @@ pub fn normalize_output(raw: &Value) -> Result<(Value, Vec<String>), AppError> {
     Ok((data, removed))
 }
 pub async fn recognize(state: Arc<State>, body: Value) -> Result<Value, AppError> {
-    let model = state.config.served_model.clone();
-    let input = tokio::task::spawn_blocking(move || extract(body, &model))
+    let input = tokio::task::spawn_blocking(move || extract(body, crate::PUBLIC_MODEL_ID))
         .await
         .map_err(|_| AppError::new(500, "internal_error", "Request validation failed."))??;
-    if input.images.len() > state.config.ocr.max_images {
+    if input.images.len() > image_capacity(&state).await? {
         return Err(AppError::invalid(
             "Too many photos; no photos were dropped.",
         ));
     }
     let (mut prompt, profile) = state.prompts.select(input.known_store.as_deref());
-    prompt.push_str("\nReturn exactly one JSON object matching this schema. No code fences or extra keys. Unknown fields must use the schema's null form, never invent a field.\n");
+    prompt.push('\n');
+    prompt.push_str(&state.prompts.receipt.schema_instruction);
+    prompt.push('\n');
     prompt.push_str(include_str!("receipt_schema.json"));
     let mut content = vec![
-        json!({"type":"text","text":format!("Known store from image alias catalog: {}",input.known_store.as_deref().unwrap_or("unknown"))}),
+        json!({"type":"text","text":format!("{} {}",state.prompts.receipt.known_store_prefix,input.known_store.as_deref().unwrap_or(&state.prompts.receipt.unknown_store))}),
     ];
     for message in &input.prompts {
         content.push(json!({"type":"text","text":message["content"]}));
@@ -255,14 +289,11 @@ pub async fn recognize(state: Arc<State>, body: Value) -> Result<Value, AppError
         json!({"role":"user","content":content}),
     ];
     let mut runs = Vec::new();
-    for attempt in 0..=state.config.ocr.repair_attempts {
+    for attempt in 0..=state.config.general.repair_attempts {
         let raw = raw_call(
             &state,
-            &state.config.ocr.url,
             json!({
-                "model":state.config.ocr.model,"messages":messages,"temperature":0,"seed":42,
-                "max_tokens":state.config.ocr.output_tokens,"response_format":{"type":"text"},
-                "chat_template_kwargs":{"enable_thinking":state.config.ocr.thinking}
+                "profile":"receipt","messages":messages
             }),
         )
         .await?;
@@ -294,14 +325,14 @@ pub async fn recognize(state: Arc<State>, body: Value) -> Result<Value, AppError
                 }
                 let usages = runs.iter().map(|r| r["usage"].clone()).collect::<Vec<_>>();
                 return Ok(
-                    json!({"id":format!("receipt-{}",uuid::Uuid::new_v4()),"object":"chat.completion","model":state.config.served_model,
+                    json!({"id":format!("receipt-{}",uuid::Uuid::new_v4()),"object":"chat.completion","model":crate::PUBLIC_MODEL_ID,
                     "choices":[{"index":0,"message":{"role":"assistant","content":data.to_string()},"finish_reason":"stop"}],
-                    "usage":aggregate_usage(&usages),"receipt_parsing":{"version":"qwen3.8-ninfer-v1","profile":profile,"image_count":input.images.len(),"thinking":state.config.ocr.thinking,"arithmetic_mismatch":arithmetic_difference(&data).is_some(),"removed_fields":removed},"model_runs":runs}),
+                    "usage":aggregate_usage(&usages),"receipt_parsing":{"version":"structured-v2","profile":profile,"image_count":input.images.len(),"arithmetic_mismatch":arithmetic_difference(&data).is_some(),"removed_fields":removed},"model_runs":runs}),
                 );
             }
-            Err(error) if attempt < state.config.ocr.repair_attempts => {
+            Err(error) if attempt < state.config.general.repair_attempts => {
                 // Retry the original photos with schema feedback, never fabricate replacement values.
-                messages.push(json!({"role":"user","content":format!("Your previous response failed validation: {}. Reread the original images and return a COMPLETE JSON object using exactly the supplied schema. Do not add explanatory fields. Keep all real rows. Do not invent values to satisfy arithmetic.",error.message)}));
+                messages.push(json!({"role":"user","content":format!("{}{}{}",state.prompts.receipt.repair_prefix,error.message,state.prompts.receipt.repair_suffix)}));
             }
             Err(error) => return Err(error),
         }
@@ -391,9 +422,8 @@ pub async fn locate_logo(state: Arc<State>, image: String) -> Result<Value, AppE
         tokio::task::spawn_blocking(move || crate::logos::localization_input(&image))
             .await
             .map_err(crate::db::io_error)??;
-    let raw = raw_call(&state, &state.config.ocr.url,json!({
-        "model":state.config.ocr.model,"messages":[{"role":"system","content":"Locate the complete store logo/wordmark in this receipt header, including all tightly grouped lines of the same logo, even if it is plain bold text. Exclude street address, phone, branch and item rows. Do NOT identify or output the store name. Return only JSON {\"box\":[left,top,right,bottom]} with integer coordinates normalized to 0..1000 relative to this header image: top-left is [0,0], bottom-right is [1000,1000]. Return {\"box\":null} if no reliable logo region is visible."},{"role":"user","content":[{"type":"image_url","image_url":{"url":image}}]}],
-        "max_tokens":4096,"temperature":0,"seed":42,"response_format":{"type":"text"},"chat_template_kwargs":{"enable_thinking":state.config.ocr.thinking}
+    let raw = raw_call(&state,json!({
+        "profile":"logo","messages":[{"role":"system","content":state.prompts.logo.locate},{"role":"user","content":[{"type":"image_url","image_url":{"url":image}}]}]
     })).await?;
     let mut data = decode_content(&raw)?;
     if data.get("box").is_none() {

@@ -28,13 +28,13 @@
 
 ### 使用
 
-拍照/选图 → 上传并保留原图 → 发起后端识别 → 黄标核对并编辑 → 确认保存 → 按类别、商品、日/周/月/季度/年查看报告。识别任务在服务器运行，关闭客户端后可重新查看结果。预算仅提醒，不阻止识别。
+拍照/选图 → 上传并保留原图 → 发起后端识别 → 黄标核对并编辑 → 确认保存 → 按类别、商品、日/周/月/季度/年查看报告。识别任务在服务器运行，关闭客户端后可重新查看结果。
 
 断网不会伪装保存成功。待上传照片保留在手机，可通过设置页重试；业务记录以服务器为准。整体恢复影响所有连接同一后端的设备，恢复前服务器自动留备份。
 
 构建要求、第一版历史和之前验证记录保留在 `docs/implementation_status.md` 与 `docs/1st_plan.md`。
 
-OCR 模型、价格与预算提醒统一配置在 [playground/backend_api/config.yaml](playground/backend_api/config.yaml)，客户端只负责认证、采集、提交任务、编辑和显示服务器结果。
+API 连接与认证配置在 [backend_api.toml](playground/data/backend_api.toml)；模型和推理参数配置在 [backend_ocr.toml](playground/data/backend_ocr.toml)。客户端只负责认证、采集、提交任务、编辑和显示服务器结果。
 
 ## OCR 回归评测
 
@@ -42,4 +42,4 @@ OCR 模型、价格与预算提醒统一配置在 [playground/backend_api/config
 
 当前：[Qwen3.8 / NInfer 与可配置提示架构](docs/backend_ocr.md)。历史对照：[Unlimited-OCR / PP-OCRv6](docs/ocr_model_comparison.md)。
 
-通用及商店提示配置：[playground/backend_api/prompts.toml](playground/backend_api/prompts.toml)，采用 `[[general]]` / `[[store]]`，修改后重启 API。模型开启 thinking，旧双 OCR 与 parser 已移除。
+Logo 定位/比对及通用与商店提示配置：[playground/data/prompt.toml](playground/data/prompt.toml)，采用 `[[general]]` / `[[store]]`，修改后重启 API。模型开启 thinking，旧双 OCR 与 parser 已移除。
