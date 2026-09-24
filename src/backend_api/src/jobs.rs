@@ -265,7 +265,7 @@ async fn database<T: Send + 'static>(
     f: impl FnOnce(&Store) -> Result<T> + Send + 'static,
 ) -> Result<T> {
     let _guard = state.storage_lock.lock().await;
-    let root = state.config.general.data_dir.clone();
+    let root = state.data_dir.clone();
     tokio::task::spawn_blocking(move || f(&Store::open(&root)?))
         .await
         .map_err(db::io_error)?
@@ -322,15 +322,14 @@ async fn process(state: Arc<State>, job: Value) -> Result<Value> {
     let mut known_store: Option<String> = None;
     let mut content = Vec::new();
     for (index, img) in images.iter().enumerate() {
-        let path =
-            db::media::safe_path(&state.config.general.data_dir, text(img, "relative_path")?)?;
+        let path = db::media::safe_path(&state.data_dir, text(img, "relative_path")?)?;
         let bytes = tokio::fs::read(path).await.map_err(db::io_error)?;
         let image = format!(
             "data:{};base64,{}",
             text(img, "mime")?,
             base64::engine::general_purpose::STANDARD.encode(&bytes)
         );
-        if index == 0 && state.config.logos.enabled {
+        if index == 0 {
             let result = async {
                 let layout = pipeline::locate_logo(state.clone(), image.clone()).await?;
                 let evidence = layout["evidence"].to_string();

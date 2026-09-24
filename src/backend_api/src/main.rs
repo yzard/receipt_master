@@ -1,5 +1,5 @@
 use receipt_backend_api::{State, application, config::Config};
-use std::{env, time::Duration};
+use std::{env, path::PathBuf, time::Duration};
 use tokio::sync::watch;
 
 #[tokio::main]
@@ -10,16 +10,20 @@ async fn main() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
         )
         .init();
     let args: Vec<String> = env::args().collect();
-    if args.len() != 3 || !matches!(args[1].as_str(), "--config" | "-c") {
-        return Err("Usage: receipt-backend-api --config PATH".into());
+    if args.len() != 3 || args[1] != "--data-dir" {
+        return Err("Usage: receipt-backend-api --data-dir ABSOLUTE_DIRECTORY".into());
     }
-    let config = Config::parse(&tokio::fs::read_to_string(&args[2]).await?)?;
+    let root = PathBuf::from(&args[2]);
+    if !root.is_absolute() || !root.is_dir() {
+        return Err("Data directory must be an existing absolute directory".into());
+    }
+    let config = Config::parse(&tokio::fs::read_to_string(root.join("config.toml")).await?)?;
     let address = (config.general.host, config.general.port);
-    let root = config.general.data_dir.clone();
-    tokio::task::spawn_blocking(move || receipt_backend_api::db::Store::initialize(&root))
+    let database_root = root.clone();
+    tokio::task::spawn_blocking(move || receipt_backend_api::db::Store::initialize(&database_root))
         .await?
         .map_err(|e| std::io::Error::other(e.message))?;
-    let state = State::new(config)?;
+    let state = State::new(config, root)?;
     let listener = tokio::net::TcpListener::bind(address).await?;
     let (stop, rx) = watch::channel(false);
     let queue_state = state.clone();

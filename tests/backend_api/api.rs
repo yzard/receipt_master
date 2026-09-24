@@ -84,15 +84,15 @@ async fn fixture(repair_attempts: usize) -> Fixture {
     c.general.repair_attempts = repair_attempts;
     c.ocr.url = format!("http://127.0.0.1:{port}");
     c.general.apk_path = dir.path().join("receipt_master.apk");
-    c.general.data_dir = dir.path().join("data");
-    receipt_backend_api::db::Store::initialize(&c.general.data_dir).unwrap();
+    let data_dir = dir.path().join("data");
+    receipt_backend_api::db::Store::initialize(&data_dir).unwrap();
     std::fs::copy(
         std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("../../docker/defaults/prompt.toml"),
-        c.general.data_dir.join("prompt.toml"),
+        data_dir.join("prompt.toml"),
     )
     .unwrap();
     Fixture {
-        app: application(State::new(c).unwrap()),
+        app: application(State::new(c, data_dir).unwrap()),
         mock,
         dir,
         task,
@@ -339,12 +339,33 @@ fn config_validation() {
     assert!(Config::parse(include_str!("../../docker/defaults/backend_api.toml")).is_err());
     assert!(Config::parse("").is_err());
     assert!(Config::parse(&text.replace("repair_attempts = 1", "repair_attempts = 9")).is_err());
+    assert!(Config::parse(&format!("{text}\n[logos]\nenabled = false\n")).is_err());
+    assert!(
+        Config::parse(&text.replace("port = 8000", "data_dir = \"/data\"\nport = 8000")).is_err()
+    );
     assert!(
         Config::parse(&format!(
             "{text}\n[pricing]\ninput_usd_per_million_tokens = \"1\"\n"
         ))
         .is_err()
     );
+}
+
+#[test]
+fn server_requires_config_toml_inside_explicit_data_directory() {
+    use std::process::Command;
+    let dir = tempfile::tempdir().unwrap();
+    let binary = env!("CARGO_BIN_EXE_receipt-backend-api");
+    let run = || {
+        Command::new(binary)
+            .arg("--data-dir")
+            .arg(dir.path())
+            .output()
+            .unwrap()
+    };
+    assert!(!run().status.success());
+    std::fs::write(dir.path().join("config.toml"), "invalid TOML = [").unwrap();
+    assert!(!run().status.success());
 }
 
 #[test]

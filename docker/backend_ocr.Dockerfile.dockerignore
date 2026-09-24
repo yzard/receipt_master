@@ -6,4 +6,7 @@
 !tests/backend_ocr/
 !tests/backend_ocr/test_main.py
 !docker/
+!docker/defaults/
+!docker/defaults/backend_ocr.toml
+!docker/service-entrypoint.sh
 **/__pycache__/

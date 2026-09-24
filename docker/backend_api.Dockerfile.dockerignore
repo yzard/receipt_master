@@ -8,5 +8,6 @@
 !docker/
 !docker/defaults/
 !docker/defaults/**
+!docker/service-entrypoint.sh
 **/__pycache__/
 **/target/

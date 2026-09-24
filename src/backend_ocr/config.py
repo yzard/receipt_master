@@ -53,5 +53,7 @@ class ServerConfig(BaseModel):
         return self
 
 
-def load_config(path: Path) -> ServerConfig:
-    return ServerConfig.model_validate(tomllib.loads(path.read_text()))
+def load_config(data_dir: Path) -> ServerConfig:
+    if not data_dir.is_absolute() or not data_dir.is_dir():
+        raise ValueError("Data directory must be an existing absolute directory")
+    return ServerConfig.model_validate(tomllib.loads((data_dir / "config.toml").read_text()))

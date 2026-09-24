@@ -40,7 +40,7 @@ pub async fn execute(
         ));
     }
     let _guard = state.storage_lock.lock().await;
-    let root = state.config.general.data_dir.clone();
+    let root = state.data_dir.clone();
     let reply=tokio::task::spawn_blocking(move||{
   let store=Store::open(&root)?;
   let read=matches!(operation.as_str(),"get"|"list"|"runs"|"suggest"|"summary"|"details"|"check_duplicates"|"edit"|"display_line"|"prepare_line"|"time_candidates"|"range");
@@ -68,7 +68,7 @@ pub async fn media(
     Path(id): Path<String>,
     req: Request,
 ) -> Result<Response, AppError> {
-    let root = state.config.general.data_dir.clone();
+    let root = state.data_dir.clone();
     let (path,mime)=tokio::task::spawn_blocking(move||{let s=Store::open(&root)?;let blob=s.one("SELECT b.* FROM media_blob b WHERE b.blob_id=? AND (EXISTS (SELECT 1 FROM receipt_image i WHERE i.original_blob_id=b.blob_id OR i.current_blob_id=b.blob_id) OR EXISTS (SELECT 1 FROM image_revision r WHERE r.blob_id=b.blob_id) OR EXISTS (SELECT 1 FROM logo_sample l WHERE l.blob_id=b.blob_id))",&[json!(id)])?;Ok::<_,AppError>((db::media::safe_path(&root,db::text(&blob,"relative_path")?)?,db::text(&blob,"mime")?.to_owned()))}).await.map_err(db::io_error)??;
     let mut response = ServeFile::new(path)
         .oneshot(req)
@@ -89,7 +89,7 @@ pub async fn upload(
     mut form: axum::extract::Multipart,
 ) -> Result<Json<Value>, AppError> {
     use tokio::io::AsyncWriteExt;
-    let staging = state.config.general.data_dir.join("staging");
+    let staging = state.data_dir.join("staging");
     let temporary = tokio::task::spawn_blocking(move || tempfile::NamedTempFile::new_in(staging))
         .await
         .map_err(db::io_error)?
@@ -124,7 +124,7 @@ pub async fn upload(
     let body = metadata.ok_or_else(db::invalid)?;
     let key = body.request_key.ok_or_else(db::invalid)?;
     let _guard = state.storage_lock.lock().await;
-    let root = state.config.general.data_dir.clone();
+    let root = state.data_dir.clone();
     let data = tokio::task::spawn_blocking(move || {
         let bytes = std::fs::read(temporary.path()).map_err(db::io_error)?;
         let s = Store::open(&root)?;

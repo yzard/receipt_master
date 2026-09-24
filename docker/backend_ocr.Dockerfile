@@ -31,6 +31,7 @@ WORKDIR /workspace
 RUN pip install --no-cache-dir fastapi==0.136.3 httpx==0.28.1 pillow==11.3.0
 COPY src/backend_ocr/ src/backend_ocr/
 COPY tests/backend_ocr/ tests/backend_ocr/
+COPY docker/defaults/backend_ocr.toml docker/defaults/backend_ocr.toml
 RUN python -m unittest discover -s tests/backend_ocr && touch /checks-passed
 
 FROM nvidia/cuda:13.1.2-runtime-ubuntu24.04@sha256:bff001d3257971cc4752e15ac2d354befa70995ded8e141741ade50569fc192e
@@ -39,6 +40,7 @@ ARG DEBIAN_FRONTEND=noninteractive
 RUN apt-get update \
     && apt-get install --yes --no-install-recommends \
         python3 python3-venv \
+        gosu \
         ca-certificates \
         libavcodec60 \
         libavformat60 \
@@ -57,6 +59,10 @@ RUN pip install --no-cache-dir fastapi==0.136.3 uvicorn==0.35.0 httpx==0.28.1 pi
 WORKDIR /app
 COPY --from=checks /checks-passed /app/checks-passed
 COPY src/backend_ocr/ /app/
-ADD --checksum=sha256:74d2c57145e6ff11d1d2faa79594477f9bc903a611af1fb20218189fbbb77d82 https://huggingface.co/neroued/Qwen3.8-27B-nvfp4-NInfer/resolve/f0b43ad436b9fa8142c6ed6647c470a6fe409484/qwen3_8_27b_nvfp4.ninfer /models/qwen3_8_27b_nvfp4.ninfer
-ENTRYPOINT ["python3", "/app/main.py"]
-CMD ["--config", "/data/backend_ocr.toml"]
+ADD --chmod=644 --checksum=sha256:74d2c57145e6ff11d1d2faa79594477f9bc903a611af1fb20218189fbbb77d82 https://huggingface.co/neroued/Qwen3.8-27B-nvfp4-NInfer/resolve/f0b43ad436b9fa8142c6ed6647c470a6fe409484/qwen3_8_27b_nvfp4.ninfer /models/qwen3_8_27b_nvfp4.ninfer
+RUN chmod 755 /models
+COPY docker/service-entrypoint.sh /app/service-entrypoint.sh
+RUN chmod +x /app/service-entrypoint.sh
+ENV RECEIPT_SERVICE=ocr
+ENTRYPOINT ["/app/service-entrypoint.sh", "python3", "/app/main.py"]
+CMD ["--data-dir", "/data"]

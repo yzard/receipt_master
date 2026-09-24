@@ -6,7 +6,6 @@ use std::{net::IpAddr, path::PathBuf};
 pub struct Config {
     pub general: General,
     pub ocr: Ocr,
-    pub logos: Logos,
 }
 #[derive(Clone, Deserialize)]
 #[serde(deny_unknown_fields)]
@@ -15,15 +14,9 @@ pub struct General {
     pub port: u16,
     pub api_key: String,
     pub apk_path: PathBuf,
-    pub data_dir: PathBuf,
     pub timeout_seconds: u64,
     pub job_workers: usize,
     pub repair_attempts: usize,
-}
-#[derive(Clone, Deserialize)]
-#[serde(deny_unknown_fields)]
-pub struct Logos {
-    pub enabled: bool,
 }
 #[derive(Clone, Deserialize)]
 #[serde(deny_unknown_fields)]
@@ -39,7 +32,6 @@ impl Config {
             || url.host_str().is_none()
             || !url.username().is_empty()
             || url.password().is_some()
-            || !c.general.data_dir.is_absolute()
             || c.general.api_key.trim().len() < 24
             || c.ocr.api_key.trim().len() < 24
             || c.ocr.api_key.trim() == c.general.api_key.trim()

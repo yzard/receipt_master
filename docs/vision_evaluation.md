@@ -66,17 +66,17 @@
 
 ```bash
 RECEIPT_BENCH_URL=http://127.0.0.1:5000 \
-RECEIPT_BENCH_CONFIG="$PWD/playground/data/backend_api.toml" \
+RECEIPT_BENCH_CONFIG="$PWD/playground/backend_api/config.toml" \
 RECEIPT_BENCH_OUTPUT="$PWD/build/vision/real-receipts.json" \
 cargo test --manifest-path src/backend_api/Cargo.toml --test corpus live_image_benchmark -- --ignored --nocapture
 
 python tests/backend_api/vision_reported.py \
-  --url http://127.0.0.1:5000 --config playground/data/backend_api.toml \
+  --url http://127.0.0.1:5000 --config playground/backend_api/config.toml \
   --output-directory build/vision/reported
 
 python tests/backend_api/smoke_async.py --scenario multi \
-  --url http://127.0.0.1:5000 --config playground/data/backend_api.toml \
-  --data-directory playground/data
+  --url http://127.0.0.1:5000 --config playground/backend_api/config.toml \
+  --data-directory playground/backend_api
 ```
 
 `smoke_async.py` 的另外两个场景为 `parallel`、`logo`。Logo 场景依赖本地已确认的 Costco 图像 Alias。准确性评测发现任一差异会非零退出并保留报告；不得忽略失败后宣称识别全部通过。

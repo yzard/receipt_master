@@ -24,7 +24,7 @@ if (
     or url.hostname in ('localhost', '0.0.0.0', '127.0.0.1')
 ):
     raise ValueError('Set RECEIPT_BACKEND_ENDPOINT to a phone-accessible HTTP(S) backend URL')
-api_config = tomllib.loads((args.root / 'playground/data/backend_api.toml').read_text())
+api_config = tomllib.loads((args.root / 'playground/backend_api/config.toml').read_text())
 key = api_config['general']['api_key'].strip()
 if len(key) < 24:
     raise ValueError('Backend API key is invalid')

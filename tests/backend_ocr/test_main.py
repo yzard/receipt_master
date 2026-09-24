@@ -55,6 +55,19 @@ def photo():
 
 
 class VisionTest(unittest.TestCase):
+    def test_config_loads_only_from_data_directory(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            data_dir = Path(tmp).resolve()
+            with self.assertRaises(FileNotFoundError):
+                load_config(data_dir)
+            template = Path(__file__).parents[2] / 'docker/defaults/backend_ocr.toml'
+            (data_dir / 'config.toml').write_text(
+                template.read_text().replace('api_key = ""', f'api_key = "{OCR_KEY}"')
+            )
+            self.assertEqual(load_config(data_dir).general.api_key, OCR_KEY)
+            with self.assertRaises(ValueError):
+                load_config(Path('relative-directory'))
+
     def test_inference_and_capabilities_require_service_key(self):
         import httpx
 

@@ -11,7 +11,7 @@
 
 ## 按需加载与空闲卸载
 
-`playground/data/backend_ocr.toml` 的 `[general]` 配置 `idle_timeout_seconds = 300`（秒，必须大于零）。修改后重启 OCR 容器生效。
+`playground/backend_ocr/config.toml` 的 `[general]` 配置 `idle_timeout_seconds = 300`（秒，必须大于零）。修改后重启 OCR 容器生效。
 
 - 容器启动只运行轻量 HTTP 服务，不启动 NInfer、不加载权重。
 - 有效任务进入串行队列后自动启动 NInfer，等待模型就绪，再进行推理；首个任务包含模型冷启动时间。加载与推理共用 `timeout_seconds` 上限。
@@ -30,7 +30,7 @@
 
 ## 提示配置
 
-推理设置由 [backend_ocr.toml](../playground/data/backend_ocr.toml) 管理：`[engine]` 包括模型、图片上限、收据与 Logo 各自的输出 token 上限、thinking、温度和随机种子。`[general]` 包括监听地址和内嵌的 OCR 专用 `api_key`。Backend API 的 `[ocr]` 只有 URL 和同一 `api_key`。Logo 定位、Logo 图片比对、收据通用和商店专用提示词都在 [prompt.toml](../playground/data/prompt.toml)；首次运行从 `docker/defaults/` 安装模板，以后保留 `/data` 内的修改。修改提示词重启 API，修改推理参数重启 OCR。
+推理设置由 [OCR config.toml](../playground/backend_ocr/config.toml) 管理：`[engine]` 包括模型、图片上限、收据与 Logo 各自的输出 token 上限、thinking、温度和随机种子。`[general]` 包括监听地址和内嵌的 OCR 专用 `api_key`。Backend API 的 `[ocr]` 只有 URL 和同一 `api_key`。Logo 定位、Logo 图片比对、收据通用和商店专用提示词都在 [prompt.toml](../playground/backend_api/prompt.toml)；首次运行从 `docker/defaults/` 安装模板，以后保留 `/data` 内的修改。修改提示词重启 API，修改推理参数重启 OCR。
 
 ```toml
 [[general]]
@@ -88,7 +88,7 @@ prompt = '''
 
 ## Logo 匹配切换（2026-09-18）
 
-`playground/data/prompt.toml` 的 `logo.match_reference` 使用评测通过的简短提示词，thinking 继承 OCR 设置。图片最长边 768，4096 输出 token，temperature=0、seed=42。每次最多 15 个参考（受配置的最大图片数量进一步限制），较大的库分批遍历；若不同批次/查询图选择了不同店名，返回未知。返回编号必须属于当前批次，拒绝额外字段、伪造编号、截断和错误类型。
+`playground/backend_api/prompt.toml` 的 `logo.match_reference` 使用评测通过的简短提示词，thinking 继承 OCR 设置。图片最长边 768，4096 输出 token，temperature=0、seed=42。每次最多 15 个参考（受配置的最大图片数量进一步限制），较大的库分批遍历；若不同批次/查询图选择了不同店名，返回未知。返回编号必须属于当前批次，拒绝额外字段、伪造编号、截断和错误类型。
 
 匹配过程保留图片/目录版本检查，过程中发生删除、旋转或 Alias 修改时拒绝过期结果。异步识别记录包含匹配响应和合计 token 用量。
 

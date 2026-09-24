@@ -30,6 +30,7 @@ use config::Config;
 use error::AppError;
 use serde_json::{Value, json};
 use std::{
+    path::PathBuf,
     sync::Arc,
     time::{Duration, Instant},
 };
@@ -39,6 +40,7 @@ use tower_http::services::ServeFile;
 
 pub struct State {
     pub config: Config,
+    pub data_dir: PathBuf,
     pub prompts: prompts::Prompts,
     pub client: reqwest::Client,
     pub lock: tokio::sync::Semaphore,
@@ -48,7 +50,10 @@ pub struct State {
     pub(crate) ocr_authorization: String,
 }
 impl State {
-    pub fn new(config: Config) -> Result<Arc<Self>, Box<dyn std::error::Error + Send + Sync>> {
+    pub fn new(
+        config: Config,
+        data_dir: PathBuf,
+    ) -> Result<Arc<Self>, Box<dyn std::error::Error + Send + Sync>> {
         let client = reqwest::Client::builder()
             .no_proxy()
             .timeout(Duration::from_secs(config.general.timeout_seconds))
@@ -56,11 +61,11 @@ impl State {
         let job_workers = config.general.job_workers;
         let authorization = format!("Bearer {}", config.general.api_key.trim()).into_bytes();
         let ocr_authorization = format!("Bearer {}", config.ocr.api_key.trim());
-        let prompts = prompts::Prompts::parse(&std::fs::read_to_string(
-            config.general.data_dir.join("prompt.toml"),
-        )?)?;
+        let prompts =
+            prompts::Prompts::parse(&std::fs::read_to_string(data_dir.join("prompt.toml"))?)?;
         Ok(Arc::new(Self {
             config,
+            data_dir,
             prompts,
             client,
             lock: tokio::sync::Semaphore::new(job_workers),
@@ -116,7 +121,7 @@ async fn model_health(AxumState(state): AxumState<Arc<State>>) -> Response {
     Json(json!({"status":"ready"})).into_response()
 }
 async fn health(AxumState(state): AxumState<Arc<State>>) -> Result<Json<Value>, AppError> {
-    let root = state.config.general.data_dir.clone();
+    let root = state.data_dir.clone();
     tokio::task::spawn_blocking(move || db::Store::open(&root).map(|_| ()))
         .await
         .map_err(db::io_error)??;

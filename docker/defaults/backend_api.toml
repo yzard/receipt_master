@@ -2,14 +2,10 @@
 host = "0.0.0.0"
 port = 8000
 api_key = ""
-data_dir = "/data"
 apk_path = "/artifacts/receipt_master.apk"
 timeout_seconds = 600
 job_workers = 1
 repair_attempts = 1
-
-[logos]
-enabled = true
 
 [ocr]
 url = "http://backend_ocr:8000"

@@ -14,8 +14,11 @@ RUN --mount=type=cache,target=/usr/local/cargo/registry --mount=type=cache,targe
     && cp /target/release/receipt-backend-api /receipt-backend-api
 
 FROM debian:bookworm-slim AS runtime
-RUN apt-get update && apt-get install -y --no-install-recommends ca-certificates curl && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get install -y --no-install-recommends ca-certificates curl gosu && rm -rf /var/lib/apt/lists/*
 WORKDIR /app
 COPY --from=checks /receipt-backend-api /app/receipt-backend-api
-ENTRYPOINT ["/app/receipt-backend-api"]
-CMD ["--config", "/data/backend_api.toml"]
+COPY docker/service-entrypoint.sh /app/service-entrypoint.sh
+RUN chmod +x /app/service-entrypoint.sh
+ENV RECEIPT_SERVICE=api
+ENTRYPOINT ["/app/service-entrypoint.sh", "/app/receipt-backend-api"]
+CMD ["--data-dir", "/data"]

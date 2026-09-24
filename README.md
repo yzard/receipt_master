@@ -17,10 +17,12 @@
 ```
 
 `build_docker.sh` 执行后端检查、Docker 内 Android 构建，并构建 API/OCR 两个镜像。`run_playground.sh` 总是先构建，再以前台 Compose 启动服务并持续显示日志；Ctrl+C 停止服务，保留数据。iOS 使用独立的 `build_ios.sh /absolute/path/to/flutter`，需要 macOS/Xcode。
+启动脚本向两个容器传入当前用户的 `PUID` 和 `GUID`，服务以该 UID/GID 运行。直接使用 Compose 时需先设置这两个环境变量。
 
 ### 数据和地址
 
-- 宿主 `playground/data/` → API 容器 `/data`，存放 SQLite、原始照片、衍生图、OCR JSON 和备份。
+- 宿主 `playground/backend_api/` → API 容器 `/data`，存放 `config.toml`、`prompt.toml`、SQLite、收据照片、识别结果和备份。
+- 宿主 `playground/backend_ocr/` → OCR 容器 `/data`，仅存放该服务的 `config.toml`；模型权重随 OCR 镜像提供。
 - `0.0.0.0:5000` → API 容器 `8000`；启动脚本打印实际宿主网络地址。手机使用同一网络可达的 host 和 port。
 - OCR 只在 Docker 内部网络通信；Qwen3.8-27B NVFP4 模型权重（同时负责 Logo 图片匹配）打包在 OCR 镜像中，API 不运行模型。
 - 下载 `/receipt_master.apk`。安装包预置后端地址和认证密钥；设置页“检查客户端更新”从同一服务检查版本和哈希，再交 Android 安装器确认。
@@ -34,7 +36,7 @@
 
 构建要求、第一版历史和之前验证记录保留在 `docs/implementation_status.md` 与 `docs/1st_plan.md`。
 
-API 连接与认证配置在 [backend_api.toml](playground/data/backend_api.toml)；模型和推理参数配置在 [backend_ocr.toml](playground/data/backend_ocr.toml)。客户端只负责认证、采集、提交任务、编辑和显示服务器结果。
+API 连接与认证配置在 [API config.toml](playground/backend_api/config.toml)；模型和推理参数配置在 [OCR config.toml](playground/backend_ocr/config.toml)。客户端只负责认证、采集、提交任务、编辑和显示服务器结果。
 
 ## OCR 回归评测
 
@@ -42,4 +44,4 @@ API 连接与认证配置在 [backend_api.toml](playground/data/backend_api.toml
 
 当前：[Qwen3.8 / NInfer 与可配置提示架构](docs/backend_ocr.md)。历史对照：[Unlimited-OCR / PP-OCRv6](docs/ocr_model_comparison.md)。
 
-Logo 定位/比对及通用与商店提示配置：[playground/data/prompt.toml](playground/data/prompt.toml)，采用 `[[general]]` / `[[store]]`，修改后重启 API。模型开启 thinking，旧双 OCR 与 parser 已移除。
+Logo 定位/比对及通用与商店提示配置：[playground/backend_api/prompt.toml](playground/backend_api/prompt.toml)，采用 `[[general]]` / `[[store]]`，修改后重启 API。模型开启 thinking，旧双 OCR 与 parser 已移除。

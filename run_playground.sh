@@ -5,7 +5,8 @@ if (( $# != 0 )); then
   exit 2
 fi
 project_dir="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
-mkdir -p "$project_dir/playground/data"
+export PUID="$(id -u)" GUID="$(id -g)"
+mkdir -p "$project_dir/playground/backend_api" "$project_dir/playground/backend_ocr"
 "$project_dir/build_docker.sh"
 # Discover host addresses, excluding Docker bridges and virtual container interfaces.
 receipt_host_ips=""

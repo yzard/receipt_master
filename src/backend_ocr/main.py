@@ -263,8 +263,8 @@ def main():
     import uvicorn
 
     parser = argparse.ArgumentParser()
-    parser.add_argument("--config", type=Path, required=True)
-    config = load_config(parser.parse_args().config)
+    parser.add_argument("--data-dir", type=Path, required=True)
+    config = load_config(parser.parse_args().data_dir)
     uvicorn.run(create_application(config), host=config.general.host, port=config.general.port, log_level="info")
 
 

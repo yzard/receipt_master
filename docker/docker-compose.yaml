@@ -18,8 +18,11 @@ services:
     <<: *gpu
     restart: unless-stopped
     image: receipt-master-backend-ocr:local
+    environment:
+      PUID: ${PUID:?Set PUID to the host user ID}
+      GUID: ${GUID:?Set GUID to the host group ID}
     volumes:
-      - ../playground/data/backend_ocr.toml:/data/backend_ocr.toml:ro
+      - ../playground/backend_ocr:/data:ro
     networks: [inference]
   backend_api:
     init: true
@@ -30,10 +33,13 @@ services:
       timeout: 6s
       retries: 10
     image: receipt-master-backend-api:local
+    environment:
+      PUID: ${PUID:?Set PUID to the host user ID}
+      GUID: ${GUID:?Set GUID to the host group ID}
     ports: ["0.0.0.0:5000:8000"]
     volumes:
       - ../build/mobile:/artifacts:ro
-      - ../playground/data:/data
+      - ../playground/backend_api:/data
     networks: [inference, ingress]
 networks:
   inference:

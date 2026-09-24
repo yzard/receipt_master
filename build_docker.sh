@@ -5,7 +5,15 @@ if (( $# != 0 )); then
   exit 2
 fi
 project_dir="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
+export PUID="${PUID:-$(id -u)}" GUID="${GUID:-$(id -g)}"
 python3 -m unittest discover -s "$project_dir/tests" -p test_playground_config.py
+if [[ -d "$project_dir/playground/data" || -d "$project_dir/playground/backend_api/data" || -d "$project_dir/playground/backend_ocr/data" ]]; then
+  # Old containers can own SQLite WAL and root-owned directories; stop them before moving data.
+  docker compose --file "$project_dir/docker/docker-compose.yaml" stop
+  docker run --rm --mount "type=bind,source=$project_dir,target=/workspace" \
+    python:3.12-slim python /workspace/docker/prepare_playground_config.py \
+    --root /workspace --migrate-only
+fi
 python3 "$project_dir/docker/prepare_playground_config.py" --root "$project_dir"
 # Each backend image includes its own mandatory checks; neither build needs a GPU.
 for component in backend_ocr backend_api; do
