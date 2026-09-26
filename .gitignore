@@ -1,0 +1,17 @@
+build/
+dist/
+*.zip
+*.sqlite*
+*.receiptbackup
+.DS_Store
+playground/secrets/
+__pycache__/
+.pytest_cache/
+.venv/
+*.egg-info/
+
+playground/android-release-state.json
+
+/playground/data/
+/playground/backend_api/
+/playground/backend_ocr/
