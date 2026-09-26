@@ -156,136 +156,228 @@ class _CapturePageState extends State<CapturePage> with WidgetsBindingObserver {
   Widget build(BuildContext context) => PopScope(
     canPop: !busy,
     child: Scaffold(
-      appBar: AppBar(title: Text('拍摄收据 · ${session.pages.length} 张')),
-      body: SafeArea(
-        child: Column(
-          children: [
-            if (busy) const LinearProgressIndicator(),
-            Expanded(
-              child: Center(
-                child: error != null
-                    ? Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text(error!),
-                          TextButton(
-                            onPressed: scheduleCamera,
-                            child: const Text('重试相机'),
-                          ),
-                        ],
-                      )
-                    : camera?.value.isInitialized == true
-                    ? CameraPreview(camera!)
-                    : const CircularProgressIndicator(),
+      backgroundColor: Colors.black,
+      body: Stack(
+        children: [
+          Positioned.fill(
+            child: Center(
+              child: camera?.value.isInitialized == true
+                  ? CameraPreview(camera!)
+                  : const CircularProgressIndicator(),
+            ),
+          ),
+          if (error != null)
+            Positioned.fill(
+              child: ColoredBox(
+                color: Colors.black87,
+                child: Center(
+                  child: Padding(
+                    padding: const EdgeInsets.all(24),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          error!,
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(color: Colors.white),
+                        ),
+                        TextButton(
+                          onPressed: scheduleCamera,
+                          child: const Text('重试相机'),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
               ),
             ),
-            const Padding(
-              padding: EdgeInsets.all(8),
-              child: Text(
-                '同一张收据可拍多张，相邻照片保留重叠区域。',
-                style: TextStyle(fontSize: 12),
+          Positioned(
+            top: 0,
+            left: 0,
+            right: 0,
+            child: Container(
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [Color(0xB8000000), Colors.transparent],
+                ),
+              ),
+              child: SafeArea(
+                bottom: false,
+                child: Row(
+                  children: [
+                    BackButton(
+                      onPressed: busy ? null : () => Navigator.pop(context),
+                      color: Colors.white,
+                    ),
+                    Expanded(
+                      child: Text(
+                        '拍摄收据 · ${session.pages.length} 张',
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 19,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
-            if (session.pages.isNotEmpty)
-              SizedBox(
-                height: 88,
-                child: ListView.builder(
-                  scrollDirection: Axis.horizontal,
-                  itemCount: session.pages.length,
-                  itemBuilder: (context, i) => Stack(
-                    children: [
-                      InkWell(
-                        onTap: busy ? null : () => setState(() => selected = i),
-                        child: Container(
-                          width: 72,
-                          margin: const EdgeInsets.all(4),
-                          padding: const EdgeInsets.all(2),
-                          decoration: BoxDecoration(
-                            border: Border.all(
-                              color: selected == i
-                                  ? Theme.of(context).colorScheme.primary
-                                  : Colors.grey,
-                              width: selected == i ? 3 : 1,
-                            ),
-                          ),
-                          child: Column(
+          ),
+          Positioned(
+            left: 0,
+            right: 0,
+            bottom: 0,
+            child: Container(
+              padding: const EdgeInsets.fromLTRB(14, 28, 14, 0),
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [Colors.transparent, Color(0xE9000000)],
+                ),
+              ),
+              child: SafeArea(
+                top: false,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    if (busy) const LinearProgressIndicator(),
+                    const Text(
+                      '分段拍摄时，让相邻照片保留重叠区域',
+                      style: TextStyle(color: Colors.white70, fontSize: 12),
+                    ),
+                    if (session.pages.isNotEmpty)
+                      SizedBox(
+                        height: 90,
+                        child: ListView.builder(
+                          scrollDirection: Axis.horizontal,
+                          itemCount: session.pages.length,
+                          itemBuilder: (context, i) => Stack(
                             children: [
-                              Expanded(
-                                child: Image.file(
-                                  session.file(i),
-                                  key: ValueKey(session.pages[i]),
-                                  fit: BoxFit.contain,
-                                  errorBuilder: (context, error, stack) =>
-                                      const Icon(
+                              InkWell(
+                                key: ValueKey('capture-thumbnail-$i'),
+                                onTap: busy
+                                    ? null
+                                    : () => setState(() => selected = i),
+                                child: Container(
+                                  width: 76,
+                                  height: 80,
+                                  margin: const EdgeInsets.all(5),
+                                  padding: const EdgeInsets.all(2),
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(9),
+                                    border: Border.all(
+                                      color: selected == i
+                                          ? const Color(0xFFADC2FF)
+                                          : Colors.white54,
+                                      width: selected == i ? 3 : 1,
+                                    ),
+                                  ),
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(6),
+                                    child: Image.file(
+                                      session.file(i),
+                                      key: ValueKey(session.pages[i]),
+                                      fit: BoxFit.cover,
+                                      errorBuilder: (_, _, _) => const Icon(
                                         Icons.image_not_supported_outlined,
+                                        color: Colors.white,
                                       ),
+                                    ),
+                                  ),
                                 ),
                               ),
-                              Text(
-                                '${i + 1}',
-                                style: const TextStyle(fontSize: 10),
+                              Positioned(
+                                top: 0,
+                                right: 0,
+                                child: Tooltip(
+                                  message: '删除第 ${i + 1} 张照片',
+                                  child: GestureDetector(
+                                    onTap: busy ? null : () => removePhoto(i),
+                                    behavior: HitTestBehavior.opaque,
+                                    child: const SizedBox(
+                                      width: 44,
+                                      height: 44,
+                                      child: Icon(
+                                        Icons.cancel,
+                                        size: 22,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              Positioned(
+                                left: 10,
+                                bottom: 8,
+                                child: IgnorePointer(
+                                  child: Text(
+                                    '${i + 1}',
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.w800,
+                                      shadows: [Shadow(blurRadius: 5)],
+                                    ),
+                                  ),
+                                ),
                               ),
                             ],
                           ),
                         ),
                       ),
-                      Positioned(
-                        top: 0,
-                        right: 0,
-                        child: IconButton(
-                          tooltip: '删除第 ${i + 1} 张照片',
-                          onPressed: busy ? null : () => removePhoto(i),
-                          icon: const DecoratedBox(
-                            decoration: BoxDecoration(
-                              color: Colors.black87,
-                              shape: BoxShape.circle,
-                            ),
-                            child: Padding(
-                              padding: EdgeInsets.all(3),
-                              child: Icon(
-                                Icons.close,
-                                size: 18,
-                                color: Colors.white,
-                              ),
-                            ),
-                          ),
+                    if (selected >= 0)
+                      Text(
+                        '重拍将替换第 ${selected + 1} 张',
+                        style: const TextStyle(
+                          color: Colors.white70,
+                          fontSize: 12,
                         ),
                       ),
-                    ],
-                  ),
+                    const SizedBox(height: 12),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: OutlinedButton(
+                            style: OutlinedButton.styleFrom(
+                              foregroundColor: Colors.white,
+                              side: const BorderSide(color: Colors.white54),
+                            ),
+                            onPressed: busy || selected < 0 || camera == null
+                                ? null
+                                : () => shoot(true),
+                            child: const Text('重拍'),
+                          ),
+                        ),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: FilledButton(
+                            onPressed: busy || camera == null
+                                ? null
+                                : () => shoot(false),
+                            child: const Text('拍摄'),
+                          ),
+                        ),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: FilledButton.tonal(
+                            onPressed: busy || session.pages.isEmpty
+                                ? null
+                                : finish,
+                            child: const Text('完成'),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 12),
+                  ],
                 ),
               ),
-            if (selected >= 0)
-              Text(
-                '重拍将替换第 ${selected + 1} 张',
-                style: const TextStyle(fontSize: 12),
-              ),
-            Padding(
-              padding: const EdgeInsets.all(12),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  OutlinedButton(
-                    onPressed: busy || selected < 0 || camera == null
-                        ? null
-                        : () => shoot(true),
-                    child: const Text('重拍'),
-                  ),
-                  FilledButton(
-                    onPressed: busy || camera == null
-                        ? null
-                        : () => shoot(false),
-                    child: const Text('拍摄'),
-                  ),
-                  FilledButton.tonal(
-                    onPressed: busy || session.pages.isEmpty ? null : finish,
-                    child: const Text('完成'),
-                  ),
-                ],
-              ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     ),
   );

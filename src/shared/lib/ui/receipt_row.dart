@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'app_theme.dart';
+
 /// A left swipe reveals a deliberate delete action; swiping alone never deletes.
 class ReceiptRow extends StatefulWidget {
   final String name, date, receiptDate, amount;
@@ -77,10 +79,10 @@ class _ReceiptRowState extends State<ReceiptRow> {
                   : (_) => setState(() => reveal = reveal >= 30 ? 80 : 0),
               child: Material(
                 color: widget.failed
-                    ? Colors.red.shade100
+                    ? AppPalette.errorSurface(context)
                     : widget.draft
-                    ? Colors.yellow.shade100
-                    : Theme.of(context).scaffoldBackgroundColor,
+                    ? AppPalette.warningSurface(context)
+                    : Theme.of(context).colorScheme.surfaceContainerLow,
                 child: InkWell(
                   onTap: deleting
                       ? null
@@ -121,8 +123,8 @@ class _ReceiptRowState extends State<ReceiptRow> {
                           ),
                         ],
                       ),
-                      date: _date(widget.date),
-                      receiptDate: _date(widget.receiptDate),
+                      date: _date(context, widget.date),
+                      receiptDate: _date(context, widget.receiptDate),
                       amount: Text(
                         widget.amount,
                         maxLines: 1,
@@ -144,12 +146,12 @@ class _ReceiptRowState extends State<ReceiptRow> {
   );
 }
 
-Widget _date(String value) => Text(
+Widget _date(BuildContext context, String value) => Text(
   value.replaceFirst(' ', '\n'),
   maxLines: 2,
-  style: const TextStyle(
+  style: TextStyle(
     fontSize: 11,
-    color: Colors.black87,
+    color: AppPalette.muted(context),
     fontFeatures: [FontFeature.tabularFigures()],
   ),
 );
@@ -190,7 +192,7 @@ class ReceiptTableHeader extends StatelessWidget {
     required this.direction,
     required this.onSort,
   });
-  Widget heading(String label, String key) => InkWell(
+  Widget heading(BuildContext context, String label, String key) => InkWell(
     onTap: () => onSort(key),
     child: Semantics(
       button: true,
@@ -218,12 +220,12 @@ class ReceiptTableHeader extends StatelessWidget {
   Widget build(BuildContext context) => Padding(
     padding: const EdgeInsets.symmetric(horizontal: 8),
     child: DefaultTextStyle(
-      style: const TextStyle(fontSize: 11, color: Colors.black87),
+      style: TextStyle(fontSize: 11, color: AppPalette.muted(context)),
       child: ReceiptColumns(
-        name: heading('店名', 'store'),
-        date: heading('录入时间', 'created_at'),
-        receiptDate: heading('收据时间', 'receipt_time'),
-        amount: heading('总金额', 'total'),
+        name: heading(context, '店名', 'store'),
+        date: heading(context, '录入时间', 'created_at'),
+        receiptDate: heading(context, '收据时间', 'receipt_time'),
+        amount: heading(context, '总金额', 'total'),
       ),
     ),
   );

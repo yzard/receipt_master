@@ -637,13 +637,36 @@ async fn clients_cannot_configure_ocr_or_pricing() {
     )
     .await;
     assert_eq!(status, 200);
-    assert_eq!(reply["data"], json!({"weight_unit":"kg"}));
+    assert_eq!(
+        reply["data"],
+        json!({"weight_unit":"kg","report_currency":"USD"})
+    );
+    let (status, _) = request(
+        &f,
+        "POST",
+        "/api/v1/config/save_report_currency",
+        Some(json!({"request_key":uuid::Uuid::new_v4().to_string(),"input":{"report_currency":"JPY","expected_version":reply["catalog_version"]}})),
+        true,
+    )
+    .await;
+    assert_eq!(status, 200);
+    let (status, reply) = request(
+        &f,
+        "POST",
+        "/api/v1/config/get",
+        Some(json!({"input":{}})),
+        true,
+    )
+    .await;
+    assert_eq!(status, 200);
+    assert_eq!(reply["data"]["report_currency"], "JPY");
+    let version = reply["catalog_version"].clone();
     for (component, input) in [
         (
             "config",
-            json!({"expected_version":0,"input_rate_micros":0,"output_rate_micros":0}),
+            json!({"expected_version":version,"input_rate_micros":0,"output_rate_micros":0}),
         ),
-        ("budgets", json!({"expected_version":0,"amount":1})),
+        ("budgets", json!({"expected_version":version,"amount":1})),
     ] {
         let (status, _) = request(
             &f,
@@ -655,6 +678,22 @@ async fn clients_cannot_configure_ocr_or_pricing() {
         .await;
         assert_eq!(status, 404);
     }
+}
+
+#[tokio::test]
+async fn trend_route_returns_read_only_calendar_series() {
+    let fixture = fixture(0).await;
+    let (status, reply) = request(
+        &fixture,
+        "POST",
+        "/api/v1/reports/trend",
+        Some(json!({"input":{"anchor":1780000000000i64,"zone":"UTC","period":"month","window":0,"category":null}})),
+        true,
+    )
+    .await;
+    assert_eq!(status, 200);
+    assert_eq!(reply["data"]["currency"], "USD");
+    assert_eq!(reply["data"]["points"].as_array().unwrap().len(), 12);
 }
 
 #[tokio::test(flavor = "multi_thread", worker_threads = 2)]

@@ -39,12 +39,18 @@ pub async fn execute(
                 .await?,
         ));
     }
+    if component == "reports" && matches!(operation.as_str(), "summary" | "details") {
+        crate::exchange::ensure_rates(&state, &body.input).await?;
+    }
+    if component == "reports" && operation == "trend" {
+        crate::exchange::ensure_trend_rates(&state, &body.input).await?;
+    }
     let _guard = state.storage_lock.lock().await;
     let root = state.data_dir.clone();
     let reply=tokio::task::spawn_blocking(move||{
   let store=Store::open(&root)?;
-  let read=matches!(operation.as_str(),"get"|"list"|"runs"|"suggest"|"summary"|"details"|"check_duplicates"|"edit"|"display_line"|"prepare_line"|"time_candidates"|"range");
-  if component=="config"&&operation=="get" {return Ok(json!({"data":store.one("SELECT weight_unit FROM app_preferences WHERE id=1",&[])?,"catalog_version":store.one("SELECT version FROM catalog_version WHERE id=1",&[])?["version"]}));}
+  let read=matches!(operation.as_str(),"get"|"list"|"runs"|"suggest"|"summary"|"details"|"trend"|"check_duplicates"|"edit"|"display_line"|"prepare_line"|"time_candidates"|"range");
+  if component=="config"&&operation=="get" {return Ok(json!({"data":store.one("SELECT a.weight_unit,r.currency_code AS report_currency FROM app_preferences a CROSS JOIN report_preferences r WHERE a.id=1 AND r.id=1",&[])?,"catalog_version":store.one("SELECT version FROM catalog_version WHERE id=1",&[])?["version"]}));}
   if component=="exports"{return store.export_action(&operation,&body.input);}
   if component=="maintenance"{return store.restore_action(&operation,&body.input);}
   let result=store.transaction(||{

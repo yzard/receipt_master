@@ -213,11 +213,7 @@ void main() {
     await tester.pumpAndSettle();
     expect(writes, ['Rice', '', '鸡蛋']);
     Future<void> tab(String text) async {
-      final target = find.descendant(
-        of: find.byType(SegmentedButton<int>),
-        matching: find.text(text),
-      );
-      await tester.ensureVisible(target);
+      final target = find.widgetWithText(ChoiceChip, text);
       await tester.tap(target);
       await tester.pumpAndSettle();
     }
@@ -394,12 +390,7 @@ void main() {
         }
       }
       expect(divider, findsNothing);
-      await tester.tap(
-        find.descendant(
-          of: find.byType(SegmentedButton<int>),
-          matching: find.text('商品分类'),
-        ),
-      );
+      await tester.tap(find.widgetWithText(ChoiceChip, '商品分类'));
       await tester.pumpAndSettle();
       ordered([
         row('category-two'),
@@ -427,6 +418,71 @@ void main() {
         row('category-two'),
         row('category-three'),
       ]);
+    },
+  );
+
+  testWidgets(
+    'missing category remains editable and catalog supports pull refresh',
+    (tester) async {
+      var categoryLoads = 0;
+      final store = AppStore(
+        '/unused',
+        configuration: () async =>
+            const BackendConnection('https://example.test', 'key'),
+        client: MockClient((req) async {
+          dynamic data;
+          switch (req.url.path) {
+            case '/api/v1/config/get':
+              data = {'weight_unit': 'kg'};
+            case '/api/v1/categories/list':
+              categoryLoads++;
+              data = [
+                {
+                  'category_id': 'uncategorized',
+                  'name': '未分类',
+                  'path': '未分类',
+                  'system_key': 'uncategorized',
+                },
+              ];
+            case '/api/v1/printed_names/list':
+              data = [];
+            case '/api/v1/product_names/list':
+              data = [
+                {
+                  'product_name_id': 'rice',
+                  'name': '大米',
+                  'category_id': 'removed',
+                },
+              ];
+            default:
+              throw StateError(req.url.path);
+          }
+          return http.Response(
+            jsonEncode({'data': data}),
+            200,
+            headers: {'content-type': 'application/json; charset=utf-8'},
+          );
+        }),
+      );
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: CatalogPage(
+              store: store,
+              zone: 'UTC',
+              onReceipt: (_) async {},
+            ),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+      await tester.tap(find.widgetWithText(ChoiceChip, '商品分类'));
+      await tester.pumpAndSettle();
+      expect(find.text('未分类'), findsWidgets);
+      await tester.drag(find.byType(ListView).last, const Offset(0, 320));
+      await tester.pumpAndSettle();
+      expect(categoryLoads, 2);
+      expect(tester.takeException(), isNull);
     },
   );
 }

@@ -3,10 +3,7 @@ import 'package:intl/intl.dart';
 import 'package:timezone/timezone.dart' as tz;
 
 import '../domain/models.dart';
-
-const ink = Color(0xFF203C32),
-    paper = Color(0xFFF6F5EF),
-    warning = Color(0xFFFFF0B3);
+import 'app_theme.dart';
 
 String itemDisplayName(String? productName, String? printedName, String kind) {
   final product = productName?.trim() ?? '';
@@ -40,7 +37,7 @@ class ReceiptItemName extends StatelessWidget {
           Flexible(
             child: Text(
               printedName,
-              style: const TextStyle(fontSize: 12, color: Colors.black54),
+              style: TextStyle(fontSize: 12, color: AppPalette.muted(context)),
             ),
           ),
         ],
@@ -160,14 +157,14 @@ class EmptyState extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, size: 56, color: ink),
+          Icon(icon, size: 56, color: Theme.of(context).colorScheme.primary),
           const SizedBox(height: 20),
           Text(title, style: Theme.of(context).textTheme.titleLarge),
           const SizedBox(height: 8),
           Text(
             detail,
             textAlign: TextAlign.center,
-            style: const TextStyle(color: Colors.black54, height: 1.6),
+            style: TextStyle(color: AppPalette.muted(context), height: 1.6),
           ),
         ],
       ),
@@ -184,8 +181,8 @@ class Notice extends StatelessWidget {
     padding: const EdgeInsets.all(12),
     margin: const EdgeInsets.symmetric(vertical: 8),
     decoration: BoxDecoration(
-      color: warning,
-      borderRadius: BorderRadius.circular(10),
+      color: AppPalette.warningSurface(context),
+      borderRadius: BorderRadius.circular(14),
     ),
     child: Row(
       crossAxisAlignment: CrossAxisAlignment.start,

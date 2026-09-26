@@ -16,9 +16,11 @@ class AppStore extends ChangeNotifier {
   final Future<BackendConnection> Function() configuration;
   int catalogVersion = 0;
   String weightUnit = 'kg';
+  String reportCurrency = 'USD';
   Future<void> loadPreferences() async {
     final config = await request('config', 'get', {});
     weightUnit = config['weight_unit'];
+    reportCurrency = config['report_currency'] ?? 'USD';
   }
 
   Future<void> saveWeightUnit(String unit) async {
@@ -27,6 +29,14 @@ class AppStore extends ChangeNotifier {
       'expected_version': catalogVersion,
     });
     weightUnit = unit;
+  }
+
+  Future<void> saveReportCurrency(String currency) async {
+    await request('config', 'save_report_currency', {
+      'report_currency': currency,
+      'expected_version': catalogVersion,
+    });
+    reportCurrency = currency;
   }
 
   final Map<String, int> versions = {};
@@ -168,13 +178,6 @@ class AppStore extends ChangeNotifier {
     Map<String, dynamic> input,
   ) async =>
       rows(await request('receipts', 'check_duplicates', {'receipt': input}));
-  Future<void> trash(String id, int? now) async {
-    await request('receipts', now == null ? 'restore' : 'trash', {
-      'id': id,
-      'expected_version': versions[id],
-    });
-  }
-
   Future<void> purge(String id) async {
     await request('receipts', 'purge', {
       'id': id,
@@ -448,8 +451,8 @@ class AppStore extends ChangeNotifier {
   Future<Map<String, dynamic>> report(
     int start,
     int end,
-    String currency,
     String? category,
+    String zone,
   ) async {
     int? offset = 0;
     Map<String, dynamic>? result;
@@ -459,8 +462,8 @@ class AppStore extends ChangeNotifier {
         await request('reports', 'summary', {
           'start': start,
           'end': end,
-          'currency': currency,
           'category': category,
+          'zone': zone,
           'offset': offset,
         }),
       );

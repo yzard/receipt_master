@@ -15,18 +15,22 @@ import '../data/store.dart';
 import '../data/backend_connection.dart';
 import '../data/backend_defaults.dart';
 import '../data/android_update.dart';
+import '../domain/models.dart';
 
 import 'common.dart';
+import 'app_theme.dart';
 
 class SettingsPage extends StatefulWidget {
   final AppStore store;
   final String zone;
   final Future<void> Function() onChanged;
+  final Appearance appearance;
   const SettingsPage({
     super.key,
     required this.store,
     required this.zone,
     required this.onChanged,
+    required this.appearance,
   });
   @override
   State<SettingsPage> createState() => _SettingsPageState();
@@ -35,6 +39,7 @@ class SettingsPage extends StatefulWidget {
 class _SettingsPageState extends State<SettingsPage> {
   final endpoint = TextEditingController(), keyField = TextEditingController();
   bool busy = false, loaded = false;
+  bool revealKey = false;
   String? message;
   @override
   void initState() {
@@ -54,13 +59,16 @@ class _SettingsPageState extends State<SettingsPage> {
       final connection = await loadBackendConnection();
       endpoint.text = connection.endpoint;
       keyField.text = connection.key;
-      await widget.store.loadPreferences();
-      if (mounted) setState(() => loaded = true);
     } catch (e) {
-      if (mounted) {
-        setState(() => loaded = true);
-        showError(context, e);
-      }
+      if (mounted) showError(context, e);
+    }
+    if (!mounted) return;
+    setState(() => loaded = true);
+    try {
+      await widget.store.loadPreferences();
+      if (mounted) setState(() {});
+    } catch (_) {
+      if (mounted) setState(() => message = '无法读取服务器偏好；仍可修改后端连接。');
     }
   }
 
@@ -95,6 +103,7 @@ class _SettingsPageState extends State<SettingsPage> {
     await vault.write(key: 'endpoint', value: origin);
     await vault.write(key: 'api_key', value: connection.key);
     widget.store.weightUnit = candidate.weightUnit;
+    widget.store.reportCurrency = candidate.reportCurrency;
     widget.store.catalogVersion = candidate.catalogVersion;
     await vault.delete(key: 'model');
     if (mounted) setState(() => message = '已连接后端并通过认证。');
@@ -191,27 +200,33 @@ class _SettingsPageState extends State<SettingsPage> {
     );
   }
 
-  Future<void> trash() async {
-    if (!mounted) return;
-    await Navigator.push(
-      context,
-      MaterialPageRoute<void>(
-        builder: (_) => TrashPage(store: widget.store, zone: widget.zone),
-      ),
-    );
-    await widget.onChanged();
-  }
-
   @override
   Widget build(BuildContext context) {
     if (!loaded) return const Center(child: CircularProgressIndicator());
     return AbsorbPointer(
       absorbing: busy,
       child: ListView(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.fromLTRB(16, 20, 16, 116),
         children: [
+          const PageHeading(title: '设置', subtitle: '让记录方式适合你'),
           if (busy) const LinearProgressIndicator(),
           if (message != null) Notice(message!),
+          Text('外观', style: Theme.of(context).textTheme.headlineSmall),
+          const SizedBox(height: 6),
+          Text(
+            '选择适合当前环境的显示方式。',
+            style: TextStyle(color: AppPalette.muted(context)),
+          ),
+          const SizedBox(height: 14),
+          AppearancePicker(
+            appearance: widget.appearance,
+            onError: (e) {
+              if (context.mounted) showError(context, e);
+            },
+          ),
+          const SizedBox(height: 28),
+          Text('偏好设置', style: Theme.of(context).textTheme.titleLarge),
+          const SizedBox(height: 12),
           if (Platform.isAndroid) ...[
             OutlinedButton.icon(
               onPressed: busy ? null : checkAndroidUpdate,
@@ -244,6 +259,25 @@ class _SettingsPageState extends State<SettingsPage> {
                     }
                   },
           ),
+          const SizedBox(height: 16),
+          DropdownButtonFormField<String>(
+            key: ValueKey('report-currency-${widget.store.reportCurrency}'),
+            initialValue: widget.store.reportCurrency,
+            decoration: const InputDecoration(
+              labelText: '报表显示币种',
+              helperText: '所有已确认收据按交易日汇率换算后统一统计。',
+            ),
+            items: currencies.keys
+                .map((code) => DropdownMenuItem(value: code, child: Text(code)))
+                .toList(),
+            onChanged: busy
+                ? null
+                : (code) {
+                    if (code != null) {
+                      action(() => widget.store.saveReportCurrency(code));
+                    }
+                  },
+          ),
           const SizedBox(height: 24),
           const Text(
             '后端连接',
@@ -259,10 +293,21 @@ class _SettingsPageState extends State<SettingsPage> {
           const SizedBox(height: 12),
           TextField(
             controller: keyField,
-            obscureText: true,
+            obscureText: !revealKey,
             enableSuggestions: false,
             autocorrect: false,
-            decoration: const InputDecoration(labelText: '后端访问密钥'),
+            decoration: InputDecoration(
+              labelText: '后端访问密钥',
+              suffixIcon: IconButton(
+                tooltip: revealKey ? '隐藏访问密钥' : '显示访问密钥',
+                onPressed: () => setState(() => revealKey = !revealKey),
+                icon: Icon(
+                  revealKey
+                      ? Icons.visibility_off_outlined
+                      : Icons.visibility_outlined,
+                ),
+              ),
+            ),
           ),
           const SizedBox(height: 20),
           FilledButton(
@@ -277,7 +322,7 @@ class _SettingsPageState extends State<SettingsPage> {
           ListTile(
             leading: const Icon(Icons.backup_outlined),
             title: const Text('导出完整备份'),
-            subtitle: const Text('包含照片、草稿和回收站；不含密钥'),
+            subtitle: const Text('包含照片和草稿；不含密钥'),
             onTap: () => action(backupData),
           ),
           ListTile(
@@ -295,113 +340,10 @@ class _SettingsPageState extends State<SettingsPage> {
             title: const Text('导出明细 CSV'),
             onTap: () => action(csv),
           ),
-          ListTile(
-            leading: const Icon(Icons.delete_outline),
-            title: const Text('回收站'),
-            onTap: trash,
-          ),
           const SizedBox(height: 24),
           const SizedBox(height: 30),
         ],
       ),
     );
   }
-}
-
-class TrashPage extends StatefulWidget {
-  final AppStore store;
-  final String zone;
-  const TrashPage({super.key, required this.store, required this.zone});
-  @override
-  State<TrashPage> createState() => _TrashPageState();
-}
-
-class _TrashPageState extends State<TrashPage> {
-  List<Map<String, dynamic>> rows = [];
-  bool loaded = false;
-  @override
-  void initState() {
-    super.initState();
-    load();
-  }
-
-  Future<void> load() async {
-    try {
-      final result = await widget.store.receipts(
-        true,
-        productNameId: null,
-        sortBy: "created_at",
-        direction: "desc",
-      );
-      if (mounted) {
-        setState(() {
-          rows = result;
-          loaded = true;
-        });
-      }
-    } catch (e) {
-      if (mounted) showError(context, e);
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(title: const Text('回收站')),
-    body: !loaded
-        ? const Center(child: CircularProgressIndicator())
-        : rows.isEmpty
-        ? const EmptyState(
-            icon: Icons.delete_outline,
-            title: '回收站是空的',
-            detail: '删除的收据可在这里恢复。',
-          )
-        : ListView(
-            children: [
-              for (final r in rows)
-                ListTile(
-                  title: Text(r['raw_store'] ?? '未命名收据'),
-                  subtitle: Text(
-                    dateText(r['occurred_at_utc_ms'], widget.zone),
-                  ),
-                  trailing: Wrap(
-                    children: [
-                      IconButton(
-                        tooltip: '恢复',
-                        icon: const Icon(Icons.restore),
-                        onPressed: () async {
-                          try {
-                            final id = r['receipt_id'] as String;
-                            await widget.store.trash(id, null);
-                            await load();
-                          } catch (e) {
-                            if (context.mounted) showError(context, e);
-                          }
-                        },
-                      ),
-                      IconButton(
-                        tooltip: '永久删除',
-                        icon: const Icon(Icons.delete_forever),
-                        onPressed: () async {
-                          try {
-                            if (!await confirm(
-                              context,
-                              '永久删除？',
-                              '此操作不能从回收站恢复。',
-                            )) {
-                              return;
-                            }
-                            final id = r['receipt_id'] as String;
-                            await widget.store.purge(id);
-                            await load();
-                          } catch (e) {
-                            if (context.mounted) showError(context, e);
-                          }
-                        },
-                      ),
-                    ],
-                  ),
-                ),
-            ],
-          ),
-  );
 }

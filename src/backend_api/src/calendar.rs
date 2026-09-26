@@ -77,3 +77,43 @@ pub fn range(input: &Value) -> Result<Value> {
         json!({"start":start.timestamp_millis(),"end":end.timestamp_millis(),"previous_start":previous.timestamp_millis(),"label":format!("{} — {}",start.format("%Y-%m-%d"),(end-chrono::Duration::milliseconds(1)).format("%Y-%m-%d")),"unfinished":end>anchor}),
     )
 }
+
+/// A chart window contains consecutive calendar periods in the display timezone.
+pub fn trend_ranges(input: &Value) -> Result<Vec<Value>> {
+    let period = text(input, "period")?;
+    let count: i64 = match period {
+        "day" => 14,
+        "week" | "month" => 12,
+        "quarter" => 8,
+        "year" => 6,
+        _ => return Err(invalid()),
+    };
+    let window = number(input, "window")?;
+    if !(-100..=0).contains(&window) {
+        return Err(invalid());
+    }
+    let zone = text(input, "zone")?
+        .parse::<chrono_tz::Tz>()
+        .map_err(|_| invalid())?;
+    let mut points = Vec::with_capacity(count as usize);
+    for index in 0..count {
+        let offset = window * count - count + 1 + index;
+        let mut request = input.clone();
+        request["period_offset"] = json!(offset);
+        let mut bounds = range(&request)?;
+        let start = chrono::DateTime::from_timestamp_millis(number(&bounds, "start")?)
+            .ok_or_else(invalid)?
+            .with_timezone(&zone);
+        let tick = match period {
+            "day" | "week" => start.format("%m/%d").to_string(),
+            "month" => start.format("%y/%m").to_string(),
+            "quarter" => format!("{} Q{}", start.format("%Y"), (start.month() - 1) / 3 + 1),
+            "year" => start.format("%Y").to_string(),
+            _ => unreachable!(),
+        };
+        bounds["offset"] = json!(offset);
+        bounds["tick"] = json!(tick);
+        points.push(bounds);
+    }
+    Ok(points)
+}

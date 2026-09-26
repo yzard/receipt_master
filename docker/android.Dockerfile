@@ -47,6 +47,7 @@ COPY src/shared/resources/ ./resources/
 COPY src/android/ ./android/
 COPY docker/apply_mobile_defaults.py /apply_mobile_defaults.py
 COPY docker/android_release.py /workspace/docker/android_release.py
+COPY docker/validate_mobile_defaults.py /workspace/docker/validate_mobile_defaults.py
 COPY tests/docker/ /workspace/tests/docker/
 RUN python3 -m unittest discover -s /workspace/tests/docker
 ARG ANDROID_BUILD_NUMBER

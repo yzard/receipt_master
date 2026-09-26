@@ -73,14 +73,138 @@ fn names_weights_and_currency_reports() {
         .unwrap();
     assert_eq!(report["net"], 1900);
     assert_eq!(report["entries"].as_array().unwrap().len(), 4);
-    let empty = s
+    s.exec(
+        "UPDATE report_preferences SET currency_code='JPY' WHERE id=1",
+        &[],
+    )
+    .unwrap();
+    let missing = s.report_action("summary", &json!({"start":0,"end":1900000000000i64}));
+    assert!(missing.is_err());
+    let date = s
+        .one(
+            "SELECT date(occurred_at_utc_ms / 1000,'unixepoch') AS day FROM receipt LIMIT 1",
+            &[],
+        )
+        .unwrap()["day"]
+        .clone();
+    s.exec(
+        "INSERT INTO exchange_rate VALUES ('USD','JPY',?, ?,150000000000,'test',1)",
+        &[date.clone(), date],
+    )
+    .unwrap();
+    let converted = s
+        .report_action("summary", &json!({"start":0,"end":1900000000000i64}))
+        .unwrap();
+    assert_eq!(converted["net"], 2850);
+    assert_eq!(converted["currency"], "JPY");
+    assert_eq!(converted["entries"][0]["original_amount_minor"], 1000);
+    assert!(first["lines"][1]["unitPriceScaled"].as_i64().unwrap() < 0);
+}
+#[test]
+fn exchange_rate_uses_the_displayed_transaction_day() {
+    let (_dir, s) = setup();
+    let mut item = receipt();
+    item["occurredAt"] = json!(1704160800000i64); // Jan 2 UTC, Jan 1 in New York.
+    save(&s, item);
+    s.exec(
+        "UPDATE report_preferences SET currency_code='JPY' WHERE id=1",
+        &[],
+    )
+    .unwrap();
+    let missing = s
+        .missing_exchange_rates(0, 1900000000000i64, "America/New_York".parse().unwrap())
+        .unwrap();
+    assert_eq!(missing[0]["requested_date"], "2024-01-01");
+    s.exec("INSERT INTO exchange_rate VALUES ('USD','JPY','2024-01-01','2024-01-01',150000000000,'test',1)", &[]).unwrap();
+    let result = s
         .report_action(
             "summary",
-            &json!({"start":0,"end":1900000000000i64,"currency":"JPY"}),
+            &json!({"start":0,"end":1900000000000i64,"zone":"America/New_York"}),
         )
         .unwrap();
-    assert_eq!(empty["net"], 0);
-    assert!(first["lines"][1]["unitPriceScaled"].as_i64().unwrap() < 0);
+    assert_eq!(result["net"], 1425);
+    assert!(
+        s.report_action(
+            "summary",
+            &json!({"start":0,"end":1900000000000i64,"zone":"UTC"})
+        )
+        .is_err()
+    );
+}
+#[test]
+fn report_separates_currency_rounding_from_receipt_reconciliation() {
+    let (_dir, s) = setup();
+    save(&s, receipt());
+    s.exec(
+        "UPDATE report_preferences SET currency_code='JPY' WHERE id=1",
+        &[],
+    )
+    .unwrap();
+    let date = db::exchange::rate_date(1780000000000i64, "UTC".parse().unwrap()).unwrap();
+    s.exec(
+        "INSERT INTO exchange_rate VALUES ('USD','JPY',?, ?,1000000000,'test',1)",
+        &[json!(date), json!(date)],
+    )
+    .unwrap();
+    let report = s
+        .report_action("summary", &json!({"start":0,"end":1900000000000i64}))
+        .unwrap();
+    let lines: i64 = report["entries"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|line| line["amount_minor"].as_i64().unwrap())
+        .sum();
+    assert_eq!(report["net"], 10);
+    assert_eq!(report["difference"], 0);
+    assert_eq!(report["rounding_adjustment"], 1);
+    assert_eq!(
+        lines
+            + report["difference"].as_i64().unwrap()
+            + report["rounding_adjustment"].as_i64().unwrap(),
+        report["net"]
+    );
+}
+#[test]
+fn trend_returns_consecutive_calendar_points_and_product_lines() {
+    let (_dir, s) = setup();
+    save(&s, receipt());
+    let input =
+        json!({"anchor":1780000000000i64,"zone":"UTC","period":"month","window":0,"category":null});
+    let trend = s.report_action("trend", &input).unwrap();
+    let points = trend["points"].as_array().unwrap();
+    assert_eq!(points.len(), 12);
+    assert_eq!(points.first().unwrap()["offset"], -11);
+    assert_eq!(points.last().unwrap()["offset"], 0);
+    assert_eq!(points.last().unwrap()["net"], 950);
+    assert_eq!(trend["currency"], "USD");
+    for adjacent in points.windows(2) {
+        assert_eq!(adjacent[0]["end"], adjacent[1]["start"]);
+    }
+    let rice = trend["series"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .find(|line| line["group"] == "product" && line["label"] == "RICE")
+        .unwrap();
+    assert_eq!(rice["values"].as_array().unwrap().last().unwrap(), 1000);
+    let older = s
+        .report_action(
+            "trend",
+            &json!({"anchor":1780000000000i64,"zone":"UTC","period":"month","window":-1}),
+        )
+        .unwrap();
+    assert_eq!(
+        older["points"].as_array().unwrap().last().unwrap()["offset"],
+        -12
+    );
+    assert!(
+        s.report_action(
+            "trend",
+            &json!({"anchor":1780000000000i64,"zone":"UTC","period":"month","window":1})
+        )
+        .is_err()
+    );
 }
 #[test]
 fn categories_reject_cycles_and_preserve_system_nodes() {

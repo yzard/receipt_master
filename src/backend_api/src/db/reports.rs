@@ -4,6 +4,9 @@ impl Store {
         if op == "range" {
             return crate::calendar::range(v);
         }
+        if op == "trend" {
+            return self.trend_action(v);
+        }
         if !["summary", "details"].contains(&op) {
             return Err(missing());
         }
@@ -12,10 +15,34 @@ impl Store {
         if start >= end {
             return Err(invalid());
         }
-        let currency = text(v, "currency")?;
-        let filter = "r.status='posted' AND r.deleted_at_utc_ms IS NULL AND r.currency_code=? AND r.occurred_at_utc_ms>=? AND r.occurred_at_utc_ms<?";
-        let args = vec![json!(currency), json!(start), json!(end)];
-        let all=self.one(&format!("SELECT COALESCE(SUM(r.total_minor),0) AS net,COALESCE(SUM(rr.difference_minor),0) AS difference FROM receipt r JOIN receipt_reconciliation rr ON rr.receipt_id=r.receipt_id WHERE {filter}"),&args)?;
+        let currency = self.report_currency()?;
+        let zone = super::exchange::report_zone(v)?;
+        let filter = "r.status='posted' AND r.deleted_at_utc_ms IS NULL AND r.occurred_at_utc_ms>=? AND r.occurred_at_utc_ms<?";
+        let args = vec![json!(start), json!(end)];
+        let totals=self.rows(&format!("SELECT r.total_minor,rr.difference_minor,r.currency_code,r.occurred_at_utc_ms FROM receipt r JOIN receipt_reconciliation rr ON rr.receipt_id=r.receipt_id WHERE {filter}"),&args)?;
+        let mut all_net = 0i64;
+        let mut all_difference = 0i64;
+        for row in &totals {
+            let source = text(row, "currency_code")?;
+            let at = number(row, "occurred_at_utc_ms")?;
+            let date = super::exchange::rate_date(at, zone)?;
+            all_net = all_net
+                .checked_add(self.converted_amount(
+                    number(row, "total_minor")?,
+                    source,
+                    &currency,
+                    &date,
+                )?)
+                .ok_or_else(invalid)?;
+            all_difference = all_difference
+                .checked_add(self.converted_amount(
+                    number(row, "difference_minor")?,
+                    source,
+                    &currency,
+                    &date,
+                )?)
+                .ok_or_else(invalid)?;
+        }
         let mut query = format!(
             "SELECT l.*,r.currency_code,r.occurred_at_utc_ms,r.raw_store,a.name AS product_name,CAST(ROUND(COALESCE(p.weight_g,w.weight_g)*1000) AS INTEGER) AS weight_mg,ec.category_id,c.name AS category_name,d.target_line_id FROM receipt_line l JOIN receipt r ON r.receipt_id=l.receipt_id JOIN line_effective_category ec ON ec.line_id=l.line_id JOIN category c ON c.category_id=ec.category_id LEFT JOIN line_discount d ON d.discount_line_id=l.line_id LEFT JOIN product p ON p.product_id=COALESCE(l.product_id,(SELECT product_id FROM receipt_line WHERE line_id=d.target_line_id)) LEFT JOIN printed_name n ON n.printed_name_id=p.printed_name_id LEFT JOIN printed_name_product_name m ON m.printed_name_id=n.printed_name_id LEFT JOIN product_name a ON a.product_name_id=m.product_name_id LEFT JOIN line_unmatched_weight w ON w.line_id=l.line_id WHERE {filter}"
         );
@@ -25,9 +52,30 @@ impl Store {
             args.push(v["category"].clone());
         }
         query.push_str(" ORDER BY r.occurred_at_utc_ms DESC,l.position,l.line_id");
-        let entries = self.rows(&query, &args)?;
+        let mut entries = self.rows(&query, &args)?;
+        for row in &mut entries {
+            let source = text(row, "currency_code")?.to_owned();
+            let at = number(row, "occurred_at_utc_ms")?;
+            let original = number(row, "amount_minor")?;
+            row["original_amount_minor"] = json!(original);
+            let date = super::exchange::rate_date(at, zone)?;
+            row["amount_minor"] =
+                json!(self.converted_amount(original, &source, &currency, &date)?);
+        }
+        let converted_line_total = entries.iter().try_fold(0i64, |sum, row| {
+            sum.checked_add(number(row, "amount_minor")?)
+                .ok_or_else(invalid)
+        })?;
+        let rounding_adjustment = if v["category"].is_null() {
+            all_net
+                .checked_sub(all_difference)
+                .and_then(|sum| sum.checked_sub(converted_line_total))
+                .ok_or_else(invalid)?
+        } else {
+            0
+        };
         let net = if v["category"].is_null() {
-            all["net"].clone()
+            json!(all_net)
         } else {
             json!(entries.iter().try_fold(0i64, |sum, r| {
                 sum.checked_add(r["amount_minor"].as_i64().unwrap_or(0))
@@ -128,7 +176,47 @@ impl Store {
         let limit = v["limit"].as_u64().unwrap_or(200).clamp(1, 500) as usize;
         let total = entries.len();
         Ok(
-            json!({"net":net,"difference":if v["category"].is_null(){all["difference"].clone()}else{Value::Null},"entries":entries.into_iter().skip(offset).take(limit).collect::<Vec<_>>(),"next_offset":if offset.saturating_add(limit)<total{Some(offset+limit)}else{None},"groups":groups,"spend":spend,"discounts":discounts,"refunds":refunds,"start":start,"end":end}),
+            json!({"currency":currency,"net":net,"difference":if v["category"].is_null(){json!(all_difference)}else{Value::Null},"rounding_adjustment":if v["category"].is_null(){json!(rounding_adjustment)}else{Value::Null},"entries":entries.into_iter().skip(offset).take(limit).collect::<Vec<_>>(),"next_offset":if offset.saturating_add(limit)<total{Some(offset+limit)}else{None},"groups":groups,"spend":spend,"discounts":discounts,"refunds":refunds,"start":start,"end":end}),
         )
+    }
+
+    fn trend_action(&self, input: &Value) -> Result<Value> {
+        let mut points = crate::calendar::trend_ranges(input)?;
+        let currency = self.report_currency()?;
+        let mut series = std::collections::BTreeMap::<String, Value>::new();
+        let count = points.len();
+        for (index, point) in points.iter_mut().enumerate() {
+            let summary = self.report_action(
+                "summary",
+                &json!({
+                    "start": point["start"],
+                    "end": point["end"],
+                    "zone": input["zone"],
+                    "category": input["category"],
+                    "limit": 1,
+                }),
+            )?;
+            point["net"] = summary["net"].clone();
+            point["spend"] = summary["spend"].clone();
+            for group in summary["groups"].as_array().ok_or_else(invalid)? {
+                let key = text(group, "key")?.to_owned();
+                let line = series.entry(key.clone()).or_insert_with(|| {
+                    json!({
+                        "key": key,
+                        "label": group["label"],
+                        "group": group["group"],
+                        "values": vec![0i64; count],
+                    })
+                });
+                line["values"][index] = group["amount"].clone();
+            }
+        }
+        Ok(json!({
+            "currency": currency,
+            "period": input["period"],
+            "window": input["window"],
+            "points": points,
+            "series": series.into_values().collect::<Vec<_>>(),
+        }))
     }
 }

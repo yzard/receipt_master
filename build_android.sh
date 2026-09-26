@@ -73,7 +73,16 @@ chmod 600 "$signing_dir/debug.keystore"
 signing_hash="$(docker run --rm --platform linux/amd64 \
   --mount "type=bind,source=$signing_dir,target=/signing,readonly" \
   eclipse-temurin:21-jdk-jammy sha256sum /signing/debug.keystore)"
-bootstrap_file="${RECEIPT_BOOTSTRAP_FILE:-$project_dir/src/shared/resources/backend_defaults.json}"
+bootstrap_file="${RECEIPT_BOOTSTRAP_FILE:-$project_dir/build/mobile-config/backend_defaults.json}"
+if [[ ! -f "$bootstrap_file" ]]; then
+  echo 'Missing backend defaults. Run ./build_docker.sh first or set RECEIPT_BOOTSTRAP_FILE.' >&2
+  exit 1
+fi
+bootstrap_file="$(realpath "$bootstrap_file")"
+docker run --rm --user "$(id -u):$(id -g)" \
+  --mount "type=bind,source=$project_dir,target=/workspace,readonly" \
+  --mount "type=bind,source=$bootstrap_file,target=/defaults.json,readonly" \
+  python:3.12-slim python /workspace/docker/validate_mobile_defaults.py /defaults.json
 bootstrap_hash="$(docker run --rm --mount "type=bind,source=$bootstrap_file,target=/defaults.json,readonly" \
   python:3.12-slim sha256sum /defaults.json)"
 release_tool=(docker run --rm --user "$(id -u):$(id -g)" \

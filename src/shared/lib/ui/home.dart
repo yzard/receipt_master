@@ -15,16 +15,24 @@ import 'reports.dart';
 import 'settings.dart';
 import 'receipt_row.dart';
 import 'capture.dart';
+import 'app_theme.dart';
 
 class HomePage extends StatefulWidget {
   final AppStore store;
   final String zone;
-  const HomePage({super.key, required this.store, required this.zone});
+  final Appearance appearance;
+  const HomePage({
+    super.key,
+    required this.store,
+    required this.zone,
+    required this.appearance,
+  });
   @override
   State<HomePage> createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
+  final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   int page = 0;
   late String zone;
   List<Map<String, dynamic>>? receipts;
@@ -232,6 +240,9 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   };
 
   Future<void> deleteReceipt(String id) async {
+    if (!await confirm(context, '永久删除这张收据？', '收据、照片和识别记录会从服务器删除，无法恢复。')) {
+      return;
+    }
     try {
       await widget.store.purge(id);
       await refresh();
@@ -241,8 +252,19 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     }
   }
 
+  void openMenu() => scaffoldKey.currentState?.openDrawer();
+
+  void choosePage(int destination) {
+    scaffoldKey.currentState?.closeDrawer();
+    setState(() => page = destination);
+    if (destination == 0) refresh();
+  }
+
   @override
   Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+    final topInset = MediaQuery.paddingOf(context).top;
+    final bottomInset = MediaQuery.paddingOf(context).bottom;
     final content = switch (page) {
       0 => receiptList(),
       1 => ReportsPage(
@@ -256,134 +278,205 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
         zone: zone,
         onReceipt: (id) => open(id),
       ),
-      _ => SettingsPage(store: widget.store, zone: zone, onChanged: refresh),
+      _ => SettingsPage(
+        store: widget.store,
+        zone: zone,
+        onChanged: refresh,
+        appearance: widget.appearance,
+      ),
     };
     return Scaffold(
-      appBar: AppBar(
-        title: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              'Receipt Master',
-              style: TextStyle(fontWeight: FontWeight.w700, letterSpacing: -.6),
-            ),
-            Text(
-              [
-                '收据 · 留下每笔消费',
-                '报表 · 看清每类支出',
-                '商品管理 · 管理商品与商店',
-                '设置 · 数据由你掌握',
-              ][page],
-              style: const TextStyle(fontSize: 12, color: Colors.black54),
-            ),
-          ],
-        ),
-        actions: page == 0
-            ? [
-                IconButton(
-                  tooltip: '刷新',
-                  onPressed: refresh,
-                  icon: const Icon(Icons.refresh),
-                ),
-              ]
-            : null,
-      ),
-      body: SafeArea(
-        child: Column(
-          children: [
-            if (importing && page == 0) const LinearProgressIndicator(),
-            if (widget.store.submissionStates.isNotEmpty)
-              ListTile(
-                dense: true,
-                leading: const Icon(Icons.cloud_upload_outlined),
-                title: Text('后台提交 ${widget.store.submissionStates.length} 张收据'),
-                subtitle: Text(
-                  widget.store.submissionStates.values.any(
-                        (v) => v.startsWith('上传失败'),
-                      )
-                      ? '部分上传失败，点击重试；照片已保留'
-                      : '上传中，可以继续拍照或查看其他页面',
-                ),
-                onTap: () => widget.store.retrySubmissions(),
-              ),
-            Expanded(child: content),
-          ],
-        ),
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      floatingActionButton: page == 0
-          ? Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                FilledButton.icon(
-                  onPressed: importing ? null : () => capture(true),
-                  icon: const Icon(Icons.camera_alt_outlined),
-                  label: const Text('拍照'),
-                ),
-                const SizedBox(width: 8),
-                FilledButton.icon(
-                  onPressed: importing ? null : () => capture(false),
-                  icon: const Icon(Icons.photo_library_outlined),
-                  label: const Text('上传照片'),
-                ),
-                const SizedBox(width: 8),
-                OutlinedButton.icon(
-                  onPressed: importing ? null : () => open(null),
-                  icon: const Icon(Icons.edit_outlined),
-                  label: const Text('手动'),
-                ),
-              ],
-            )
-          : null,
-      bottomNavigationBar: NavigationBar(
+      key: scaffoldKey,
+      backgroundColor: Colors.transparent,
+      drawer: NavigationDrawer(
         selectedIndex: page,
-        onDestinationSelected: (value) {
-          setState(() => page = value);
-          if (value == 0) refresh();
-        },
-        destinations: const [
-          NavigationDestination(
+        onDestinationSelected: choosePage,
+        children: const [
+          Padding(
+            padding: EdgeInsets.fromLTRB(28, 48, 20, 24),
+            child: Text(
+              'Receipt Master',
+              style: TextStyle(fontSize: 26, fontWeight: FontWeight.w800),
+            ),
+          ),
+          NavigationDrawerDestination(
             icon: Icon(Icons.receipt_long_outlined),
-            label: '收据',
+            selectedIcon: Icon(Icons.receipt_long),
+            label: Text('收据'),
           ),
-          NavigationDestination(
-            icon: Icon(Icons.bar_chart_outlined),
-            label: '报表',
+          NavigationDrawerDestination(
+            icon: Icon(Icons.insights_outlined),
+            selectedIcon: Icon(Icons.insights),
+            label: Text('报表'),
           ),
-          NavigationDestination(
+          NavigationDrawerDestination(
             icon: Icon(Icons.category_outlined),
-            label: '商品管理',
+            selectedIcon: Icon(Icons.category),
+            label: Text('商品管理'),
           ),
-          NavigationDestination(icon: Icon(Icons.tune), label: '设置'),
+          NavigationDrawerDestination(
+            icon: Icon(Icons.tune_outlined),
+            selectedIcon: Icon(Icons.tune),
+            label: Text('设置'),
+          ),
+        ],
+      ),
+      body: Stack(
+        children: [
+          Positioned.fill(
+            child: DecoratedBox(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    scheme.surface,
+                    scheme.primaryContainer.withValues(alpha: .24),
+                    scheme.surface,
+                  ],
+                  stops: const [0, .48, 1],
+                ),
+              ),
+            ),
+          ),
+          Positioned.fill(
+            child: Padding(
+              padding: EdgeInsets.only(top: topInset),
+              child: Column(
+                children: [
+                  if (importing && page == 0) const LinearProgressIndicator(),
+                  if (widget.store.submissionStates.isNotEmpty)
+                    Material(
+                      color: scheme.primaryContainer.withValues(alpha: .65),
+                      child: ListTile(
+                        dense: true,
+                        leading: const Icon(Icons.cloud_upload_outlined),
+                        title: Text(
+                          '后台提交 ${widget.store.submissionStates.length} 张收据',
+                        ),
+                        subtitle: Text(
+                          widget.store.submissionStates.values.any(
+                                (v) => v.startsWith('上传失败'),
+                              )
+                              ? '部分上传失败，点击重试；照片已保留'
+                              : '上传中，可以继续使用其他页面',
+                        ),
+                        onTap: () => widget.store.retrySubmissions(),
+                      ),
+                    ),
+                  Expanded(child: content),
+                ],
+              ),
+            ),
+          ),
+          Positioned(
+            left: 14,
+            right: page == 0 ? 14 : null,
+            bottom: bottomInset + 14,
+            child: FrostedBar(
+              radius: BorderRadius.circular(25),
+              child: Padding(
+                padding: const EdgeInsets.all(5),
+                child: Row(
+                  mainAxisSize: page == 0 ? MainAxisSize.max : MainAxisSize.min,
+                  children: [
+                    GestureDetector(
+                      onLongPress: openMenu,
+                      child: SizedBox(
+                        width: 58,
+                        height: 58,
+                        child: IconButton(
+                          tooltip: '打开导航菜单',
+                          onPressed: openMenu,
+                          icon: const Icon(Icons.menu_rounded, size: 28),
+                        ),
+                      ),
+                    ),
+                    if (page == 0) ...[
+                      const SizedBox(width: 5),
+                      Container(
+                        width: 1,
+                        height: 30,
+                        color: scheme.outlineVariant,
+                      ),
+                      const SizedBox(width: 5),
+                      Expanded(
+                        child: _QuickAction(
+                          label: '拍照',
+                          icon: Icons.camera_alt_outlined,
+                          primary: true,
+                          onTap: importing ? null : () => capture(true),
+                        ),
+                      ),
+                      Expanded(
+                        child: _QuickAction(
+                          label: '上传照片',
+                          icon: Icons.photo_library_outlined,
+                          onTap: importing ? null : () => capture(false),
+                        ),
+                      ),
+                      Expanded(
+                        child: _QuickAction(
+                          label: '手动',
+                          icon: Icons.edit_note_outlined,
+                          onTap: importing ? null : () => open(null),
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+            ),
+          ),
         ],
       ),
     );
   }
 
   Widget receiptList() {
-    if (error != null) {
-      return Center(
-        child: TextButton(onPressed: refresh, child: const Text('数据加载失败，点击重试')),
-      );
-    }
-    if (receipts == null) {
-      return const Center(child: CircularProgressIndicator());
-    }
-    if (receipts!.isEmpty) {
-      return const EmptyState(
-        icon: Icons.receipt_long_outlined,
-        title: '从第一张收据开始',
-        detail: '拍摄、导入照片或手工录入。\n确认每一笔，慢慢看清日常消费。',
-      );
-    }
+    final rows = receipts ?? [];
     return RefreshIndicator(
       onRefresh: refresh,
       child: ListView.separated(
-        padding: const EdgeInsets.fromLTRB(12, 8, 12, 100),
-        itemCount: receipts!.length + 1,
+        physics: const AlwaysScrollableScrollPhysics(),
+        padding: const EdgeInsets.fromLTRB(16, 8, 16, 112),
+        itemCount: error != null || receipts == null || rows.isEmpty
+            ? 2
+            : rows.length + 2,
         separatorBuilder: (_, i) => const Divider(height: 1),
         itemBuilder: (context, i) {
           if (i == 0) {
+            return PageHeading(
+              title: '收据',
+              subtitle: '每一笔，都清楚',
+              trailing: IconButton(
+                tooltip: '刷新收据',
+                onPressed: refresh,
+                icon: const Icon(Icons.refresh_rounded),
+              ),
+            );
+          }
+          if (i == 1 && error != null) {
+            return Column(
+              children: [
+                const Text('数据加载失败'),
+                const SizedBox(height: 8),
+                SelectableText(error.toString(), textAlign: TextAlign.center),
+                TextButton(onPressed: refresh, child: const Text('点击重试')),
+              ],
+            );
+          }
+          if (i == 1 && receipts == null) {
+            return const Center(child: CircularProgressIndicator());
+          }
+          if (i == 1 && rows.isEmpty) {
+            return const EmptyState(
+              icon: Icons.receipt_long_outlined,
+              title: '从第一张收据开始',
+              detail: '拍摄、导入照片或手工录入。\n确认每一笔，慢慢看清日常消费。',
+            );
+          }
+          if (i == 1) {
             return ReceiptTableHeader(
               sortBy: sortBy,
               direction: direction,
@@ -398,7 +491,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
               },
             );
           }
-          final r = receipts![i - 1];
+          final r = rows[i - 2];
           return ReceiptRow(
             key: ValueKey(r['receipt_id']),
             name:
@@ -414,6 +507,40 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
             onDelete: () => deleteReceipt(r['receipt_id']),
           );
         },
+      ),
+    );
+  }
+}
+
+class _QuickAction extends StatelessWidget {
+  const _QuickAction({
+    required this.label,
+    required this.icon,
+    required this.onTap,
+    this.primary = false,
+  });
+  final String label;
+  final IconData icon;
+  final VoidCallback? onTap;
+  final bool primary;
+
+  @override
+  Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+    return Material(
+      color: primary ? scheme.primary : Colors.transparent,
+      borderRadius: BorderRadius.circular(19),
+      child: SizedBox(
+        height: 58,
+        child: IconButton(
+          tooltip: label,
+          onPressed: onTap,
+          icon: Icon(
+            icon,
+            size: 25,
+            color: primary ? scheme.onPrimary : scheme.onSurface,
+          ),
+        ),
       ),
     );
   }

@@ -11,6 +11,7 @@ use std::{
 use unicode_normalization::UnicodeNormalization;
 pub mod backup;
 pub mod catalog;
+pub mod exchange;
 pub mod logos;
 pub mod media;
 mod merchant_resources;
@@ -170,6 +171,8 @@ impl Store {
                 "数据库结构不匹配，请使用当前表结构创建空库",
             ));
         }
+        // Preferences and historical rates are additive; keep existing receipts intact.
+        s.db.execute_batch("CREATE TABLE IF NOT EXISTS report_preferences (id INTEGER PRIMARY KEY CHECK(id=1), currency_code TEXT NOT NULL REFERENCES currency(code)); INSERT OR IGNORE INTO report_preferences VALUES (1,'USD'); CREATE TABLE IF NOT EXISTS exchange_rate (source_code TEXT NOT NULL REFERENCES currency(code), target_code TEXT NOT NULL REFERENCES currency(code), requested_date TEXT NOT NULL, observed_date TEXT NOT NULL, rate_scaled INTEGER NOT NULL CHECK(rate_scaled>0), provider TEXT NOT NULL, fetched_at_utc_ms INTEGER NOT NULL, PRIMARY KEY(source_code,target_code,requested_date));").map_err(sql_error)?;
         s.exec("UPDATE recognition_job SET status='queued',error_code=NULL,finished_at_utc_ms=NULL WHERE status='running'",&[])?;
         s.exec("UPDATE recognition_run SET status='unknown',error_code='interrupted',finished_at_utc_ms=? WHERE status IN ('queued','running')",&[json!(now())])?;
         s.cleanup_media()?;

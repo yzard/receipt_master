@@ -15,7 +15,7 @@ class ReleaseTest(unittest.TestCase):
     def test_unchanged_inputs_and_bytes_reuse_version_and_changed_bytes_bump(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
-            for name in ['src/shared/pubspec.yaml', 'src/shared/pubspec.lock', 'docker/android.Dockerfile', 'docker/android.Dockerfile.dockerignore', 'docker/apply_mobile_defaults.py', 'docker/android_release.py', 'build_android.sh', 'bootstrap.json', 'key']:
+            for name in ['src/shared/pubspec.yaml', 'src/shared/pubspec.lock', 'docker/android.Dockerfile', 'docker/android.Dockerfile.dockerignore', 'docker/apply_mobile_defaults.py', 'docker/validate_mobile_defaults.py', 'docker/android_release.py', 'build_android.sh', 'bootstrap.json', 'key']:
                 p = root / name
                 p.parent.mkdir(parents=True, exist_ok=True)
                 p.write_text(name)

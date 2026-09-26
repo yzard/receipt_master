@@ -117,7 +117,7 @@ void main() {
       }
       expect(submitted, isNull);
       expect(find.text('拍摄收据 · 2 张'), findsOneWidget);
-      await tester.tap(find.text('1'));
+      await tester.tap(find.byKey(const ValueKey('capture-thumbnail-0')));
       await tester.pump();
       await tester.runAsync(() async {
         await tester.tap(find.text('重拍'));

@@ -10,6 +10,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
 import 'package:receipt_master/main.dart';
+import 'package:receipt_master/ui/app_theme.dart';
 import 'package:receipt_master/ui/receipt_row.dart';
 import 'package:receipt_master/data/store.dart';
 import 'package:receipt_master/data/backend_connection.dart';
@@ -36,6 +37,62 @@ class CancelPicker extends ImagePickerPlatform {
 }
 
 void main() {
+  testWidgets('page title scrolls away while the menu opens a left drawer', (
+    tester,
+  ) async {
+    tzdata.initializeTimeZones();
+    tester.view.physicalSize = const Size(430, 820);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    final store = AppStore(
+      '/unused',
+      configuration: () async =>
+          const BackendConnection('https://example.test', 'key'),
+      client: MockClient(
+        (req) async => http.Response(
+          jsonEncode({
+            'data': {
+              'items': [
+                for (var i = 0; i < 30; i++)
+                  {
+                    'receipt_id': 'receipt-$i',
+                    'version': 1,
+                    'raw_store': 'Store $i',
+                    'status': 'posted',
+                    'recognition_status': 'applied',
+                    'created_at_utc_ms': 1780000000000 - i * 86400000,
+                    'occurred_at_utc_ms': 1780000000000 - i * 86400000,
+                    'total_minor': 100 + i,
+                    'currency_code': 'USD',
+                  },
+              ],
+              'next_cursor': null,
+            },
+          }),
+          200,
+        ),
+      ),
+    );
+    await tester.pumpWidget(
+      ReceiptApp(
+        store: store,
+        zone: 'America/New_York',
+        appearance: Appearance(store.cacheRoot),
+      ),
+    );
+    await tester.pumpAndSettle();
+    expect(find.text('收据'), findsOneWidget);
+    await tester.drag(find.byType(ListView).first, const Offset(0, -420));
+    await tester.pumpAndSettle();
+    expect(find.text('收据'), findsNothing);
+    expect(find.byTooltip('打开导航菜单'), findsOneWidget);
+    await tester.tap(find.byTooltip('打开导航菜单'));
+    await tester.pumpAndSettle();
+    expect(find.text('报表'), findsOneWidget);
+    expect(find.text('商品管理'), findsOneWidget);
+  });
+
   testWidgets(
     'overview requests all four server sort orders and toggles direction',
     (tester) async {
@@ -72,7 +129,11 @@ void main() {
         }),
       );
       await tester.pumpWidget(
-        ReceiptApp(store: store, zone: 'America/New_York'),
+        ReceiptApp(
+          store: store,
+          zone: 'America/New_York',
+          appearance: Appearance(store.cacheRoot),
+        ),
       );
       await tester.pumpAndSettle();
       expect(sorts.last, ['created_at', 'desc']);
@@ -121,11 +182,15 @@ void main() {
             const BackendConnection('https://example.test', 'key'),
       );
       await tester.pumpWidget(
-        ReceiptApp(store: store, zone: 'America/New_York'),
+        ReceiptApp(
+          store: store,
+          zone: 'America/New_York',
+          appearance: Appearance(store.cacheRoot),
+        ),
       );
       await tester.pumpAndSettle();
       await tester.runAsync(() async {
-        await tester.tap(find.text('拍照'));
+        await tester.tap(find.byTooltip('拍照'));
         await Future<void>.delayed(const Duration(milliseconds: 50));
       });
       for (var i = 0; i < 5; i++) {
@@ -148,7 +213,7 @@ void main() {
       expect(picker.cameraCalls, 0);
       expect(find.text('收据草稿'), findsNothing);
       await tester.runAsync(() async {
-        await tester.tap(find.text('上传照片'));
+        await tester.tap(find.byTooltip('上传照片'));
         await Future<void>.delayed(const Duration(milliseconds: 50));
       });
       await tester.pumpAndSettle();
@@ -161,6 +226,10 @@ void main() {
   testWidgets('backend failure is visible without creating a local database', (
     tester,
   ) async {
+    tester.view.physicalSize = const Size(320, 720);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
     tzdata.initializeTimeZones();
     final store = AppStore(
       '/does-not-exist',
@@ -170,12 +239,25 @@ void main() {
       configuration: () async =>
           const BackendConnection('https://example.test', 'key'),
     );
-    await tester.pumpWidget(ReceiptApp(store: store, zone: 'America/New_York'));
+    await tester.pumpWidget(
+      ReceiptApp(
+        store: store,
+        zone: 'America/New_York',
+        appearance: Appearance(store.cacheRoot),
+      ),
+    );
     await tester.pumpAndSettle();
     expect(find.textContaining('数据加载失败'), findsWidgets);
+    final menu = tester.getRect(find.byTooltip('打开导航菜单'));
     for (final label in ['拍照', '上传照片', '手动']) {
-      expect(find.text(label), findsOneWidget);
+      final action = find.byTooltip(label);
+      expect(action, findsOneWidget);
+      expect(find.text(label), findsNothing);
+      final rect = tester.getRect(action);
+      expect(rect.right, lessThanOrEqualTo(320));
+      expect(rect.center.dy, closeTo(menu.center.dy, 1));
     }
+    expect(tester.takeException(), isNull);
     await tester.pumpWidget(const SizedBox());
   });
   testWidgets(
@@ -267,7 +349,9 @@ void main() {
                   .first,
             )
             .color,
-        Colors.yellow.shade100,
+        AppPalette.warningSurface(
+          tester.element(find.byType(ReceiptRow).first),
+        ),
       );
       expect(
         tester
@@ -280,7 +364,7 @@ void main() {
                   .first,
             )
             .color,
-        Colors.red.shade100,
+        AppPalette.errorSurface(tester.element(find.byType(ReceiptRow).last)),
       );
       expect(find.text('收据时间'), findsOneWidget);
       expect(tester.takeException(), isNull);
@@ -306,6 +390,72 @@ void main() {
       );
     },
   );
+  testWidgets('permanent receipt deletion requires confirmation', (
+    tester,
+  ) async {
+    tzdata.initializeTimeZones();
+    var deleted = false, purgeCalls = 0;
+    final store = AppStore(
+      '/unused',
+      configuration: () async =>
+          const BackendConnection('https://example.test', 'key'),
+      client: MockClient((req) async {
+        dynamic data;
+        if (req.url.path.endsWith('/receipts/list')) {
+          data = {
+            'items': deleted
+                ? []
+                : [
+                    {
+                      'receipt_id': 'receipt',
+                      'version': 1,
+                      'raw_store': 'Shop',
+                      'status': 'posted',
+                      'recognition_status': 'applied',
+                      'created_at_utc_ms': 1780000000000,
+                      'occurred_at_utc_ms': 1780000000000,
+                      'total_minor': 100,
+                      'currency_code': 'USD',
+                    },
+                  ],
+            'next_cursor': null,
+          };
+        } else if (req.url.path.endsWith('/receipts/purge')) {
+          purgeCalls++;
+          deleted = true;
+        } else {
+          throw StateError(req.url.path);
+        }
+        return http.Response(jsonEncode({'data': data}), 200);
+      }),
+    );
+    await tester.pumpWidget(
+      ReceiptApp(
+        store: store,
+        zone: 'America/New_York',
+        appearance: Appearance(store.cacheRoot),
+      ),
+    );
+    await tester.pumpAndSettle();
+    Future<void> revealAndTap() async {
+      await tester.drag(find.byType(ReceiptRow), const Offset(-100, 0));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Trash'));
+      await tester.pumpAndSettle();
+    }
+
+    await revealAndTap();
+    expect(find.text('永久删除这张收据？'), findsOneWidget);
+    await tester.tap(find.text('取消'));
+    await tester.pumpAndSettle();
+    expect(purgeCalls, 0);
+    await revealAndTap();
+    await tester.tap(find.text('确认'));
+    await tester.pumpAndSettle();
+    expect(purgeCalls, 1);
+    expect(find.byType(ReceiptRow), findsNothing);
+  });
+
   testWidgets(
     'logo image alias can be added edited and removed through the backend',
     (tester) async {
@@ -355,6 +505,12 @@ void main() {
       await tester.pumpAndSettle();
       await tester.tap(find.text('尚未设置店名'));
       await tester.pumpAndSettle();
+      expect(
+        tester
+            .widget<FilledButton>(find.widgetWithText(FilledButton, '保存别名'))
+            .onPressed,
+        isNull,
+      );
       await tester.enterText(find.byType(TextFormField).at(0), 'H Mart');
       await tester.tap(find.text('保存别名'));
       await tester.pumpAndSettle();
@@ -366,6 +522,13 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.text('H MART'), findsOneWidget);
       await tester.tap(find.byTooltip('删除商店名称样本'));
+      await tester.pumpAndSettle();
+      expect(aliases, isNotEmpty);
+      await tester.tap(find.text('取消'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byTooltip('删除商店名称样本'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('确认'));
       await tester.pumpAndSettle();
       expect(aliases, isEmpty);
       expect(tester.takeException(), isNull);

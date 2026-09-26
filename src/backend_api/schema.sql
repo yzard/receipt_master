@@ -334,6 +334,22 @@ CREATE TABLE app_preferences (
 );
 INSERT INTO app_preferences VALUES (1, 'kg');
 
+CREATE TABLE report_preferences (
+    id INTEGER PRIMARY KEY CHECK (id = 1),
+    currency_code TEXT NOT NULL REFERENCES currency(code)
+);
+
+CREATE TABLE exchange_rate (
+    source_code TEXT NOT NULL REFERENCES currency(code),
+    target_code TEXT NOT NULL REFERENCES currency(code),
+    requested_date TEXT NOT NULL,
+    observed_date TEXT NOT NULL,
+    rate_scaled INTEGER NOT NULL CHECK (rate_scaled > 0),
+    provider TEXT NOT NULL,
+    fetched_at_utc_ms INTEGER NOT NULL,
+    PRIMARY KEY (source_code, target_code, requested_date)
+);
+
 
 CREATE TABLE merchant_alias (
     alias_key TEXT PRIMARY KEY CHECK (length(trim(alias_key)) > 0),

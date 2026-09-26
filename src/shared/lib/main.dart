@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 
 import 'data/backend_defaults.dart';
@@ -11,11 +12,12 @@ import 'package:path/path.dart' as p;
 import 'package:timezone/data/latest.dart' as tzdata;
 
 import 'data/store.dart';
-import 'ui/common.dart';
+import 'ui/app_theme.dart';
 import 'ui/home.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
   tzdata.initializeTimeZones();
   try {
     final support = await getApplicationSupportDirectory();
@@ -27,7 +29,9 @@ Future<void> main() async {
       configuration: loadBackendConnection,
     );
     final zone = (await FlutterTimezone.getLocalTimezone()).identifier;
-    runApp(ReceiptApp(store: store, zone: zone));
+    final appearance = Appearance(root);
+    await appearance.load();
+    runApp(ReceiptApp(store: store, zone: zone, appearance: appearance));
   } catch (e) {
     runApp(
       MaterialApp(
@@ -42,36 +46,27 @@ Future<void> main() async {
 class ReceiptApp extends StatelessWidget {
   final AppStore store;
   final String zone;
-  const ReceiptApp({super.key, required this.store, required this.zone});
+  final Appearance appearance;
+  const ReceiptApp({
+    super.key,
+    required this.store,
+    required this.zone,
+    required this.appearance,
+  });
   @override
-  Widget build(BuildContext context) => MaterialApp(
-    debugShowCheckedModeBanner: false,
-    title: 'Receipt Master',
-    theme: ThemeData(
-      useMaterial3: true,
-      colorScheme: ColorScheme.fromSeed(seedColor: ink, surface: paper),
-      scaffoldBackgroundColor: paper,
-      appBarTheme: const AppBarTheme(
-        backgroundColor: paper,
-        foregroundColor: ink,
-        centerTitle: false,
+  Widget build(BuildContext context) => AnimatedBuilder(
+    animation: appearance,
+    builder: (context, _) => MaterialApp(
+      debugShowCheckedModeBanner: false,
+      title: 'Receipt Master',
+      theme: receiptTheme(Brightness.light),
+      darkTheme: receiptTheme(Brightness.dark),
+      themeMode: appearance.mode,
+      builder: (context, child) => AnnotatedRegion<SystemUiOverlayStyle>(
+        value: systemBars(Theme.of(context).brightness),
+        child: child ?? const SizedBox.shrink(),
       ),
-      inputDecorationTheme: InputDecorationTheme(
-        filled: true,
-        fillColor: Colors.white,
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-        contentPadding: const EdgeInsets.symmetric(
-          horizontal: 14,
-          vertical: 14,
-        ),
-      ),
-      navigationBarTheme: const NavigationBarThemeData(
-        backgroundColor: Color(0xFFEEEFE7),
-      ),
-      filledButtonTheme: FilledButtonThemeData(
-        style: FilledButton.styleFrom(minimumSize: const Size(48, 48)),
-      ),
+      home: HomePage(store: store, zone: zone, appearance: appearance),
     ),
-    home: HomePage(store: store, zone: zone),
   );
 }

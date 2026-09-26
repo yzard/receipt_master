@@ -96,6 +96,7 @@ Compose 将宿主 `playground/backend_api/` 绑定到 API 的 `/data`。其下�
 - `receipts/edit`：receipt/action，支持 preview、currency、split、merge、total_from_lines；可提供 total_text。后端返回转换后的 receipt 和 summary（knownTotal/difference）。客户端不再计算合计、差额、拆分合并金额或币种数值转换。
 - `receipts/time_candidates`：text/zone，服务器返回 UTC 候选毫秒；客户端仅展示 DST 歧义候选供用户选择。
 - `reports/range`：anchor/zone/period/period_offset，服务器返回 start/end/previous_start、label、unfinished；统计与时间边界都在后端。
+- `reports/trend`：anchor/zone/period/window/category，返回连续周期的 `points`（每期的起止、标签、净额、支出）和 `series`（商品分类及商品名称的金额数组）。`window=0` 是最近一组，负数查看更早时间；日 14 点、周/月各 12 点、季 8 点、年 6 点。后端按交易日汇率统一币种，客户端只负责绘制和点选。
 - `recognition/start` 不接受或保存费用价格快照；识别费用和月度预算提醒不再计算。
 - 旧的 config/save、budgets/get/save 不提供。历史数据库可能仍有旧费用字段，新数据库不再创建。
 

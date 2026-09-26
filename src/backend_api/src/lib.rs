@@ -4,6 +4,7 @@ pub mod data_api;
 pub mod db;
 pub mod editing;
 pub mod error;
+pub mod exchange;
 pub mod jobs;
 pub mod logos;
 mod merchant_images;

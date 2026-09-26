@@ -92,6 +92,11 @@ impl Store {
  if !["g","kg","lb","oz"].contains(&unit){return Err(invalid());}
  self.exec("UPDATE app_preferences SET weight_unit=? WHERE id=1",&[json!(unit)])?;
  Value::Null},
+ ("config","save_report_currency")=>{
+ let currency=text(v,"report_currency")?;
+ self.one("SELECT code FROM currency WHERE code=?",&[json!(currency)])?;
+ self.exec("UPDATE report_preferences SET currency_code=? WHERE id=1",&[json!(currency)])?;
+ Value::Null},
  ("categories","list")=>json!(self.rows("WITH RECURSIVE tree AS (SELECT category_id,parent_id,name,system_key,name AS path,0 AS depth FROM category WHERE parent_id IS NULL UNION ALL SELECT c.category_id,c.parent_id,c.name,c.system_key,t.path || ' / ' || c.name,t.depth+1 FROM category c JOIN tree t ON c.parent_id=t.category_id) SELECT * FROM tree ORDER BY path",&[])?),
  ("categories","save")=>{let name=normalized(text(v,"name")?);if name.is_empty(){return Err(invalid());}
 if v["id"].is_null(){self.exec("INSERT INTO category VALUES (?,?,?,NULL)",&[json!(id()),v["parent"].clone(),json!(name)])?;}else{self.one("SELECT category_id FROM category WHERE category_id=?",&[v["id"].clone()])?;self.exec("UPDATE category SET name=?,parent_id=? WHERE category_id=?",&[json!(name),v["parent"].clone(),v["id"].clone()])?;}Value::Null},

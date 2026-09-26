@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../data/store.dart';
 import '../domain/models.dart';
 import 'common.dart';
+import 'app_theme.dart';
 
 /// The server resolves current name mappings; edits can remove a receipt here.
 class ProductReceiptsPage extends StatefulWidget {
@@ -56,7 +57,11 @@ class _ProductReceiptsPageState extends State<ProductReceiptsPage> {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(title: Text(widget.name)),
+    extendBodyBehindAppBar: true,
+    appBar: AppBar(
+      flexibleSpace: const FrostedBar(child: SizedBox.expand()),
+      title: Text(widget.name),
+    ),
     body: error != null
         ? Center(
             child: TextButton(onPressed: load, child: const Text('加载失败，点击重试')),
@@ -67,6 +72,10 @@ class _ProductReceiptsPageState extends State<ProductReceiptsPage> {
             onRefresh: load,
             child: ListView(
               physics: const AlwaysScrollableScrollPhysics(),
+              padding: EdgeInsets.only(
+                top: MediaQuery.paddingOf(context).top + 72,
+                bottom: 24,
+              ),
               children: [
                 if (receipts!.isEmpty)
                   const Padding(
@@ -77,9 +86,9 @@ class _ProductReceiptsPageState extends State<ProductReceiptsPage> {
                   ListTile(
                     key: ValueKey(r['receipt_id']),
                     tileColor: r['recognition_status'] == 'failed'
-                        ? Colors.red.shade100
+                        ? AppPalette.errorSurface(context)
                         : r['status'] == 'draft'
-                        ? Colors.yellow.shade100
+                        ? AppPalette.warningSurface(context)
                         : null,
                     title: Text(
                       (r['raw_store'] as String?)?.isNotEmpty == true

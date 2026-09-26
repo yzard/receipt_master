@@ -32,7 +32,7 @@ def inputs(root, bootstrap, signer):
         for path in (root / directory).rglob('*'):
             if path.is_file() and not excluded.intersection(path.relative_to(root).parts) and path.name not in excluded_names and path.suffix not in {'.keystore', '.jks'}:
                 files.append(path)
-    files += [root / name for name in ['src/shared/pubspec.yaml', 'src/shared/pubspec.lock', 'docker/android.Dockerfile', 'docker/android.Dockerfile.dockerignore', 'docker/apply_mobile_defaults.py', 'docker/android_release.py', 'build_android.sh']]
+    files += [root / name for name in ['src/shared/pubspec.yaml', 'src/shared/pubspec.lock', 'docker/android.Dockerfile', 'docker/android.Dockerfile.dockerignore', 'docker/apply_mobile_defaults.py', 'docker/validate_mobile_defaults.py', 'docker/android_release.py', 'build_android.sh']]
     hasher = hashlib.sha256()
     for path in sorted(files):
         hasher.update(str(path.relative_to(root)).encode() + b'\0' + bytes.fromhex(digest(path)))
