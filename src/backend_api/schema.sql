@@ -405,7 +405,7 @@ CREATE TABLE line_unmatched_sku (
 );
 CREATE TABLE line_tax_code (
     line_id TEXT PRIMARY KEY REFERENCES receipt_line(line_id) ON DELETE CASCADE,
-    tax_code TEXT NOT NULL CHECK (length(tax_code) = 1)
+    tax_code TEXT NOT NULL CHECK (length(tax_code) BETWEEN 1 AND 3)
 );
 CREATE INDEX line_sku_sku_idx ON line_sku(sku_id);
 

@@ -128,7 +128,7 @@
               "string",
               "null"
             ],
-            "maxLength": 1
+            "maxLength": 3
           },
           "is_weighed": {
             "type": "boolean"

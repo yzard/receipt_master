@@ -247,6 +247,10 @@ describe("interactive web workflows", () => {
         onClose={() => {}}
       />,
     );
+    expect(screen.getByLabelText("税码")).toHaveProperty("maxLength", 3);
+    fireEvent.change(screen.getByLabelText("税码"), {
+      target: { value: "ABC" },
+    });
     fireEvent.change(screen.getByLabelText("折扣对应商品"), {
       target: { value: "product" },
     });
@@ -256,7 +260,7 @@ describe("interactive web workflows", () => {
     fireEvent.click(screen.getByRole("button", { name: "应用修改" }));
     await waitFor(() => expect(save).toHaveBeenCalled());
     expect(op.mock.calls.at(-1)?.[2]).toMatchObject({
-      line: { discountTarget: "product" },
+      line: { discountTarget: "product", taxCode: "ABC" },
       fields: { amountText: "-1.20" },
     });
   });
@@ -287,16 +291,17 @@ describe("confirmed receipts and admin management", () => {
         if (operation === "edit")
           return {
             ...input?.receipt,
-            summary: { knownTotal: 0, difference: 100 },
+            summary: { knownTotal: 100, difference: 0 },
           };
+        if (operation === "check_duplicates") return [];
         return r;
       });
-    render(<Editor id="confirmed" onBack={() => {}} />);
+    render(<Editor id="confirmed" isNew={false} onBack={() => {}} />);
     await screen.findByDisplayValue("Store");
     fireEvent.change(screen.getByLabelText("商店名称"), {
       target: { value: "Corrected Store" },
     });
-    fireEvent.click(screen.getByRole("button", { name: "保存修改" }));
+    fireEvent.click(screen.getByRole("button", { name: "录入并退出" }));
     await waitFor(() =>
       expect(op.mock.calls.some((c) => c[1] === "confirm")).toBe(true),
     );

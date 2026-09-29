@@ -732,16 +732,16 @@ export function LineEditor({
     <Modal title="编辑商品" onClose={onClose}>
       <form onSubmit={save}>
         <Field
-          label="票面名称"
-          value={value.rawName}
-          onChange={(v) => set("rawName", v)}
-          required
-        />
-        <Field
           label="商品名称"
           value={value.productNameEdit ?? value.display?.productName ?? ""}
           onChange={(v) => set("productNameEdit", v)}
           list="product-names"
+        />
+        <Field
+          label="票面名称"
+          value={value.rawName}
+          onChange={(v) => set("rawName", v)}
+          required
         />
         <datalist id="product-names">
           {suggestions.data?.map((n: Row) => (
@@ -789,7 +789,7 @@ export function LineEditor({
           <Field
             label="税码"
             value={value.taxCode ?? ""}
-            maxLength={1}
+            maxLength={3}
             onChange={(v) => set("taxCode", v || null)}
           />
           <Field
@@ -844,7 +844,18 @@ export function LineEditor({
     </Modal>
   );
 }
-export function Editor({ id, onBack }: { id: string; onBack: () => void }) {
+type EditorHandle = { leave: (exit: () => void) => void };
+export function Editor({
+  id,
+  isNew,
+  onBack,
+  ref,
+}: {
+  id: string;
+  isNew: boolean;
+  onBack: () => void;
+  ref?: React.Ref<EditorHandle>;
+}) {
   const loaded = useLoad(
     async () =>
       Promise.all([
@@ -867,8 +878,22 @@ export function Editor({ id, onBack }: { id: string; onBack: () => void }) {
       times: number[];
     } | null>(null),
     [error, setError] = useState("");
+  const [leaving, setLeaving] = useState(false);
+  const [images, setImages] = useState<Row[]>([]);
+  const exitTarget = useRef(onBack);
+  React.useImperativeHandle(ref, () => ({ leave }));
+  useEffect(() => {
+    if (!dirty) return;
+    const warn = (event: BeforeUnloadEvent) => {
+      event.preventDefault();
+      event.returnValue = "";
+    };
+    window.addEventListener("beforeunload", warn);
+    return () => window.removeEventListener("beforeunload", warn);
+  }, [dirty]);
   useEffect(() => {
     if (loaded.data) {
+      setImages(loaded.data[1]);
       setR(loaded.data[0]);
       setTotal(
         loaded.data[0].totalMinor == null
@@ -878,29 +903,6 @@ export function Editor({ id, onBack }: { id: string; onBack: () => void }) {
       setDirty(false);
     }
   }, [loaded.data]);
-  useEffect(() => {
-    if (!r || !dirty) return;
-    let cancelled = false;
-    const timer = setTimeout(() => {
-      void api
-        .op("receipts", "edit", {
-          receipt: r,
-          action: "preview",
-          total_text: total,
-        })
-        .then((value) => {
-          if (!cancelled)
-            setR((current) =>
-              current ? { ...current, summary: value.summary } : current,
-            );
-        })
-        .catch(() => {});
-    }, 300);
-    return () => {
-      cancelled = true;
-      clearTimeout(timer);
-    };
-  }, [r?.lines, r?.currency, total, dirty]);
   function update(key: string, value: any) {
     setR((r: Row | null) => ({ ...r!, [key]: value }));
     setDirty(true);
@@ -931,9 +933,26 @@ export function Editor({ id, onBack }: { id: string; onBack: () => void }) {
       const dup = await api.op("receipts", "check_duplicates", {
         receipt: preview,
       });
+      const reasons: string[] = [];
+      const difference = preview.summary?.difference;
+      if (typeof difference !== "number" || !Number.isFinite(difference))
+        throw new Error("无法计算收据差额，请重试");
+      if (difference !== 0)
+        reasons.push(
+          `收据总额与明细相差 ${money(difference, preview.currency)}`,
+        );
+      if (preview.lines.some((item: Row) => item.warnings?.length))
+        reasons.push("有明细尚待核对");
+      if (preview.timeSource.startsWith("estimated_"))
+        reasons.push("消费时间是估计值");
       if (
         dup.length &&
         !confirm(`发现 ${dup.length} 张可能重复的收据，仍确认保存？`)
+      )
+        return;
+      if (
+        reasons.length &&
+        !confirm(`仍要录入这张收据？\n${reasons.join("\n")}`)
       )
         return;
     }
@@ -960,29 +979,73 @@ export function Editor({ id, onBack }: { id: string; onBack: () => void }) {
       setBusy(false);
     }
   }
+  async function discard(exit: () => void) {
+    if (isNew && r)
+      await api.op("receipts", "purge", {
+        id,
+        expected_version: r.revision,
+      });
+    exit();
+  }
+  function leave(exit: () => void) {
+    if (busy) return;
+    exitTarget.current = exit;
+    if (dirty) setLeaving(true);
+    else void doAction(() => discard(exit));
+  }
   function back() {
-    if (dirty && !confirm("放弃尚未保存的修改？")) return;
-    onBack();
+    leave(onBack);
   }
   async function imageAction(operation: string, input: Row) {
-    const current = dirty ? await save(false) : r;
     await api.op("images", operation, {
       receipt_id: id,
-      expected_version: current.revision,
+      expected_version: r!.revision,
       ...input,
     });
-    loaded.reload();
+    // Explicit photo actions must never save or overwrite the field draft.
+    const [saved, images] = await Promise.all([
+      api.op("receipts", "get", { id }),
+      api.op("images", "list", { receipt_id: id }),
+    ]);
+    setImages(images);
+    setR(
+      (current) =>
+        current && {
+          ...current,
+          revision: saved.revision,
+          lines: current.lines.map((line: Row) => ({
+            ...line,
+            evidence: (line.evidence || []).flatMap((evidence: Row) => {
+              if (evidence.imageId !== input.id) return [evidence];
+              if (operation === "remove") return [];
+              if (operation === "rotate")
+                return [
+                  {
+                    ...evidence,
+                    x0: 1 - evidence.y1,
+                    y0: evidence.x0,
+                    x1: 1 - evidence.y0,
+                    y1: evidence.x1,
+                  },
+                ];
+              return [evidence];
+            }),
+          })),
+        },
+    );
   }
   async function recognize() {
     if (
       !confirm(
-        r?.posted
-          ? "重新识别会将已确认收据放回草稿。继续？"
-          : "重新识别这张收据？",
+        dirty
+          ? "放弃未保存修改并重新识别？重新识别会放弃本页未保存的改动。"
+          : r?.posted
+            ? "重新识别会将已确认收据放回草稿。继续？"
+            : "重新识别这张收据？",
       )
     )
       return;
-    const current = dirty ? await save(false) : r;
+    const current = await api.op("receipts", "get", { id });
     await api.op("recognition", "start", {
       receipt_id: id,
       expected_version: current.revision,
@@ -1014,7 +1077,7 @@ export function Editor({ id, onBack }: { id: string; onBack: () => void }) {
         <IconButton
           icon="refresh"
           label="重新识别"
-          disabled={busy || !loaded.data?.[1].length}
+          disabled={busy || !images.length}
           onClick={() => void doAction(recognize)}
         />
         <IconButton
@@ -1041,10 +1104,10 @@ export function Editor({ id, onBack }: { id: string; onBack: () => void }) {
       )}
       <div className="editor-layout">
         <aside className="receipt-photos" aria-label="收据照片">
-          {loaded.data?.[1].length === 0 && (
+          {images.length === 0 && (
             <p className="muted">手动录入的收据没有照片。</p>
           )}
-          {loaded.data?.[1].map((img: Row, i: number) => (
+          {images.map((img: Row, i: number) => (
             <figure key={img.image_id}>
               <button
                 className="photo-select"
@@ -1056,7 +1119,7 @@ export function Editor({ id, onBack }: { id: string; onBack: () => void }) {
                 />
               </button>
               <figcaption>
-                第 {i + 1} 张
+                <span>第 {i + 1} 张</span>
                 <div>
                   <IconButton
                     icon="rotate"
@@ -1074,9 +1137,7 @@ export function Editor({ id, onBack }: { id: string; onBack: () => void }) {
                       disabled={busy}
                       onClick={() =>
                         void doAction(() => {
-                          const ids = loaded.data[1].map(
-                            (p: Row) => p.image_id,
-                          );
+                          const ids = images.map((p: Row) => p.image_id);
                           [ids[i - 1], ids[i]] = [ids[i], ids[i - 1]];
                           return imageAction("reorder", { ids });
                         })
@@ -1102,186 +1163,204 @@ export function Editor({ id, onBack }: { id: string; onBack: () => void }) {
           ))}
         </aside>
         <section className="receipt-fields" aria-label="收据内容">
-          <div className="form-grid">
-            {[
-              ["store", "商店名称"],
-              ["branch", "分店"],
-              ["address", "地址"],
-              ["country", "国家代码"],
-            ].map(([key, label]) => (
-              <Field
-                key={key}
-                label={label}
-                value={r[key] || ""}
-                onChange={(v) =>
-                  update(key, key === "country" ? v.toUpperCase() : v)
-                }
-              />
-            ))}
-            <Select
-              label="币种"
-              value={r.currency}
-              options={currencies.map((c) => [c, c])}
-              onChange={(v) =>
-                void doAction(() => edit("currency", { currency: v }))
-              }
-            />
-            <Field
-              label="票面总金额"
-              value={total}
-              onChange={(v) => {
-                setTotal(v);
-                setDirty(true);
-              }}
-              inputMode="decimal"
-            />
-            <Field
-              label={`收据时间 · ${zone}`}
-              type="datetime-local"
-              value={localInput(r.occurredAt)}
-              onChange={(v) =>
-                void doAction(async () => {
-                  const times = await api.op("receipts", "time_candidates", {
-                    text: v.replace("T", " "),
-                    zone,
-                  });
-                  if (!times.length) throw new Error("此时间在当前时区不存在");
-                  if (times.length > 1) {
-                    setTimeChoices({ text: v, times });
-                    return;
+          <div className="receipt-fields-scroll">
+            <div className="form-grid">
+              {[
+                ["store", "商店名称"],
+                ["branch", "分店"],
+                ["address", "地址"],
+                ["country", "国家代码"],
+              ].map(([key, label]) => (
+                <Field
+                  key={key}
+                  label={label}
+                  value={r[key] || ""}
+                  onChange={(v) =>
+                    update(key, key === "country" ? v.toUpperCase() : v)
                   }
-                  update("occurredAt", times[0]);
-                  update("timeSource", "user_entered");
-                  update("rawTime", v.replace("T", " "));
-                })
-              }
-            />
-            <Select
-              label="时间来源"
-              value={r.timeSource}
-              onChange={(v) => update("timeSource", v)}
-              options={Object.entries({
-                recognized: "票面识别",
-                user_entered: "手动确认",
-                estimated_clock: "估计 · 录入时间",
-                estimated_instant: "用户指定估计时间",
-              })}
-            />
-          </div>
-          <button onClick={() => setStoreEdit(true)}>编辑商店 Logo 名称</button>
-          <div className="section-heading">
-            <h2>
-              商品明细 <small>{r.lines.length}</small>
-            </h2>
-            <button
-              onClick={() =>
-                void doAction(async () => {
-                  const l = await api.op("receipts", "display_line", {
-                    line: emptyLine(),
-                    currency: r.currency,
-                  });
-                  setLine(l);
-                })
-              }
-            >
-              <Icon name="add" />
-              添加
-            </button>
-          </div>
-          {r.lines.length === 0 && (
-            <p className="muted">还没有商品明细。识别完成后会显示在这里。</p>
-          )}
-          {r.lines.map((l: Row) => (
-            <div
-              key={l.id}
-              className={`line ${l.warnings.length ? "warning" : ""}`}
-            >
-              <input
-                type="checkbox"
-                checked={selected.includes(l.id)}
-                aria-label={`选择 ${l.rawName}`}
-                onChange={(e) =>
-                  setSelected((s) =>
-                    e.target.checked
-                      ? [...s, l.id]
-                      : s.filter((id) => id !== l.id),
-                  )
+                />
+              ))}
+              <Select
+                label="币种"
+                value={r.currency}
+                options={currencies.map((c) => [c, c])}
+                onChange={(v) =>
+                  void doAction(() => edit("currency", { currency: v }))
                 }
               />
-              <button className="line-main" onClick={() => setLine(l)}>
-                <strong>
-                  {l.display?.productName || l.rawName || "未命名商品"}
-                </strong>
-                {l.display?.productName && <small>{l.rawName}</small>}
-                <div className="line-meta">
-                  {kinds[l.kind]} {l.taxCode && `· 税码 ${l.taxCode}`}{" "}
-                  {l.sku && `· SKU ${l.sku}`}{" "}
-                  {l.display?.weightLabel && `· ${l.display.weightLabel}`}
-                </div>
-                {l.warnings.map((w: string) => (
-                  <p className="warning-text" key={w}>
-                    {w}
-                  </p>
-                ))}
+              <Field
+                label="票面总金额"
+                value={total}
+                onChange={(v) => {
+                  setTotal(v);
+                  setDirty(true);
+                }}
+                inputMode="decimal"
+              />
+              <Field
+                label={`收据时间 · ${zone}`}
+                type="datetime-local"
+                value={localInput(r.occurredAt)}
+                onChange={(v) =>
+                  void doAction(async () => {
+                    const times = await api.op("receipts", "time_candidates", {
+                      text: v.replace("T", " "),
+                      zone,
+                    });
+                    if (!times.length)
+                      throw new Error("此时间在当前时区不存在");
+                    if (times.length > 1) {
+                      setTimeChoices({ text: v, times });
+                      return;
+                    }
+                    update("occurredAt", times[0]);
+                    update("timeSource", "user_entered");
+                    update("rawTime", v.replace("T", " "));
+                  })
+                }
+              />
+              <Select
+                label="时间来源"
+                value={r.timeSource}
+                onChange={(v) => update("timeSource", v)}
+                options={Object.entries({
+                  recognized: "票面识别",
+                  user_entered: "手动确认",
+                  estimated_clock: "估计 · 录入时间",
+                  estimated_instant: "用户指定估计时间",
+                })}
+              />
+            </div>
+            <button onClick={() => setStoreEdit(true)}>
+              编辑商店 Logo 名称
+            </button>
+            <div className="section-heading">
+              <h2>
+                商品明细 <small>{r.lines.length}</small>
+              </h2>
+              <button
+                onClick={() =>
+                  void doAction(async () => {
+                    const l = await api.op("receipts", "display_line", {
+                      line: emptyLine(),
+                      currency: r.currency,
+                    });
+                    setLine(l);
+                  })
+                }
+              >
+                <Icon name="add" />
+                添加
               </button>
-              <span className="numeric">
-                {money(l.amountMinor, r.currency)}
-              </span>
-              <IconButton
-                icon="trash"
-                label="删除商品"
+            </div>
+            {r.lines.length === 0 && (
+              <p className="muted">还没有商品明细。识别完成后会显示在这里。</p>
+            )}
+            {r.lines.map((l: Row) => (
+              <div
+                key={l.id}
+                className={`line ${l.warnings.length ? "warning" : ""}`}
+              >
+                <input
+                  type="checkbox"
+                  checked={selected.includes(l.id)}
+                  aria-label={`选择 ${l.rawName}`}
+                  onChange={(e) =>
+                    setSelected((s) =>
+                      e.target.checked
+                        ? [...s, l.id]
+                        : s.filter((id) => id !== l.id),
+                    )
+                  }
+                />
+                <button className="line-main" onClick={() => setLine(l)}>
+                  <strong>
+                    {l.display?.productName || l.rawName || "未命名商品"}
+                  </strong>
+                  {l.display?.productName && <small>{l.rawName}</small>}
+                  <div className="line-meta">
+                    {kinds[l.kind]} {l.taxCode && `· 税码 ${l.taxCode}`}{" "}
+                    {l.sku && `· SKU ${l.sku}`}{" "}
+                  </div>
+                  {l.warnings.map((w: string) => (
+                    <p className="warning-text" key={w}>
+                      {w}
+                    </p>
+                  ))}
+                </button>
+                <span className="numeric">
+                  {money(l.amountMinor, r.currency)}
+                </span>
+                <IconButton
+                  icon="trash"
+                  label="删除商品"
+                  onClick={() => {
+                    if (confirm("删除这一项？"))
+                      update(
+                        "lines",
+                        r.lines.filter(
+                          (a: Row) =>
+                            a.id !== l.id && a.discountTarget !== l.id,
+                        ),
+                      );
+                  }}
+                />
+              </div>
+            ))}
+            <div className="inline-actions">
+              <button
+                disabled={selected.length !== 1}
                 onClick={() => {
-                  if (confirm("删除这一项？"))
-                    update(
-                      "lines",
-                      r.lines.filter(
-                        (a: Row) => a.id !== l.id && a.discountTarget !== l.id,
-                      ),
+                  const amount = prompt("拆分出的金额");
+                  if (amount !== null)
+                    void doAction(() =>
+                      edit("split", { selected, amount_text: amount }),
                     );
                 }}
-              />
+              >
+                拆分
+              </button>
+              <button
+                disabled={selected.length < 2}
+                onClick={() => void doAction(() => edit("merge", { selected }))}
+              >
+                合并
+              </button>
+              <button
+                onClick={() => void doAction(() => edit("total_from_lines"))}
+              >
+                按明细计算总额
+              </button>
             </div>
-          ))}
-          <div className="inline-actions">
-            <button
-              disabled={selected.length !== 1}
-              onClick={() => {
-                const amount = prompt("拆分出的金额");
-                if (amount !== null)
-                  void doAction(() =>
-                    edit("split", { selected, amount_text: amount }),
-                  );
-              }}
-            >
-              拆分
-            </button>
-            <button
-              disabled={selected.length < 2}
-              onClick={() => void doAction(() => edit("merge", { selected }))}
-            >
-              合并
-            </button>
-            <button
-              onClick={() => void doAction(() => edit("total_from_lines"))}
-            >
-              按明细计算总额
-            </button>
+            {r.summary && !dirty && (
+              <div className="reconciliation">
+                <span>明细合计 {money(r.summary.knownTotal, r.currency)}</span>
+                <strong className={r.summary.difference ? "warning-text" : ""}>
+                  差额 {money(r.summary.difference, r.currency)}
+                </strong>
+              </div>
+            )}
           </div>
-          {r.summary && (
-            <div className="reconciliation">
-              <span>明细合计 {money(r.summary.knownTotal, r.currency)}</span>
-              <strong className={r.summary.difference ? "warning-text" : ""}>
-                差额 {money(r.summary.difference, r.currency)}
-              </strong>
-            </div>
-          )}
           <footer className="save-bar">
             <button
+              className="discard"
               disabled={busy}
-              onClick={() => void doAction(() => save(false))}
+              onClick={() => void doAction(() => discard(onBack))}
             >
-              {r.posted ? "保存修改" : "保存草稿"}
+              放弃改动
             </button>
+            {!r.posted && (
+              <button
+                disabled={busy}
+                onClick={() =>
+                  void doAction(async () => {
+                    if (await save(false)) onBack();
+                  })
+                }
+              >
+                保存草稿
+              </button>
+            )}
             <button
               className="primary"
               disabled={busy}
@@ -1292,11 +1371,40 @@ export function Editor({ id, onBack }: { id: string; onBack: () => void }) {
                 })
               }
             >
-              {busy ? "正在保存…" : "确认并退出"}
+              {busy ? "正在保存…" : "录入并退出"}
             </button>
           </footer>
         </section>
       </div>
+      {leaving && (
+        <Modal title="离开收据编辑？" onClose={() => setLeaving(false)}>
+          <p>本页改动尚未保存。</p>
+          <footer>
+            <button disabled={busy} onClick={() => setLeaving(false)}>
+              继续编辑
+            </button>
+            <button
+              disabled={busy}
+              onClick={() => void doAction(() => discard(exitTarget.current))}
+            >
+              放弃改动
+            </button>
+            {!r.posted && (
+              <button
+                className="primary"
+                disabled={busy}
+                onClick={() =>
+                  void doAction(async () => {
+                    if (await save(false)) exitTarget.current();
+                  })
+                }
+              >
+                保存草稿
+              </button>
+            )}
+          </footer>
+        </Modal>
+      )}
       {timeChoices && (
         <Modal title="确认重复的本地时间" onClose={() => setTimeChoices(null)}>
           <p>夏令时切换使这个时间出现两次，请选择实际交易时间。</p>
@@ -1343,7 +1451,6 @@ export function Editor({ id, onBack }: { id: string; onBack: () => void }) {
           title="商店名称"
           onClose={() => {
             setStoreEdit(false);
-            loaded.reload();
           }}
           wide
         >
@@ -2474,6 +2581,7 @@ function Workspace() {
     [drawer, setDrawer] = useState(false),
     [camera, setCamera] = useState(false),
     [editor, setEditor] = useState<string | null>(null),
+    [newManual, setNewManual] = useState<string | null>(null),
     [product, setProduct] = useState<Row | null>(null),
     [theme, setThemeValue] = useState(
       localStorage.getItem("theme") || "system",
@@ -2481,6 +2589,7 @@ function Workspace() {
     [change, setChange] = useState(false),
     [notice, setNotice] = useState("");
   const upload = useRef<HTMLInputElement>(null);
+  const editorRef = useRef<EditorHandle>(null);
   useEffect(() => {
     const handler = (e: Event) => setNotice((e as CustomEvent).detail);
     window.addEventListener("notice", handler);
@@ -2495,14 +2604,22 @@ function Workspace() {
     const result = await api.op("receipts", "create", {
       receipt: emptyReceipt(),
     });
+    setNewManual(result.id);
     setEditor(result.id);
   }
-  function navigate(key: string) {
-    if (editor && !confirm("退出收据编辑？请先保存尚未保存的修改。")) return;
+  function closeEditor() {
     setEditor(null);
-    setProduct(null);
-    setPage(key);
+    setNewManual(null);
+  }
+  function navigate(key: string) {
     setDrawer(false);
+    const exit = () => {
+      closeEditor();
+      setProduct(null);
+      setPage(key);
+    };
+    if (editor) editorRef.current?.leave(exit);
+    else exit();
   }
   return (
     <>
@@ -2589,7 +2706,7 @@ function Workspace() {
           </nav>
         </>
       )}
-      <main className="workspace">
+      <main className={`workspace ${editor ? "editing" : ""}`}>
         {notice && (
           <div className="notice toast" role="status">
             <span>{notice}</span>
@@ -2601,7 +2718,13 @@ function Workspace() {
           </div>
         )}
         {editor ? (
-          <Editor id={editor} onBack={() => setEditor(null)} />
+          <Editor
+            ref={editorRef}
+            key={editor}
+            id={editor}
+            isNew={newManual === editor}
+            onBack={closeEditor}
+          />
         ) : page === "receipts" ? (
           <>
             {product && (

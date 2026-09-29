@@ -182,6 +182,10 @@ async fn store_alias_routes_only_its_prompt() {
         (json!("skyFOODS"), "skyFOODS"),
         (json!("Sky Foods"), "skyFOODS"),
         (json!("H-Mart"), "H MART"),
+        (json!("feilong"), "Fei Long"),
+        (json!(" FEI LONG MARKET "), "Fei Long"),
+        (json!("飛龍"), "Fei Long"),
+        (json!("Not Fei Long"), "general"),
     ] {
         let mut b = body();
         b["receipt_context"] = json!({"known_store":store});
@@ -193,10 +197,21 @@ async fn store_alias_routes_only_its_prompt() {
         let (status, result) = request(&f, "POST", "/v1/chat/completions", Some(b), true).await;
         assert_eq!(status, 200, "{result}");
         assert_eq!(result["receipt_parsing"]["profile"], profile);
+        let calls = f.mock.lock().unwrap();
+        let call = calls.calls.last().unwrap();
+        assert_eq!(call["profile"], "receipt");
+        let text = call["messages"].to_string();
+        assert!(text.contains("Receipt-wide leading-number rule"));
+        assert!(text.contains("exactly 7-digit"));
+        assert!(text.contains("preserving leading zeros"));
         assert_eq!(
-            f.mock.lock().unwrap().calls.last().unwrap()["profile"],
-            "receipt"
+            text.contains("MERCHANT PROFILE: FEI LONG"),
+            profile == "Fei Long"
         );
+        if profile == "Fei Long" {
+            assert!(text.contains("2 CHIVE FLOWER"));
+            assert!(text.contains("TOTAL AMOUNT of that row"));
+        }
     }
     for context in [json!("Costco"), json!({"known_store":42})] {
         let mut b = body();

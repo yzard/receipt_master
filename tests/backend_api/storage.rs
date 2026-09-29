@@ -1421,7 +1421,7 @@ fn sku_catalog_is_merchant_scoped_optional_and_preserved_by_old_clients() {
         .remove("taxCode");
     let mut edited = s.transaction(|| s.save(old_client, false)).unwrap();
     assert_eq!(edited["lines"][0]["sku"], "002338");
-    edited["lines"][0]["taxCode"] = json!("AB");
+    edited["lines"][0]["taxCode"] = json!("ABCD");
     assert!(s.transaction(|| s.save(edited.clone(), false)).is_err());
     edited["lines"][0]["taxCode"] = Value::Null;
     edited["lines"][0]["sku"] = Value::Null;
@@ -1429,6 +1429,49 @@ fn sku_catalog_is_merchant_scoped_optional_and_preserved_by_old_clients() {
     assert!(saved["lines"][0]["sku"].is_null());
     assert!(saved["lines"][0]["taxCode"].is_null());
     assert!(s.rows("PRAGMA foreign_key_check", &[]).unwrap().is_empty());
+}
+
+#[test]
+fn tax_codes_accept_up_to_three_characters_through_ocr_editing_and_storage() {
+    let (_dir, s) = setup();
+    for code in ["E", "AB", "ABC", "税码三"] {
+        let data = vision_fixture(json!({"lines":[{
+            "name":"MILK", "kind":"product", "amount":"9.50", "tax_code":code
+        }]}));
+        let decoded =
+            jobs::decode_receipt(&s, receipt(), data, vec![], "America/New_York").unwrap();
+        assert_eq!(decoded["lines"][0]["taxCode"], code);
+        let saved = s.transaction(|| s.save(decoded, false)).unwrap();
+        assert_eq!(saved["lines"][0]["taxCode"], code);
+        let mut edited = saved.clone();
+        edited["lines"][0]["taxCode"] = json!(" ABC ");
+        let saved = s.transaction(|| s.save(edited, false)).unwrap();
+        assert_eq!(saved["lines"][0]["taxCode"], "ABC");
+        let line_id = saved["lines"][0]["id"].clone();
+        for invalid in ["", "ABCD"] {
+            assert!(
+                s.exec(
+                    "UPDATE line_tax_code SET tax_code=? WHERE line_id=?",
+                    &[json!(invalid), line_id.clone()]
+                )
+                .is_err()
+            );
+        }
+        let mut edited = saved.clone();
+        edited["lines"][0]["taxCode"] = json!("ABCD");
+        assert!(s.transaction(|| s.save(edited, false)).is_err());
+        assert_eq!(
+            s.load(saved["id"].as_str().unwrap()).unwrap()["lines"][0]["taxCode"],
+            "ABC"
+        );
+        let bad = vision_fixture(json!({"lines":[{
+            "name":"MILK", "kind":"product", "amount":"9.50", "tax_code":"ABCD"
+        }]}));
+        assert!(receipt_backend_api::pipeline::validate_receipt(&bad, 0).is_err());
+        let mut blank = saved;
+        blank["lines"][0]["taxCode"] = json!("   ");
+        assert!(s.transaction(|| s.save(blank, false)).unwrap()["lines"][0]["taxCode"].is_null());
+    }
 }
 
 #[test]
@@ -1696,6 +1739,41 @@ fn vision_fixture(mut data: Value) -> Value {
     }
     data
 }
+#[test]
+fn counted_product_prefix_and_seven_digit_sku_keep_printed_names_and_amounts() {
+    let (_dir, s) = setup();
+    for (store, quantity, sku) in [
+        ("Fei Long", json!("2"), Value::Null),
+        ("Unknown grocery", json!("12"), Value::Null),
+        ("Unknown grocery", Value::Null, json!("0002338")),
+    ] {
+        let mut base = receipt();
+        base["store"] = json!(store);
+        base["totalMinor"] = json!(358);
+        let data = vision_fixture(json!({"total":"3.58", "lines":[{
+            "name":"CHIVE FLOWER", "kind":"product", "amount":"3.58",
+            "quantity":quantity, "quantity_unit":if quantity.is_null() { Value::Null } else { json!("ea") },
+            "sku":sku, "tax_code":"F"
+        }]}));
+        let decoded = jobs::decode_receipt(&s, base, data, vec![], "America/New_York").unwrap();
+        let saved = s.transaction(|| s.save(decoded, false)).unwrap();
+        let line = &saved["lines"][0];
+        assert_eq!(line["rawName"], "CHIVE FLOWER");
+        assert_eq!(line["amountMinor"], 358);
+        assert_eq!(line["taxCode"], "F");
+        assert_eq!(line["sku"], sku);
+        assert!(line["unitPriceScaled"].is_null());
+        assert_eq!(
+            line["quantityMicros"],
+            match quantity.as_str() {
+                Some("2") => json!(2_000_000),
+                Some("12") => json!(12_000_000),
+                _ => Value::Null,
+            }
+        );
+    }
+}
+
 #[test]
 fn vision_contract_keeps_explicit_fields_duplicates_and_cross_photo_evidence() {
     let (_dir, s) = setup();

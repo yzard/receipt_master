@@ -192,6 +192,7 @@ void main() {
             if (path.endsWith('/receipts/prepare_line')) {
               expect(data['rawName'], 'RAW PRODUCT');
               expect(data['productNameEdit'], 'New product name');
+              expect(data['taxCode'], 'ABC');
               events.add('product name preview');
             }
           } else if (path.endsWith('/images/list')) {
@@ -308,6 +309,9 @@ void main() {
           lessThan(tester.getCenter(find.widgetWithText(TextField, '票面名称')).dy),
         );
         await tester.enterText(productName, 'New product name');
+        final taxCode = find.widgetWithText(TextField, '税码（最多三个字符，可留空）');
+        expect(tester.widget<TextField>(taxCode).maxLength, 3);
+        await tester.enterText(taxCode, 'ABC');
         await tester.tap(find.text('应用修改'));
         await tester.pumpAndSettle();
         expect(events, ['product name preview']);

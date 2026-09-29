@@ -1,0 +1,16 @@
+name: receipt-master-ocr
+
+# NAS deployment: reuse the same OCR container configuration without starting API.
+services:
+  backend_ocr:
+    extends:
+      file: docker-compose.yaml
+      service: backend_ocr
+    ports:
+      - "${RECEIPT_OCR_LISTEN_IP:?Set the OCR host LAN IP}:${RECEIPT_OCR_PORT:?Set the OCR host port}:8000"
+    networks: [inference, remote_ocr]
+
+networks:
+  inference:
+    internal: true
+  remote_ocr: {}

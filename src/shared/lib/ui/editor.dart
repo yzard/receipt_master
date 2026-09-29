@@ -351,6 +351,7 @@ class _EditorPageState extends State<EditorPage> {
             padding: const EdgeInsets.only(bottom: 12),
             child: TextField(
               controller: c[key],
+              maxLength: key == 'taxCode' ? 3 : null,
               decoration: InputDecoration(labelText: label),
               keyboardType:
                   ['weight', 'quantity', 'price', 'amount'].contains(key)
@@ -400,7 +401,7 @@ class _EditorPageState extends State<EditorPage> {
                     if (line.kind == 'product') field('productName', '商品名称'),
                     field('raw', '票面名称'),
                     if (line.kind == 'product') ...[
-                      field('taxCode', '税码（一个字符，可留空）'),
+                      field('taxCode', '税码（最多三个字符，可留空）'),
                       field('sku', '商店 SKU（可留空）'),
                       field('weight', '重量 $displayUnit（可留空）'),
                       TextButton.icon(

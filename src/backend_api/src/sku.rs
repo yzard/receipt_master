@@ -14,7 +14,7 @@ pub fn normalize(line: &mut Value) -> Result<()> {
             continue;
         }
         let value = line[key].as_str().ok_or_else(invalid)?.trim();
-        if key == "taxCode" && value.chars().count() > 1 {
+        if key == "taxCode" && value.chars().count() > 3 {
             return Err(invalid());
         }
         line[key] = if value.is_empty() {

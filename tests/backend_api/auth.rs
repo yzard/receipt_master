@@ -8,6 +8,64 @@ use serde_json::{Value, json};
 use tower::ServiceExt;
 const SECRET: &str = "synthetic-test-signing-key-not-real-secret";
 const PASS: &str = "admin-password-changed-123";
+
+#[test]
+fn concurrent_auth_and_receipt_connections_do_not_deadlock() {
+    // 3.51.1 could deadlock in unixOpen/unixClose when WAL connections overlap.
+    assert!(rusqlite::version_number() >= 3_051_003);
+    const CHILD: &str = "RECEIPT_TEST_WAL_CONNECTION_STRESS";
+    if std::env::var_os(CHILD).is_some() {
+        let root = tempfile::tempdir().unwrap();
+        Identities::initialize(root.path(), false).unwrap();
+        let barrier = std::sync::Arc::new(std::sync::Barrier::new(12));
+        std::thread::scope(|scope| {
+            for _ in 0..12 {
+                let barrier = barrier.clone();
+                let path = root.path();
+                scope.spawn(move || {
+                    barrier.wait();
+                    for _ in 0..300 {
+                        assert_eq!(
+                            Identities::open(path).unwrap().users(false).unwrap().len(),
+                            1
+                        );
+                        let store = db::Store::open(path).unwrap();
+                        let receipts = store.receipt_action("list", &json!({})).unwrap();
+                        assert!(receipts["items"].as_array().unwrap().is_empty());
+                    }
+                });
+            }
+        });
+        return;
+    }
+    // A subprocess lets a lock regression fail promptly instead of hanging CI.
+    let mut child = std::process::Command::new(std::env::current_exe().unwrap())
+        .args([
+            "--exact",
+            "concurrent_auth_and_receipt_connections_do_not_deadlock",
+            "--nocapture",
+        ])
+        .env(CHILD, "1")
+        .spawn()
+        .unwrap();
+    let deadline = std::time::Instant::now() + std::time::Duration::from_secs(30);
+    loop {
+        if let Some(status) = child.try_wait().unwrap() {
+            assert!(
+                status.success(),
+                "concurrent WAL connection subprocess failed"
+            );
+            break;
+        }
+        if std::time::Instant::now() >= deadline {
+            child.kill().unwrap();
+            child.wait().unwrap();
+            panic!("concurrent auth/receipt WAL connections stalled for 30 seconds");
+        }
+        std::thread::sleep(std::time::Duration::from_millis(25));
+    }
+}
+
 fn setup() -> (tempfile::TempDir, Router) {
     let root = tempfile::tempdir().unwrap();
     Identities::initialize(root.path(), false).unwrap();
