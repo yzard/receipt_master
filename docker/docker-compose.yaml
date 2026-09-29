@@ -17,10 +17,10 @@ services:
   backend_ocr:
     <<: *gpu
     restart: unless-stopped
-    image: receipt-master-backend-ocr:local
+    image: receipt-master-backend-ocr:latest
     environment:
       PUID: ${PUID:?Set PUID to the host user ID}
-      GUID: ${GUID:?Set GUID to the host group ID}
+      PGID: ${PGID:?Set PGID to the host group ID}
     volumes:
       - ../playground/backend_ocr:/data:ro
     networks: [inference]
@@ -32,11 +32,13 @@ services:
       interval: 10s
       timeout: 6s
       retries: 10
-    image: receipt-master-backend-api:local
+    image: receipt-master-backend-api:latest
     environment:
-      PUID: ${PUID:?Set PUID to the host user ID}
-      GUID: ${GUID:?Set GUID to the host group ID}
-      RESET_ADMIN_PASSWORD: ${RESET_ADMIN_PASSWORD:-false}
+      - PUID=${PUID:?Set PUID to the host user ID}
+      - PGID=${PGID:?Set PGID to the host group ID}
+      - RESET_ADMIN_PASSWORD=${RESET_ADMIN_PASSWORD:-false}
+      - BACKEND_OCR_URL=${BACKEND_OCR_URL:-http://backend_ocr:8000}
+      - BACKEND_OCR_API_KEY
     ports: ["0.0.0.0:5000:8000"]
     volumes:
       - ../playground/backend_api:/data

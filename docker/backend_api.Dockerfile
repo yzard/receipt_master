@@ -26,5 +26,6 @@ COPY --chmod=0644 build/mobile/updates/*.apk /artifacts/updates/
 COPY docker/service-entrypoint.sh /app/service-entrypoint.sh
 RUN chmod 0755 /artifacts /artifacts/updates && chmod +x /app/service-entrypoint.sh
 ENV RECEIPT_SERVICE=api
+EXPOSE 8000
 ENTRYPOINT ["/app/service-entrypoint.sh", "/app/receipt-backend-api"]
 CMD ["--data-dir", "/data"]

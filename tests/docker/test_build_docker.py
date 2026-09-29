@@ -25,19 +25,24 @@ name = Path(sys.argv[0]).name
 args = sys.argv[1:]
 with open(os.environ['BUILD_TEST_LOG'], 'a') as log:
     log.write(json.dumps([name, *args]) + '\\n')
+commands = [json.loads(line) for line in Path(os.environ['BUILD_TEST_LOG']).read_text().splitlines()]
 failure = os.environ.get('BUILD_TEST_FAILURE', '')
 if (failure == 'android' and name == 'build_android.sh'
     or failure == 'checks' and name == 'docker' and '--target' in args and 'checks' in args
-    or failure == 'api_build' and name == 'docker' and '--load' in args and 'receipt-master-backend-api:local' in args
+    or failure == 'api_build' and name == 'docker' and '--load' in args and any(a.startswith('receipt-master-backend-api:') for a in args)
     or failure == 'smoke' and name == 'fake-python' and any(a.endswith('http_smoke.py') for a in args)
-    or failure == 'push' and name == 'docker' and args[:2] == ['image', 'push']):
+    or failure == 'push' and name == 'docker' and args[:2] == ['image', 'push']
+    or failure == 'latest_push' and name == 'docker' and args[:2] == ['image', 'push'] and args[-1].endswith(':latest')):
     sys.exit(37)
 if name == 'docker' and args[:2] == ['image', 'inspect']:
-    print('sha256:' + ('a' if args[-1] == 'receipt-master-backend-api:local' else 'b') * 64)
+    print('sha256:' + ('a' if args[-1].startswith('receipt-master-backend-api:') else 'b') * 64)
 elif name == 'docker' and args[:1] == ['compose']:
     print('{}')
+elif name == 'date':
+    # A second clock read crosses midnight, exposing inconsistent image dates.
+    print('20260929' if sum(c[0] == 'date' for c in commands) == 1 else '20260930')
 '''
-        for name in ['docker', 'fake-python']:
+        for name in ['docker', 'fake-python', 'date']:
             script = self.bin / name
             script.write_text(stub)
             script.chmod(0o755)
@@ -69,27 +74,48 @@ elif name == 'docker' and args[:1] == ['compose']:
         self.assertTrue(any(c[0] == 'build_android.sh' for c in commands))
         smoke = next(c for c in commands if any(a.endswith('http_smoke.py') for a in c))
         self.assertEqual(smoke[smoke.index('--image') + 1], 'sha256:' + 'a' * 64)
-        self.assertFalse(any(c[:3] in [['docker', 'image', 'push'], ['docker', 'image', 'tag']] for c in commands))
+        self.assertFalse(any(c[:3] == ['docker', 'image', 'push'] for c in commands))
+        builds = [c for c in commands if c[:3] == ['docker', 'buildx', 'build'] and '--load' in c]
+        self.assertEqual(
+            [c[c.index('--tag') + 1] for c in builds],
+            ['receipt-master-backend-ocr:20260929', 'receipt-master-backend-api:20260929'],
+        )
+        aliases = [c for c in commands if c[:3] == ['docker', 'image', 'tag']]
+        self.assertEqual(
+            [c[-2:] for c in aliases],
+            [
+                ['sha256:' + 'b' * 64, 'receipt-master-backend-ocr:latest'],
+                ['sha256:' + 'a' * 64, 'receipt-master-backend-api:latest'],
+            ],
+        )
+        self.assertTrue(all(commands.index(c) > commands.index(smoke) for c in aliases))
+        self.assertEqual([c for c in commands if c[0] == 'date'], [['date', '+%Y%m%d']])
 
     def test_each_registry_pushes_both_tested_images_after_smoke(self):
-        for registry, host, extra, tag in [
-            ('dockerhub', 'docker.io', [], 'latest'),
-            ('github', 'ghcr.io', ['--tag', 'v3.1.0'], 'v3.1.0'),
-        ]:
+        for registry, host in [('dockerhub', 'docker.io'), ('github', 'ghcr.io')]:
             with self.subTest(registry=registry):
                 self.log.unlink(missing_ok=True)
-                result, commands = self.run_build('--publish', registry, '--username', 'Example-User', *extra)
+                result, commands = self.run_build('--publish', registry, '--username', 'Example-User')
                 self.assertEqual(result.returncode, 0, result.stderr)
-                expected = [f'{host}/example-user/receipt-master-backend-{c}:{tag}' for c in ['ocr', 'api']]
+                expected = [
+                    f'{host}/example-user/receipt-master-backend-{c}:{tag}'
+                    for tag in ['20260929', 'latest']
+                    for c in ['ocr', 'api']
+                ]
                 pushes = [c for c in commands if c[:3] == ['docker', 'image', 'push']]
                 self.assertEqual([c[-1] for c in pushes], expected)
-                tags = [c for c in commands if c[:3] == ['docker', 'image', 'tag']]
+                tags = [c for c in commands if c[:3] == ['docker', 'image', 'tag'] and c[-1].startswith(host + '/')]
                 self.assertEqual(
-                    [c[-2:] for c in tags], [['sha256:' + 'b' * 64, expected[0]], ['sha256:' + 'a' * 64, expected[1]]]
+                    [c[-2:] for c in tags],
+                    [
+                        ['sha256:' + ('b' if c == 'ocr' else 'a') * 64, ref]
+                        for c, ref in zip(['ocr', 'api', 'ocr', 'api'], expected)
+                    ],
                 )
                 smoke_index = next(i for i, c in enumerate(commands) if any(a.endswith('http_smoke.py') for a in c))
                 self.assertTrue(all(commands.index(c) > smoke_index for c in pushes + tags))
                 self.assertFalse(any(c[:2] == ['docker', 'login'] for c in commands))
+                self.assertEqual(sum(c[0] == 'date' for c in commands), 1)
 
     def test_invalid_options_fail_before_any_work(self):
         for args in [
@@ -124,6 +150,20 @@ elif name == 'docker' and args[:1] == ['compose']:
         result, commands = self.run_build('--publish', 'dockerhub', '--username', 'tester', failure='push')
         self.assertEqual(result.returncode, 37, result.stderr)
         self.assertEqual(len([c for c in commands if c[:3] == ['docker', 'image', 'push']]), 1)
+        self.assertNotIn('Published both backend images', result.stdout)
+
+    def test_latest_push_failure_does_not_claim_complete_publication(self):
+        result, commands = self.run_build('--publish', 'github', '--username', 'tester', failure='latest_push')
+        self.assertEqual(result.returncode, 37, result.stderr)
+        pushes = [c[-1] for c in commands if c[:3] == ['docker', 'image', 'push']]
+        self.assertEqual(
+            pushes,
+            [
+                'ghcr.io/tester/receipt-master-backend-ocr:20260929',
+                'ghcr.io/tester/receipt-master-backend-api:20260929',
+                'ghcr.io/tester/receipt-master-backend-ocr:latest',
+            ],
+        )
         self.assertNotIn('Published both backend images', result.stdout)
 
     def test_help_performs_no_build(self):

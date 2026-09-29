@@ -7,7 +7,7 @@
 ## 持久化
 
 Compose 将宿主 `playground/backend_api/` 绑定到 API 的 `/data`。其下包括固定名称的 `config.toml`、`prompt.toml`、`database/auth.sqlite`、`database/receipts.sqlite`（以及各自 WAL/SHM）、`media/originals/`、`media/derived/`、`recognition/`、`staging/` 和 `backups/`。启动命令通过 `--data-dir /data` 指定目录；配置文件中不含 `data_dir`。重建镜像、重建容器和退出 playground 不删除这些数据。业务备份不包含身份库；恢复只替换收据库及其 WAL/SHM，保留同目录的身份库、账户与会话。
-`run_playground.sh` 将宿主当前 UID/GID 分别传为 `PUID`/`GUID`。容器入口校验参数，将已有 API 数据文件归属调整到该用户，然后以此身份运行服务；后续创建的 SQLite、照片和备份文件也属于该用户。直接执行 Compose 时须显式设置这两个变量。
+`run_playground.sh` 将宿主当前 UID/GID 分别传为 `PUID`/`PGID`。容器入口校验参数，将已有 API 数据文件归属调整到该用户，然后以此身份运行服务；后续创建的 SQLite、照片和备份文件也属于该用户。直接执行 Compose 时须显式设置这两个变量。
 
 只有 API 容器访问业务目录。OCR 容器将独立的宿主 `playground/backend_ocr/` 只读绑定到自己的 `/data`，从其 `config.toml` 读取推理设置；通过内部 REST 接收识别图像。Android 安装包、更新清单和不可变更新包构建时复制进 API 镜像的 `/artifacts/`，由运行时 UID 只读访问，不依赖宿主 APK 挂载。发布新安装包需重建 API 镜像。
 
@@ -88,7 +88,7 @@ Compose 将宿主 `playground/backend_api/` 绑定到 API 的 `/data`。其下�
 
 ## 客户端职责与服务器配置
 
-`playground/backend_api/config.toml` 只配置 API 本身以及 `[ocr]` 的服务 URL 和独立认证密钥。模型名称、输出长度、thinking、图片上限等推理参数在 OCR 自己的 `playground/backend_ocr/config.toml`；API 提示词在自己的 `prompt.toml`。两个服务都由启动参数 `--data-dir` 指定各自目录并读取固定文件名 `config.toml`。JWT 签名密钥保存在 API 的 `[general].jwt_secret`，不发给客户端，服务间密钥内嵌在 API 的 `[ocr].api_key` 和 OCR 的 `[general].api_key`，不另建密钥文件。两份配置仅允许所有者读取。API 的 `[general].web_path` 指向镜像内 `/app/web` 静态资源。API 通过受认证的 OCR capabilities 接口获取图片上限，不复制模型配置。修改对应 TOML 后重启相应服务。当前本地 NInfer 不按 token 收费，费用估算和预算提醒已移除。
+`playground/backend_api/config.toml` 只配置 API 本身以及 `[ocr]` 的服务 URL 和独立认证密钥。启动时 `BACKEND_OCR_URL` 与 `BACKEND_OCR_API_KEY` 可分别覆盖这两个 TOML 值，供 Docker Compose 部署配置使用；覆盖值仍经过同样验证。模型名称、输出长度、thinking、图片上限等推理参数在 OCR 自己的 `playground/backend_ocr/config.toml`；API 提示词在自己的 `prompt.toml`。两个服务都由启动参数 `--data-dir` 指定各自目录并读取固定文件名 `config.toml`。JWT 签名密钥保存在 API 的 `[general].jwt_secret`，不发给客户端；OCR 服务端 `[general].api_key` 必须与 API 最终使用的密钥相同。TOML 和部署环境中的密钥只允许管理员读取。API 的 `[general].web_path` 指向镜像内 `/app/web` 静态资源。API 通过受认证的 OCR capabilities 接口获取图片上限，不复制模型配置。修改对应配置后重启相应服务。当前本地 NInfer 不按 token 收费，费用估算和预算提醒已移除。
 每次收据识别都先执行 Logo 定位与匹配，然后按识别出的商店选择专用提示词；未匹配时使用通用提示词。API 配置不提供关闭 Logo 的开关。
 
 客户端不显示或保存 OCR 模型、provider 地址或服务间密钥。安装包只预置后端 origin 与客户端认证密钥；设置中的“连接并验证”验证后端认证。识别任务入口保留状态和可编辑结果。重量显示单位属于共享展示偏好，仍可在设置修改。

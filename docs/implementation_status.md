@@ -233,7 +233,7 @@ build 10012 已部署。票面名称由 OCR 原文和金额唯一匹配恢复完
 
 构建总入口为 `build_docker.sh`：后端检查 → `build_android.sh` 的 Flutter 检查与 APK 构建 → 发布 APK 文件 → 后端镜像。`build_ios.sh` 保持独立，暂不纳入 Docker 总构建。运行入口为 `run_playground.sh`。APK 下载由后端在 `0.0.0.0:5000/receipt_master.apk` 提供，APK 和更新端点均需登录认证。APK、更新清单和不可变更新包直接打入 API 镜像，无宿主 APK 挂载，模型未就绪时也可以下载。
 
-`build_docker.sh` 无参数仍只构建本地；`--publish dockerhub|github --username NAME [--tag TAG]` 将两个后端镜像发布到 `docker.io` 或 `ghcr.io` 指定命名空间。发布使用事先配置的 Docker 登录凭据，默认标签 `latest`，也支持指定版本。参数验证、构建/测试失败不推送、两平台目标及推送错误退出由 `tests/docker/test_build_docker.py` 在无网络的命令替身下覆盖，纳入每次总构建。发布固定本次镜像 ID，并在容器 HTTP 验证通过后才开始；本地标签和 playground 行为保持不变。
+`build_docker.sh` 无参数仍只构建本地；`--publish dockerhub|github --username NAME` 将两个后端镜像发布到 `docker.io` 或 `ghcr.io` 指定命名空间，使用事先配置的 Docker 登录凭据。版本标签固定为启动时按构建机时区读取一次的 `YYYYMMDD`；全部验证通过后，本地 `latest` 指向对应日期镜像的相同 ID，playground 使用 `:latest`。发布固定本次镜像 ID，先推送两个日期标签，再推送两个 `latest` 标签；不支持自定义 `--tag`。参数验证、构建/测试失败不推送或更新 `latest`、跨午夜日期一致、两平台四次推送及推送错误退出由 `tests/docker/test_build_docker.py` 在无网络的命令替身下覆盖，纳入每次总构建。
 
 统一 Docker 构建和实际 APK 下载验证通过（SHA256 一致、HEAD/Range 正常、OCR 接口仍要求密钥）。模型加载期间也能下载 APK。iOS 脚本独立提供，实际编译尚待 macOS/Xcode。
 
@@ -253,7 +253,7 @@ build 10012 已部署。票面名称由 OCR 原文和金额唯一匹配恢复完
 
 设置页提供“检查客户端更新”。更新清单 `/android-update.json` 和按 SHA256 固定的 `/updates/<hash>.apk` 均由同一个 `backend_api` 提供；客户端按设备架构选择 APK，比较版本号和 SHA256，下载后校验大小、哈希、包名和签名，再打开 Android 系统安装器。首次需要允许此应用安装更新，安装由用户确认。更新地址使用安装包预置的后端，修改 OCR 提供商不会改变更新来源。
 
-`build_android.sh` 在 Docker 中生成版本和哈希，源码、默认配置或签名变化会递增版本；相同输入和产物保留版本。如果相同输入实际生成不同 APK，也会递增版本重建。发布先保存不可变 APK，最后原子替换清单，已有下载不受新发布影响。请保留 `playground/android-release-state.json` 和签名文件；构建使用宿主 `flock` 防止并发发布。旧客户端没有此按钮，需要先从 `/receipt_master.apk` 手动安装一次新版。
+`build_android.sh` 在 Docker 中生成版本和哈希，源码、默认配置或签名变化会递增版本；相同输入和产物保留版本。如果相同输入实际生成不同 APK，也会递增版本重建。发布先保存当前版本 APK，再原子替换清单；成功后删除开发输出和更新目录中的所有旧 APK，只保留当前版本。旧下载 URL 不继续保留，重新检查更新会取得当前清单。请保留 `playground/android-release-state.json` 和签名文件；构建使用宿主 `flock` 防止并发发布。旧客户端没有此按钮，需要先从 `/receipt_master.apk` 手动安装一次新版。
 
 更新验收：连续两次 Docker 总构建保持 build 10000 及相同 APK 哈希；输入变化和产物变化递增版本的状态测试通过。后端清单、两个架构 APK 及初始下载别名校验通过。API 36 模拟器通过设置按钮下载、允许安装来源、系统确认安装，升级到版本代码 14000 后再次检查显示“已是最新版本”。
 

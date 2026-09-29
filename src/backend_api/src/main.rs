@@ -17,7 +17,13 @@ async fn main() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
     if !root.is_absolute() || !root.is_dir() {
         return Err("Data directory must be an existing absolute directory".into());
     }
-    let config = Config::parse(&tokio::fs::read_to_string(root.join("config.toml")).await?)?;
+    let ocr_url = optional_env("BACKEND_OCR_URL")?;
+    let ocr_api_key = optional_env("BACKEND_OCR_API_KEY")?;
+    let config = Config::parse_with_ocr_overrides(
+        &tokio::fs::read_to_string(root.join("config.toml")).await?,
+        ocr_url.as_deref(),
+        ocr_api_key.as_deref(),
+    )?;
     let address = (config.general.host, config.general.port);
     let database_root = root.clone();
     tokio::task::spawn_blocking(move || {
@@ -82,4 +88,12 @@ async fn main() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
         server.abort();
     }
     result
+}
+
+fn optional_env(name: &str) -> Result<Option<String>, env::VarError> {
+    match env::var(name) {
+        Ok(value) => Ok(Some(value)),
+        Err(env::VarError::NotPresent) => Ok(None),
+        Err(error) => Err(error),
+    }
 }

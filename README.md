@@ -8,6 +8,7 @@ Web、Android 和 iOS 通过统一 API 管理收据。Rust `backend_api` 保存 
 - 第二版历史：[docs/2nd_plan.md](docs/2nd_plan.md)
 - 接口与持久化：[docs/backend_api_v2.md](docs/backend_api_v2.md)
 - OCR/模型部署：[docs/backend_ocr.md](docs/backend_ocr.md)
+- NAS API + 本机 OCR 部署：[docs/nas_deployment.md](docs/nas_deployment.md)
 - 镜像内置商店 Logo 样本和可配置提示词，空数据库首次启动即可使用；现有 Alias 不会因重启被覆盖。
 
 ### 构建和运行
@@ -18,18 +19,18 @@ Web、Android 和 iOS 通过统一 API 管理收据。Rust `backend_api` 保存 
 ```
 
 `build_docker.sh` 执行后端检查、Docker 内 Android 和 Web 构建，并构建 API/OCR 两个镜像。`run_playground.sh` 总是先构建，再以前台 Compose 启动服务并持续显示日志；Ctrl+C 停止服务，保留数据。iOS 使用独立的 `build_ios.sh /absolute/path/to/flutter`，需要 macOS/Xcode。
-启动脚本向两个容器传入当前用户的 `PUID` 和 `GUID`，服务以该 UID/GID 运行。直接使用 Compose 时需先设置这两个环境变量。
+启动脚本向两个容器传入当前用户的 `PUID` 和 `PGID`，服务以该 UID/GID 运行。直接使用 Compose 时需先设置这两个环境变量。
 
 ### 发布镜像
 
-`build_docker.sh` 默认只构建本地镜像。使用 `--publish dockerhub|github --username NAME` 才发布；`github` 指 GitHub Container Registry（GHCR）。`--username` 指镜像所属的用户名或组织命名空间，会统一转成小写；`--tag` 默认为 `latest`，也可指定版本标签。
+`build_docker.sh` 默认只构建本地镜像。使用 `--publish dockerhub|github --username NAME` 才发布；`github` 指 GitHub Container Registry（GHCR）。`--username` 指镜像所属的用户名或组织命名空间，会统一转成小写。版本标签固定为脚本启动时按构建机时区取得的 `YYYYMMDD`，一次构建只取一次日期；全部检查通过后，`latest` 标为相同镜像 ID 的别名。发布每个后端时同时推送日期标签和 `latest`，不再支持自定义 `--tag`。
 
 Docker Hub：
 
 ```bash
 docker login docker.io --username YOUR_USERNAME
 RECEIPT_BACKEND_ENDPOINT=https://receipts.example.com/ \
-  ./build_docker.sh --publish dockerhub --username YOUR_USERNAME --tag v3.0.0
+  ./build_docker.sh --publish dockerhub --username YOUR_USERNAME
 ```
 
 GitHub Container Registry：
@@ -37,30 +38,34 @@ GitHub Container Registry：
 ```bash
 docker login ghcr.io --username YOUR_USERNAME
 RECEIPT_BACKEND_ENDPOINT=https://receipts.example.com/ \
-  ./build_docker.sh --publish github --username YOUR_USERNAME --tag v3.0.0
+  ./build_docker.sh --publish github --username YOUR_USERNAME
 ```
 
-替换用户名、版本和实际服务域名。登录时输入对应平台的访问令牌；GHCR 的本机发布使用带 `write:packages` 权限的 classic PAT，详见 [GitHub 官方说明](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-container-registry)。Docker Hub 登录方式见 [Docker 官方说明](https://docs.docker.com/reference/cli/docker/login/)。脚本使用 Docker 已保存的登录凭据，不接收、记录或打包发布令牌。
+替换用户名和实际服务域名。登录时输入对应平台的访问令牌；GHCR 的本机发布使用带 `write:packages` 权限的 classic PAT，详见 [GitHub 官方说明](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-container-registry)。Docker Hub 登录方式见 [Docker 官方说明](https://docs.docker.com/reference/cli/docker/login/)。脚本使用 Docker 已保存的登录凭据，不接收、记录或打包发布令牌。
 
-两种发布方式分别生成：
+例如构建日期为 `20260929`，两种发布方式分别生成：
 
 ```text
-docker.io/your_username/receipt-master-backend-api:v3.0.0
-docker.io/your_username/receipt-master-backend-ocr:v3.0.0
-ghcr.io/your_username/receipt-master-backend-api:v3.0.0
-ghcr.io/your_username/receipt-master-backend-ocr:v3.0.0
+docker.io/your_username/receipt-master-backend-api:20260929
+docker.io/your_username/receipt-master-backend-api:latest
+docker.io/your_username/receipt-master-backend-ocr:20260929
+docker.io/your_username/receipt-master-backend-ocr:latest
+ghcr.io/your_username/receipt-master-backend-api:20260929
+ghcr.io/your_username/receipt-master-backend-api:latest
+ghcr.io/your_username/receipt-master-backend-ocr:20260929
+ghcr.io/your_username/receipt-master-backend-ocr:latest
 ```
 
-发布顺序为：全部本地构建与检查 → 镜像内 APK/更新文件的容器 HTTP 验证 → 给本次镜像 ID 打远端标签 → 推送 API/OCR 两个镜像。构建或测试失败不会推送；推送失败立即退出并返回错误，已成功推送的镜像不会自动撤销。仅推送指定标签，本地 `:local` 标签继续供 playground 使用。API 镜像自带 APK，OCR 镜像自带模型；发布新 APK 或改变其服务域名需重新构建镜像。
+发布顺序为：全部本地构建与检查 → 镜像内 APK/更新文件的容器 HTTP 验证 → 给本次镜像 ID 打两个标签 → 先推送 API/OCR 的日期标签，再推送两个 `latest` 别名。构建或测试失败不会推送，也不更新本地 `latest`；推送失败立即退出并返回错误，已成功推送的标签不会自动撤销。playground 使用本地 `:latest`。同一天多次成功构建会更新当天标签和 `latest`。API 镜像自带 APK，OCR 镜像自带模型；发布新 APK 或改变其服务域名需重新构建镜像。
 
 ### 数据和地址
 
 - 宿主 `playground/backend_api/` → API 容器 `/data`，存放 `config.toml`、`prompt.toml`、SQLite、收据照片、识别结果和备份。
 - 宿主 `playground/backend_ocr/` → OCR 容器 `/data`，仅存放该服务的 `config.toml`；模型权重随 OCR 镜像提供。
 - `0.0.0.0:5000` → API 容器 `8000`；启动脚本打印实际宿主网络地址。手机使用同一网络可达的 host 和 port。
-- OCR 只在 Docker 内部网络通信；Qwen3.8-27B NVFP4 模型权重（同时负责 Logo 图片匹配）打包在 OCR 镜像中，API 不运行模型。
+- 本地 playground 的 OCR 只在 Docker 内部网络通信；NAS 部署使用独立 OCR Compose 配置，通过局域网和 API Key 认证通信。Qwen3.8-27B NVFP4 模型权重（同时负责 Logo 图片匹配）打包在 OCR 镜像中，API 不运行模型。
 - 登录 Web 后，从侧边栏“下载 Android APK”下载 `/receipt_master.apk`；APK、更新清单和更新包都需要登录认证。安装包只预置后端地址，安装后仍需输入用户名密码；“检查客户端更新”使用手机的登录会话从同一服务检查版本和哈希。
-- `build_docker.sh` 先调用 `build_android.sh`，再将安装包、更新清单及不可变更新包打进 `backend_api` 镜像的 `/artifacts/`。运行时只挂载 API 的 `/data`，不挂载宿主 APK 目录；镜像搬到其他服务器后仍自带下载文件。发布新 APK 需要重建并更新 API 镜像。
+- `build_docker.sh` 先调用 `build_android.sh`，再将安装包、更新清单及当前版本的各架构更新包打进 `backend_api` 镜像的 `/artifacts/`。开发目录和镜像都只保留最新版本 APK：成功发布新版本后删除所有旧 APK，不归档、不保留历史下载；构建失败保留最后一个有效版本。签名文件和版本状态继续保留。运行时只挂载 API 的 `/data`，不挂载宿主 APK 目录；发布新 APK 需要重建并更新 API 镜像。
 - Web 打开 `http://localhost:5000/`；其他设备使用启动脚本打印的网络地址。
 - 中央身份库为 `playground/backend_api/database/auth.sqlite`，与 admin 的 `database/receipts.sqlite` 同目录；普通用户的数据在 `users/<UUID>/`。业务备份与恢复只处理收据库和相关文件，不包含或覆盖身份库及会话。
 

@@ -27,7 +27,21 @@ pub struct Ocr {
 }
 impl Config {
     pub fn parse(text: &str) -> Result<Self, Box<dyn std::error::Error + Send + Sync>> {
-        let c: Self = toml::from_str(text)?;
+        Self::parse_with_ocr_overrides(text, None, None)
+    }
+
+    pub fn parse_with_ocr_overrides(
+        text: &str,
+        url_override: Option<&str>,
+        api_key_override: Option<&str>,
+    ) -> Result<Self, Box<dyn std::error::Error + Send + Sync>> {
+        let mut c: Self = toml::from_str(text)?;
+        if let Some(url) = url_override {
+            c.ocr.url = url.to_owned();
+        }
+        if let Some(api_key) = api_key_override {
+            c.ocr.api_key = api_key.to_owned();
+        }
         let url = reqwest::Url::parse(&c.ocr.url)?;
         if !matches!(url.scheme(), "http" | "https")
             || url.host_str().is_none()

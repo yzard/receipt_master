@@ -381,6 +381,25 @@ fn config_validation() {
 }
 
 #[test]
+fn ocr_environment_overrides_are_validated_after_toml_loading() {
+    let text = configured_template();
+    let url = "http://192.168.1.20:8000";
+    let key = "replacement-ocr-service-key-for-tests";
+    let config = Config::parse_with_ocr_overrides(&text, Some(url), Some(key)).unwrap();
+    assert_eq!(config.ocr.url, url);
+    assert_eq!(config.ocr.api_key, key);
+    assert!(Config::parse_with_ocr_overrides(&text, Some("ftp://ocr"), None).is_err());
+    assert!(Config::parse_with_ocr_overrides(&text, None, Some("")).is_err());
+    assert!(Config::parse_with_ocr_overrides(&text, None, Some(KEY)).is_err());
+    let template = include_str!("../../docker/defaults/backend_api.toml").replacen(
+        "jwt_secret = \"\"",
+        &format!("jwt_secret = \"{KEY}\""),
+        1,
+    );
+    assert!(Config::parse_with_ocr_overrides(&template, None, Some(key)).is_ok());
+}
+
+#[test]
 fn server_requires_config_toml_inside_explicit_data_directory() {
     use std::process::Command;
     let dir = tempfile::tempdir().unwrap();

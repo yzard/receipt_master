@@ -614,7 +614,7 @@ CSV 采用 UTF-8，包含 receipt_id/line_id、UTC 时间与当前时区显示�
 
 设置页提供“检查客户端更新”。更新清单 `/android-update.json` 和按 SHA256 固定的 `/updates/<hash>.apk` 均由同一个 `backend_api` 提供；客户端按设备架构选择 APK，比较版本号和 SHA256，下载后校验大小、哈希、包名和签名，再打开 Android 系统安装器。首次需要允许此应用安装更新，安装由用户确认。更新地址使用安装包预置的后端，修改 OCR 提供商不会改变更新来源。
 
-`build_android.sh` 在 Docker 中生成版本和哈希，源码、默认配置或签名变化会递增版本；相同输入和产物保留版本。如果相同输入实际生成不同 APK，也会递增版本重建。发布先保存不可变 APK，最后原子替换清单，已有下载不受新发布影响。请保留 `playground/android-release-state.json` 和签名文件；构建使用宿主 `flock` 防止并发发布。旧客户端没有此按钮，需要先从 `/receipt_master.apk` 手动安装一次新版。
+`build_android.sh` 在 Docker 中生成版本和哈希，源码、默认配置或签名变化会递增版本；相同输入和产物保留版本。如果相同输入实际生成不同 APK，也会递增版本重建。发布先保存当前版本 APK，再原子替换清单；成功后删除开发输出和更新目录中的所有旧 APK，只保留当前版本。旧下载 URL 不继续保留，重新检查更新会取得当前清单。请保留 `playground/android-release-state.json` 和签名文件；构建使用宿主 `flock` 防止并发发布。旧客户端没有此按钮，需要先从 `/receipt_master.apk` 手动安装一次新版。
 
 
 ## 商品 SKU 与票面税码补充（2026-09-16）

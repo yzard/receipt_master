@@ -82,7 +82,7 @@ def png():
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--image', default='receipt-master-backend-api:local')
+    parser.add_argument('--image', default='receipt-master-backend-api:latest')
     parser.add_argument('--artifacts', required=True, type=Path)
     args = parser.parse_args()
     name = 'receipt-web-smoke-' + uuid.uuid4().hex[:12]
@@ -112,7 +112,7 @@ def main():
                 '--env',
                 f'PUID={os.getuid()}',
                 '--env',
-                f'GUID={os.getgid()}',
+                f'PGID={os.getgid()}',
                 '--env',
                 f'RESET_ADMIN_PASSWORD={str(reset).lower()}',
                 '--volume',
@@ -136,6 +136,10 @@ def main():
 
         try:
             origin = start()
+            process = docker('exec', name, 'cat', '/proc/1/status')
+            for field, identity in [('Uid', os.getuid()), ('Gid', os.getgid())]:
+                values = re.search(rf'^{field}:\s+(.+)$', process, re.MULTILINE).group(1).split()
+                assert [int(value) for value in values] == [identity] * 4, (field, values)
             admin = Browser(origin)
             status, headers, page = admin.request('/')
             assert status == 200 and b'<div id="root">' in page
@@ -252,6 +256,15 @@ def main():
             status, _, manifest = user.request('/android-update.json')
             assert status == 200
             assert manifest == json.loads((args.artifacts / 'android-update.json').read_text())
+            current_names = {Path(variant['path']).name for variant in manifest['variants'].values()}
+            installed_names = set(
+                docker(
+                    'exec', name, 'find', '/artifacts/updates', '-type', 'f', '-name', '*.apk', '-printf', '%f\n'
+                ).splitlines()
+            )
+            assert installed_names == current_names, 'API image must contain only the current update APKs'
+            assert {p.name for p in (args.artifacts / 'updates').glob('*.apk')} == current_names
+            assert user.request('/updates/' + 'a' * 64 + '.apk')[0] == 404
             for variant in manifest['variants'].values():
                 status, _, update = user.request(variant['path'])
                 assert status == 200
@@ -259,6 +272,7 @@ def main():
                 assert hashlib.sha256(update).hexdigest() == variant['sha256']
             assert hashlib.sha256(apk).hexdigest() == manifest['variants']['arm64-v8a']['sha256']
             assert (data / 'database/auth.sqlite').stat().st_uid == os.getuid()
+            assert (data / 'database/auth.sqlite').stat().st_gid == os.getgid()
             assert (data / 'database/auth.sqlite').stat().st_mode & 0o077 == 0
             assert (data / 'database/receipts.sqlite').is_file()
             assert not (data / 'auth.sqlite').exists()

@@ -39,5 +39,7 @@ tests/backend_api/*
 !docker/
 !docker/apply_mobile_defaults.py
 !docker/android_release.py
+!docker/validate_mobile_defaults.py
+!docker/service-entrypoint.sh
 !tests/docker/
 !tests/docker/**

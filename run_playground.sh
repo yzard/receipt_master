@@ -5,7 +5,7 @@ if (( $# != 0 )); then
   exit 2
 fi
 project_dir="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
-export PUID="$(id -u)" GUID="$(id -g)"
+export PUID="$(id -u)" PGID="$(id -g)"
 mkdir -p "$project_dir/playground/backend_api" "$project_dir/playground/backend_ocr"
 "$project_dir/build_docker.sh"
 # Discover host addresses, excluding Docker bridges and virtual container interfaces.
@@ -19,7 +19,7 @@ fi
 # Python runs in the existing image; no host Python installation is required.
 docker compose --file "$project_dir/docker/docker-compose.yaml" config --format json | \
   docker run --rm -i --env RECEIPT_HOST_IPS="$receipt_host_ips" \
-    --entrypoint python3 receipt-master-backend-ocr:local -c '
+    --entrypoint python3 receipt-master-backend-ocr:latest -c '
 import json
 import os
 import sys
