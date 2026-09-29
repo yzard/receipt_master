@@ -51,6 +51,26 @@ void main() {
     },
   );
   test(
+    'updates use the saved authenticated server after an APK upgrade',
+    () async {
+      final savedOrigin = Uri.parse('https://previous.example.test/');
+      final paths = <String>[];
+      final client = MockClient((request) async {
+        expect(request.url.origin, savedOrigin.origin);
+        expect(request.headers['Authorization'], 'Bearer test-session-jwt');
+        paths.add(request.url.path);
+        return http.Response('artifact', 200);
+      });
+      final auth = session(client)..endpoint = savedOrigin.toString();
+      final downloads = AndroidDownloads(auth, client, await auth.origin());
+      for (final path in ['/android-update.json', '/updates/${'a' * 64}.apk']) {
+        final response = await downloads.get(path);
+        await response.stream.drain<void>();
+      }
+      expect(paths, ['/android-update.json', '/updates/${'a' * 64}.apk']);
+    },
+  );
+  test(
     'never sends credentials to another update host or while signed out',
     () async {
       final client = MockClient(

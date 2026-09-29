@@ -61,6 +61,14 @@ void main() {
       expect((await auth.connection()).key, 'jwt');
     },
   );
+  test('upgrade preserves a previously saved HTTP server but rejects new HTTP hosts', () async {
+    vault['endpoint'] = 'http://192.168.1.20:5000/';
+    final auth = makeSession(MockClient((_) async => http.Response('{}', 500)));
+    await auth.restore();
+    expect((await auth.origin()).toString(), 'http://192.168.1.20:5000/');
+    auth.endpoint = 'http://other.example.test:5000/';
+    await expectLater(auth.origin(), throwsException);
+  });
   test(
     'network outages retain refresh credentials, revocation clears them',
     () async {

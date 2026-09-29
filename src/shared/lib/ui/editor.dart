@@ -32,7 +32,6 @@ class _EditorPageState extends State<EditorPage> {
   bool dirty = false;
   int currencyPickerVersion = 0;
   String? error;
-  Timer? debounce;
   Future<void> pending = Future.value();
   @override
   void initState() {
@@ -45,7 +44,6 @@ class _EditorPageState extends State<EditorPage> {
 
   @override
   void dispose() {
-    debounce?.cancel();
     for (final c in fields.values) {
       c.dispose();
     }
@@ -108,21 +106,6 @@ class _EditorPageState extends State<EditorPage> {
 
   void changed() {
     dirty = true;
-    debounce?.cancel();
-    if (draft?.posted == true) {
-      debounce = Timer(const Duration(milliseconds: 600), () async {
-        try {
-          await syncFields();
-          if (mounted) setState(() {});
-        } catch (e) {
-          if (mounted) showError(context, e);
-        }
-      });
-    } else if (draft != null) {
-      debounce = Timer(const Duration(milliseconds: 600), () {
-        persistDraft().catchError((Object _) {});
-      });
-    }
   }
 
   Future<void> persistDraft() {
@@ -161,7 +144,6 @@ class _EditorPageState extends State<EditorPage> {
 
   Future<void> act(Future<void> Function() action) async {
     if (busy) return;
-    debounce?.cancel();
     setState(() => busy = true);
     try {
       await pending;
@@ -415,9 +397,9 @@ class _EditorPageState extends State<EditorPage> {
                       }),
                     ),
                     const SizedBox(height: 12),
+                    if (line.kind == 'product') field('productName', '商品名称'),
                     field('raw', '票面名称'),
                     if (line.kind == 'product') ...[
-                      field('productName', '商品名称'),
                       field('taxCode', '税码（一个字符，可留空）'),
                       field('sku', '商店 SKU（可留空）'),
                       field('weight', '重量 $displayUnit（可留空）'),
@@ -683,16 +665,17 @@ class _EditorPageState extends State<EditorPage> {
         return;
       }
       if (!mounted) return;
-      final hasWarnings =
-          draft!.difference != 0 ||
-          draft!.lines.any((l) => l.warnings.isNotEmpty) ||
-          draft!.timeSource.startsWith('estimated');
-      if (hasWarnings &&
-          !await confirm(
-            context,
-            '确认保存',
-            '这张收据含黄色提示或估计时间。差额 ${money(draft!.difference, draft!.currency)} 会单独显示，是否保存？',
-          )) {
+      final difference = draft!.difference;
+      if (difference == null) {
+        throw const InputError('无法计算收据差额，请重试');
+      }
+      final reasons = <String>[
+        if (difference != 0) '收据总额与明细相差 ${money(difference, draft!.currency)}',
+        if (draft!.lines.any((l) => l.warnings.isNotEmpty)) '有明细尚待核对',
+        if (draft!.timeSource.startsWith('estimated')) '消费时间是估计值',
+      ];
+      if (reasons.isNotEmpty &&
+          !await confirm(context, '仍要录入这张收据？', reasons.join('\n'))) {
         return;
       }
       await widget.store.save(map, true, DateTime.now().millisecondsSinceEpoch);
@@ -705,140 +688,250 @@ class _EditorPageState extends State<EditorPage> {
     child: ListView.builder(
       scrollDirection: Axis.horizontal,
       itemCount: images.length,
-      itemBuilder: (ctx, i) {
-        final photo = images[i];
-        return SizedBox(
-          width: 152,
-          child: Column(
-            children: [
-              Expanded(
-                child: GestureDetector(
-                  onTap: () => showDialog<void>(
-                    context: context,
-                    builder: (ctx) => Dialog.fullscreen(
-                      child: Scaffold(
-                        appBar: AppBar(title: Text('第 ${i + 1} 段')),
-                        body: InteractiveViewer(
-                          maxScale: 8,
-                          child: Center(child: widget.store.image(photo)),
-                        ),
+      itemBuilder: (ctx, i) => photoTile(r, i, wide: false),
+    ),
+  );
+
+  Widget photoPanel(ReceiptDraft r) => LayoutBuilder(
+    builder: (context, constraints) {
+      final top = MediaQuery.paddingOf(context).top + 70;
+      final photoHeight = (constraints.maxHeight - top - 16)
+          .clamp(240.0, double.infinity)
+          .toDouble();
+      return ListView.builder(
+        key: const ValueKey('receipt-photo-panel'),
+        padding: EdgeInsets.fromLTRB(12, top, 12, 16),
+        itemCount: images.length,
+        itemBuilder: (ctx, i) => Padding(
+          padding: EdgeInsets.only(bottom: i == images.length - 1 ? 0 : 16),
+          child: photoTile(r, i, wide: true, wideHeight: photoHeight),
+        ),
+      );
+    },
+  );
+
+  Widget photoTile(
+    ReceiptDraft r,
+    int i, {
+    required bool wide,
+    double? wideHeight,
+  }) {
+    final photo = images[i];
+    return SizedBox(
+      width: wide ? null : 152,
+      child: Column(
+        mainAxisSize: wide ? MainAxisSize.min : MainAxisSize.max,
+        children: [
+          Builder(
+            builder: (context) {
+              final image = GestureDetector(
+                key: ValueKey('receipt-photo-image-$i'),
+                onTap: () => showDialog<void>(
+                  context: context,
+                  builder: (ctx) => Dialog.fullscreen(
+                    child: Scaffold(
+                      appBar: AppBar(title: Text('第 ${i + 1} 段')),
+                      body: InteractiveViewer(
+                        maxScale: 8,
+                        child: Center(child: widget.store.image(photo)),
                       ),
                     ),
                   ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(4),
-                    child: widget.store.image(
-                      photo,
-                      fit: BoxFit.cover,
-                      width: 110,
+                ),
+                child: wide
+                    ? widget.store.image(
+                        photo,
+                        fit: BoxFit.contain,
+                        width: double.infinity,
+                      )
+                    : Padding(
+                        padding: const EdgeInsets.all(4),
+                        child: widget.store.image(
+                          photo,
+                          fit: BoxFit.cover,
+                          width: 110,
+                        ),
+                      ),
+              );
+              if (wide) {
+                return SizedBox(
+                  height: wideHeight,
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(16),
+                    child: ColoredBox(
+                      color: Theme.of(context).colorScheme.surfaceContainerLow,
+                      child: Stack(
+                        fit: StackFit.expand,
+                        children: [
+                          image,
+                          Positioned(
+                            top: 12,
+                            left: 12,
+                            child: DecoratedBox(
+                              decoration: BoxDecoration(
+                                color: Colors.black.withValues(alpha: .68),
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 10,
+                                  vertical: 6,
+                                ),
+                                child: Text(
+                                  '第 ${i + 1} 张',
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 12,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                          Positioned(
+                            right: 12,
+                            top: 12,
+                            child: Material(
+                              color: Colors.black.withValues(alpha: .72),
+                              borderRadius: BorderRadius.circular(18),
+                              child: IconTheme(
+                                data: const IconThemeData(color: Colors.white),
+                                child: photoActions(
+                                  r,
+                                  i,
+                                  photo,
+                                  floating: true,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
-                ),
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  IconButton(
-                    tooltip: '向前移动',
-                    icon: const Icon(Icons.chevron_left),
-                    onPressed: i == 0
-                        ? null
-                        : () => act(() async {
-                            final ids = images
-                                .map((p) => p['image_id'] as String)
-                                .toList();
-                            final old = ids.removeAt(i);
-                            ids.insert(i - 1, old);
-                            final id = r.id;
-                            await widget.store.reorderImages(id, ids);
-                            await refreshImages();
-                          }),
-                  ),
-                  IconButton(
-                    tooltip: '旋转 90°',
-                    icon: const Icon(Icons.rotate_right),
-                    onPressed: () => act(() async {
-                      final image = photo['image_id'] as String;
-                      await widget.store.rotateImage(r.id, image);
-                      for (final l in r.lines) {
-                        for (final e in l.evidence.where(
-                          (e) => e['imageId'] == image,
-                        )) {
-                          final x0 = e['x0'],
-                              y0 = e['y0'],
-                              x1 = e['x1'],
-                              y1 = e['y1'];
-                          e['x0'] = 1 - y1;
-                          e['y0'] = x0;
-                          e['x1'] = 1 - y0;
-                          e['y1'] = x1;
-                        }
-                      }
-                      await refreshImages();
-                    }),
-                  ),
-                  IconButton(
-                    tooltip: '删除此段',
-                    icon: const Icon(Icons.close),
-                    onPressed: () async {
-                      if (!await confirm(
-                        context,
-                        '删除这张收据照片？',
-                        '照片会从服务器删除，无法恢复。',
-                      )) {
-                        return;
-                      }
-                      await act(() async {
-                        final id = r.id, image = photo['image_id'] as String;
-                        await widget.store.removeImage(id, image);
-                        for (final l in r.lines) {
-                          l.evidence.removeWhere((e) => e['imageId'] == image);
-                        }
-                        await refreshImages();
-                      });
-                    },
-                  ),
-                ],
-              ),
-            ],
+                );
+              }
+              return Expanded(child: image);
+            },
           ),
-        );
-      },
-    ),
-  );
-  Future<void> leave() async {
-    await act(() async {
-      if (draft!.posted) {
-        if (dirty && !await confirm(context, '放弃未保存修改？', '正式记录仍保留上次确认的数据。')) {
-          return;
-        }
-      } else {
-        try {
-          await persistDraft();
-        } catch (_) {
-          if (!mounted ||
-              !await confirm(
-                context,
-                '草稿保存失败，放弃未保存修改并退出？',
-                '服务器已保存的收据和照片会保留，本次未保存的修改将丢弃。',
-              )) {
+          if (!wide) photoActions(r, i, photo),
+        ],
+      ),
+    );
+  }
+
+  Widget photoActions(
+    ReceiptDraft r,
+    int i,
+    Map<String, dynamic> photo, {
+    bool floating = false,
+  }) => Row(
+    mainAxisSize: MainAxisSize.min,
+    mainAxisAlignment: MainAxisAlignment.center,
+    children: [
+      IconButton(
+        tooltip: '向前移动',
+        icon: const Icon(Icons.chevron_left),
+        color: floating ? Colors.white : null,
+        disabledColor: floating ? Colors.white38 : null,
+        onPressed: i == 0
+            ? null
+            : () => act(() async {
+                final ids = images.map((p) => p['image_id'] as String).toList();
+                final old = ids.removeAt(i);
+                ids.insert(i - 1, old);
+                final id = r.id;
+                await widget.store.reorderImages(id, ids);
+                await refreshImages();
+              }),
+      ),
+      IconButton(
+        tooltip: '旋转 90°',
+        icon: const Icon(Icons.rotate_right),
+        color: floating ? Colors.white : null,
+        onPressed: () => act(() async {
+          final image = photo['image_id'] as String;
+          await widget.store.rotateImage(r.id, image);
+          for (final l in r.lines) {
+            for (final e in l.evidence.where((e) => e['imageId'] == image)) {
+              final x0 = e['x0'], y0 = e['y0'], x1 = e['x1'], y1 = e['y1'];
+              e['x0'] = 1 - y1;
+              e['y0'] = x0;
+              e['x1'] = 1 - y0;
+              e['y1'] = x1;
+            }
+          }
+          await refreshImages();
+        }),
+      ),
+      IconButton(
+        tooltip: '删除此段',
+        icon: const Icon(Icons.close),
+        color: floating ? Colors.white : null,
+        onPressed: () async {
+          if (!await confirm(context, '删除这张收据照片？', '照片会从服务器删除，无法恢复。')) {
             return;
           }
-        }
-      }
-      if (mounted) Navigator.pop(context);
-    });
+          await act(() async {
+            final id = r.id, image = photo['image_id'] as String;
+            await widget.store.removeImage(id, image);
+            for (final l in r.lines) {
+              l.evidence.removeWhere((e) => e['imageId'] == image);
+            }
+            await refreshImages();
+          });
+        },
+      ),
+    ],
+  );
+
+  Future<void> leave() async {
+    if (!dirty) {
+      await discardChanges();
+      return;
+    }
+    final choice = await showDialog<String>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: const Text('离开收据编辑？'),
+        content: const Text('本页改动尚未保存。'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext),
+            child: const Text('继续编辑'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext, 'discard'),
+            child: const Text('放弃改动'),
+          ),
+          if (!draft!.posted)
+            FilledButton(
+              onPressed: () => Navigator.pop(dialogContext, 'save'),
+              child: const Text('保存草稿'),
+            ),
+        ],
+      ),
+    );
+    if (!mounted) return;
+    if (choice == 'discard') await discardChanges();
+    if (choice == 'save') await saveDraftAndExit();
   }
+
+  Future<void> discardChanges() => act(() async {
+    if (widget.receiptId == null) {
+      await widget.store.purge(draft!.id);
+    }
+    if (mounted) Navigator.pop(context);
+  });
+
+  Future<void> saveDraftAndExit() => act(() async {
+    await persistDraft();
+    if (mounted) Navigator.pop(context);
+  });
 
   Future<void> retryRecognition() async {
     await act(() async {
       final r = draft!;
       if (images.isEmpty) return;
-      if (r.posted &&
-          dirty &&
-          !await confirm(context, '放弃未保存修改并重新识别？', '收据将转回草稿，重新识别照片。')) {
-        return;
-      }
       final jobs = await widget.store.request('recognition', 'list', {
         'receipt_id': r.id,
       });
@@ -852,10 +945,15 @@ class _EditorPageState extends State<EditorPage> {
         }
         return;
       }
-      await persistDraft();
+      if (!mounted) return;
+      if (dirty &&
+          !await confirm(context, '放弃未保存修改并重新识别？', '重新识别会放弃本页未保存的改动。')) {
+        return;
+      }
+      final saved = await widget.store.load(r.id);
       await widget.store.startRecognition(
         r.id,
-        r.revision,
+        saved['revision'],
         widget.zone,
         requestKey: null,
       );
@@ -941,284 +1039,332 @@ class _EditorPageState extends State<EditorPage> {
         ),
         body: AbsorbPointer(
           absorbing: busy,
-          child: ListView(
-            padding: EdgeInsets.fromLTRB(
-              18,
-              MediaQuery.paddingOf(context).top + 70,
-              18,
-              125,
-            ),
-            children: [
-              if (busy) const LinearProgressIndicator(),
-              if (error != null) Notice('草稿尚未保存：$error'),
-              Text('核对这张收据', style: Theme.of(context).textTheme.headlineSmall),
-              const SizedBox(height: 5),
-              Text(
-                '查看原图，确认关键金额，再保存记录。',
-                style: TextStyle(
-                  color: AppPalette.muted(context),
-                  fontSize: 13,
-                ),
-              ),
-              const SizedBox(height: 17),
-              if (images.isNotEmpty) photoStrip(r),
-              for (final photo in images.where(
-                (p) => p['quality_warning'] != null,
-              ))
-                Notice(photo['quality_warning']),
-              const SizedBox(height: 16),
-              if (images.isNotEmpty && fields['store']!.text.isEmpty)
-                const Notice('尚未匹配店名，请确认 Logo 并设置商店名称。'),
-              text('store', '店名 / 连锁店'),
-              if (images.isNotEmpty)
-                TextButton.icon(
-                  icon: const Icon(Icons.image_search),
-                  label: const Text('商店名称'),
-                  onPressed: () => act(() async {
-                    final name = await Navigator.push<String>(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => LogoAliasesPage(
-                          store: widget.store,
-                          receiptId: r.id,
-                          suggestedName: fields['store']!.text,
-                        ),
-                      ),
-                    );
-                    if (name != null && mounted) {
-                      fields['store']!.text = name;
-                      changed();
-                    }
-                  }),
-                ),
-              ExpansionTile(
-                tilePadding: EdgeInsets.zero,
-                title: const Text('更多票据信息'),
-                subtitle: Text(
-                  '分店、地址、国家和票面币种',
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: AppPalette.muted(context),
-                  ),
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              final wide = constraints.maxWidth >= 600;
+              final compactSplit = constraints.maxWidth < 800;
+              final form = ListView(
+                key: const ValueKey('receipt-edit-form'),
+                padding: EdgeInsets.fromLTRB(
+                  wide ? 20 : 18,
+                  MediaQuery.paddingOf(context).top + 70,
+                  wide ? 20 : 18,
+                  125,
                 ),
                 children: [
-                  text('branch', '分店名'),
-                  text('address', '票面地址'),
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Expanded(child: text('country', '国家代码')),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: DropdownButtonFormField<String>(
-                          key: ValueKey('$currencyPickerVersion-${r.currency}'),
-                          initialValue: r.currency,
-                          decoration: const InputDecoration(labelText: '币种'),
-                          items: currencies.keys
-                              .map(
-                                (c) =>
-                                    DropdownMenuItem(value: c, child: Text(c)),
-                              )
-                              .toList(),
-                          onChanged: (value) async {
-                            try {
-                              await syncFields();
-                              final revised = await editReceipt('currency', {
-                                'currency': value!,
-                              });
-                              if (!context.mounted) return;
-                              if ((r.lines.isNotEmpty ||
-                                      r.totalMinor != null) &&
-                                  !await confirm(
-                                    context,
-                                    '修正票面币种？',
-                                    '金额数字保持不变，仅修正币种标记，不进行汇率换算。',
-                                  )) {
-                                if (mounted) {
-                                  setState(() {
-                                    currencyPickerVersion++;
-                                  });
-                                }
-                                return;
-                              }
-                              if (!mounted) return;
-                              setState(() {
-                                currencyPickerVersion++;
-                                draft = revised;
-                                populate();
-                              });
-                              changed();
-                            } catch (e) {
-                              if (context.mounted) {
-                                showError(context, e);
-                                setState(() {
-                                  currencyPickerVersion++;
-                                });
-                              }
-                            }
-                          },
-                        ),
-                      ),
-                    ],
+                  if (busy) const LinearProgressIndicator(),
+                  if (error != null) Notice('草稿尚未保存：$error'),
+                  Text(
+                    '核对这张收据',
+                    style: Theme.of(context).textTheme.headlineSmall,
                   ),
-                ],
-              ),
-              Card(
-                elevation: 0,
-                color: r.timeSource.startsWith('estimated')
-                    ? AppPalette.warningSurface(context)
-                    : Theme.of(context).colorScheme.surfaceContainerLow,
-                child: ListTile(
-                  title: Text(dateText(r.occurredAt, widget.zone)),
-                  subtitle: Text(
-                    '${widget.zone}${r.timeSource.startsWith('estimated') ? ' · 时间含估计值' : ''}',
+                  const SizedBox(height: 5),
+                  Text(
+                    '查看原图，确认关键金额，再保存记录。',
+                    style: TextStyle(
+                      color: AppPalette.muted(context),
+                      fontSize: 13,
+                    ),
                   ),
-                  trailing: const Icon(Icons.edit_outlined),
-                  onTap: changeTime,
-                ),
-              ),
-              const SizedBox(height: 12),
-              text('total', '收据总额'),
-              TextButton(
-                onPressed: () => act(() async {
-                  final result = await editReceipt('total_from_lines', {});
-                  if (!mounted) return;
-                  setState(() {
-                    draft = result;
-                    populate();
-                  });
-                  changed();
-                }),
-                child: const Text('明确使用明细合计作为总额'),
-              ),
-              ListTile(
-                contentPadding: EdgeInsets.zero,
-                title: const Text(
-                  '商品与调整',
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
-                ),
-                trailing: IconButton(
-                  tooltip: '添加明细',
-                  onPressed: () => editLine(null),
-                  icon: const Icon(Icons.add_circle_outline),
-                ),
-              ),
-              if (selected.isNotEmpty)
-                Wrap(
-                  spacing: 8,
-                  children: [
-                    TextButton(
-                      onPressed: () => act(split),
-                      child: const Text('拆分所选行'),
-                    ),
-                    TextButton(
-                      onPressed: () => act(merge),
-                      child: const Text('合并所选行'),
-                    ),
-                    TextButton(
-                      onPressed: () {
-                        setState(selected.clear);
-                      },
-                      child: const Text('取消选择'),
-                    ),
-                  ],
-                ),
-              for (final l in r.lines)
-                Card(
-                  color: l.warnings.isNotEmpty
-                      ? AppPalette.warningSurface(context)
-                      : Theme.of(context).colorScheme.surfaceContainerLow,
-                  elevation: 0,
-                  child: ListTile(
-                    leading: Checkbox(
-                      value: selected.contains(l.id),
-                      onChanged: (v) => setState(() {
-                        if (v!) {
-                          selected.add(l.id);
-                        } else {
-                          selected.remove(l.id);
+                  const SizedBox(height: 17),
+                  if (!wide && images.isNotEmpty) photoStrip(r),
+                  for (final photo in images.where(
+                    (p) => p['quality_warning'] != null,
+                  ))
+                    Notice(photo['quality_warning']),
+                  const SizedBox(height: 16),
+                  if (images.isNotEmpty && fields['store']!.text.isEmpty)
+                    const Notice('尚未匹配店名，请确认 Logo 并设置商店名称。'),
+                  text('store', '店名 / 连锁店'),
+                  if (images.isNotEmpty)
+                    TextButton.icon(
+                      icon: const Icon(Icons.image_search),
+                      label: const Text('商店名称'),
+                      onPressed: () => act(() async {
+                        final name = await Navigator.push<String>(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => LogoAliasesPage(
+                              store: widget.store,
+                              receiptId: r.id,
+                              suggestedName: fields['store']!.text,
+                            ),
+                          ),
+                        );
+                        if (name != null && mounted) {
+                          fields['store']!.text = name;
+                          changed();
                         }
                       }),
                     ),
-                    title: ReceiptItemName(
-                      productName:
-                          l.productNameEdit ?? l.display['productName'],
-                      printedName: l.rawName,
-                      kind: l.kind,
-                    ),
+                  ExpansionTile(
+                    tilePadding: EdgeInsets.zero,
+                    title: const Text('更多票据信息'),
                     subtitle: Text(
-                      '${kindLabels[l.kind]}${(l.taxCode ?? '').isEmpty ? '' : ' · 税码 ${l.taxCode}'}${(l.sku ?? '').isEmpty ? '' : ' · SKU ${l.sku}'}',
+                      '分店、地址、国家和票面币种',
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: AppPalette.muted(context),
+                      ),
                     ),
-                    trailing: Row(
-                      mainAxisSize: MainAxisSize.min,
+                    children: [
+                      text('branch', '分店名'),
+                      text('address', '票面地址'),
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Expanded(child: text('country', '国家代码')),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: DropdownButtonFormField<String>(
+                              key: ValueKey(
+                                '$currencyPickerVersion-${r.currency}',
+                              ),
+                              initialValue: r.currency,
+                              decoration: const InputDecoration(
+                                labelText: '币种',
+                              ),
+                              items: currencies.keys
+                                  .map(
+                                    (c) => DropdownMenuItem(
+                                      value: c,
+                                      child: Text(c),
+                                    ),
+                                  )
+                                  .toList(),
+                              onChanged: (value) async {
+                                try {
+                                  await syncFields();
+                                  final revised = await editReceipt(
+                                    'currency',
+                                    {'currency': value!},
+                                  );
+                                  if (!context.mounted) return;
+                                  if ((r.lines.isNotEmpty ||
+                                          r.totalMinor != null) &&
+                                      !await confirm(
+                                        context,
+                                        '修正票面币种？',
+                                        '金额数字保持不变，仅修正币种标记，不进行汇率换算。',
+                                      )) {
+                                    if (mounted) {
+                                      setState(() {
+                                        currencyPickerVersion++;
+                                      });
+                                    }
+                                    return;
+                                  }
+                                  if (!mounted) return;
+                                  setState(() {
+                                    currencyPickerVersion++;
+                                    draft = revised;
+                                    populate();
+                                  });
+                                  changed();
+                                } catch (e) {
+                                  if (context.mounted) {
+                                    showError(context, e);
+                                    setState(() {
+                                      currencyPickerVersion++;
+                                    });
+                                  }
+                                }
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                  Card(
+                    elevation: 0,
+                    color: r.timeSource.startsWith('estimated')
+                        ? AppPalette.warningSurface(context)
+                        : Theme.of(context).colorScheme.surfaceContainerLow,
+                    child: ListTile(
+                      title: Text(dateText(r.occurredAt, widget.zone)),
+                      subtitle: Text(
+                        '${widget.zone}${r.timeSource.startsWith('estimated') ? ' · 时间含估计值' : ''}',
+                      ),
+                      trailing: const Icon(Icons.edit_outlined),
+                      onTap: changeTime,
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  text('total', '收据总额'),
+                  TextButton(
+                    onPressed: () => act(() async {
+                      final result = await editReceipt('total_from_lines', {});
+                      if (!mounted) return;
+                      setState(() {
+                        draft = result;
+                        populate();
+                      });
+                      changed();
+                    }),
+                    child: const Text('明确使用明细合计作为总额'),
+                  ),
+                  ListTile(
+                    contentPadding: EdgeInsets.zero,
+                    title: const Text(
+                      '商品与调整',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    trailing: IconButton(
+                      tooltip: '添加明细',
+                      onPressed: () => editLine(null),
+                      icon: const Icon(Icons.add_circle_outline),
+                    ),
+                  ),
+                  if (selected.isNotEmpty)
+                    Wrap(
+                      spacing: 8,
                       children: [
-                        Text(
-                          l.amountMinor == null
-                              ? '缺少金额'
-                              : money(l.amountMinor, r.currency),
+                        TextButton(
+                          onPressed: () => act(split),
+                          child: const Text('拆分所选行'),
                         ),
-                        IconButton(
-                          tooltip: '删除明细',
-                          onPressed: busy ? null : () => removeLine(l),
-                          icon: const Icon(Icons.close, size: 18),
+                        TextButton(
+                          onPressed: () => act(merge),
+                          child: const Text('合并所选行'),
+                        ),
+                        TextButton(
+                          onPressed: () {
+                            setState(selected.clear);
+                          },
+                          child: const Text('取消选择'),
                         ),
                       ],
                     ),
-                    onTap: () => editLine(l),
-                  ),
-                ),
-              if (r.lines.isEmpty)
-                const Padding(
-                  padding: EdgeInsets.all(16),
-                  child: Text('还没有明细，可手工添加。'),
-                ),
-              if (r.totalMinor != null)
-                Notice(
-                  '已录入明细 ${money(r.knownTotal, r.currency)}\n待核对差额 ${money(r.difference, r.currency)}',
-                ),
-              Text(
-                '追溯编号：${r.id}',
-                style: TextStyle(
-                  fontSize: 11,
-                  color: AppPalette.muted(context),
-                ),
-              ),
-            ],
-          ),
-        ),
-        bottomSheet: FrostedBar(
-          child: Container(
-            color: Colors.transparent,
-            padding: const EdgeInsets.fromLTRB(16, 12, 16, 20),
-            child: SafeArea(
-              top: false,
-              child: Row(
-                children: [
-                  if (!r.posted)
-                    Expanded(
-                      child: OutlinedButton(
-                        onPressed: busy
-                            ? null
-                            : () => act(() async {
-                                await persistDraft();
-                                if (error == null && context.mounted) {
-                                  Navigator.pop(context);
-                                }
-                              }),
-                        child: const Text('保存草稿'),
+                  for (final l in r.lines)
+                    Card(
+                      color: l.warnings.isNotEmpty
+                          ? AppPalette.warningSurface(context)
+                          : Theme.of(context).colorScheme.surfaceContainerLow,
+                      elevation: 0,
+                      child: ListTile(
+                        leading: Checkbox(
+                          value: selected.contains(l.id),
+                          onChanged: (v) => setState(() {
+                            if (v!) {
+                              selected.add(l.id);
+                            } else {
+                              selected.remove(l.id);
+                            }
+                          }),
+                        ),
+                        title: ReceiptItemName(
+                          productName:
+                              l.productNameEdit ?? l.display['productName'],
+                          printedName: l.rawName,
+                          kind: l.kind,
+                        ),
+                        subtitle: Text(
+                          '${kindLabels[l.kind]}${(l.taxCode ?? '').isEmpty ? '' : ' · 税码 ${l.taxCode}'}${(l.sku ?? '').isEmpty ? '' : ' · SKU ${l.sku}'}',
+                        ),
+                        trailing: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              l.amountMinor == null
+                                  ? '缺少金额'
+                                  : money(l.amountMinor, r.currency),
+                            ),
+                            IconButton(
+                              tooltip: '删除明细',
+                              onPressed: busy ? null : () => removeLine(l),
+                              icon: const Icon(Icons.close, size: 18),
+                            ),
+                          ],
+                        ),
+                        onTap: () => editLine(l),
                       ),
                     ),
-                  if (!r.posted) const SizedBox(width: 12),
-                  Expanded(
-                    child: FilledButton(
-                      onPressed: busy ? null : save,
-                      child: Text(busy ? '处理中…' : '确认并保存'),
+                  if (r.lines.isEmpty)
+                    const Padding(
+                      padding: EdgeInsets.all(16),
+                      child: Text('还没有明细，可手工添加。'),
+                    ),
+                  if (r.totalMinor != null)
+                    Notice(
+                      '已录入明细 ${money(r.knownTotal, r.currency)}\n待核对差额 ${money(r.difference, r.currency)}',
+                    ),
+                  Text(
+                    '追溯编号：${r.id}',
+                    style: TextStyle(
+                      fontSize: 11,
+                      color: AppPalette.muted(context),
                     ),
                   ),
                 ],
-              ),
-            ),
+              );
+              if (!wide || images.isEmpty) return form;
+              return Row(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Expanded(flex: compactSplit ? 9 : 1, child: photoPanel(r)),
+                  const VerticalDivider(width: 1, thickness: 1),
+                  Expanded(flex: compactSplit ? 11 : 1, child: form),
+                ],
+              );
+            },
           ),
+        ),
+        floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+        floatingActionButton: Builder(
+          builder: (context) {
+            final scheme = Theme.of(context).colorScheme;
+            return Material(
+              key: const ValueKey('receipt-save-actions'),
+              color: scheme.surfaceContainerHigh,
+              elevation: 12,
+              shadowColor: Colors.black.withValues(alpha: .36),
+              shape: const StadiumBorder(),
+              child: Padding(
+                padding: const EdgeInsets.all(5),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    TextButton(
+                      style: TextButton.styleFrom(
+                        foregroundColor: scheme.error,
+                        minimumSize: const Size(0, 46),
+                        shape: const StadiumBorder(),
+                        padding: const EdgeInsets.symmetric(horizontal: 8),
+                      ),
+                      onPressed: busy ? null : discardChanges,
+                      child: const Text('放弃改动'),
+                    ),
+                    const SizedBox(width: 2),
+                    if (!r.posted) ...[
+                      TextButton(
+                        style: TextButton.styleFrom(
+                          minimumSize: const Size(0, 46),
+                          shape: const StadiumBorder(),
+                          padding: const EdgeInsets.symmetric(horizontal: 8),
+                        ),
+                        onPressed: busy ? null : saveDraftAndExit,
+                        child: const Text('保存草稿'),
+                      ),
+                      const SizedBox(width: 2),
+                    ],
+                    FilledButton(
+                      style: FilledButton.styleFrom(
+                        minimumSize: const Size(0, 46),
+                        shape: const StadiumBorder(),
+                        padding: const EdgeInsets.symmetric(horizontal: 12),
+                      ),
+                      onPressed: busy ? null : save,
+                      child: Text(busy ? '处理中…' : '录入并退出'),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
         ),
       ),
     );

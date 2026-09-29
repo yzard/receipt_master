@@ -1040,7 +1040,7 @@ export function Editor({ id, onBack }: { id: string; onBack: () => void }) {
         </p>
       )}
       <div className="editor-layout">
-        <aside className="receipt-photos">
+        <aside className="receipt-photos" aria-label="收据照片">
           {loaded.data?.[1].length === 0 && (
             <p className="muted">手动录入的收据没有照片。</p>
           )}
@@ -1101,7 +1101,7 @@ export function Editor({ id, onBack }: { id: string; onBack: () => void }) {
             </figure>
           ))}
         </aside>
-        <section>
+        <section className="receipt-fields" aria-label="收据内容">
           <div className="form-grid">
             {[
               ["store", "商店名称"],

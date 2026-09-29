@@ -487,8 +487,21 @@ footer {
 }
 .editor-layout {
   display: grid;
-  grid-template-columns: 350px 1fr;
-  gap: 38px;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 24px;
+  height: max(420px, calc(100dvh - 225px));
+}
+.editor-layout > * {
+  min-width: 0;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+.receipt-photos {
+  padding-right: 10px;
+}
+.receipt-fields {
+  padding-right: 10px;
 }
 .receipt-photos figure {
   margin: 0 0 22px;
@@ -849,6 +862,31 @@ footer {
   overflow: hidden;
   clip: rect(0, 0, 0, 0);
 }
+@media (max-width: 1000px) {
+  .editor-layout {
+    grid-template-columns: 1fr;
+    height: auto;
+    gap: 20px;
+  }
+  .editor-layout > * {
+    overflow: visible;
+    padding-right: 0;
+  }
+  .receipt-photos {
+    display: flex;
+    overflow-x: auto;
+    gap: 15px;
+  }
+  .receipt-photos figure {
+    width: 180px;
+    flex-shrink: 0;
+  }
+  .receipt-photos img {
+    height: 230px;
+    object-fit: contain;
+    background: white;
+  }
+}
 @media (max-width: 800px) {
   .toolbar {
     gap: 4px;
@@ -878,24 +916,6 @@ footer {
   }
   .page-heading .muted {
     font-size: 13px;
-  }
-  .editor-layout {
-    grid-template-columns: 1fr;
-    gap: 20px;
-  }
-  .receipt-photos {
-    display: flex;
-    overflow: auto;
-    gap: 15px;
-  }
-  .receipt-photos figure {
-    width: 180px;
-    flex-shrink: 0;
-  }
-  .receipt-photos img {
-    height: 230px;
-    object-fit: contain;
-    background: white;
   }
   .editor-heading {
     gap: 7px;

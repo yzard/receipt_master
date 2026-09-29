@@ -23,12 +23,17 @@ class AuthSession extends ChangeNotifier {
   final http.Client client;
   Map<String, dynamic>? user;
   String endpoint = '', token = '', refreshToken = '';
+  String? _savedHttpEndpoint;
   int expiresAt = 0;
   Future<void>? _refreshing;
   int _epoch = 0;
   Future<void> restore() async {
     final defaults = await loadDefaults();
-    endpoint = await credentialStore.read(key: 'endpoint') ?? defaults.endpoint;
+    final savedEndpoint = await credentialStore.read(key: 'endpoint');
+    endpoint = savedEndpoint ?? defaults.endpoint;
+    _savedHttpEndpoint = Uri.tryParse(savedEndpoint ?? '')?.scheme == 'http'
+        ? savedEndpoint
+        : null;
     refreshToken = await credentialStore.read(key: 'refresh_token') ?? '';
     await credentialStore.delete(key: 'api_key');
     if (refreshToken.isNotEmpty) {
@@ -47,7 +52,7 @@ class AuthSession extends ChangeNotifier {
     return BackendConnection(
       endpoint,
       '',
-      allowedHttpEndpoint: defaults.endpoint,
+      allowedHttpEndpoint: _savedHttpEndpoint ?? defaults.endpoint,
     ).endpointUri;
   }
 
@@ -91,6 +96,9 @@ class AuthSession extends ChangeNotifier {
         (body['expires_in'] as int) * 1000;
     user = Map<String, dynamic>.from(body['user']);
     await credentialStore.write(key: 'endpoint', value: endpoint);
+    _savedHttpEndpoint = Uri.tryParse(endpoint)?.scheme == 'http'
+        ? endpoint
+        : null;
     await credentialStore.write(key: 'refresh_token', value: refreshToken);
     notifyListeners();
   }
@@ -128,7 +136,7 @@ class AuthSession extends ChangeNotifier {
     return BackendConnection(
       endpoint,
       token,
-      allowedHttpEndpoint: defaults.endpoint,
+      allowedHttpEndpoint: _savedHttpEndpoint ?? defaults.endpoint,
     );
   }
 

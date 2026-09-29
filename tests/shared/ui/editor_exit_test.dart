@@ -12,7 +12,7 @@ import 'package:timezone/data/latest.dart' as tzdata;
 
 void main() {
   testWidgets(
-    'failed draft save permits cancelling or discarding and exiting without deleting receipt',
+    'failed explicit draft save permits returning or discarding without another write',
     (tester) async {
       tzdata.initializeTimeZones();
       final receipt = ReceiptDraft.empty(DateTime.now()).toMap();
@@ -69,21 +69,29 @@ void main() {
       );
       await tester.tap(find.text('打开收据'));
       await tester.pumpAndSettle();
+      await tester.enterText(
+        find.widgetWithText(TextField, '店名 / 连锁店'),
+        'Edited',
+      );
+      await tester.pump(const Duration(milliseconds: 800));
+      expect(saveCalls, 0);
+      await tester.tap(find.text('保存草稿'));
+      await tester.pumpAndSettle();
+      expect(find.byType(EditorPage), findsOneWidget);
+      expect(saveCalls, 1);
       await tester.pageBack();
-      await tester.pump();
-      await tester.pump(const Duration(milliseconds: 350));
-      expect(find.text('草稿保存失败，放弃未保存修改并退出？'), findsOneWidget);
-      await tester.tap(find.text('取消'));
+      await tester.pumpAndSettle();
+      expect(find.text('离开收据编辑？'), findsOneWidget);
+      await tester.tap(find.text('继续编辑'));
       await tester.pumpAndSettle();
       expect(find.byType(EditorPage), findsOneWidget);
       await tester.pageBack();
-      await tester.pump();
-      await tester.pump(const Duration(milliseconds: 350));
-      await tester.tap(find.text('确认'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('放弃改动').last);
       await tester.pumpAndSettle();
       expect(find.byType(EditorPage), findsNothing);
       expect(find.text('打开收据'), findsOneWidget);
-      expect(saveCalls, 2);
+      expect(saveCalls, 1);
     },
   );
 }

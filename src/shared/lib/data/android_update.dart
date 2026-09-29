@@ -7,7 +7,6 @@ import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
 
 import '../domain/models.dart';
-import 'backend_defaults.dart';
 import 'auth_session.dart';
 
 const androidUpdateChannel = MethodChannel('receipt_master/android_update');
@@ -23,7 +22,7 @@ class AndroidDownloads {
     final target = origin.resolve(path);
     if (connection.uri.origin != origin.origin ||
         target.origin != origin.origin) {
-      throw const InputError('请登录安装包预置的服务后更新客户端');
+      throw const InputError('请登录当前收据服务器后更新客户端');
     }
     final request = http.Request('GET', target)
       ..followRedirects = false
@@ -85,10 +84,9 @@ class AndroidUpdate {
   AndroidUpdate(this.origin, this.release, this.session);
 
   static Future<AndroidUpdate?> check(AuthSession session) async {
-    final defaults = await loadBackendDefaults();
-    if (defaults.endpoint.isEmpty) throw const InputError('此安装包未配置本地更新服务');
-    final endpoint = Uri.parse(defaults.endpoint);
-    final origin = endpoint.replace(path: '/', query: null, fragment: null);
+    // The authenticated server may be a user-saved address from an older APK.
+    // Updates must come from that same server, not a new build's default.
+    final origin = await session.origin();
     final installed = Map<String, dynamic>.from(
       (await androidUpdateChannel.invokeMethod<Map>('installedApp'))!,
     );
