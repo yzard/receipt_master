@@ -3,16 +3,16 @@ import 'package:receipt_master/data/backend_connection.dart';
 import 'package:receipt_master/data/backend_defaults.dart';
 
 void main() {
-  const defaults = BackendDefaults('http://192.168.1.20:5000/', 'test-key');
+  const defaults = BackendDefaults('http://192.168.1.20:5000/');
   test(
-    'packaged authentication and saved legacy path resolve to backend origin',
+    'account authentication and saved legacy path resolve to backend origin',
     () {
-      expect(defaults.resolve({}).uri.toString(), defaults.endpoint);
+      expect(defaults.resolve({}).endpointUri.toString(), defaults.endpoint);
       expect(
         defaults
             .resolve({
               'endpoint': 'http://192.168.1.20:5000/v1/chat/completions',
-              'api_key': 'saved',
+              'access_token': 'saved',
             })
             .uri
             .toString(),
@@ -21,7 +21,7 @@ void main() {
       expect(
         defaults.resolve({
           'endpoint': 'https://example.test/',
-          'api_key': 'custom',
+          'access_token': 'custom',
         }).key,
         'custom',
       );

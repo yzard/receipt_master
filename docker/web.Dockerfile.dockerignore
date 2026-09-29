@@ -1,0 +1,8 @@
+**
+!src/
+!src/web/
+!src/web/**
+!tests/
+!tests/web/
+!tests/web/**
+**/node_modules/

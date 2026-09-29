@@ -5,15 +5,14 @@ import 'dart:typed_data';
 import 'package:file_selector/file_selector.dart';
 import 'package:flutter/material.dart';
 
-import '../platform/credentials.dart';
+import '../data/auth_session.dart';
+import 'account.dart';
 
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as p;
 import 'package:share_plus/share_plus.dart';
 
 import '../data/store.dart';
-import '../data/backend_connection.dart';
-import '../data/backend_defaults.dart';
 import '../data/android_update.dart';
 import '../domain/models.dart';
 
@@ -37,9 +36,8 @@ class SettingsPage extends StatefulWidget {
 }
 
 class _SettingsPageState extends State<SettingsPage> {
-  final endpoint = TextEditingController(), keyField = TextEditingController();
   bool busy = false, loaded = false;
-  bool revealKey = false;
+
   String? message;
   @override
   void initState() {
@@ -47,28 +45,14 @@ class _SettingsPageState extends State<SettingsPage> {
     load();
   }
 
-  @override
-  void dispose() {
-    endpoint.dispose();
-    keyField.dispose();
-    super.dispose();
-  }
-
   Future<void> load() async {
-    try {
-      final connection = await loadBackendConnection();
-      endpoint.text = connection.endpoint;
-      keyField.text = connection.key;
-    } catch (e) {
-      if (mounted) showError(context, e);
-    }
     if (!mounted) return;
     setState(() => loaded = true);
     try {
       await widget.store.loadPreferences();
       if (mounted) setState(() {});
     } catch (_) {
-      if (mounted) setState(() => message = '无法读取服务器偏好；仍可修改后端连接。');
+      if (mounted) setState(() => message = '无法读取服务器偏好；请稍后重试。');
     }
   }
 
@@ -85,34 +69,10 @@ class _SettingsPageState extends State<SettingsPage> {
     }
   }
 
-  Future<void> save() async {
-    final defaults = await loadBackendDefaults();
-    final connection = BackendConnection(
-      endpoint.text.trim(),
-      keyField.text.trim(),
-      allowedHttpEndpoint: defaults.endpoint,
-    );
-    final origin = connection.uri.toString();
-    final candidate = AppStore(
-      widget.store.cacheRoot,
-      client: widget.store.client,
-      configuration: () async => connection,
-    );
-    await candidate.loadPreferences();
-    const vault = credentialStore;
-    await vault.write(key: 'endpoint', value: origin);
-    await vault.write(key: 'api_key', value: connection.key);
-    widget.store.weightUnit = candidate.weightUnit;
-    widget.store.reportCurrency = candidate.reportCurrency;
-    widget.store.catalogVersion = candidate.catalogVersion;
-    await vault.delete(key: 'model');
-    if (mounted) setState(() => message = '已连接后端并通过认证。');
-  }
-
   Future<void> checkAndroidUpdate() async {
     await action(() async {
       setState(() => message = '正在检查客户端更新…');
-      final update = await AndroidUpdate.check();
+      final update = await AndroidUpdate.check(AuthSession.instance);
       if (!mounted) return;
       if (update == null) {
         setState(() => message = '已是最新版本');
@@ -175,7 +135,7 @@ class _SettingsPageState extends State<SettingsPage> {
     if (!await confirm(
       context,
       '整体恢复备份',
-      '当前收据、商品和照片会被备份替换，不合并。替换前会在后端保留一份恢复点。此操作影响连接同一后端的所有设备。',
+      '当前收据、商品和照片会被备份替换，不合并。替换前会在后端保留一份恢复点。此操作影响登录同一账户的所有设备。',
     )) {
       return;
     }
@@ -280,39 +240,44 @@ class _SettingsPageState extends State<SettingsPage> {
           ),
           const SizedBox(height: 24),
           const Text(
-            '后端连接',
+            '账户',
             style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
           ),
-          const SizedBox(height: 8),
-          const Text('所有收据和照片由下方后端保存，两台设备连接同一后端即可共享数据。'),
-          const SizedBox(height: 16),
-          TextField(
-            controller: endpoint,
-            decoration: const InputDecoration(labelText: '后端 API 地址'),
+          ListTile(
+            title: const Text('当前账户'),
+            subtitle: Text(AuthSession.instance.user?['username'] ?? ''),
+            leading: const Icon(Icons.person_outline),
           ),
-          const SizedBox(height: 12),
-          TextField(
-            controller: keyField,
-            obscureText: !revealKey,
-            enableSuggestions: false,
-            autocorrect: false,
-            decoration: InputDecoration(
-              labelText: '后端访问密钥',
-              suffixIcon: IconButton(
-                tooltip: revealKey ? '隐藏访问密钥' : '显示访问密钥',
-                onPressed: () => setState(() => revealKey = !revealKey),
-                icon: Icon(
-                  revealKey
-                      ? Icons.visibility_off_outlined
-                      : Icons.visibility_outlined,
+          ListTile(
+            title: const Text('修改密码'),
+            onTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => PasswordPage(
+                  session: AuthSession.instance,
+                  requiredChange: false,
                 ),
               ),
             ),
           ),
-          const SizedBox(height: 20),
-          FilledButton(
-            onPressed: () => action(save),
-            child: const Text('连接并验证'),
+          if (AuthSession.instance.user?['is_admin'] == true)
+            ListTile(
+              title: const Text('用户管理'),
+              onTap: () => Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => UsersPage(session: AuthSession.instance),
+                ),
+              ),
+            ),
+          ListTile(
+            title: const Text('退出登录'),
+            leading: const Icon(Icons.logout),
+            onTap: () => action(AuthSession.instance.logout),
+          ),
+          Text(
+            AuthSession.instance.endpoint,
+            style: Theme.of(context).textTheme.bodySmall,
           ),
           const SizedBox(height: 24),
           const Text(

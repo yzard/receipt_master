@@ -11,3 +11,7 @@
 !docker/service-entrypoint.sh
 **/__pycache__/
 **/target/
+
+!build/
+!build/web/
+!build/web/**

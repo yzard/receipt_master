@@ -12,7 +12,8 @@ pub struct Config {
 pub struct General {
     pub host: IpAddr,
     pub port: u16,
-    pub api_key: String,
+    pub jwt_secret: String,
+    pub web_path: PathBuf,
     pub apk_path: PathBuf,
     pub timeout_seconds: u64,
     pub job_workers: usize,
@@ -32,9 +33,9 @@ impl Config {
             || url.host_str().is_none()
             || !url.username().is_empty()
             || url.password().is_some()
-            || c.general.api_key.trim().len() < 24
+            || c.general.jwt_secret.trim().len() < 24
             || c.ocr.api_key.trim().len() < 24
-            || c.ocr.api_key.trim() == c.general.api_key.trim()
+            || c.ocr.api_key.trim() == c.general.jwt_secret.trim()
             || c.general.port == 0
             || !(1..=8).contains(&c.general.job_workers)
             || c.general.timeout_seconds == 0

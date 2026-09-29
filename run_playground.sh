@@ -31,9 +31,11 @@ if len(ports) != 1 or ports[0]["host_ip"] != "0.0.0.0" or ports[0]["protocol"] !
 port, target = ports[0]["published"], ports[0]["target"]
 print(f"\nAPI mapping: 0.0.0.0:{port} -> backend_api:{target}")
 print("Access URLs (the model loads on the first task):")
+print(f"  Web:          http://localhost:{port}/")
 print(f"  Local health: http://localhost:{port}/health")
 addresses = os.environ["RECEIPT_HOST_IPS"].split()
 for address in addresses:
+    print(f"  Network Web:    http://{address}:{port}/")
     print(f"  Network health: http://{address}:{port}/health")
     print(f"  APK:            http://{address}:{port}/receipt_master.apk")
 if not addresses:

@@ -8,8 +8,37 @@ import 'package:path_provider/path_provider.dart';
 
 import '../domain/models.dart';
 import 'backend_defaults.dart';
+import 'auth_session.dart';
 
 const androidUpdateChannel = MethodChannel('receipt_master/android_update');
+
+class AndroidDownloads {
+  final AuthSession session;
+  final http.Client client;
+  final Uri origin;
+  AndroidDownloads(this.session, this.client, this.origin);
+
+  Future<http.StreamedResponse> get(String path) async {
+    final connection = await session.connection();
+    final target = origin.resolve(path);
+    if (connection.uri.origin != origin.origin ||
+        target.origin != origin.origin) {
+      throw const InputError('请登录安装包预置的服务后更新客户端');
+    }
+    final request = http.Request('GET', target)
+      ..followRedirects = false
+      ..headers['Authorization'] = 'Bearer ${connection.key}';
+    final response = await client.send(request);
+    if (response.statusCode == 401) {
+      if (session.token == connection.key) await session.clear();
+      throw const AuthenticationError(401, '登录已过期，请重新登录后下载客户端');
+    }
+    if (response.statusCode == 403) {
+      throw const AuthenticationError(403, '请先修改密码再下载客户端');
+    }
+    return response;
+  }
+}
 
 class AndroidRelease {
   final int versionCode, bytes;
@@ -52,11 +81,12 @@ AndroidRelease selectAndroidRelease(
 class AndroidUpdate {
   final Uri origin;
   final AndroidRelease release;
-  AndroidUpdate(this.origin, this.release);
+  final AuthSession session;
+  AndroidUpdate(this.origin, this.release, this.session);
 
-  static Future<AndroidUpdate?> check() async {
+  static Future<AndroidUpdate?> check(AuthSession session) async {
     final defaults = await loadBackendDefaults();
-    if (defaults.key.isEmpty) throw const InputError('此安装包未配置本地更新服务');
+    if (defaults.endpoint.isEmpty) throw const InputError('此安装包未配置本地更新服务');
     final endpoint = Uri.parse(defaults.endpoint);
     final origin = endpoint.replace(path: '/', query: null, fragment: null);
     final installed = Map<String, dynamic>.from(
@@ -64,13 +94,11 @@ class AndroidUpdate {
     );
     final client = http.Client();
     try {
-      final request = http.Request(
-        'GET',
-        origin.resolve('/android-update.json'),
-      )..followRedirects = false;
-      final response = await client
-          .send(request)
-          .timeout(const Duration(seconds: 20));
+      final response = await AndroidDownloads(
+        session,
+        client,
+        origin,
+      ).get('/android-update.json').timeout(const Duration(seconds: 20));
       if (response.statusCode != 200) throw const InputError('无法检查更新，请确认后端已启动');
       final manifest = jsonDecode(
         await response.stream.bytesToString().timeout(
@@ -87,7 +115,7 @@ class AndroidUpdate {
       )) {
         return null;
       }
-      return AndroidUpdate(origin, release);
+      return AndroidUpdate(origin, release, session);
     } finally {
       client.close();
     }
@@ -102,12 +130,11 @@ class AndroidUpdate {
     final partial = File('${file.path}.part');
     final client = http.Client();
     try {
-      final response = await client
-          .send(
-            http.Request('GET', origin.resolve(release.path))
-              ..followRedirects = false,
-          )
-          .timeout(const Duration(seconds: 30));
+      final response = await AndroidDownloads(
+        session,
+        client,
+        origin,
+      ).get(release.path).timeout(const Duration(seconds: 30));
       if (response.statusCode != 200) throw const InputError('更新包下载失败，请稍后重试');
       final sink = partial.openWrite();
       var received = 0;

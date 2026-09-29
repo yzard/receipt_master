@@ -21,7 +21,7 @@ Compose 将宿主 `playground/backend_api/` 绑定到 API 的 `/data`。其下�
 
 写操作需要稳定的 `request_key`。重试同一内容返回第一次成功结果；同键不同内容返回 409。读取操作可省略该字段。成功返回 `{"data": ..., "catalog_version": ...}`（导出等独立操作没有 catalog_version）。失败返回 `{"error":{"code":...,"message":...}}`，401 表示未认证，404 表示资源不存在，409 表示版本或请求冲突，422 表示数据关系约束失败。
 
-全部业务请求、媒体和备份都需要 `Authorization: Bearer <API key>`。个人试用版本使用一个共享工作区；共享密钥意味着共享数据访问权，不提供不同用户隔离。APK 下载及更新清单维持公开。
+全部业务请求、媒体、备份、APK 下载、更新清单与更新包都需要登录后的 Bearer JWT 或浏览器会话 cookie。后端按认证身份选择数据根目录，每个账户独立保存业务数据。默认 admin 必须首次改密；仅 admin 可管理普通用户。登录页面、静态 Web 资源和健康检查公开。Android 更新请求携带手机的 JWT；安装包只包含服务地址，不包含登录凭据。完整认证协议见 [第三版方案](3rd_plan_web_auth.md)。
 
 | Component | Operations | 关键字段 |
 | --- | --- | --- |
@@ -88,7 +88,7 @@ Compose 将宿主 `playground/backend_api/` 绑定到 API 的 `/data`。其下�
 
 ## 客户端职责与服务器配置
 
-`playground/backend_api/config.toml` 只配置 API 本身以及 `[ocr]` 的服务 URL 和独立认证密钥。模型名称、输出长度、thinking、图片上限等推理参数在 OCR 自己的 `playground/backend_ocr/config.toml`；API 提示词在自己的 `prompt.toml`。两个服务都由启动参数 `--data-dir` 指定各自目录并读取固定文件名 `config.toml`。客户端密钥内嵌在 API 的 `[general].api_key`，服务间密钥内嵌在 API 的 `[ocr].api_key` 和 OCR 的 `[general].api_key`，不另建密钥文件。两份配置仅允许所有者读取。API 通过受认证的 OCR capabilities 接口获取图片上限，不复制模型配置。修改对应 TOML 后重启相应服务。当前本地 NInfer 不按 token 收费，费用估算和预算提醒已移除。
+`playground/backend_api/config.toml` 只配置 API 本身以及 `[ocr]` 的服务 URL 和独立认证密钥。模型名称、输出长度、thinking、图片上限等推理参数在 OCR 自己的 `playground/backend_ocr/config.toml`；API 提示词在自己的 `prompt.toml`。两个服务都由启动参数 `--data-dir` 指定各自目录并读取固定文件名 `config.toml`。JWT 签名密钥保存在 API 的 `[general].jwt_secret`，不发给客户端，服务间密钥内嵌在 API 的 `[ocr].api_key` 和 OCR 的 `[general].api_key`，不另建密钥文件。两份配置仅允许所有者读取。API 的 `[general].web_path` 指向镜像内 `/app/web` 静态资源。API 通过受认证的 OCR capabilities 接口获取图片上限，不复制模型配置。修改对应 TOML 后重启相应服务。当前本地 NInfer 不按 token 收费，费用估算和预算提醒已移除。
 每次收据识别都先执行 Logo 定位与匹配，然后按识别出的商店选择专用提示词；未匹配时使用通用提示词。API 配置不提供关闭 Logo 的开关。
 
 客户端不显示或保存 OCR 模型、provider 地址或服务间密钥。安装包只预置后端 origin 与客户端认证密钥；设置中的“连接并验证”验证后端认证。识别任务入口保留状态和可编辑结果。重量显示单位属于共享展示偏好，仍可在设置修改。

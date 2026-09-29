@@ -29,8 +29,8 @@ def config():
                 port=8002,
                 context_length=32768,
                 max_images=16,
-                receipt_output_tokens=8192,
-                logo_output_tokens=4096,
+                receipt_output_tokens=16384,
+                logo_output_tokens=16384,
                 thinking=True,
                 temperature=0,
                 seed=42,
@@ -64,7 +64,10 @@ class VisionTest(unittest.TestCase):
             (data_dir / 'config.toml').write_text(
                 template.read_text().replace('api_key = ""', f'api_key = "{OCR_KEY}"')
             )
-            self.assertEqual(load_config(data_dir).general.api_key, OCR_KEY)
+            loaded = load_config(data_dir)
+            self.assertEqual(loaded.general.api_key, OCR_KEY)
+            self.assertEqual(loaded.engine.receipt_output_tokens, 16384)
+            self.assertEqual(loaded.engine.logo_output_tokens, 16384)
             with self.assertRaises(ValueError):
                 load_config(Path('relative-directory'))
 
@@ -109,7 +112,7 @@ class VisionTest(unittest.TestCase):
         prepared = prepare_request(copy.deepcopy(body), config())
         self.assertEqual(prepared['response_format'], {'type': 'text'})
         self.assertEqual(prepared['model'], 'vision')
-        self.assertEqual(prepared['max_tokens'], 8192)
+        self.assertEqual(prepared['max_tokens'], 16384)
         self.assertTrue(prepared['chat_template_kwargs']['enable_thinking'])
         self.assertEqual(prepared['messages'][0], body['messages'][0])
         parts = prepared['messages'][1]['content']

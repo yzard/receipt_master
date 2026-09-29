@@ -16,11 +16,12 @@ if [[ -d "$project_dir/playground/data" || -d "$project_dir/playground/backend_a
 fi
 python3 "$project_dir/docker/prepare_playground_config.py" --root "$project_dir"
 # Each backend image includes its own mandatory checks; neither build needs a GPU.
+"$project_dir/build_web.sh"
 for component in backend_ocr backend_api; do
   docker buildx build --platform linux/amd64 --target checks \
     --file "$project_dir/docker/$component.Dockerfile" "$project_dir"
 done
-# Provision before Android compilation so the APK and server share one persistent key.
+# Provision the phone-accessible service origin before Android compilation.
 receipt_host=""
 if command -v ip >/dev/null 2>&1; then
   receipt_host="$(ip -4 route get 1.1.1.1 | awk '{for (i=1;i<=NF;i++) if ($i=="src") {print $(i+1); exit}}')"
@@ -39,3 +40,6 @@ docker buildx build --platform linux/amd64 --load --tag receipt-master-backend-o
   --file "$project_dir/docker/backend_ocr.Dockerfile" "$project_dir"
 docker buildx build --platform linux/amd64 --load --tag receipt-master-backend-api:local \
   --file "$project_dir/docker/backend_api.Dockerfile" "$project_dir"
+
+# Exercise the actual API/Web image with disposable accounts, never the playground volume.
+python3 "$project_dir/tests/web/http_smoke.py" --artifacts "$project_dir/build/mobile"

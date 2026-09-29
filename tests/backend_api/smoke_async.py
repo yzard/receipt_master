@@ -167,7 +167,9 @@ def main():
                     print('Logo diagnostics:', call('logos', 'match', {'receipt_id': rid}), flush=True)
                     for run in call('recognition', 'runs', {}):
                         if run['receipt_id'] == rid and run['status'] == 'succeeded':
-                            result = json.loads((args.data_directory / 'recognition' / (run['run_id'] + '.json')).read_text())
+                            result = json.loads(
+                                (args.data_directory / 'recognition' / (run['run_id'] + '.json')).read_text()
+                            )
                             print('Logo box:', result.get('logo_inference', {}).get('evidence'), flush=True)
                 assert receipt['store'] == 'Costco', receipt['store']
             if args.scenario == 'multi':
@@ -192,9 +194,13 @@ def main():
             result = json.loads((args.data_directory / 'recognition' / (run['run_id'] + '.json')).read_text())
             assert result['receipt_parsing']['version'] == 'structured-v2'
             assert result['receipt_parsing']['image_count'] == (2 if args.scenario == 'multi' else 1)
-        with urllib.request.urlopen(base + '/android-update.json') as reply:
+        with urllib.request.urlopen(
+            urllib.request.Request(base + '/android-update.json', headers={'Authorization': 'Bearer ' + key})
+        ) as reply:
             manifest = json.load(reply)
-        with urllib.request.urlopen(base + '/receipt_master.apk') as reply:
+        with urllib.request.urlopen(
+            urllib.request.Request(base + '/receipt_master.apk', headers={'Authorization': 'Bearer ' + key})
+        ) as reply:
             digest = hashlib.sha256(reply.read()).hexdigest()
         assert digest == manifest['variants']['arm64-v8a']['sha256']
         print(

@@ -1,5 +1,8 @@
 import 'dart:async';
 import 'dart:convert';
+
+import 'auth_session.dart';
+
 import 'dart:io';
 import 'dart:typed_data';
 
@@ -69,6 +72,10 @@ class AppStore extends ChangeNotifier {
     ).timeout(const Duration(minutes: 3));
     final data =
         jsonDecode(utf8.decode(response.bodyBytes)) as Map<String, dynamic>;
+    if (response.statusCode == 401 &&
+        AuthSession.instance.token == config.key) {
+      await AuthSession.instance.clear();
+    }
     if (response.statusCode < 200 || response.statusCode >= 300) {
       throw InputError(
         data['error']?['message'] ?? '后端请求失败 ${response.statusCode}',
@@ -288,6 +295,10 @@ class AppStore extends ChangeNotifier {
       input['expected_version'] = current['revision'];
       await metadata.writeAsString(jsonEncode(input), flush: true);
       return _sendUpload(id);
+    }
+    if (response.statusCode == 401 &&
+        AuthSession.instance.token == config.key) {
+      await AuthSession.instance.clear();
     }
     if (response.statusCode != 200) {
       throw InputError(value['error']?['message'] ?? '上传失败；照片已留存，可重试');

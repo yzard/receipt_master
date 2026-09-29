@@ -36,6 +36,7 @@ services:
     environment:
       PUID: ${PUID:?Set PUID to the host user ID}
       GUID: ${GUID:?Set GUID to the host group ID}
+      RESET_ADMIN_PASSWORD: ${RESET_ADMIN_PASSWORD:-false}
     ports: ["0.0.0.0:5000:8000"]
     volumes:
       - ../build/mobile:/artifacts:ro

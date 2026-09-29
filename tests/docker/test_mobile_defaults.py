@@ -4,7 +4,6 @@ import tempfile
 import unittest
 from pathlib import Path
 
-
 spec = importlib.util.spec_from_file_location(
     'mobile_defaults', Path(__file__).parents[2] / 'docker/validate_mobile_defaults.py'
 )
@@ -13,7 +12,7 @@ spec.loader.exec_module(mobile_defaults)
 
 
 class MobileDefaultsTest(unittest.TestCase):
-    def test_release_requires_backend_address_and_key(self):
+    def test_release_requires_backend_address_without_secrets(self):
         with tempfile.TemporaryDirectory() as tmp:
             path = Path(tmp) / 'defaults.json'
             for config in [
@@ -24,11 +23,9 @@ class MobileDefaultsTest(unittest.TestCase):
                 path.write_text(json.dumps(config))
                 with self.assertRaises(ValueError):
                     mobile_defaults.validate(path)
-            path.write_text(json.dumps({
-                'endpoint': 'http://192.168.1.20:5000/',
-                'api_key': 'x' * 32,
-            }))
-            mobile_defaults.validate(path)
+            for endpoint in ['http://192.168.1.20:5000/', 'https://receipts.example.com/']:
+                path.write_text(json.dumps({'endpoint': endpoint}))
+                mobile_defaults.validate(path)
 
 
 if __name__ == '__main__':

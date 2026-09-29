@@ -4,9 +4,9 @@ use crate::{
     error::AppError,
 };
 use axum::{
-    Json,
+    Extension, Json,
     body::Body,
-    extract::{Path, Request, State as AxumState},
+    extract::{Path, Request},
     response::{IntoResponse, Response},
 };
 use serde::Deserialize;
@@ -21,7 +21,7 @@ pub struct Operation {
     pub input: Value,
 }
 pub async fn execute(
-    AxumState(state): AxumState<Arc<State>>,
+    Extension(state): Extension<Arc<State>>,
     Path((component, operation)): Path<(String, String)>,
     Json(body): Json<Operation>,
 ) -> Result<Json<Value>, AppError> {
@@ -46,6 +46,9 @@ pub async fn execute(
         crate::exchange::ensure_trend_rates(&state, &body.input).await?;
     }
     let _guard = state.storage_lock.lock().await;
+    if state.deleted.load(std::sync::atomic::Ordering::SeqCst) {
+        return Err(AppError::new(401, "unauthenticated", "账户已删除"));
+    }
     let root = state.data_dir.clone();
     let reply=tokio::task::spawn_blocking(move||{
   let store=Store::open(&root)?;
@@ -70,7 +73,7 @@ if let Some(previous)=store.rows("SELECT * FROM idempotency_record WHERE request
     Ok(Json(reply))
 }
 pub async fn media(
-    AxumState(state): AxumState<Arc<State>>,
+    Extension(state): Extension<Arc<State>>,
     Path(id): Path<String>,
     req: Request,
 ) -> Result<Response, AppError> {
@@ -91,7 +94,7 @@ pub async fn media(
     Ok(response)
 }
 pub async fn upload(
-    AxumState(state): AxumState<Arc<State>>,
+    Extension(state): Extension<Arc<State>>,
     mut form: axum::extract::Multipart,
 ) -> Result<Json<Value>, AppError> {
     use tokio::io::AsyncWriteExt;
@@ -130,6 +133,9 @@ pub async fn upload(
     let body = metadata.ok_or_else(db::invalid)?;
     let key = body.request_key.ok_or_else(db::invalid)?;
     let _guard = state.storage_lock.lock().await;
+    if state.deleted.load(std::sync::atomic::Ordering::SeqCst) {
+        return Err(AppError::new(401, "unauthenticated", "账户已删除"));
+    }
     let root = state.data_dir.clone();
     let data = tokio::task::spawn_blocking(move || {
         let bytes = std::fs::read(temporary.path()).map_err(db::io_error)?;
@@ -164,4 +170,17 @@ pub async fn upload(
     .await
     .map_err(db::io_error)??;
     Ok(Json(json!({"data":data})))
+}
+
+/// Large photo backups retain the v2 restore protocol without the ordinary JSON limit.
+pub async fn prepare_restore(
+    Extension(state): Extension<Arc<State>>,
+    Json(body): Json<Operation>,
+) -> Result<Json<Value>, AppError> {
+    execute(
+        Extension(state),
+        Path(("maintenance".into(), "prepare_restore".into())),
+        Json(body),
+    )
+    .await
 }

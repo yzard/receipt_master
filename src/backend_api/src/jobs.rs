@@ -235,6 +235,9 @@ impl Drop for WorkerSlot {
     }
 }
 pub fn wake(state: Arc<State>) {
+    if state.deleted.load(Ordering::SeqCst) {
+        return;
+    }
     for _ in 0..state.config.general.job_workers {
         if state
             .active_job_workers
@@ -271,6 +274,9 @@ async fn database<T: Send + 'static>(
         .map_err(db::io_error)?
 }
 async fn next_job(state: Arc<State>) -> Result<bool> {
+    if state.deleted.load(Ordering::SeqCst) {
+        return Ok(false);
+    }
     let queued = database(&state, |s| {
         Ok(!s
             .rows(

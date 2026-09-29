@@ -28,7 +28,7 @@ class BackendConnection {
 
   Uri get uri {
     final origin = endpointUri;
-    if (key.trim().isEmpty) throw const InputError('请填写后端访问密钥');
+    if (key.trim().isEmpty) throw const InputError('请先登录');
     return origin;
   }
 }

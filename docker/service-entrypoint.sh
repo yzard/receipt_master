@@ -1,5 +1,6 @@
 #!/bin/sh
 set -eu
+umask 077
 
 for value in "${PUID:-}" "${GUID:-}"; do
     case "$value" in

@@ -4,7 +4,6 @@ import argparse
 import json
 import os
 import sys
-import tomllib
 from pathlib import Path
 from urllib.parse import urlparse
 
@@ -24,13 +23,9 @@ if (
     or url.hostname in ('localhost', '0.0.0.0', '127.0.0.1')
 ):
     raise ValueError('Set RECEIPT_BACKEND_ENDPOINT to a phone-accessible HTTP(S) backend URL')
-api_config = tomllib.loads((args.root / 'playground/backend_api/config.toml').read_text())
-key = api_config['general']['api_key'].strip()
-if len(key) < 24:
-    raise ValueError('Backend API key is invalid')
 output = args.root / 'build/mobile-config/backend_defaults.json'
 output.parent.mkdir(parents=True, exist_ok=True)
 output.parent.chmod(0o700)
-output.write_text(json.dumps({'endpoint': endpoint, 'api_key': key}) + '\n')
+output.write_text(json.dumps({'endpoint': endpoint}) + '\n')
 output.chmod(0o600)
-print(f'APK backend: {endpoint} (key not displayed)', file=sys.stderr)
+print(f'APK backend: {endpoint}', file=sys.stderr)

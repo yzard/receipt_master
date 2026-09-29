@@ -98,8 +98,7 @@ def prepare(root: Path) -> Path:
     old_ocr = api['ocr']
     old_keys = [api_data / 'api-key', root / 'playground/secrets/ocr-api-key']
     ocr_key_file = api_data / 'ocr-api-key'
-    client_key = unique_key('Client API key', [api['general'].get('api_key', '')] +
-                            [p.read_text() for p in old_keys if p.exists()])
+    client_key = unique_key('JWT signing secret', [api['general'].get('jwt_secret', '')])
     service_key = unique_key('OCR service API key',
                              [old_ocr.get('api_key', ''), ocr['general'].get('api_key', '')] +
                              ([ocr_key_file.read_text()] if ocr_key_file.exists() else []))
@@ -111,7 +110,9 @@ def prepare(root: Path) -> Path:
     general.pop('api_key_file', None)
     general.pop('served_model', None)
     general.pop('data_dir', None)
-    general['api_key'] = client_key
+    general.pop('api_key', None)
+    general['jwt_secret'] = client_key
+    general.setdefault('web_path', '/app/web')
     general['repair_attempts'] = old_ocr.get('repair_attempts', general.get('repair_attempts', 1))
     api['ocr'] = {'url': old_ocr['url'], 'api_key': service_key}
     api.pop('logos', None)
@@ -122,8 +123,8 @@ def prepare(root: Path) -> Path:
     ocr['general']['api_key'] = service_key
     engine = ocr['engine']
     engine['max_images'] = old_ocr.get('max_images', engine['max_images'])
-    engine['receipt_output_tokens'] = old_ocr.get('output_tokens', engine.get('receipt_output_tokens', 8192))
-    engine.setdefault('logo_output_tokens', 4096)
+    engine['receipt_output_tokens'] = old_ocr.get('output_tokens', engine.get('receipt_output_tokens', 16384))
+    engine.setdefault('logo_output_tokens', 16384)
     engine['thinking'] = old_ocr.get('thinking', engine.get('thinking', True))
     engine.setdefault('temperature', 0)
     engine.setdefault('seed', 42)

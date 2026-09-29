@@ -1,7 +1,8 @@
 [general]
 host = "0.0.0.0"
 port = 8000
-api_key = ""
+jwt_secret = ""
+web_path = "/app/web"
 apk_path = "/artifacts/receipt_master.apk"
 timeout_seconds = 600
 job_workers = 1

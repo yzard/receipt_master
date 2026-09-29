@@ -30,6 +30,8 @@ chrono-tz = "0.10"
 zip = { version = "4", default-features = false, features = ["deflate"] }
 
 tempfile = "3"
+argon2 = "0.5.3"
+jsonwebtoken = "9.3.1"
 
 [dev-dependencies]
 
@@ -44,3 +46,7 @@ path = "../../tests/backend_api/storage.rs"
 [[test]]
 name = "corpus"
 path = "../../tests/backend_api/corpus.rs"
+
+[[test]]
+name = "auth"
+path = "../../tests/backend_api/auth.rs"

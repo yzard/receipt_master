@@ -5,6 +5,8 @@ import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 
 import 'data/backend_defaults.dart';
+import 'data/auth_session.dart';
+import 'ui/account.dart';
 
 import 'package:flutter_timezone/flutter_timezone.dart';
 import 'package:path_provider/path_provider.dart';
@@ -31,7 +33,8 @@ Future<void> main() async {
     final zone = (await FlutterTimezone.getLocalTimezone()).identifier;
     final appearance = Appearance(root);
     await appearance.load();
-    runApp(ReceiptApp(store: store, zone: zone, appearance: appearance));
+    await AuthSession.instance.restore();
+    runApp(AccountApp(store: store, zone: zone, appearance: appearance));
   } catch (e) {
     runApp(
       MaterialApp(
@@ -67,6 +70,39 @@ class ReceiptApp extends StatelessWidget {
         child: child ?? const SizedBox.shrink(),
       ),
       home: HomePage(store: store, zone: zone, appearance: appearance),
+    ),
+  );
+}
+
+class AccountApp extends StatelessWidget {
+  final AppStore store;
+  final String zone;
+  final Appearance appearance;
+  const AccountApp({
+    super.key,
+    required this.store,
+    required this.zone,
+    required this.appearance,
+  });
+  @override
+  Widget build(BuildContext context) => AnimatedBuilder(
+    animation: appearance,
+    builder: (context, _) => MaterialApp(
+      debugShowCheckedModeBanner: false,
+      title: 'Receipt Master',
+      theme: receiptTheme(Brightness.light),
+      darkTheme: receiptTheme(Brightness.dark),
+      themeMode: appearance.mode,
+      builder: (context, child) => AnnotatedRegion<SystemUiOverlayStyle>(
+        value: systemBars(Theme.of(context).brightness),
+        child: child ?? const SizedBox.shrink(),
+      ),
+      home: AccountGate(
+        store: store,
+        zone: zone,
+        appearance: appearance,
+        session: AuthSession.instance,
+      ),
     ),
   );
 }

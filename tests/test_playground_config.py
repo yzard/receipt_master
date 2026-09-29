@@ -30,8 +30,8 @@ class PlaygroundConfigTest(unittest.TestCase):
         api_path = prepare(self.root)
         api, ocr = self.settings()
         self.assertEqual(api_path, self.paths()[0])
-        self.assertEqual(api['general']['api_key'], 'existing-persistent-key-with-enough-length')
-        self.assertNotEqual(api['ocr']['api_key'], api['general']['api_key'])
+        self.assertNotEqual(api['general']['jwt_secret'], 'existing-persistent-key-with-enough-length')
+        self.assertNotEqual(api['ocr']['api_key'], api['general']['jwt_secret'])
         self.assertEqual(api['ocr']['api_key'], ocr['general']['api_key'])
         self.assertEqual(set(api['ocr']), {'url', 'api_key'})
         self.assertNotIn('logos', api)
@@ -46,15 +46,14 @@ class PlaygroundConfigTest(unittest.TestCase):
         self.assertEqual(api_path.read_bytes(), before)
         self.assertIn('# operator edit', prompt.read_text())
 
-    def test_conflicting_existing_keys_fail_without_overwrite(self):
+    def test_removes_legacy_client_key_without_reusing_it_for_jwt(self):
         api_path = prepare(self.root)
         before = api_path.read_bytes()
         old = api_path.parent / 'api-key'
         old.write_text('another-valid-but-different-api-key\n')
-        with self.assertRaisesRegex(ValueError, 'differ'):
-            prepare(self.root)
+        prepare(self.root)
         self.assertEqual(api_path.read_bytes(), before)
-        self.assertTrue(old.exists())
+        self.assertFalse(old.exists())
 
     def test_moves_existing_database_media_and_config_into_service_roots(self):
         legacy = self.root / 'playground/data'
@@ -101,10 +100,10 @@ class PlaygroundConfigTest(unittest.TestCase):
     def test_upgrades_old_ocr_settings_and_key_files(self):
         api_path = prepare(self.root)
         api, ocr = self.settings()
-        client_key, service_key = api['general']['api_key'], api['ocr']['api_key']
+        client_key, service_key = api['general']['jwt_secret'], api['ocr']['api_key']
         (api_path.parent / 'api-key').write_text(client_key + '\n')
         (api_path.parent / 'ocr-api-key').write_text(service_key + '\n')
-        api['general'].pop('api_key')
+        api['general'].pop('jwt_secret')
         api['general']['api_key_file'] = '/data/api-key'
         api['general']['served_model'] = 'receipt-qwen3.8'
         api['general']['data_dir'] = '/data'
@@ -123,7 +122,7 @@ class PlaygroundConfigTest(unittest.TestCase):
         write_sections(self.paths()[1], ocr)
         prepare(self.root)
         api, ocr = self.settings()
-        self.assertEqual(api['general']['api_key'], client_key)
+        self.assertNotEqual(api['general']['jwt_secret'], client_key)
         self.assertEqual(api['ocr']['api_key'], service_key)
         self.assertEqual(ocr['general']['api_key'], service_key)
         self.assertEqual(api['general']['repair_attempts'], 2)

@@ -15,3 +15,5 @@ playground/android-release-state.json
 /playground/data/
 /playground/backend_api/
 /playground/backend_ocr/
+
+**/node_modules/

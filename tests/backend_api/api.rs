@@ -13,7 +13,7 @@ const KEY: &str = "synthetic-test-key-not-a-real-secret";
 const OCR_KEY: &str = "synthetic-ocr-service-key-for-tests";
 fn configured_template() -> String {
     include_str!("../../docker/defaults/backend_api.toml")
-        .replacen("api_key = \"\"", &format!("api_key = \"{KEY}\""), 1)
+        .replacen("jwt_secret = \"\"", &format!("jwt_secret = \"{KEY}\""), 1)
         .replacen("api_key = \"\"", &format!("api_key = \"{OCR_KEY}\""), 1)
 }
 fn schema() -> Value {
@@ -42,6 +42,7 @@ struct Mock {
 }
 struct Fixture {
     app: Router,
+    token: String,
     mock: Arc<Mutex<Mock>>,
     dir: tempfile::TempDir,
     task: tokio::task::JoinHandle<()>,
@@ -91,7 +92,17 @@ async fn fixture(repair_attempts: usize) -> Fixture {
         data_dir.join("prompt.toml"),
     )
     .unwrap();
+    receipt_backend_api::auth::Identities::initialize(&data_dir, false).unwrap();
+    let identities = receipt_backend_api::auth::Identities::open(&data_dir).unwrap();
+    let session = identities.login("admin", "admin", "test", KEY).unwrap();
+    let user = identities
+        .authenticate(session["access_token"].as_str().unwrap(), KEY)
+        .unwrap();
+    let session = identities
+        .change_password(&user, "admin", "new-test-password-123", KEY)
+        .unwrap();
     Fixture {
+        token: session["access_token"].as_str().unwrap().to_owned(),
         app: application(State::new(c, data_dir).unwrap()),
         mock,
         dir,
@@ -110,7 +121,7 @@ async fn request(
         .uri(path)
         .header("content-type", "application/json");
     if auth {
-        b = b.header("authorization", format!("Bearer {KEY}"));
+        b = b.header("authorization", format!("Bearer {}", f.token));
     }
     let response = f
         .app
@@ -289,19 +300,37 @@ async fn raw_ocr() {
     assert_eq!(f.mock.lock().unwrap().calls.len(), 1);
 }
 #[tokio::test]
-async fn public_apk_download_and_auth() {
+async fn authenticated_apk_download_preserves_head_and_range() {
     let f = fixture(0).await;
     std::fs::write(
         f.dir.path().join("receipt_master.apk"),
         b"synthetic-apk-content",
     )
     .unwrap();
+    for method in ["GET", "HEAD"] {
+        let response = f
+            .app
+            .clone()
+            .oneshot(
+                Request::builder()
+                    .method(method)
+                    .uri("/receipt_master.apk")
+                    .body(Body::empty())
+                    .unwrap(),
+            )
+            .await
+            .unwrap();
+        assert_eq!(response.status(), 401);
+    }
     for (method, range, status, expected) in [
         ("GET", None, 200, &b"synthetic-apk-content"[..]),
         ("HEAD", None, 200, &b""[..]),
         ("GET", Some("bytes=0-8"), 206, &b"synthetic"[..]),
     ] {
-        let mut req = Request::builder().method(method).uri("/receipt_master.apk");
+        let mut req = Request::builder()
+            .method(method)
+            .uri("/receipt_master.apk")
+            .header("authorization", format!("Bearer {}", f.token));
         if let Some(range) = range {
             req = req.header("range", range);
         }
@@ -316,7 +345,7 @@ async fn public_apk_download_and_auth() {
             r.headers()["content-type"],
             "application/vnd.android.package-archive"
         );
-        assert_eq!(r.headers()["cache-control"], "no-store");
+        assert_eq!(r.headers()["cache-control"], "private, no-store");
         assert_eq!(
             &to_bytes(r.into_body(), usize::MAX).await.unwrap()[..],
             expected
@@ -326,7 +355,7 @@ async fn public_apk_download_and_auth() {
     assert_eq!(request(&f, "GET", "/v1/models", None, true).await.0, 200);
     std::fs::remove_file(f.dir.path().join("receipt_master.apk")).unwrap();
     assert_eq!(
-        request(&f, "GET", "/receipt_master.apk", None, false)
+        request(&f, "GET", "/receipt_master.apk", None, true)
             .await
             .0,
         404
@@ -386,7 +415,7 @@ fn schema_property_order_is_preserved_for_generation() {
 }
 
 #[tokio::test]
-async fn update_manifest_and_immutable_download_are_public_and_scoped() {
+async fn update_manifest_and_immutable_download_require_authentication() {
     let f = fixture(0).await;
     std::fs::write(
         f.dir.path().join("android-update.json"),
@@ -394,13 +423,19 @@ async fn update_manifest_and_immutable_download_are_public_and_scoped() {
     )
     .unwrap();
     assert_eq!(
-        request(&f, "GET", "/android-update.json", None, false)
+        request(&f, "GET", "/android-update.json", None, true)
             .await
             .0,
         200
     );
     std::fs::create_dir(f.dir.path().join("updates")).unwrap();
     let name = format!("{}.apk", "a".repeat(64));
+    for path in [
+        "/android-update.json".to_owned(),
+        format!("/updates/{name}"),
+    ] {
+        assert_eq!(request(&f, "GET", &path, None, false).await.0, 401);
+    }
     std::fs::write(f.dir.path().join("updates").join(&name), b"immutable-apk").unwrap();
     let response = f
         .app
@@ -408,6 +443,7 @@ async fn update_manifest_and_immutable_download_are_public_and_scoped() {
         .oneshot(
             Request::builder()
                 .uri(format!("/updates/{name}"))
+                .header("cookie", format!("rm_access={}", f.token))
                 .body(Body::empty())
                 .unwrap(),
         )
@@ -419,7 +455,7 @@ async fn update_manifest_and_immutable_download_are_public_and_scoped() {
         b"immutable-apk"
     );
     assert_eq!(
-        request(&f, "GET", "/updates/secrets.json", None, false)
+        request(&f, "GET", "/updates/secrets.json", None, true)
             .await
             .0,
         404
@@ -838,7 +874,7 @@ async fn receipt_photos_and_logo_crops_are_downloadable_but_unreferenced_media_a
     ] {
         let mut request = Request::builder().uri(format!("/api/v1/media/{id}"));
         if auth {
-            request = request.header("authorization", format!("Bearer {KEY}"));
+            request = request.header("authorization", format!("Bearer {}", f.token));
         }
         let response = f
             .app
