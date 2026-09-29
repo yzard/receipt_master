@@ -95,7 +95,7 @@ pub struct Identities {
 }
 impl Identities {
     pub fn open(root: &FsPath) -> db::Result<Self> {
-        let db = Connection::open(root.join("auth.sqlite")).map_err(db::sql_error)?;
+        let db = Connection::open(root.join("database/auth.sqlite")).map_err(db::sql_error)?;
         db.busy_timeout(std::time::Duration::from_secs(5))
             .map_err(db::sql_error)?;
         db.execute_batch(queries::DATABASE_PRAGMAS)

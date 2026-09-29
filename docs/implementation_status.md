@@ -231,7 +231,9 @@ build 10012 已部署。票面名称由 OCR 原文和金额唯一匹配恢复完
 
 ## 统一构建与临时下载入口
 
-构建总入口为 `build_docker.sh`：后端检查 → `build_android.sh` 的 Flutter 检查与 APK 构建 → 发布 APK 文件 → 后端镜像。`build_ios.sh` 保持独立，暂不纳入 Docker 总构建。运行入口为 `run_playground.sh`。临时 APK 下载由后端在 `0.0.0.0:5000/receipt_master.apk` 提供，OCR 接口仍需认证。APK 目录只读挂载，模型未就绪时也可以下载。
+构建总入口为 `build_docker.sh`：后端检查 → `build_android.sh` 的 Flutter 检查与 APK 构建 → 发布 APK 文件 → 后端镜像。`build_ios.sh` 保持独立，暂不纳入 Docker 总构建。运行入口为 `run_playground.sh`。APK 下载由后端在 `0.0.0.0:5000/receipt_master.apk` 提供，APK 和更新端点均需登录认证。APK、更新清单和不可变更新包直接打入 API 镜像，无宿主 APK 挂载，模型未就绪时也可以下载。
+
+`build_docker.sh` 无参数仍只构建本地；`--publish dockerhub|github --username NAME [--tag TAG]` 将两个后端镜像发布到 `docker.io` 或 `ghcr.io` 指定命名空间。发布使用事先配置的 Docker 登录凭据，默认标签 `latest`，也支持指定版本。参数验证、构建/测试失败不推送、两平台目标及推送错误退出由 `tests/docker/test_build_docker.py` 在无网络的命令替身下覆盖，纳入每次总构建。发布固定本次镜像 ID，并在容器 HTTP 验证通过后才开始；本地标签和 playground 行为保持不变。
 
 统一 Docker 构建和实际 APK 下载验证通过（SHA256 一致、HEAD/Range 正常、OCR 接口仍要求密钥）。模型加载期间也能下载 APK。iOS 脚本独立提供，实际编译尚待 macOS/Xcode。
 

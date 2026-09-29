@@ -39,7 +39,6 @@ services:
       RESET_ADMIN_PASSWORD: ${RESET_ADMIN_PASSWORD:-false}
     ports: ["0.0.0.0:5000:8000"]
     volumes:
-      - ../build/mobile:/artifacts:ro
       - ../playground/backend_api:/data
     networks: [inference, ingress]
 networks:

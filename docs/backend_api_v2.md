@@ -6,10 +6,10 @@
 
 ## 持久化
 
-Compose 将宿主 `playground/backend_api/` 绑定到 API 的 `/data`。其下包括固定名称的 `config.toml`、`prompt.toml`、`database/receipts.sqlite`（以及 WAL/SHM）、`media/originals/`、`media/derived/`、`recognition/`、`staging/` 和 `backups/`。启动命令通过 `--data-dir /data` 指定目录；配置文件中不含 `data_dir`。重建镜像、重建容器和退出 playground 不删除这些数据。
+Compose 将宿主 `playground/backend_api/` 绑定到 API 的 `/data`。其下包括固定名称的 `config.toml`、`prompt.toml`、`database/auth.sqlite`、`database/receipts.sqlite`（以及各自 WAL/SHM）、`media/originals/`、`media/derived/`、`recognition/`、`staging/` 和 `backups/`。启动命令通过 `--data-dir /data` 指定目录；配置文件中不含 `data_dir`。重建镜像、重建容器和退出 playground 不删除这些数据。业务备份不包含身份库；恢复只替换收据库及其 WAL/SHM，保留同目录的身份库、账户与会话。
 `run_playground.sh` 将宿主当前 UID/GID 分别传为 `PUID`/`GUID`。容器入口校验参数，将已有 API 数据文件归属调整到该用户，然后以此身份运行服务；后续创建的 SQLite、照片和备份文件也属于该用户。直接执行 Compose 时须显式设置这两个变量。
 
-只有 API 容器访问业务目录。OCR 容器将独立的宿主 `playground/backend_ocr/` 只读绑定到自己的 `/data`，从其 `config.toml` 读取推理设置；通过内部 REST 接收识别图像。APK 与更新清单继续只读挂载在 `/artifacts`。
+只有 API 容器访问业务目录。OCR 容器将独立的宿主 `playground/backend_ocr/` 只读绑定到自己的 `/data`，从其 `config.toml` 读取推理设置；通过内部 REST 接收识别图像。Android 安装包、更新清单和不可变更新包构建时复制进 API 镜像的 `/artifacts/`，由运行时 UID 只读访问，不依赖宿主 APK 挂载。发布新安装包需重建 API 镜像。
 
 ## 协议
 

@@ -257,7 +257,28 @@ pub fn finish_restore(root: &Path) -> Result<()> {
     let token = text(&v, "token")?;
     uuid::Uuid::parse_str(token).map_err(|_| invalid())?;
     let stage = root.join("staging").join(token);
-    for folder in ["database", "media", "recognition"] {
+    // The identity database shares this directory. Replace only the business database,
+    // leaving auth.sqlite and its live WAL/SHM files untouched, even after interruption.
+    let database = root.join("database");
+    let snapshot = stage.join("database/receipts.sqlite");
+    if snapshot.exists() {
+        std::fs::create_dir_all(&database).map_err(io_error)?;
+        let old = root.join(format!("staging/previous-{token}-database"));
+        std::fs::create_dir_all(&old).map_err(io_error)?;
+        for name in [
+            "receipts.sqlite",
+            "receipts.sqlite-wal",
+            "receipts.sqlite-shm",
+        ] {
+            let target = database.join(name);
+            let previous = old.join(name);
+            if target.exists() && !previous.exists() {
+                std::fs::rename(target, previous).map_err(io_error)?;
+            }
+        }
+        std::fs::rename(snapshot, database.join("receipts.sqlite")).map_err(io_error)?;
+    }
+    for folder in ["media", "recognition"] {
         let from = stage.join(folder);
         if !from.exists() {
             continue;

@@ -117,10 +117,11 @@ def main():
                 f'RESET_ADMIN_PASSWORD={str(reset).lower()}',
                 '--volume',
                 f'{data}:/data',
-                '--volume',
-                f'{args.artifacts.resolve()}:/artifacts:ro',
                 args.image,
             )
+            # Downloads must come from the image; only persistent business data is mounted.
+            mounts = json.loads(docker('inspect', name))[0]['Mounts']
+            assert {mount['Destination'] for mount in mounts} == {'/data'}, mounts
             port = docker('port', name, '8000/tcp').rsplit(':', 1)[1]
             origin = f'http://127.0.0.1:{port}'
             deadline = time.monotonic() + 45
@@ -238,7 +239,7 @@ def main():
             assert user.request('/api/auth/me', method='GET')[0] == 200
             # Verify the delivered APK is exactly the signed build artifact.
             status, _, apk = admin.request('/receipt_master.apk')
-            assert status == 200
+            assert status == 200, ('Image-embedded APK download failed', status)
             assert (
                 hashlib.sha256(apk).digest()
                 == hashlib.sha256((args.artifacts / 'receipt_master.apk').read_bytes()).digest()
@@ -250,9 +251,17 @@ def main():
             assert user.request('/receipt_master.apk')[0] == 200
             status, _, manifest = user.request('/android-update.json')
             assert status == 200
-            assert user.request(manifest['variants']['arm64-v8a']['path'])[0] == 200
-            assert (data / 'auth.sqlite').stat().st_uid == os.getuid()
-            assert (data / 'auth.sqlite').stat().st_mode & 0o077 == 0
+            assert manifest == json.loads((args.artifacts / 'android-update.json').read_text())
+            for variant in manifest['variants'].values():
+                status, _, update = user.request(variant['path'])
+                assert status == 200
+                assert len(update) == variant['bytes']
+                assert hashlib.sha256(update).hexdigest() == variant['sha256']
+            assert hashlib.sha256(apk).hexdigest() == manifest['variants']['arm64-v8a']['sha256']
+            assert (data / 'database/auth.sqlite').stat().st_uid == os.getuid()
+            assert (data / 'database/auth.sqlite').stat().st_mode & 0o077 == 0
+            assert (data / 'database/receipts.sqlite').is_file()
+            assert not (data / 'auth.sqlite').exists()
             docker('stop', '--time', '10', name)
             origin = start(reset=True)
             user.origin = origin
@@ -270,9 +279,9 @@ def main():
             while (data / 'users' / created['user_id']).exists() and time.monotonic() < deadline:
                 time.sleep(0.1)
             assert not (data / 'users' / created['user_id']).exists()
-            assert (data / 'auth.sqlite').exists()
+            assert (data / 'database/auth.sqlite').exists()
             print(
-                'HTTP smoke passed: static Web, cookies, forced change, roles, isolated receipts/photos/jobs, multi-photo upload, rotation, reports, APK hash, UID/mode, runtime RESET and user cleanup.'
+                'HTTP smoke passed: static Web, cookies, forced change, roles, isolated receipts/photos/jobs, multi-photo upload, rotation, reports, image-embedded APK/update hashes without artifact mounts, UID/mode, runtime RESET and user cleanup.'
             )
         finally:
             subprocess.run(

@@ -19,8 +19,12 @@ RUN apt-get update && apt-get install -y --no-install-recommends ca-certificates
 WORKDIR /app
 COPY --from=checks /receipt-backend-api /app/receipt-backend-api
 COPY build/web/ /app/web/
+# Android is built and published before this runtime image. Keep downloads in the
+# image, readable by the runtime UID, with no dependency on a host artifact mount.
+COPY --chmod=0644 build/mobile/receipt_master.apk build/mobile/android-update.json /artifacts/
+COPY --chmod=0644 build/mobile/updates/*.apk /artifacts/updates/
 COPY docker/service-entrypoint.sh /app/service-entrypoint.sh
-RUN chmod +x /app/service-entrypoint.sh
+RUN chmod 0755 /artifacts /artifacts/updates && chmod +x /app/service-entrypoint.sh
 ENV RECEIPT_SERVICE=api
 ENTRYPOINT ["/app/service-entrypoint.sh", "/app/receipt-backend-api"]
 CMD ["--data-dir", "/data"]

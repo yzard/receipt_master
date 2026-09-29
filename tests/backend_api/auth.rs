@@ -101,6 +101,9 @@ async fn op(
 #[tokio::test]
 async fn admin_bootstrap_change_reset_and_database_protection() {
     let (root, app) = setup();
+    assert!(root.path().join("database/auth.sqlite").is_file());
+    assert!(root.path().join("database/receipts.sqlite").is_file());
+    assert!(!root.path().join("auth.sqlite").exists());
     let s = login(&app, "admin", "admin").await;
     assert_eq!(s["user"]["must_change_password"], true);
     for path in [
@@ -167,7 +170,7 @@ async fn admin_bootstrap_change_reset_and_database_protection() {
         .0,
         200
     );
-    let conn = rusqlite::Connection::open(root.path().join("auth.sqlite")).unwrap();
+    let conn = rusqlite::Connection::open(root.path().join("database/auth.sqlite")).unwrap();
     assert!(
         conn.execute("DELETE FROM app_user WHERE user_id='admin'", [])
             .is_err()
@@ -515,7 +518,13 @@ async fn media_jobs_catalog_backups_and_restart_obey_user_scope() {
         .decode(backup["data"]["bytes_base64"].as_str().unwrap())
         .unwrap();
     let mut zip = zip::ZipArchive::new(std::io::Cursor::new(bytes)).unwrap();
-    assert!(zip.by_name("auth.sqlite").is_err());
+    for path in [
+        "database/auth.sqlite",
+        "database/auth.sqlite-wal",
+        "database/auth.sqlite-shm",
+    ] {
+        assert!(zip.by_name(path).is_err());
+    }
     assert!(
         zip.by_name(&format!("users/{}/database/receipts.sqlite", user.user_id))
             .is_err()

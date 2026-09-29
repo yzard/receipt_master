@@ -15,3 +15,8 @@
 !build/
 !build/web/
 !build/web/**
+!build/mobile/
+!build/mobile/receipt_master.apk
+!build/mobile/android-update.json
+!build/mobile/updates/
+!build/mobile/updates/*.apk

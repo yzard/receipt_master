@@ -406,6 +406,76 @@ fn entire_restore_replaces_data_and_reopens_cleanly() {
 }
 
 #[test]
+fn interrupted_restore_preserves_identity_database_and_live_sidecars() {
+    for phase in ["before_database", "database_saved", "database_installed"] {
+        let (dir, s) = setup();
+        receipt_backend_api::auth::Identities::initialize(dir.path(), false).unwrap();
+        let identities = receipt_backend_api::auth::Identities::open(dir.path()).unwrap();
+        let identity_files = ["auth.sqlite", "auth.sqlite-wal", "auth.sqlite-shm"]
+            .map(|name| dir.path().join("database").join(name));
+        let identity_bytes = identity_files.each_ref().map(|p| std::fs::read(p).unwrap());
+        let r = save(&s, receipt());
+        let b = s.export_action("create_backup", &json!({})).unwrap();
+        let prepared = s
+            .restore_action(
+                "prepare_restore",
+                &json!({"bytes_base64":b["data"]["bytes_base64"]}),
+            )
+            .unwrap();
+        save(&s, receipt());
+        drop(s);
+        let token = prepared["data"]["token"].as_str().unwrap();
+        std::fs::write(
+            dir.path().join("restore.json"),
+            json!({"token":token}).to_string(),
+        )
+        .unwrap();
+        if phase != "before_database" {
+            let old = dir
+                .path()
+                .join(format!("staging/previous-{token}-database"));
+            std::fs::create_dir(&old).unwrap();
+            std::fs::rename(
+                dir.path().join("database/receipts.sqlite"),
+                old.join("receipts.sqlite"),
+            )
+            .unwrap();
+        }
+        if phase == "database_installed" {
+            std::fs::rename(
+                dir.path()
+                    .join(format!("staging/{token}/database/receipts.sqlite")),
+                dir.path().join("database/receipts.sqlite"),
+            )
+            .unwrap();
+        }
+        Store::initialize(dir.path()).unwrap();
+        let restored = Store::open(dir.path()).unwrap();
+        assert_eq!(
+            restored.rows("SELECT * FROM receipt", &[]).unwrap().len(),
+            1
+        );
+        assert_eq!(
+            restored.load(r["id"].as_str().unwrap()).unwrap()["totalMinor"],
+            950
+        );
+        for (path, bytes) in identity_files.iter().zip(identity_bytes) {
+            assert_eq!(std::fs::read(path).unwrap(), bytes, "{phase}: {path:?}");
+        }
+        assert_eq!(identities.users(false).unwrap()[0].username, "admin");
+        assert_eq!(
+            receipt_backend_api::auth::Identities::open(dir.path())
+                .unwrap()
+                .users(false)
+                .unwrap()[0]
+                .username,
+            "admin"
+        );
+        assert!(!dir.path().join("restore.json").exists());
+    }
+}
+
+#[test]
 fn printed_seconds_and_us_am_pm_survive_utc_conversion() {
     use chrono::TimeZone;
     let (_dir, s) = setup();
