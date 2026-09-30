@@ -97,6 +97,10 @@ class AppStore extends ChangeNotifier {
 
   Future<List<Map<String, dynamic>>> categories() async =>
       rows(await request('categories', 'list', {}));
+  Future<List<Map<String, dynamic>>> searchCatalog(
+    String component,
+    String query,
+  ) async => rows(await request(component, 'suggest', {'query': query}));
   Future<void> saveCategory(String? id, String name, String? parent) async {
     await request('categories', 'save', {
       'id': id,

@@ -11,6 +11,7 @@ use std::{
 use unicode_normalization::UnicodeNormalization;
 pub mod backup;
 pub mod catalog;
+mod catalog_queries;
 pub mod exchange;
 pub mod logos;
 pub mod media;
@@ -32,17 +33,41 @@ pub fn normalized(s: &str) -> String {
         .nfc()
         .collect()
 }
+/// Catalogue identity ignores Unicode presentation forms, extra whitespace,
+/// and ASCII case (SQLite's NOCASE). Keep the user's canonical display spelling.
+pub fn catalog_name(s: &str) -> String {
+    normalized(&s.nfkc().collect::<String>())
+}
 pub fn io_error(e: impl std::fmt::Display) -> AppError {
     tracing::error!(error=%e,"storage failure");
     AppError::new(500, "storage_error", "数据存储失败，请重试")
 }
 pub fn sql_error(e: rusqlite::Error) -> AppError {
+    if let rusqlite::Error::SqliteFailure(_, Some(message)) = &e {
+        if message == "UNIQUE constraint failed: category.name" {
+            return duplicate_category_name();
+        }
+        if message == "UNIQUE constraint failed: product_name.name" {
+            return AppError::new(
+                409,
+                "duplicate_product_name",
+                "商品名称已存在，请选择已有名称",
+            );
+        }
+    }
     if matches!(&e,rusqlite::Error::SqliteFailure(x,_) if x.code==rusqlite::ErrorCode::ConstraintViolation)
     {
         AppError::new(422, "constraint_violation", "数据关系或字段不符合约束")
     } else {
         io_error(e)
     }
+}
+pub fn duplicate_category_name() -> AppError {
+    AppError::new(
+        409,
+        "duplicate_category_name",
+        "商品种类名称已存在，请选择已有种类或使用其他名称",
+    )
 }
 pub fn conflict() -> AppError {
     AppError::new(409, "version_conflict", "数据已被更新，请重新加载后编辑")

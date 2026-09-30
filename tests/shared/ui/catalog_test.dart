@@ -485,4 +485,85 @@ void main() {
       expect(tester.takeException(), isNull);
     },
   );
+  testWidgets('duplicate category creation keeps the dialog and input intact', (
+    tester,
+  ) async {
+    int writes = 0;
+    final store = AppStore(
+      '/unused',
+      configuration: () async =>
+          const BackendConnection('https://example.test', 'key'),
+      client: MockClient((req) async {
+        dynamic data;
+        switch (req.url.path) {
+          case '/api/v1/config/get':
+            data = {'weight_unit': 'kg'};
+          case '/api/v1/categories/list':
+            data = [
+              {
+                'category_id': 'water',
+                'name': 'Water',
+                'path': 'Water',
+                'parent_id': null,
+                'system_key': null,
+              },
+            ];
+          case '/api/v1/categories/suggest':
+            data = [];
+          case '/api/v1/printed_names/list':
+          case '/api/v1/product_names/list':
+            data = [];
+          case '/api/v1/categories/save':
+            writes++;
+            return http.Response(
+              jsonEncode({
+                'error': {'message': '商品种类名称已存在，请使用其他名称'},
+              }),
+              409,
+              headers: {'content-type': 'application/json; charset=utf-8'},
+            );
+          default:
+            throw StateError(req.url.path);
+        }
+        return http.Response(
+          jsonEncode({'catalog_version': 1, 'data': data}),
+          200,
+          headers: {'content-type': 'application/json; charset=utf-8'},
+        );
+      }),
+    );
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: CatalogPage(store: store, zone: 'UTC', onReceipt: (_) async {}),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('商品种类'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('添加种类'));
+    // The page's save indicator keeps animating while its dialog is open.
+    await tester.pump(const Duration(milliseconds: 400));
+    final input = find.descendant(
+      of: find.byType(AlertDialog),
+      matching: find.byType(TextField),
+    );
+    await tester.enterText(input, ' water ');
+    await tester.tap(find.text('保存'));
+    await tester.pump(const Duration(milliseconds: 400));
+    expect(writes, 0);
+    expect(find.text('商品种类名称已存在，请使用其他名称'), findsOneWidget);
+    expect(find.byType(AlertDialog), findsOneWidget);
+    await tester.enterText(input, 'New name');
+    await tester.tap(find.text('保存'));
+    await tester.pump(const Duration(milliseconds: 400));
+    expect(writes, 1);
+    expect(find.byType(AlertDialog), findsOneWidget);
+    expect(tester.widget<TextField>(input).controller!.text, 'New name');
+    expect(find.textContaining('商品种类名称已存在'), findsOneWidget);
+    await tester.tap(find.text('取消'));
+    await tester.pumpAndSettle();
+    expect(find.byType(AlertDialog), findsNothing);
+  });
 }

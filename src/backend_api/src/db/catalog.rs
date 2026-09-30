@@ -10,7 +10,7 @@ impl Store {
             "SELECT printed_name_id FROM printed_name WHERE printed_name_id=?",
             &[json!(printed_name_id)],
         )?;
-        let name = normalized(value);
+        let name = catalog_name(value);
         let before = self.rows("SELECT n.name FROM printed_name_product_name m JOIN product_name n USING(product_name_id) WHERE m.printed_name_id=?", &[json!(printed_name_id)])?.first().map(|r|r["name"].as_str().unwrap().to_owned()).unwrap_or_default();
         if name.is_empty() {
             self.exec(
@@ -18,11 +18,11 @@ impl Store {
                 &[json!(printed_name_id)],
             )?;
         } else {
-            self.exec("INSERT INTO product_name VALUES (?,?,?,?) ON CONFLICT(name) DO UPDATE SET last_used_at_utc_ms=excluded.last_used_at_utc_ms", &[json!(id()),json!(name),json!(category),json!(now())])?;
-            let row = self.one(
-                "SELECT product_name_id FROM product_name WHERE name=?",
-                &[json!(name)],
+            self.exec(
+                catalog_queries::UPSERT_PRODUCT_NAME,
+                &[json!(id()), json!(name), json!(category), json!(now())],
             )?;
+            let row = self.one(catalog_queries::PRODUCT_NAME_BY_NAME, &[json!(name)])?;
             self.exec("INSERT INTO printed_name_product_name VALUES (?,?) ON CONFLICT(printed_name_id) DO UPDATE SET product_name_id=excluded.product_name_id", &[json!(printed_name_id),row["product_name_id"].clone()])?;
         }
         Ok(before != name)
@@ -79,6 +79,26 @@ impl Store {
     }
 
     pub fn catalog_action(&self, component: &str, op: &str, v: &Value) -> Result<Value> {
+        if op == "suggest" && matches!(component, "product_names" | "categories") {
+            let query = catalog_name(text(v, "query")?);
+            let pattern = format!(
+                "%{}%",
+                query
+                    .replace('\\', "\\\\")
+                    .replace('%', "\\%")
+                    .replace('_', "\\_")
+            );
+            let sql = if component == "product_names" {
+                catalog_queries::PRODUCT_NAMES_CONTAINING
+            } else {
+                catalog_queries::CATEGORIES_CONTAINING
+            };
+            let mut rows = self.rows(sql, &[json!(pattern)])?;
+            for row in &mut rows {
+                row["exact_match"] = json!(text(row, "name")?.eq_ignore_ascii_case(&query));
+            }
+            return Ok(json!(rows));
+        }
         let write = !matches!(op, "list" | "suggest" | "get");
         if write {
             let version = self.one("SELECT version FROM catalog_version WHERE id=1", &[])?;
@@ -98,7 +118,8 @@ impl Store {
  self.exec("UPDATE report_preferences SET currency_code=? WHERE id=1",&[json!(currency)])?;
  Value::Null},
  ("categories","list")=>json!(self.rows("WITH RECURSIVE tree AS (SELECT category_id,parent_id,name,system_key,name AS path,0 AS depth FROM category WHERE parent_id IS NULL UNION ALL SELECT c.category_id,c.parent_id,c.name,c.system_key,t.path || ' / ' || c.name,t.depth+1 FROM category c JOIN tree t ON c.parent_id=t.category_id) SELECT * FROM tree ORDER BY path",&[])?),
- ("categories","save")=>{let name=normalized(text(v,"name")?);if name.is_empty(){return Err(invalid());}
+ ("categories","save")=>{let name=catalog_name(text(v,"name")?);if name.is_empty(){return Err(invalid());}
+if self.rows(catalog_queries::CATEGORY_BY_NAME,&[json!(name)])?.iter().any(|row|row["category_id"]!=v["id"]){return Err(duplicate_category_name());}
 if v["id"].is_null(){self.exec("INSERT INTO category VALUES (?,?,?,NULL)",&[json!(id()),v["parent"].clone(),json!(name)])?;}else{self.one("SELECT category_id FROM category WHERE category_id=?",&[v["id"].clone()])?;self.exec("UPDATE category SET name=?,parent_id=? WHERE category_id=?",&[json!(name),v["parent"].clone(),v["id"].clone()])?;}Value::Null},
  ("categories","delete")=>{let row=self.one("SELECT * FROM category WHERE category_id=?",&[v["id"].clone()])?;if !row["system_key"].is_null(){return Err(invalid());}
  self.exec("UPDATE category SET parent_id=NULL WHERE parent_id=?",&[v["id"].clone()])?;
@@ -113,8 +134,8 @@ if v["id"].is_null(){self.exec("INSERT INTO category VALUES (?,?,?,NULL)",&[json
  ("product_names","classify")=>{
  self.one("SELECT product_name_id FROM product_name WHERE product_name_id=?",&[v["id"].clone()])?;
  let category=if let Some(category)=v["category_id"].as_str(){self.one("SELECT category_id FROM category WHERE category_id=?",&[json!(category)])?["category_id"].clone()}else{
- let name=normalized(text(v,"category_name")?);if name.is_empty(){return Err(invalid());}
- let rows=self.rows("SELECT category_id FROM category WHERE name=? ORDER BY category_id",&[json!(name)])?;
+ let name=catalog_name(text(v,"category_name")?);if name.is_empty(){return Err(invalid());}
+ let rows=self.rows(catalog_queries::CATEGORY_BY_NAME,&[json!(name)])?;
  if rows.len()>1{return Err(invalid());}
  if let Some(row)=rows.first(){row["category_id"].clone()}else{let key=id();self.exec("INSERT INTO category VALUES (?,NULL,?,NULL)",&[json!(key),json!(name)])?;json!(key)}};
  self.exec("UPDATE product_name SET category_id=? WHERE product_name_id=?",&[category.clone(),v["id"].clone()])?;

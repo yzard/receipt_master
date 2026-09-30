@@ -345,7 +345,7 @@ impl Store {
             {
                 self.exec(
                     "INSERT INTO line_product_name_candidate VALUES (?,?)",
-                    &[json!(l.id), json!(normalized(name))],
+                    &[json!(l.id), json!(catalog_name(name))],
                 )?;
             }
             self.save_line_sku(

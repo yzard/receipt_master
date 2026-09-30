@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 
 import '../data/store.dart';
 import 'common.dart';
+import 'catalog_search.dart';
+import 'category_editor.dart';
 import 'logo_aliases.dart';
 import 'product_receipts.dart';
 import 'app_theme.dart';
@@ -67,67 +69,14 @@ class _CatalogPageState extends State<CatalogPage> {
   }
 
   Future<void> editCategory(Map<String, dynamic>? category) async {
-    final name = TextEditingController(text: category?['name'] ?? '');
-    String? parent = category?['parent_id'];
-    final excluded = <String>{if (category != null) category['category_id']};
-    // Exclude the current category and its descendants from possible parents.
-    bool changed = true;
-    while (changed) {
-      changed = false;
-      for (final c in categories) {
-        if (excluded.contains(c['parent_id']) &&
-            excluded.add(c['category_id'])) {
-          changed = true;
-        }
-      }
-    }
-    final accepted = await showDialog<bool>(
+    await showDialog<void>(
       context: context,
-      builder: (context) => StatefulBuilder(
-        builder: (context, setDialogState) => AlertDialog(
-          title: Text(category == null ? '添加商品种类' : '编辑商品种类'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TextField(
-                controller: name,
-                decoration: const InputDecoration(labelText: '商品种类'),
-              ),
-              DropdownButtonFormField<String>(
-                initialValue: parent ?? '',
-                decoration: const InputDecoration(labelText: '父类'),
-                items: [
-                  const DropdownMenuItem(value: '', child: Text('顶层')),
-                  for (final c in categories)
-                    if (!excluded.contains(c['category_id']))
-                      DropdownMenuItem(
-                        value: c['category_id'],
-                        child: Text(c['path']),
-                      ),
-                ],
-                onChanged: (v) =>
-                    setDialogState(() => parent = v == '' ? null : v),
-              ),
-            ],
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context, false),
-              child: const Text('取消'),
-            ),
-            TextButton(
-              onPressed: () => Navigator.pop(context, true),
-              child: const Text('保存'),
-            ),
-          ],
-        ),
+      builder: (_) => CategoryEditorDialog(
+        store: widget.store,
+        category: category,
+        categories: categories,
       ),
     );
-    final value = name.text;
-    name.dispose();
-    if (accepted == true) {
-      await widget.store.saveCategory(category?['category_id'], value, parent);
-    }
   }
 
   Future<void> removeName(Map<String, dynamic> n) async {
@@ -255,6 +204,8 @@ class _CatalogPageState extends State<CatalogPage> {
                       label: p['raw_name'],
                       value: p['product_name'] ?? '',
                       fieldLabel: '商品名称',
+                      store: widget.store,
+                      component: 'product_names',
                       enabled: !saving,
                       options: {
                         for (final n in productNames)
@@ -349,6 +300,8 @@ class _CatalogPageState extends State<CatalogPage> {
                               .firstOrNull?['path'] ??
                           '未分类',
                       fieldLabel: '商品种类',
+                      store: widget.store,
+                      component: 'categories',
                       enabled: !saving,
                       options: {
                         for (final c in categories)
@@ -395,6 +348,8 @@ class _Headings extends StatelessWidget {
 class _ChoiceRow extends StatefulWidget {
   final String label, value, fieldLabel;
   final Map<String, String> options;
+  final AppStore store;
+  final String component;
   final bool enabled;
   final Future<void> Function(String, bool) save;
   const _ChoiceRow({
@@ -403,6 +358,8 @@ class _ChoiceRow extends StatefulWidget {
     required this.value,
     required this.fieldLabel,
     required this.options,
+    required this.store,
+    required this.component,
     required this.enabled,
     required this.save,
   });
@@ -450,42 +407,42 @@ class _ChoiceRowState extends State<_ChoiceRow> {
         overflow: TextOverflow.ellipsis,
         style: const TextStyle(fontWeight: FontWeight.w600),
       );
-      final field = TextField(
+      final field = CatalogSearchField(
+        store: widget.store,
+        component: widget.component,
+        label: widget.fieldLabel,
+        labelField: widget.component == 'categories' ? 'path' : 'name',
+        onSelected: (row) => widget.save(
+          row[widget.component == 'categories' ? 'category_id' : 'name'],
+          true,
+        ),
         controller: controller,
         enabled: widget.enabled,
         onSubmitted: submit,
-        textInputAction: TextInputAction.done,
-        decoration: InputDecoration(
-          isDense: true,
-          hintText: '输入或选择',
-          labelText: widget.fieldLabel,
-          suffixIcon: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              PopupMenuButton<String>(
-                tooltip: '选择${widget.fieldLabel}',
-                enabled: widget.enabled && widget.options.isNotEmpty,
-                padding: EdgeInsets.zero,
-                icon: const Icon(Icons.arrow_drop_down),
-                onSelected: (value) {
-                  controller.text = widget.options[value]!;
-                  widget.save(value, true);
-                },
-                itemBuilder: (_) => [
-                  for (final e in widget.options.entries)
-                    PopupMenuItem(value: e.key, child: Text(e.value)),
-                ],
-              ),
-              IconButton(
-                tooltip: '保存${widget.fieldLabel}',
-                visualDensity: VisualDensity.compact,
-                icon: const Icon(Icons.check, size: 18),
-                onPressed: widget.enabled
-                    ? () => submit(controller.text)
-                    : null,
-              ),
-            ],
-          ),
+        suffix: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            PopupMenuButton<String>(
+              tooltip: '选择${widget.fieldLabel}',
+              enabled: widget.enabled && widget.options.isNotEmpty,
+              padding: EdgeInsets.zero,
+              icon: const Icon(Icons.arrow_drop_down),
+              onSelected: (value) {
+                controller.text = widget.options[value]!;
+                widget.save(value, true);
+              },
+              itemBuilder: (_) => [
+                for (final e in widget.options.entries)
+                  PopupMenuItem(value: e.key, child: Text(e.value)),
+              ],
+            ),
+            IconButton(
+              tooltip: '保存${widget.fieldLabel}',
+              visualDensity: VisualDensity.compact,
+              icon: const Icon(Icons.check, size: 18),
+              onPressed: widget.enabled ? () => submit(controller.text) : null,
+            ),
+          ],
         ),
       );
       return Padding(

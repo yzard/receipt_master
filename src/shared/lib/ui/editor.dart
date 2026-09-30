@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import '../data/store.dart';
 import '../domain/models.dart';
 import 'common.dart';
+import 'catalog_search.dart';
 import 'app_theme.dart';
 
 class EditorPage extends StatefulWidget {
@@ -349,18 +350,25 @@ class _EditorPageState extends State<EditorPage> {
         builder: (ctx, set) {
           Widget field(String key, String label) => Padding(
             padding: const EdgeInsets.only(bottom: 12),
-            child: TextField(
-              controller: c[key],
-              maxLength: key == 'taxCode' ? 3 : null,
-              decoration: InputDecoration(labelText: label),
-              keyboardType:
-                  ['weight', 'quantity', 'price', 'amount'].contains(key)
-                  ? const TextInputType.numberWithOptions(
-                      decimal: true,
-                      signed: true,
-                    )
-                  : TextInputType.text,
-            ),
+            child: key == 'productName'
+                ? CatalogSearchField(
+                    store: widget.store,
+                    component: 'product_names',
+                    controller: c[key]!,
+                    label: label,
+                  )
+                : TextField(
+                    controller: c[key],
+                    maxLength: key == 'taxCode' ? 3 : null,
+                    decoration: InputDecoration(labelText: label),
+                    keyboardType:
+                        ['weight', 'quantity', 'price', 'amount'].contains(key)
+                        ? const TextInputType.numberWithOptions(
+                            decimal: true,
+                            signed: true,
+                          )
+                        : TextInputType.text,
+                  ),
           );
           return AlertDialog(
             title: Text(original == null ? '添加明细' : '确认明细'),

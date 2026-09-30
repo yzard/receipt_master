@@ -1130,3 +1130,33 @@ footer {
     right: 12px;
   }
 }
+
+.catalog-search {
+  position: relative;
+  min-width: 0;
+}
+.catalog-options {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  z-index: 30;
+  max-height: 240px;
+  overflow-y: auto;
+  border-radius: 12px;
+  border: 1px solid var(--line);
+  background: var(--canvas);
+  box-shadow: 0 8px 24px #0003;
+}
+.catalog-options button {
+  display: block;
+  width: 100%;
+  text-align: left;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+}
+.catalog-options button:hover,
+.catalog-options button[aria-selected="true"] {
+  background: var(--soft);
+}

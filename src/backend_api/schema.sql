@@ -29,6 +29,7 @@ CREATE TABLE category (
     ),
     CHECK (parent_id IS NULL OR parent_id <> category_id)
 );
+CREATE UNIQUE INDEX category_name_uq ON category(name COLLATE NOCASE);
 
 CREATE TABLE printed_name (
     printed_name_id TEXT PRIMARY KEY,
@@ -42,6 +43,7 @@ CREATE TABLE product_name (
     last_used_at_utc_ms INTEGER NOT NULL
 );
 CREATE INDEX product_name_category_idx ON product_name(category_id);
+CREATE UNIQUE INDEX product_name_name_uq ON product_name(name COLLATE NOCASE);
 
 CREATE TABLE printed_name_product_name (
     printed_name_id TEXT PRIMARY KEY REFERENCES printed_name(printed_name_id) ON DELETE CASCADE,

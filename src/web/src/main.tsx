@@ -16,6 +16,7 @@ import {
 } from "./api";
 import { enqueue, pending, retry, Submission } from "./uploads";
 import "./style.css";
+import { CatalogSearchInput, catalogNameKey } from "./catalog-search";
 const names: Record<string, string> = {
   receipts: "收据",
   reports: "报表",
@@ -707,7 +708,6 @@ export function LineEditor({
     [fields, setFields] = useState<Row>(structuredClone(line.display)),
     [busy, setBusy] = useState(false),
     [error, setError] = useState("");
-  const suggestions = useLoad(() => api.op("product_names", "list"), []);
   function set(key: string, v: any) {
     setValue((r: Row) => ({ ...r, [key]: v }));
   }
@@ -731,11 +731,11 @@ export function LineEditor({
   return (
     <Modal title="编辑商品" onClose={onClose}>
       <form onSubmit={save}>
-        <Field
+        <CatalogSearchInput
           label="商品名称"
+          component="product_names"
           value={value.productNameEdit ?? value.display?.productName ?? ""}
           onChange={(v) => set("productNameEdit", v)}
-          list="product-names"
         />
         <Field
           label="票面名称"
@@ -743,11 +743,6 @@ export function LineEditor({
           onChange={(v) => set("rawName", v)}
           required
         />
-        <datalist id="product-names">
-          {suggestions.data?.map((n: Row) => (
-            <option key={n.product_name_id} value={n.name} />
-          ))}
-        </datalist>
         <div className="form-grid">
           <Select
             label="类型"
@@ -1475,21 +1470,23 @@ function CommitInput({
   value,
   options,
   onCommit,
+  searchComponent,
 }: {
   label: string;
   value: string;
   options: string[];
-  onCommit: (v: string) => Promise<any>;
+  searchComponent?: "product_names" | "categories";
+  onCommit: (v: string, selected?: Row) => Promise<any>;
 }) {
   const [text, setText] = useState(value),
     [busy, setBusy] = useState(false);
   const id = React.useId();
   useEffect(() => setText(value), [value]);
-  async function commit() {
-    if (text === value || busy) return;
+  async function commit(next = text, selected?: Row) {
+    if (next === value || busy) return;
     setBusy(true);
     try {
-      await onCommit(text);
+      await onCommit(next, selected);
     } catch (e) {
       notify(String(e));
       setText(value);
@@ -1497,6 +1494,24 @@ function CommitInput({
       setBusy(false);
     }
   }
+  if (searchComponent)
+    return (
+      <CatalogSearchInput
+        label={label}
+        value={text}
+        component={searchComponent}
+        labelField={searchComponent === "categories" ? "path" : "name"}
+        disabled={busy}
+        onChange={setText}
+        onBlur={() => void commit()}
+        onSelect={(row) =>
+          void commit(
+            row[searchComponent === "categories" ? "path" : "name"],
+            row,
+          )
+        }
+      />
+    );
   return (
     <>
       <input
@@ -1620,7 +1635,10 @@ function Catalog({
                                   ? data.data[1].map((n: Row) => n.name)
                                   : data.data[2].map((c: Row) => c.path)
                               }
-                              onCommit={(v) =>
+                              searchComponent={
+                                tab === 0 ? "product_names" : "categories"
+                              }
+                              onCommit={(v, selected) =>
                                 save(() =>
                                   tab === 0
                                     ? api.op(
@@ -1636,9 +1654,11 @@ function Catalog({
                                         id: r.product_name_id,
                                         ...(v
                                           ? (() => {
-                                              const c = data.data[2].find(
-                                                (c: Row) => c.path === v,
-                                              );
+                                              const c =
+                                                selected ||
+                                                data.data[2].find(
+                                                  (c: Row) => c.path === v,
+                                                );
                                               return c
                                                 ? { category_id: c.category_id }
                                                 : { category_name: v };
@@ -1765,7 +1785,13 @@ function CategoryForm({
 }) {
   const [name, setName] = useState(value.name),
     [parent, setParent] = useState(value.parent_id || ""),
-    [busy, setBusy] = useState(false);
+    [busy, setBusy] = useState(false),
+    [error, setError] = useState("");
+  const duplicate = categories.some(
+    (c) =>
+      c.category_id !== value.category_id &&
+      catalogNameKey(c.name) === catalogNameKey(name),
+  );
   return (
     <Modal
       title={value.category_id ? "编辑商品种类" : "添加商品种类"}
@@ -1774,13 +1800,32 @@ function CategoryForm({
       <form
         onSubmit={(e) => {
           e.preventDefault();
+          if (busy || duplicate) return;
           setBusy(true);
-          void action(() => onSave({ name, parent: parent || null })).finally(
-            () => setBusy(false),
-          );
+          setError("");
+          void onSave({ name, parent: parent || null })
+            .catch((e) => setError(e instanceof Error ? e.message : String(e)))
+            .finally(() => setBusy(false));
         }}
       >
-        <Field label="种类名称" value={name} onChange={setName} required />
+        <CatalogSearchInput
+          label="种类名称"
+          component="categories"
+          value={name}
+          onChange={(v) => {
+            setName(v);
+            setError("");
+          }}
+          required
+          disabled={busy}
+          rejectExistingName
+          currentId={value.category_id || undefined}
+        />
+        {(duplicate || error) && (
+          <p role="alert">
+            {duplicate ? "商品种类名称已存在，请使用其他名称" : error}
+          </p>
+        )}
         <Select
           label="父类"
           value={parent}
@@ -1798,7 +1843,10 @@ function CategoryForm({
           <button type="button" onClick={onClose}>
             取消
           </button>
-          <button className="primary" disabled={busy}>
+          <button
+            className="primary"
+            disabled={busy || duplicate || !name.trim()}
+          >
             保存
           </button>
         </footer>

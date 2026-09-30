@@ -2704,3 +2704,159 @@ fn product_name_receipts_filter_is_unique_paginated_and_tracks_current_mappings(
             .is_empty()
     );
 }
+
+#[test]
+fn catalog_suggestions_search_substrings_literally_without_writes() {
+    let (_dir, s) = setup();
+    for name in ["瓶装水", "Bottled Water", "100%_Pure\\Water"] {
+        s.exec(
+            "INSERT INTO product_name VALUES (?,?,?,?)",
+            &[
+                json!(db::id()),
+                json!(name),
+                json!(db::UNCATEGORIZED),
+                json!(1),
+            ],
+        )
+        .unwrap();
+    }
+    let parent = db::id();
+    let child = db::id();
+    s.exec(
+        "INSERT INTO category VALUES (?,NULL,?,NULL)",
+        &[json!(parent), json!("测试饮品")],
+    )
+    .unwrap();
+    s.exec(
+        "INSERT INTO category VALUES (?,?,?,NULL)",
+        &[json!(child), json!(parent), json!("瓶装水种类")],
+    )
+    .unwrap();
+    let version = s
+        .one("SELECT version FROM catalog_version WHERE id=1", &[])
+        .unwrap();
+    for (query, expected) in [
+        ("装", "瓶装水"),
+        ("tled w", "Bottled Water"),
+        ("%_", "100%_Pure\\Water"),
+        ("\\", "100%_Pure\\Water"),
+    ] {
+        let rows = s
+            .catalog_action("product_names", "suggest", &json!({"query":query}))
+            .unwrap();
+        assert_eq!(rows.as_array().unwrap().len(), 1);
+        assert_eq!(rows[0]["name"], expected);
+    }
+    assert!(
+        s.catalog_action("product_names", "suggest", &json!({"query":"' OR 1=1 --"}))
+            .unwrap()
+            .as_array()
+            .unwrap()
+            .is_empty()
+    );
+    let rows = s
+        .catalog_action("categories", "suggest", &json!({"query":"装水"}))
+        .unwrap();
+    assert_eq!(rows[0]["category_id"], child);
+    assert_eq!(rows[0]["path"], "测试饮品 / 瓶装水种类");
+    assert!(
+        s.catalog_action("product_names", "suggest", &json!({"query":""}))
+            .unwrap()
+            .as_array()
+            .unwrap()
+            .len()
+            >= 3
+    );
+    assert_eq!(
+        s.one("SELECT version FROM catalog_version WHERE id=1", &[])
+            .unwrap(),
+        version
+    );
+}
+
+#[test]
+fn catalogue_names_are_unique_and_assignments_reuse_existing_records() {
+    let (_dir, s) = setup();
+    let version = || {
+        s.one("SELECT version FROM catalog_version WHERE id=1", &[])
+            .unwrap()["version"]
+            .clone()
+    };
+    let add = |name: &str, id: Value| {
+        s.transaction(|| {
+            s.catalog_action(
+                "categories",
+                "save",
+                &json!({"id":id,"name":name,"parent":null,"expected_version":version()}),
+            )
+        })
+    };
+    add("  Test   Food  ", Value::Null).unwrap();
+    let original = s
+        .one("SELECT * FROM category WHERE name='Test Food'", &[])
+        .unwrap();
+    let before = version();
+    for name in ["Test Food", "test food", " Ｔｅｓｔ　 Ｆｏｏｄ "] {
+        let error = add(name, Value::Null).unwrap_err();
+        assert_eq!(error.code, "duplicate_category_name");
+        assert_eq!(error.status.as_u16(), 409);
+        assert_eq!(version(), before);
+    }
+    // Saving the same category's spelling is legal; renaming another to it is not.
+    add("TEST FOOD", original["category_id"].clone()).unwrap();
+    let nuts = s
+        .one("SELECT category_id FROM category WHERE name='坚果'", &[])
+        .unwrap();
+    assert_eq!(
+        add("Test Food", nuts["category_id"].clone())
+            .unwrap_err()
+            .code,
+        "duplicate_category_name"
+    );
+    let mut first = receipt();
+    first["lines"][0]["productNameEdit"] = json!("  Bottled   Water ");
+    save(&s, first);
+    let mut second = receipt();
+    second["lines"][0]["rawName"] = json!("OTHER WATER");
+    second["lines"][0]["productNameEdit"] = json!("ｂｏｔｔｌｅｄ　ｗａｔｅｒ");
+    save(&s, second);
+    let names = s
+        .catalog_action("product_names", "list", &json!({}))
+        .unwrap();
+    assert_eq!(names.as_array().unwrap().len(), 1);
+    assert_eq!(names[0]["name"], "Bottled Water");
+    assert_eq!(
+        s.rows("SELECT * FROM printed_name_product_name", &[])
+            .unwrap()
+            .len(),
+        2
+    );
+    s.transaction(|| s.catalog_action("product_names", "classify", &json!({"id":names[0]["product_name_id"],"category_name":"test　food","expected_version":version()}))).unwrap();
+    assert_eq!(
+        s.one("SELECT category_id FROM product_name", &[]).unwrap()["category_id"],
+        original["category_id"]
+    );
+    // Database constraints defend writes bypassing the API too, with actionable errors.
+    let error = s
+        .exec(
+            "INSERT INTO category VALUES (?,NULL,'test food',NULL)",
+            &[json!(db::id())],
+        )
+        .unwrap_err();
+    assert_eq!(error.code, "duplicate_category_name");
+    let error = s
+        .exec(
+            "INSERT INTO product_name VALUES (?,'bottled water',?,1)",
+            &[json!(db::id()), json!(db::UNCATEGORIZED)],
+        )
+        .unwrap_err();
+    assert_eq!(error.code, "duplicate_product_name");
+    let suggestions = s
+        .catalog_action(
+            "product_names",
+            "suggest",
+            &json!({"query":" ＢＯＴＴＬＥＤ　ＷＡＴＥＲ "}),
+        )
+        .unwrap();
+    assert_eq!(suggestions[0]["exact_match"], true);
+}

@@ -55,6 +55,7 @@ echo "Build date tag: $build_tag"
 export PUID="${PUID:-$(id -u)}" PGID="${PGID:-$(id -g)}"
 python3 -m unittest discover -s "$project_dir/tests/docker" -p 'test_*.py'
 python3 -m unittest discover -s "$project_dir/tests" -p test_playground_config.py
+python3 -m unittest discover -s "$project_dir/tests/backend_api/tools" -p 'test_*.py'
 if [[ -d "$project_dir/playground/data" || -d "$project_dir/playground/backend_api/data" || -d "$project_dir/playground/backend_ocr/data" ]]; then
   # Old containers can own SQLite WAL and root-owned directories; stop them before moving data.
   docker compose --file "$project_dir/docker/docker-compose.yaml" stop
