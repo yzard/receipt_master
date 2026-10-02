@@ -20,6 +20,8 @@ pub struct Line {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub product_name_edit: Option<String>,
     pub category_id: String,
+    #[serde(default)]
+    pub receipt_type_id: Option<String>,
     pub product_id: Option<String>,
     pub discount_target: Option<String>,
     pub quantity_unit: Option<String>,
@@ -40,6 +42,8 @@ pub struct Receipt {
     pub store: String,
     #[serde(default)]
     pub recognized_store: String,
+    #[serde(default)]
+    pub receipt_type_id: Option<String>,
     pub branch: String,
     pub address: String,
     pub country: String,
@@ -130,6 +134,13 @@ impl Store {
     pub fn save(&self, mut input: Value, publish: bool) -> Result<Value> {
         for line in input["lines"].as_array_mut().ok_or_else(invalid)? {
             // Already distributed clients omit these fields; preserve existing metadata.
+            if line.get("receiptTypeId").is_none()
+                && let Some(previous) = self
+                    .rows(receipt_type_queries::GET_LINE, &[line["id"].clone()])?
+                    .first()
+            {
+                line["receiptTypeId"] = previous["receipt_type_id"].clone();
+            }
             let old = self.line_sku(&line["id"])?;
             for (key, column) in [("taxCode", "tax_code"), ("sku", "sku")] {
                 if line.get(key).is_none() {
@@ -261,9 +272,16 @@ impl Store {
             }
         }
         let location = self.location(&r)?;
+        let receipt_type =
+            self.resolve_receipt_type(&r.id, &r.store, r.receipt_type_id.as_deref())?;
+        r.receipt_type_id = Some(receipt_type.clone());
         r.revision += 1;
         r.posted = publish;
         self.exec("INSERT INTO receipt(receipt_id,location_id,currency_code,country_code,raw_store,raw_branch,raw_address,raw_time_text,occurred_at_utc_ms,time_source,total_minor,total_source,status,version,input_revision,created_at_utc_ms,updated_at_utc_ms) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?) ON CONFLICT(receipt_id) DO UPDATE SET location_id=excluded.location_id,currency_code=excluded.currency_code,country_code=excluded.country_code,raw_store=excluded.raw_store,raw_branch=excluded.raw_branch,raw_address=excluded.raw_address,raw_time_text=excluded.raw_time_text,occurred_at_utc_ms=excluded.occurred_at_utc_ms,time_source=excluded.time_source,total_minor=excluded.total_minor,total_source=excluded.total_source,status=excluded.status,version=excluded.version,input_revision=receipt.input_revision+1,updated_at_utc_ms=excluded.updated_at_utc_ms",&[json!(r.id),json!(location),json!(r.currency),json!(r.country),json!(r.store),json!(r.branch),json!(r.address),json!(r.raw_time),json!(r.occurred_at),json!(r.time_source),json!(r.total_minor),json!(r.total_source),json!(if publish{"posted"}else{"draft"}),json!(r.revision),json!(r.revision),json!(r.created_at),json!(now())])?;
+        self.exec(
+            receipt_type_queries::SET_RECEIPT,
+            &[json!(r.id), json!(receipt_type)],
+        )?;
         if !r.recognized_store.trim().is_empty() {
             self.exec("INSERT INTO receipt_ocr_store VALUES (?,?) ON CONFLICT(receipt_id) DO UPDATE SET raw_name=excluded.raw_name", &[json!(r.id),json!(r.recognized_store)])?;
         }
@@ -339,6 +357,12 @@ impl Store {
                     json!(l.amount_minor),
                 ],
             )?;
+            if let Some(kind) = &l.receipt_type_id {
+                self.validate_receipt_type(kind)?;
+                if kind != &receipt_type {
+                    self.exec(receipt_type_queries::SET_LINE, &[json!(l.id), json!(kind)])?;
+                }
+            }
             if !publish
                 && l.kind == "product"
                 && let Some(name) = &l.product_name_edit
@@ -448,11 +472,11 @@ impl Store {
         let mut lines = vec![];
         for l in rows {
             let metadata = self.line_sku(&l["line_id"])?;
-            lines.push(json!({"id":l["line_id"],"kind":l["kind"],"rawName":l["raw_name"],"taxCode":metadata["tax_code"],"sku":metadata["sku"],"isWeighed":!self.rows("SELECT line_id FROM line_weighed WHERE line_id=?",&[l["line_id"].clone()])?.is_empty(),"categoryId":l["category_id"].as_str().unwrap_or(UNCATEGORIZED),"productId":l["product_id"],"productNameEdit":self.rows("SELECT name FROM line_product_name_candidate WHERE line_id=?", &[l["line_id"].clone()])?.first().map(|c|c["name"].clone()).unwrap_or(Value::Null),"discountTarget":l["target_line_id"],"quantityUnit":l["quantity_unit"],"weightMg":l["weight_mg"],"quantityMicros":l["quantity_micros"],"unitPriceScaled":l["unit_price_scaled"],"amountMinor":l["amount_minor"],"printedAmountMinor":self.rows("SELECT amount_minor FROM line_printed_amount WHERE line_id=?",&[l["line_id"].clone()])?.first().map(|v|v["amount_minor"].clone()).unwrap_or(Value::Null),"warnings":self.rows("SELECT reason_code FROM review_issue WHERE line_id=? AND state='open'",&[l["line_id"].clone()])?.iter().filter(|w| actionable_warning(w["reason_code"].as_str().unwrap_or(""))).map(|w|w["reason_code"].clone()).collect::<Vec<_>>(),"evidence":self.rows("SELECT image_id AS imageId,x0,y0,x1,y1 FROM line_image_evidence WHERE line_id=?",&[l["line_id"].clone()])?}));
+            lines.push(json!({"id":l["line_id"],"kind":l["kind"],"rawName":l["raw_name"],"taxCode":metadata["tax_code"],"sku":metadata["sku"],"isWeighed":!self.rows("SELECT line_id FROM line_weighed WHERE line_id=?",&[l["line_id"].clone()])?.is_empty(),"receiptTypeId":self.line_receipt_type(text(&l,"line_id")?)?,"categoryId":l["category_id"].as_str().unwrap_or(UNCATEGORIZED),"productId":l["product_id"],"productNameEdit":self.rows("SELECT name FROM line_product_name_candidate WHERE line_id=?", &[l["line_id"].clone()])?.first().map(|c|c["name"].clone()).unwrap_or(Value::Null),"discountTarget":l["target_line_id"],"quantityUnit":l["quantity_unit"],"weightMg":l["weight_mg"],"quantityMicros":l["quantity_micros"],"unitPriceScaled":l["unit_price_scaled"],"amountMinor":l["amount_minor"],"printedAmountMinor":self.rows("SELECT amount_minor FROM line_printed_amount WHERE line_id=?",&[l["line_id"].clone()])?.first().map(|v|v["amount_minor"].clone()).unwrap_or(Value::Null),"warnings":self.rows("SELECT reason_code FROM review_issue WHERE line_id=? AND state='open'",&[l["line_id"].clone()])?.iter().filter(|w| actionable_warning(w["reason_code"].as_str().unwrap_or(""))).map(|w|w["reason_code"].clone()).collect::<Vec<_>>(),"evidence":self.rows("SELECT image_id AS imageId,x0,y0,x1,y1 FROM line_image_evidence WHERE line_id=?",&[l["line_id"].clone()])?}));
         }
         crate::sku::inherit_discount_metadata(&mut lines);
         Ok(
-            json!({"id":id,"store":r["raw_store"],"recognizedStore":self.rows("SELECT raw_name FROM receipt_ocr_store WHERE receipt_id=?",&[json!(id)])?.first().map(|row|row["raw_name"].clone()).unwrap_or(json!("")),"branch":r["raw_branch"],"address":r["raw_address"],"country":r["country_code"],"currency":r["currency_code"],"timeSource":r["time_source"],"rawTime":r["raw_time_text"],"totalSource":r["total_source"],"occurredAt":r["occurred_at_utc_ms"],"createdAt":r["created_at_utc_ms"],"revision":r["version"],"totalMinor":r["total_minor"],"posted":r["status"]=="posted","lines":lines}),
+            json!({"id":id,"store":r["raw_store"],"receiptTypeId":self.resolve_receipt_type(id,text(&r,"raw_store")?,None)?,"recognizedStore":self.rows("SELECT raw_name FROM receipt_ocr_store WHERE receipt_id=?",&[json!(id)])?.first().map(|row|row["raw_name"].clone()).unwrap_or(json!("")),"branch":r["raw_branch"],"address":r["raw_address"],"country":r["country_code"],"currency":r["currency_code"],"timeSource":r["time_source"],"rawTime":r["raw_time_text"],"totalSource":r["total_source"],"occurredAt":r["occurred_at_utc_ms"],"createdAt":r["created_at_utc_ms"],"revision":r["version"],"totalMinor":r["total_minor"],"posted":r["status"]=="posted","lines":lines}),
         )
     }
     pub fn receipt_action(&self, op: &str, v: &Value) -> Result<Value> {

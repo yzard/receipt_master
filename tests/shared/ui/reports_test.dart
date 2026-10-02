@@ -32,8 +32,21 @@ void main() {
                       'offset': index - 2,
                     },
                 ],
-                series: const [],
-                visibleSeries: const {},
+                series: const [
+                  {
+                    'key': 'category:drinks',
+                    'group': 'category',
+                    'label': '饮料',
+                    'values': [0, 100, 200],
+                  },
+                  {
+                    'key': 'product:water',
+                    'group': 'product',
+                    'label': '瓶装水',
+                    'values': [0, 100, 200],
+                  },
+                ],
+                visibleSeries: const {'category:drinks', 'product:water'},
                 currency: 'USD',
                 selectedIndex: 2,
                 onSelect: (index) => selected = index,
@@ -45,6 +58,9 @@ void main() {
         ),
       ),
     );
+    expect(find.text('总金额'), findsOneWidget);
+    expect(find.text('商品分类 · 饮料'), findsOneWidget);
+    expect(find.text('商品 · 瓶装水'), findsOneWidget);
     final rect = tester.getRect(find.byType(ReportTrendChart));
     await tester.tapAt(Offset(rect.left + 52, rect.center.dy));
     expect(selected, 0);
@@ -247,10 +263,7 @@ void main() {
       await tester.tap(find.text('瓶装水'));
       await tester.pumpAndSettle();
       expect(opened, 'mapped');
-      expect(
-        summaries,
-        4,
-      ); // Returning from the receipt recalculates both periods.
+      expect(summaries, 6); // Opening the selector and returning from a receipt both query fresh data.
     },
   );
 
@@ -365,6 +378,163 @@ void main() {
       expect(find.textContaining('报表更新失败'), findsNothing);
       expect(find.text('USD 3.75'), findsOneWidget);
       expect(summaries, 7);
+    },
+  );
+  testWidgets(
+    'curve selection refreshes all categories, disables empty ones and selects category curves independently',
+    (tester) async {
+      tester.view.physicalSize = const Size(800, 1400);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+      bool classified = false, fail = false;
+      int trends = 0;
+      final store = AppStore(
+        '/unused',
+        configuration: () async =>
+            const BackendConnection('https://example.test', 'key'),
+        client: MockClient((req) async {
+          dynamic data;
+          switch (req.url.path) {
+            case '/api/v1/reports/trend':
+              trends++;
+              if (fail) {
+                return http.Response(
+                  jsonEncode({
+                    'error': {'message': 'network failure'},
+                  }),
+                  500,
+                );
+              }
+              final category = classified ? 'drinks' : 'uncategorized';
+              data = {
+                'currency': 'USD',
+                'points': [
+                  {
+                    'start': 1000,
+                    'end': 2000,
+                    'previous_start': 0,
+                    'offset': 0,
+                    'tick': 'Jan',
+                    'label': '当前周期',
+                    'net': 100,
+                  },
+                ],
+                'series': [
+                  {
+                    'key': 'category:groceries',
+                    'group': 'category',
+                    'label': '杂货',
+                    'values': [classified ? 100 : 0],
+                  },
+                  {
+                    'key': 'category:drinks',
+                    'group': 'category',
+                    'label': '饮料',
+                    'path': '杂货 / 饮料',
+                    'depth': 1,
+                    'values': [classified ? 100 : 0],
+                  },
+                  {
+                    'key': 'category:nuts',
+                    'group': 'category',
+                    'label': '坚果',
+                    'values': [0],
+                  },
+                  {
+                    'key': 'category:uncategorized',
+                    'group': 'category',
+                    'label': '未分类',
+                    'values': [classified ? 0 : 100],
+                  },
+                  {
+                    'key': 'product:water',
+                    'group': 'product',
+                    'label': '瓶装水',
+                    'values': [100],
+                    'category_keys': ['category:$category'],
+                  },
+                ],
+              };
+            case '/api/v1/categories/list':
+              data = [];
+            case '/api/v1/reports/summary':
+              data = {
+                'currency': 'USD',
+                'net': 100,
+                'spend': 100,
+                'refunds': 0,
+                'discounts': 0,
+                'difference': 0,
+                'groups': [],
+                'entries': [],
+              };
+            default:
+              throw StateError(req.url.path);
+          }
+          return http.Response(
+            jsonEncode({'data': data}),
+            200,
+            headers: {'content-type': 'application/json; charset=utf-8'},
+          );
+        }),
+      );
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: ReportsPage(
+              store: store,
+              zone: 'UTC',
+              onReceipt: (_) async {},
+            ),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+      classified = true;
+      await tester.tap(find.text('曲线'));
+      await tester.pumpAndSettle();
+      expect(trends, 2);
+      expect(find.text('未分类'), findsOneWidget);
+      expect(find.byType(CheckboxListTile), findsNWidgets(4));
+      expect(find.text('瓶装水'), findsNothing);
+      await tester.tap(find.byTooltip('展开饮料商品'));
+      await tester.pumpAndSettle();
+      expect(find.byType(CheckboxListTile), findsNWidgets(5));
+      CheckboxListTile tile(String title) => tester.widget<CheckboxListTile>(
+        find.widgetWithText(CheckboxListTile, title),
+      );
+      expect(tile('坚果').onChanged, isNull);
+      expect(tile('未分类').onChanged, isNull);
+      expect(tile('饮料').enabled, isTrue);
+      expect(find.text('杂货 / 饮料 · 分类合计'), findsOneWidget);
+      await tester.tap(find.text('杂货'));
+      await tester.pumpAndSettle();
+      expect(tile('杂货').value, isTrue);
+      expect(tile('饮料').value, isFalse);
+      expect(tile('瓶装水').value, isFalse);
+      await tester.tap(find.text('饮料'));
+      await tester.pumpAndSettle();
+      expect(tile('杂货').value, isTrue);
+      expect(tile('饮料').value, isTrue);
+      expect(tile('瓶装水').value, isFalse);
+      await tester.tap(find.text('杂货'));
+      await tester.tap(find.text('饮料'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('瓶装水'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byTooltip('收起饮料商品'));
+      await tester.pumpAndSettle();
+      expect(find.text('瓶装水'), findsNothing);
+      expect(find.byType(CheckboxListTile), findsNWidgets(4));
+      Navigator.of(tester.element(find.byType(CheckboxListTile).first)).pop();
+      await tester.pumpAndSettle();
+      expect(find.text('商品 · 瓶装水'), findsOneWidget);
+      fail = true;
+      await tester.tap(find.text('曲线 1'));
+      await tester.pumpAndSettle();
+      expect(find.byType(CheckboxListTile), findsNothing);
+      expect(find.textContaining('报表更新失败'), findsOneWidget);
     },
   );
 }

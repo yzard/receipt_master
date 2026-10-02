@@ -188,6 +188,9 @@ impl crate::db::Store {
                 product_name
             };
             value["display"] = json!({"productName":product_name,"weightText":weight_text,"weightUnit":unit,"weightLabel":if weight_text.is_empty(){String::new()}else{format!("{weight_text} {unit}")},"quantityText":display_quantity(&quantity,&quantity_unit),"quantityUnit":quantity_unit,"priceText":decimal(&price,digits+6),"amountText":decimal(&value["amountMinor"],digits),"pricingNote":if value["printedAmountMinor"].is_number(){format!("原票面净额 {currency} {}；优惠已拆分",crate::receipt_lines::money(i128::from(value["printedAmountMinor"].as_i64().unwrap()),digits))}else{String::new()}});
+            if let Some(kind) = value["receiptTypeId"].as_str() {
+                value["display"]["receiptTypeName"] = json!(self.receipt_type_label(kind)?);
+            }
             return Ok(());
         }
         if let Some(weight) = value.get("weight_mg") {

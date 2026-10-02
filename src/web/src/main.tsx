@@ -1,3 +1,4 @@
+import { ReceiptTypesManager } from "./receipt_types";
 import React, { useState, useEffect, useRef, useId, FormEvent } from "react";
 import {
   api,
@@ -21,7 +22,7 @@ const names: Record<string, string> = {
   receipts: "收据",
   reports: "报表",
   catalog: "商品管理",
-  stores: "商店名称",
+  stores: "商店",
   settings: "设置",
   users: "用户管理",
 };
@@ -694,6 +695,7 @@ export function LineEditor({
   lines,
   currency,
   categories,
+  receiptTypes,
   onSave,
   onClose,
 }: {
@@ -701,6 +703,7 @@ export function LineEditor({
   lines: Row[];
   currency: string;
   categories: Row[];
+  receiptTypes: Row[];
   onSave: (line: Row) => void;
   onClose: () => void;
 }) {
@@ -758,6 +761,18 @@ export function LineEditor({
               }));
             }}
             options={Object.entries(kinds)}
+          />
+          <Select
+            label="商店类别"
+            value={value.receiptTypeId || ""}
+            onChange={(v) => set("receiptTypeId", v || null)}
+            options={[
+              ["", "使用商店类别"],
+              ...receiptTypes.map((t): [string, string] => [
+                t.receipt_type_id,
+                t.name,
+              ]),
+            ]}
           />
           <Select
             label="商品分类"
@@ -857,6 +872,7 @@ export function Editor({
         api.op("receipts", "get", { id }),
         api.op("images", "list", { receipt_id: id }),
         api.op("categories", "list"),
+        api.op("receipt_types", "list"),
       ]),
     [id],
   );
@@ -1159,6 +1175,25 @@ export function Editor({
         </aside>
         <section className="receipt-fields" aria-label="收据内容">
           <div className="receipt-fields-scroll">
+            <Select
+              label="商店类别"
+              value={r.receiptTypeId || ""}
+              options={[
+                ["", "请选择"],
+                ...(loaded.data[3] || []).map((t: Row): [string, string] => [
+                  t.receipt_type_id,
+                  t.name,
+                ]),
+              ]}
+              onChange={(v) => {
+                setR({
+                  ...r,
+                  receiptTypeId: v,
+                  lines: r.lines.map((l: Row) => ({ ...l, receiptTypeId: v })),
+                });
+                setDirty(true);
+              }}
+            />
             <div className="form-grid">
               {[
                 ["store", "商店名称"],
@@ -1274,7 +1309,10 @@ export function Editor({
                   </strong>
                   {l.display?.productName && <small>{l.rawName}</small>}
                   <div className="line-meta">
-                    {kinds[l.kind]} {l.taxCode && `· 税码 ${l.taxCode}`}{" "}
+                    {kinds[l.kind]}{" "}
+                    {l.display?.receiptTypeName &&
+                      `· ${l.display.receiptTypeName}`}{" "}
+                    {l.taxCode && `· 税码 ${l.taxCode}`}{" "}
                     {l.sku && `· SKU ${l.sku}`}{" "}
                   </div>
                   {l.warnings.map((w: string) => (
@@ -1424,6 +1462,7 @@ export function Editor({
           lines={r.lines}
           currency={r.currency}
           categories={loaded.data[2]}
+          receiptTypes={loaded.data[3]}
           onClose={() => setLine(null)}
           onSave={(l) => {
             const exists = r.lines.some((a: Row) => a.id === l.id);
@@ -1854,7 +1893,7 @@ function CategoryForm({
     </Modal>
   );
 }
-function Stores({
+export function Stores({
   receiptId = null,
   suggested = "",
 }: {
@@ -1865,6 +1904,7 @@ function Stores({
     () => api.op("logos", "list", { receipt_id: receiptId }),
     [receiptId],
   );
+  const [tab, setTab] = useState(0);
   const [busy, setBusy] = useState(false);
   async function mutate(f: () => Promise<any>) {
     if (busy) return;
@@ -1879,74 +1919,96 @@ function Stores({
   return (
     <>
       {!receiptId && (
-        <Heading
-          title="商店名称"
-          subtitle="图像对应店名，识别不再依赖票面文字。"
-        />
+        <Heading title="商店" subtitle="管理商店名称与商店类别。" />
       )}
-      {receiptId && (
-        <button
-          disabled={busy}
-          onClick={() =>
-            void action(() =>
-              mutate(() =>
-                api.op("logos", "extract", { receipt_id: receiptId }),
-              ),
-            )
-          }
-        >
-          重新提取 Logo
-        </button>
+      {!receiptId && (
+        <div className="tabs" role="tablist" aria-label="商店管理">
+          {["商店名称", "商店类别"].map((name, i) => (
+            <button
+              key={name}
+              role="tab"
+              aria-selected={tab === i}
+              className={tab === i ? "active" : ""}
+              onClick={() => setTab(i)}
+            >
+              {name}
+            </button>
+          ))}
+        </div>
       )}
-      <StateView
-        busy={!list.data && list.busy}
-        error={list.error}
-        onRetry={list.reload}
-      />
-      <div className="store-grid">
-        {list.data?.map((s: Row) => (
-          <article key={s.logo_id}>
-            <img
-              src={`/api/v1/media/${s.media_id}`}
-              alt={s.name || "尚未命名的商店标志"}
-            />
-            <CommitInput
-              label="商店名称"
-              value={s.name || ""}
-              options={suggested ? [suggested] : []}
-              onCommit={(name) =>
-                mutate(() =>
-                  api.op("logos", "save", {
-                    id: s.logo_id,
-                    name,
-                    expected_version: api.version,
-                  }),
+      {!receiptId && tab === 1 ? (
+        <ReceiptTypesManager />
+      ) : (
+        <>
+          {receiptId && (
+            <button
+              disabled={busy}
+              onClick={() =>
+                void action(() =>
+                  mutate(() =>
+                    api.op("logos", "extract", { receipt_id: receiptId }),
+                  ),
                 )
               }
-            />
-            {s.name && (
-              <IconButton
-                icon="trash"
-                label="删除商店名称样本"
-                disabled={busy}
-                onClick={() =>
-                  void action(async () => {
-                    if (confirm("删除此商店名称样本？"))
-                      await mutate(() =>
-                        api.op("logos", "delete", {
-                          id: s.logo_id,
-                          expected_version: api.version,
-                        }),
-                      );
-                  })
-                }
-              />
-            )}
-          </article>
-        ))}
-      </div>
-      {list.data?.length === 0 && (
-        <p className="muted">这张收据还没有提取到 Logo，可尝试重新提取。</p>
+            >
+              重新提取 Logo
+            </button>
+          )}
+          <StateView
+            busy={!list.data && list.busy}
+            error={list.error}
+            onRetry={list.reload}
+          />
+          <div className="store-grid">
+            {list.data?.map((s: Row) => (
+              <article key={s.logo_id}>
+                <img
+                  src={`/api/v1/media/${s.media_id}`}
+                  alt={s.name || "尚未命名的商店标志"}
+                />
+                <CommitInput
+                  label="商店名称"
+                  value={s.name || ""}
+                  options={suggested ? [suggested] : []}
+                  onCommit={(name) =>
+                    mutate(() =>
+                      api.op("logos", "save", {
+                        id: s.logo_id,
+                        name,
+                        expected_version: api.version,
+                      }),
+                    )
+                  }
+                />
+                {s.name && (
+                  <IconButton
+                    icon="trash"
+                    label="删除商店名称样本"
+                    disabled={busy}
+                    onClick={() =>
+                      void action(async () => {
+                        if (confirm("删除此商店名称样本？"))
+                          await mutate(() =>
+                            api.op("logos", "delete", {
+                              id: s.logo_id,
+                              expected_version: api.version,
+                            }),
+                          );
+                      })
+                    }
+                  />
+                )}
+              </article>
+            ))}
+          </div>
+          {list.data?.length === 0 && (
+            <p className="muted">
+              {receiptId
+                ? "这张收据还没有提取到 Logo，可尝试重新提取。"
+                : "尚无商店 Logo 样本；确认收据的 Logo 和店名后会显示在这里。"}
+            </p>
+          )}
+        </>
       )}
     </>
   );
@@ -1959,6 +2021,118 @@ const colors = [
   "#b18729",
   "#bd4c86",
 ];
+function trendColor(key: string) {
+  let hash = 0;
+  for (let i = 0; i < key.length; i++)
+    hash = (hash * 31 + key.charCodeAt(i)) & 0x7fffffff;
+  return key === "total" ? colors[0] : colors[1 + (hash % (colors.length - 1))];
+}
+function curveLabel(row: Row) {
+  return row.key === "total"
+    ? row.label
+    : `${row.group === "category" ? "商品分类" : row.group === "receipt_type" ? "商店类别" : "商品"} · ${row.label}`;
+}
+export function TrendSeriesMenu({
+  series,
+  visible,
+  onToggle,
+}: {
+  series: Row[];
+  visible: Set<string>;
+  onToggle: (key: string) => void;
+}) {
+  const [expanded, setExpanded] = useState(new Set<string>());
+  function option(row: Row) {
+    const disabled = !(
+      row.has_activity ?? row.values.some((value: number) => value !== 0)
+    );
+    return (
+      <label
+        className={`check${disabled ? " curve-disabled" : ""}`}
+        key={row.key}
+      >
+        <input
+          type="checkbox"
+          checked={!disabled && visible.has(row.key)}
+          disabled={disabled}
+          onChange={() => onToggle(row.key)}
+        />
+        {row.label}
+        <small>
+          {disabled
+            ? "当前范围无消费"
+            : row.group === "category"
+              ? row.depth > 0
+                ? `${row.path} · 分类合计`
+                : "分类合计"
+              : row.group === "receipt_type"
+                ? "商店类别合计"
+                : "商品"}
+        </small>
+      </label>
+    );
+  }
+  return (
+    <div className="series-menu" aria-label="曲线选择">
+      <label className="check">
+        <input
+          type="checkbox"
+          checked={visible.has("total")}
+          onChange={() => onToggle("total")}
+        />
+        总金额
+      </label>
+      <div className="series-category-list">
+        {series.filter((r) => r.group === "receipt_type").map(option)}
+        {series
+          .filter((row) => row.group === "category")
+          .map((category) => {
+            const products = series.filter(
+              (row) =>
+                row.group === "product" &&
+                row.category_keys.includes(category.key),
+            );
+            const open = expanded.has(category.key);
+            return (
+              <section
+                className="series-category"
+                key={category.key}
+                aria-label={category.label}
+              >
+                <div className="series-category-header">
+                  {option(category)}
+                  {products.length > 0 ? (
+                    <button
+                      type="button"
+                      className="series-expand"
+                      aria-label={`${open ? "收起" : "展开"}${category.label}商品`}
+                      aria-expanded={open}
+                      onClick={() =>
+                        setExpanded((previous) => {
+                          const next = new Set(previous);
+                          if (open) next.delete(category.key);
+                          else next.add(category.key);
+                          return next;
+                        })
+                      }
+                    >
+                      {products.length} 商品{" "}
+                      <span aria-hidden="true">{open ? "⌃" : "⌄"}</span>
+                    </button>
+                  ) : (
+                    <span className="series-count">0 商品</span>
+                  )}
+                </div>
+                {open && (
+                  <div className="series-products">{products.map(option)}</div>
+                )}
+              </section>
+            );
+          })}
+      </div>
+    </div>
+  );
+}
 export function TrendChart({
   data,
   visible,
@@ -1974,103 +2148,124 @@ export function TrendChart({
     lines: Row[] = [
       { key: "total", label: "总金额", values: points.map((p) => p.net) },
       ...data.series,
-    ].filter((s) => visible.has(s.key));
+    ].filter(
+      (s) =>
+        visible.has(s.key) &&
+        (s.key === "total" ||
+          (s.has_activity ?? s.values.some((value: number) => value !== 0))),
+    );
   const values = lines.flatMap((s) => s.values as number[]),
     min = Math.min(0, ...values),
     max = Math.max(1, ...values),
     x = (i: number) => 70 + (i * 860) / Math.max(1, points.length - 1),
     y = (n: number) => 235 - ((n - min) / (max - min)) * 200;
   return (
-    <div className="chart-scroll">
-      <svg
-        className="trend-chart"
-        viewBox="0 0 980 290"
-        role="img"
-        aria-label="消费趋势，可选择时间点查看明细"
-      >
-        {[0, 0.5, 1].map((v) => {
-          const n = min + (max - min) * v;
-          return (
-            <g key={v}>
-              <line
-                x1="70"
-                x2="935"
-                y1={y(n)}
-                y2={y(n)}
-                className="grid-line"
+    <div>
+      <div className="chart-scroll">
+        <svg
+          className="trend-chart"
+          viewBox="0 0 980 290"
+          role="img"
+          aria-label="消费趋势，可选择时间点查看明细"
+        >
+          {[0, 0.5, 1].map((v) => {
+            const n = min + (max - min) * v;
+            return (
+              <g key={v}>
+                <line
+                  x1="70"
+                  x2="935"
+                  y1={y(n)}
+                  y2={y(n)}
+                  className="grid-line"
+                />
+                <text x="60" y={y(n) + 4} textAnchor="end">
+                  {money(n, data.currency)}
+                </text>
+              </g>
+            );
+          })}
+          <line
+            x1={x(index)}
+            x2={x(index)}
+            y1="26"
+            y2="235"
+            className="selected-line"
+          />
+          {lines.map((s) => (
+            <g key={s.key}>
+              <polyline
+                fill="none"
+                stroke={trendColor(s.key)}
+                strokeWidth={s.key === "total" ? 3 : 2}
+                points={s.values
+                  .map((n: number, i: number) => `${x(i)},${y(n)}`)
+                  .join(" ")}
               />
-              <text x="60" y={y(n) + 4} textAnchor="end">
-                {money(n, data.currency)}
+              {s.values.map((n: number, i: number) => (
+                <circle
+                  key={i}
+                  cx={x(i)}
+                  cy={y(n)}
+                  r={i === index ? 5 : 3}
+                  fill={trendColor(s.key)}
+                />
+              ))}
+            </g>
+          ))}
+          {points.map((p, i) => (
+            <g
+              key={p.start}
+              role="button"
+              tabIndex={0}
+              aria-label={`${p.label}，${money(p.net, data.currency)}`}
+              onClick={() => onSelect(i)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") onSelect(i);
+              }}
+            >
+              <rect
+                x={x(i) - 18}
+                y="20"
+                width="36"
+                height="255"
+                fill="transparent"
+              />
+              <text
+                x={x(i)}
+                y="270"
+                textAnchor="middle"
+                className={i === index ? "selected-tick" : ""}
+              >
+                {p.tick}
               </text>
             </g>
-          );
-        })}
-        <line
-          x1={x(index)}
-          x2={x(index)}
-          y1="26"
-          y2="235"
-          className="selected-line"
-        />
-        {lines.map((s, k) => (
-          <g key={s.key}>
-            <polyline
-              fill="none"
-              stroke={colors[k % colors.length]}
-              strokeWidth={s.key === "total" ? 3 : 2}
-              points={s.values
-                .map((n: number, i: number) => `${x(i)},${y(n)}`)
-                .join(" ")}
+          ))}
+        </svg>
+      </div>
+      <ul className="trend-legend" aria-label="图例">
+        {lines.map((row) => (
+          <li key={row.key}>
+            <span
+              className="legend-line"
+              style={{ backgroundColor: trendColor(row.key) }}
+              aria-hidden="true"
             />
-            {s.values.map((n: number, i: number) => (
-              <circle
-                key={i}
-                cx={x(i)}
-                cy={y(n)}
-                r={i === index ? 5 : 3}
-                fill={colors[k % colors.length]}
-              />
-            ))}
-          </g>
+            {curveLabel(row)}
+          </li>
         ))}
-        {points.map((p, i) => (
-          <g
-            key={p.start}
-            role="button"
-            tabIndex={0}
-            aria-label={`${p.label}，${money(p.net, data.currency)}`}
-            onClick={() => onSelect(i)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter" || e.key === " ") onSelect(i);
-            }}
-          >
-            <rect
-              x={x(i) - 18}
-              y="20"
-              width="36"
-              height="255"
-              fill="transparent"
-            />
-            <text
-              x={x(i)}
-              y="270"
-              textAnchor="middle"
-              className={i === index ? "selected-tick" : ""}
-            >
-              {p.tick}
-            </text>
-          </g>
-        ))}
-      </svg>
+      </ul>
+      {!lines.length && <p className="muted">请选择要显示的曲线。</p>}
     </div>
   );
 }
-function Reports({ open }: { open: (id: string) => void }) {
+export function Reports({ open }: { open: (id: string) => void }) {
   const [period, setPeriod] = useState("month"),
     [windowIndex, setWindow] = useState(0),
     [index, setIndex] = useState(-1),
     [visible, setVisible] = useState(new Set(["total"])),
     [category, setCategory] = useState<string | null>(null),
+    [receiptType, setReceiptType] = useState<string | null>(null),
     [detail, setDetail] = useState<Row | null>(null),
     [seriesMenu, setSeriesMenu] = useState(false);
   const touch = useRef(0);
@@ -2082,8 +2277,9 @@ function Reports({ open }: { open: (id: string) => void }) {
         anchor: Date.now(),
         zone,
         category,
+        receipt_type: receiptType,
       }),
-    [period, windowIndex, category],
+    [period, windowIndex, category, receiptType],
   );
   const selected =
     trend.data?.points[
@@ -2105,6 +2301,7 @@ function Reports({ open }: { open: (id: string) => void }) {
         end: selected.end,
         zone,
         category,
+        receipt_type: receiptType,
         offset,
       });
       result ??= p;
@@ -2112,8 +2309,19 @@ function Reports({ open }: { open: (id: string) => void }) {
       offset = p.next_offset;
     } while (offset !== null);
     return { ...result, entries };
-  }, [selected?.start, selected?.end, category]);
-  const categories = useLoad(() => api.op("categories", "list"), []);
+  }, [trend.data, selected?.start, selected?.end, category, receiptType]);
+  const categories = useLoad(() => api.op("categories", "list"), [trend.data]);
+  useEffect(() => {
+    const refresh = () => {
+      if (document.visibilityState === "visible") trend.reload();
+    };
+    window.addEventListener("focus", refresh);
+    document.addEventListener("visibilitychange", refresh);
+    return () => {
+      window.removeEventListener("focus", refresh);
+      document.removeEventListener("visibilitychange", refresh);
+    };
+  }, []);
   function toggle(key: string) {
     setVisible((s) => {
       const n = new Set(s);
@@ -2130,7 +2338,6 @@ function Reports({ open }: { open: (id: string) => void }) {
       onTouchEnd={(e) => {
         if (touch.current && e.changedTouches[0].clientY - touch.current > 70) {
           trend.reload();
-          summary.reload();
         }
         touch.current = 0;
       }}
@@ -2144,11 +2351,43 @@ function Reports({ open }: { open: (id: string) => void }) {
             label="重新统计并刷新报表"
             onClick={() => {
               trend.reload();
-              summary.reload();
             }}
           />
         }
       />
+      <StateView
+        busy={!trend.data && trend.busy}
+        error={trend.error}
+        onRetry={trend.reload}
+      />
+      {trend.data && (
+        <Select
+          label="商店类别统计范围"
+          value={receiptType || ""}
+          onChange={(v) => {
+            setReceiptType(v || null);
+            setCategory(null);
+            setDetail(null);
+          }}
+          options={[
+            ["", "全部商店类别"],
+            ...trend.data.series
+              .filter((t: Row) => t.group === "receipt_type")
+              .map((t: Row): [string, string] => [t.key.slice(13), t.label]),
+          ]}
+        />
+      )}
+      {trend.data && (
+        <TrendChart
+          data={trend.data}
+          visible={visible}
+          index={Math.max(0, index < 0 ? trend.data.points.length - 1 : index)}
+          onSelect={(i) => {
+            setIndex(i);
+            trend.reload();
+          }}
+        />
+      )}
       <div className="report-controls">
         <div className="segmented">
           {Object.entries({
@@ -2189,36 +2428,21 @@ function Reports({ open }: { open: (id: string) => void }) {
         >
           较近 →
         </button>
-        <button onClick={() => setSeriesMenu(!seriesMenu)}>曲线选择</button>
+        <button
+          onClick={() => {
+            if (!seriesMenu) trend.reload();
+            setSeriesMenu(!seriesMenu);
+          }}
+        >
+          曲线选择
+        </button>
       </div>
-      <StateView
-        busy={!trend.data && trend.busy}
-        error={trend.error}
-        onRetry={trend.reload}
-      />
-      {seriesMenu && (
-        <div className="series-menu">
-          {[
-            { key: "total", label: "总金额" },
-            ...(trend.data?.series || []),
-          ].map((s: Row) => (
-            <label className="check" key={s.key}>
-              <input
-                type="checkbox"
-                checked={visible.has(s.key)}
-                onChange={() => toggle(s.key)}
-              />
-              {s.label}
-            </label>
-          ))}
-        </div>
-      )}
-      {trend.data && (
-        <TrendChart
-          data={trend.data}
+      {seriesMenu && trend.busy && <p role="status">正在重新查询曲线…</p>}
+      {seriesMenu && !trend.busy && !trend.error && (
+        <TrendSeriesMenu
+          series={trend.data?.series || []}
           visible={visible}
-          index={Math.max(0, index < 0 ? trend.data.points.length - 1 : index)}
-          onSelect={setIndex}
+          onToggle={toggle}
         />
       )}
       <div className="section-heading">
@@ -2255,9 +2479,15 @@ function Reports({ open }: { open: (id: string) => void }) {
             </p>
           )}
           <div className="report-groups">
-            {["category", "product"].map((group) => (
+            {["receipt_type", "category", "product"].map((group) => (
               <section key={group}>
-                <h2>{group === "category" ? "商品分类" : "商品"}</h2>
+                <h2>
+                  {group === "category"
+                    ? "商品分类"
+                    : group === "receipt_type"
+                      ? "商店类别"
+                      : "商品"}
+                </h2>
                 {summary.data.groups
                   .filter((g: Row) => g.group === group)
                   .map((g: Row) => (
@@ -2265,7 +2495,11 @@ function Reports({ open }: { open: (id: string) => void }) {
                       className="group-row"
                       key={g.key}
                       onClick={() => {
-                        if (group === "category") {
+                        if (group === "receipt_type") {
+                          setReceiptType(g.key.slice(13));
+                          setCategory(null);
+                          setDetail(null);
+                        } else if (group === "category") {
                           const key = g.key.slice(9);
                           if (
                             categories.data?.some(

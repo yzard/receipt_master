@@ -181,7 +181,7 @@ impl Store {
                 restored.validate()?;
                 let integrity = restored.one("PRAGMA integrity_check", &[])?;
                 if integrity["integrity_check"] != "ok"
-                    || restored.one("PRAGMA user_version", &[])?["user_version"] != 15
+                    || restored.one("PRAGMA user_version", &[])?["user_version"] != 16
                 {
                     return Err(invalid());
                 }

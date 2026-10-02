@@ -142,7 +142,7 @@ class _CatalogPageState extends State<CatalogPage> {
             subtitle: '将票面写法归为你熟悉的商品与种类',
             trailing: TextButton.icon(
               icon: const Icon(Icons.storefront_outlined),
-              label: const Text('商店名称'),
+              label: const Text('商店'),
               onPressed: () async {
                 await Navigator.of(context).push(
                   MaterialPageRoute<void>(

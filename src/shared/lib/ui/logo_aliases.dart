@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../data/store.dart';
 import 'common.dart';
 import 'app_theme.dart';
+import 'receipt_types.dart';
 
 class LogoAliasesPage extends StatefulWidget {
   final AppStore store;
@@ -22,6 +23,7 @@ class _LogoAliasesPageState extends State<LogoAliasesPage> {
   List<dynamic>? logos;
   String? error;
   bool busy = false;
+  int tab = 0;
   @override
   void initState() {
     super.initState();
@@ -115,7 +117,7 @@ class _LogoAliasesPageState extends State<LogoAliasesPage> {
     extendBodyBehindAppBar: true,
     appBar: AppBar(
       flexibleSpace: const FrostedBar(child: SizedBox.expand()),
-      title: Text(widget.receiptId == null ? '商店名称' : '收据 Logo'),
+      title: Text(widget.receiptId == null ? '商店' : '收据 Logo'),
     ),
     body: AbsorbPointer(
       absorbing: busy,
@@ -127,69 +129,91 @@ class _LogoAliasesPageState extends State<LogoAliasesPage> {
           32,
         ),
         children: [
-          if (busy) const LinearProgressIndicator(),
-          if (error != null)
-            TextButton(onPressed: load, child: const Text('加载失败，点击重试')),
-          if (logos == null && error == null)
-            const Center(child: CircularProgressIndicator()),
-          if (widget.receiptId != null && logos?.isEmpty == true)
-            FilledButton(
-              onPressed: () => act(() async {
-                await widget.store.request('logos', 'extract', {
-                  'receipt_id': widget.receiptId,
-                });
-                await load();
-              }),
-              child: const Text('提取收据顶部 Logo'),
+          if (widget.receiptId == null) ...[
+            Wrap(
+              spacing: 8,
+              children: [
+                for (final (index, label) in ['商店名称', '商店类别'].indexed)
+                  ChoiceChip(
+                    label: Text(label),
+                    selected: tab == index,
+                    onSelected: (_) => setState(() => tab = index),
+                  ),
+              ],
             ),
-          if (logos?.isEmpty == true)
-            const Text('尚无 Logo 样本。新收据识别完成后会提取顶部候选图；确认店名后加入别名库。'),
-          for (final logo in logos ?? [])
-            Card(
-              child: Column(
-                children: [
-                  SizedBox(
-                    height: 140,
-                    child: widget.store.image(
-                      Map<String, dynamic>.from(logo),
-                      fit: BoxFit.contain,
-                    ),
-                  ),
-                  ListTile(
-                    title: Text(logo['name'] ?? '尚未设置店名'),
-                    subtitle: Text(
-                      logo['detection'] == 'header_candidate'
-                          ? '顶部候选区域，请确认是否为 Logo'
-                          : '请确认 Logo 和对应店名',
-                    ),
-                    onTap: () => edit(logo as Map),
-                    trailing: logo['name'] == null
-                        ? const Icon(Icons.edit)
-                        : IconButton(
-                            tooltip: '删除商店名称样本',
-                            icon: const Icon(Icons.delete_outline),
-                            onPressed: () async {
-                              if (!await confirm(
-                                context,
-                                '删除这个商店名称样本？',
-                                '以后识别相似 Logo 时将不再使用这个样本。',
-                              )) {
-                                return;
-                              }
-                              await act(() async {
-                                await widget.store.request('logos', 'delete', {
-                                  'id': logo['logo_id'],
-                                  'expected_version':
-                                      widget.store.catalogVersion,
-                                });
-                                await load();
-                              });
-                            },
-                          ),
-                  ),
-                ],
+            const SizedBox(height: 16),
+          ],
+          if (widget.receiptId == null && tab == 1)
+            ReceiptTypesManager(store: widget.store)
+          else ...[
+            if (busy) const LinearProgressIndicator(),
+            if (error != null)
+              TextButton(onPressed: load, child: const Text('加载失败，点击重试')),
+            if (logos == null && error == null)
+              const Center(child: CircularProgressIndicator()),
+            if (widget.receiptId != null && logos?.isEmpty == true)
+              FilledButton(
+                onPressed: () => act(() async {
+                  await widget.store.request('logos', 'extract', {
+                    'receipt_id': widget.receiptId,
+                  });
+                  await load();
+                }),
+                child: const Text('提取收据顶部 Logo'),
               ),
-            ),
+            if (logos?.isEmpty == true)
+              const Text('尚无 Logo 样本。新收据识别完成后会提取顶部候选图；确认店名后加入别名库。'),
+            for (final logo in logos ?? [])
+              Card(
+                child: Column(
+                  children: [
+                    SizedBox(
+                      height: 140,
+                      child: widget.store.image(
+                        Map<String, dynamic>.from(logo),
+                        fit: BoxFit.contain,
+                      ),
+                    ),
+                    ListTile(
+                      title: Text(logo['name'] ?? '尚未设置店名'),
+                      subtitle: Text(
+                        logo['detection'] == 'header_candidate'
+                            ? '顶部候选区域，请确认是否为 Logo'
+                            : '请确认 Logo 和对应店名',
+                      ),
+                      onTap: () => edit(logo as Map),
+                      trailing: logo['name'] == null
+                          ? const Icon(Icons.edit)
+                          : IconButton(
+                              tooltip: '删除商店名称样本',
+                              icon: const Icon(Icons.delete_outline),
+                              onPressed: () async {
+                                if (!await confirm(
+                                  context,
+                                  '删除这个商店名称样本？',
+                                  '以后识别相似 Logo 时将不再使用这个样本。',
+                                )) {
+                                  return;
+                                }
+                                await act(() async {
+                                  await widget.store.request(
+                                    'logos',
+                                    'delete',
+                                    {
+                                      'id': logo['logo_id'],
+                                      'expected_version':
+                                          widget.store.catalogVersion,
+                                    },
+                                  );
+                                  await load();
+                                });
+                              },
+                            ),
+                    ),
+                  ],
+                ),
+              ),
+          ],
         ],
       ),
     ),

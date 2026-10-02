@@ -26,7 +26,7 @@ class EditorPage extends StatefulWidget {
 
 class _EditorPageState extends State<EditorPage> {
   ReceiptDraft? draft;
-  List<Map<String, dynamic>> categories = [], images = [];
+  List<Map<String, dynamic>> categories = [], images = [], receiptTypes = [];
   final fields = <String, TextEditingController>{};
   final selected = <String>{};
   bool busy = false;
@@ -55,6 +55,7 @@ class _EditorPageState extends State<EditorPage> {
     try {
       await widget.store.loadPreferences();
       categories = await widget.store.categories();
+      receiptTypes = await widget.store.receiptTypes();
       if (draft == null) {
         final r = widget.receiptId == null
             ? ReceiptDraft.empty(DateTime.now())
@@ -303,6 +304,7 @@ class _EditorPageState extends State<EditorPage> {
         ? LineDraft.empty()
         : LineDraft.fromMap(original.toMap());
     final r = draft!;
+    line.receiptTypeId ??= r.receiptTypeId;
     try {
       line = LineDraft.fromMap(
         await widget.store.request('receipts', 'display_line', {
@@ -491,6 +493,19 @@ class _EditorPageState extends State<EditorPage> {
                         onChanged: (value) =>
                             set(() => line.discountTarget = value),
                       ),
+                    DropdownButtonFormField<String>(
+                      initialValue: line.receiptTypeId,
+                      decoration: const InputDecoration(labelText: '商店类别'),
+                      items: [
+                        for (final t in receiptTypes)
+                          DropdownMenuItem(
+                            value: t['receipt_type_id'] as String,
+                            child: Text(t['name']),
+                          ),
+                      ],
+                      onChanged: (value) =>
+                          set(() => line.receiptTypeId = value),
+                    ),
                     if (line.kind != 'item_discount')
                       ListTile(
                         contentPadding: EdgeInsets.zero,
@@ -1085,6 +1100,28 @@ class _EditorPageState extends State<EditorPage> {
                   if (images.isNotEmpty && fields['store']!.text.isEmpty)
                     const Notice('尚未匹配店名，请确认 Logo 并设置商店名称。'),
                   text('store', '店名 / 连锁店'),
+                  const SizedBox(height: 12),
+                  DropdownButtonFormField<String>(
+                    key: ValueKey('receipt-type-${r.receiptTypeId}'),
+                    initialValue: r.receiptTypeId,
+                    decoration: const InputDecoration(labelText: '商店类别'),
+                    items: [
+                      for (final t in receiptTypes)
+                        DropdownMenuItem(
+                          value: t['receipt_type_id'] as String,
+                          child: Text(t['name']),
+                        ),
+                    ],
+                    onChanged: (value) {
+                      setState(() {
+                        r.receiptTypeId = value;
+                        for (final l in r.lines) {
+                          l.receiptTypeId = value;
+                        }
+                      });
+                      changed();
+                    },
+                  ),
                   if (images.isNotEmpty)
                     TextButton.icon(
                       icon: const Icon(Icons.image_search),
@@ -1272,7 +1309,7 @@ class _EditorPageState extends State<EditorPage> {
                           kind: l.kind,
                         ),
                         subtitle: Text(
-                          '${kindLabels[l.kind]}${(l.taxCode ?? '').isEmpty ? '' : ' · 税码 ${l.taxCode}'}${(l.sku ?? '').isEmpty ? '' : ' · SKU ${l.sku}'}',
+                          '${kindLabels[l.kind]}${(l.display['receiptTypeName'] ?? '').isEmpty ? '' : ' · ${l.display['receiptTypeName']}'}${(l.taxCode ?? '').isEmpty ? '' : ' · 税码 ${l.taxCode}'}${(l.sku ?? '').isEmpty ? '' : ' · SKU ${l.sku}'}',
                         ),
                         trailing: Row(
                           mainAxisSize: MainAxisSize.min,

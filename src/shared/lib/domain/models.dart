@@ -56,7 +56,8 @@ String money(int? number, String currency) =>
 
 class LineDraft {
   String id, kind, rawName, categoryId;
-  String? productId,
+  String? receiptTypeId,
+      productId,
       discountTarget,
       quantityUnit,
       taxCode,
@@ -79,6 +80,7 @@ class LineDraft {
     required this.sku,
     required this.productNameEdit,
     required this.categoryId,
+    required this.receiptTypeId,
     required this.productId,
     required this.discountTarget,
     required this.quantityUnit,
@@ -100,6 +102,7 @@ class LineDraft {
     sku: null,
     productNameEdit: null,
     categoryId: systemCategories['uncategorized']!,
+    receiptTypeId: null,
     productId: null,
     discountTarget: null,
     quantityUnit: null,
@@ -122,6 +125,7 @@ class LineDraft {
     sku: m['sku'],
     productNameEdit: m['productNameEdit'],
     categoryId: m['categoryId'],
+    receiptTypeId: m['receiptTypeId'],
     productId: m['productId'],
     discountTarget: m['discountTarget'],
     quantityUnit: m['quantityUnit'],
@@ -145,6 +149,7 @@ class LineDraft {
     'sku': sku,
     if (productNameEdit != null) 'productNameEdit': productNameEdit,
     'categoryId': categoryId,
+    'receiptTypeId': receiptTypeId,
     'productId': productId,
     'discountTarget': discountTarget,
     'quantityUnit': quantityUnit,
@@ -160,6 +165,7 @@ class LineDraft {
 }
 
 class ReceiptDraft {
+  String? receiptTypeId;
   String id,
       store,
       recognizedStore,
@@ -179,6 +185,7 @@ class ReceiptDraft {
     required this.id,
     required this.store,
     required this.recognizedStore,
+    required this.receiptTypeId,
     required this.branch,
     required this.address,
     required this.country,
@@ -198,6 +205,7 @@ class ReceiptDraft {
     id: newId(),
     store: '',
     recognizedStore: '',
+    receiptTypeId: null,
     branch: '',
     address: '',
     country: 'US',
@@ -218,6 +226,7 @@ class ReceiptDraft {
     id: m['id'],
     store: m['store'],
     recognizedStore: m['recognizedStore'] ?? '',
+    receiptTypeId: m['receiptTypeId'],
     branch: m['branch'],
     address: m['address'],
     country: m['country'],
@@ -239,6 +248,7 @@ class ReceiptDraft {
     'id': id,
     'store': store,
     'recognizedStore': recognizedStore,
+    'receiptTypeId': receiptTypeId,
     'branch': branch,
     'address': address,
     'country': country,

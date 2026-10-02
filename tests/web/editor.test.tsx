@@ -217,6 +217,7 @@ describe("explicit receipt editing", () => {
         lines={[line]}
         currency="USD"
         categories={[]}
+        receiptTypes={[]}
         onClose={() => {}}
         onSave={() => {}}
       />,

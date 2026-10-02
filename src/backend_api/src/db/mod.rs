@@ -15,10 +15,15 @@ mod catalog_queries;
 pub mod exchange;
 pub mod logos;
 pub mod media;
+mod merchant_queries;
 mod merchant_resources;
+mod receipt_type_queries;
+mod receipt_types;
 pub mod receipts;
 pub mod reports;
 pub type Result<T> = std::result::Result<T, AppError>;
+pub const UNCLASSIFIED_RECEIPT_TYPE: &str = "10000000-0000-4000-8000-000000000001";
+pub const GROCERY_RECEIPT_TYPE: &str = "10000000-0000-4000-8000-000000000002";
 pub const UNCATEGORIZED: &str = "00000000-0000-4000-8000-000000000001";
 pub fn now() -> i64 {
     chrono::Utc::now().timestamp_millis()
@@ -189,7 +194,7 @@ impl Store {
             }
             merchant_resources::seed(&s)?;
             s.db.execute_batch("COMMIT").map_err(sql_error)?;
-        } else if version != 15 {
+        } else if version != 16 {
             return Err(AppError::new(
                 503,
                 "schema_version",

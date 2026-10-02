@@ -753,17 +753,58 @@ async fn clients_cannot_configure_ocr_or_pricing() {
 #[tokio::test]
 async fn trend_route_returns_read_only_calendar_series() {
     let fixture = fixture(0).await;
+    let query = json!({"request_key":"reused-report-read","input":{"anchor":1780000000000i64,"zone":"UTC","period":"month","window":0,"category":null}});
     let (status, reply) = request(
         &fixture,
         "POST",
         "/api/v1/reports/trend",
-        Some(json!({"input":{"anchor":1780000000000i64,"zone":"UTC","period":"month","window":0,"category":null}})),
+        Some(query.clone()),
         true,
     )
     .await;
     assert_eq!(status, 200);
     assert_eq!(reply["data"]["currency"], "USD");
     assert_eq!(reply["data"]["points"].as_array().unwrap().len(), 12);
+    let store = receipt_backend_api::db::Store::open(&fixture.dir.path().join("data")).unwrap();
+    let mut receipt = domain_receipt();
+    receipt["lines"] = json!([{"id":uuid::Uuid::new_v4().to_string(),"kind":"product","rawName":"MILK","productNameEdit":"Milk","categoryId":receipt_backend_api::db::UNCATEGORIZED,"amountMinor":550,"quantityMicros":1000000,"quantityUnit":"ea","unitPriceScaled":550000000,"warnings":[],"evidence":[]}]);
+    store.transaction(|| store.save(receipt, true)).unwrap();
+    let (status, reply) = request(
+        &fixture,
+        "POST",
+        "/api/v1/reports/trend",
+        Some(query.clone()),
+        true,
+    )
+    .await;
+    assert_eq!(status, 200);
+    assert_eq!(
+        reply["data"]["points"].as_array().unwrap().last().unwrap()["net"],
+        550
+    );
+    let category = store
+        .one("SELECT category_id FROM category WHERE name='奶制品'", &[])
+        .unwrap()["category_id"]
+        .clone();
+    store
+        .exec(
+            "UPDATE product_name SET category_id=? WHERE name='Milk'",
+            std::slice::from_ref(&category),
+        )
+        .unwrap();
+    let (status, reply) =
+        request(&fixture, "POST", "/api/v1/reports/trend", Some(query), true).await;
+    assert_eq!(status, 200);
+    let product = reply["data"]["series"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .find(|s| s["key"] == "product:Milk")
+        .unwrap();
+    assert_eq!(
+        product["category_keys"],
+        json!([format!("category:{}", category.as_str().unwrap())])
+    );
 }
 
 #[tokio::test(flavor = "multi_thread", worker_threads = 2)]

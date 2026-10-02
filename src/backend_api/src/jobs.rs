@@ -99,7 +99,7 @@ impl Store {
         let base = &settings["source"];
         if !base.is_object()
             || current["posted"] == true
-            || ["lines", "country", "currency"]
+            || ["lines", "country", "currency", "receiptTypeId"]
                 .iter()
                 .any(|key| current[key] != base[key])
         {
@@ -400,7 +400,12 @@ async fn process(state: Arc<State>, job: Value) -> Result<Value> {
     {
         return Err(conflict());
     }
-    content.insert(0,json!({"type":"text","text":format!("{} {}",state.prompts.receipt.trusted_context_prefix,json!({"known_store":known_store,"country":source["country"],"currency":source["currency"]}))}));
+    let merchant = known_store.clone().unwrap_or_default();
+    let receipt_type = database(&state, move |s| {
+        s.receipt_type_label(&s.store_receipt_type(&merchant)?)
+    })
+    .await?;
+    content.insert(0,json!({"type":"text","text":format!("{} {}",state.prompts.receipt.trusted_context_prefix,json!({"known_store":known_store,"receipt_type":receipt_type,"country":source["country"],"currency":source["currency"]}))}));
     let run = id();
     let run_copy = run.clone();
     let receipt = job["receipt_id"].clone();
@@ -520,6 +525,7 @@ pub fn decode_receipt(
 ) -> Result<Value> {
     let tz = chrono_tz::Tz::from_str(zone).map_err(|_| invalid())?;
     r["recognizedStore"] = json!("");
+    r["receiptTypeId"] = json!(store.store_receipt_type(r["store"].as_str().unwrap_or(""))?);
     let mut all;
     pipeline::validate_receipt(&data, image_ids.len())?;
     {
@@ -597,7 +603,7 @@ pub fn decode_receipt(
             let evidence=m["evidence"].as_array().unwrap().iter().map(|e|{
                 let b=&e["box"];json!({"imageId":image_ids[e["image_index"].as_u64().unwrap() as usize],"x0":b[0],"y0":b[1],"x1":b[2],"y1":b[3]})
             }).collect::<Vec<_>>();
-            lines.push(json!({"id":id(),"kind":kind,"rawName":m["name"],"sku":m["sku"],"taxCode":m["tax_code"],"isWeighed":m["is_weighed"],"productNameEdit":m["product_name"],"categoryId":format!("00000000-0000-4000-8000-{category:012}"),"productId":null,"discountTarget":null,"quantityUnit":m["quantity_unit"],"weightMg":crate::weights::recognized(m)?,"quantityMicros":quantity,"unitPriceScaled":fixed(&m["unit_price"],digits+6)?,"amountMinor":amount,"printedAmountMinor":printed,"warnings":warnings,"evidence":evidence}));
+            lines.push(json!({"id":id(),"kind":kind,"rawName":m["name"],"sku":m["sku"],"taxCode":m["tax_code"],"isWeighed":m["is_weighed"],"productNameEdit":m["product_name"],"receiptTypeId":r["receiptTypeId"],"categoryId":format!("00000000-0000-4000-8000-{category:012}"),"productId":null,"discountTarget":null,"quantityUnit":m["quantity_unit"],"weightMg":crate::weights::recognized(m)?,"quantityMicros":quantity,"unitPriceScaled":fixed(&m["unit_price"],digits+6)?,"amountMinor":amount,"printedAmountMinor":printed,"warnings":warnings,"evidence":evidence}));
         }
         for i in 0..lines.len() {
             if let Some(target) = data["lines"][i]["discount_target_index"].as_u64() {

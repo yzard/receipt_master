@@ -1278,7 +1278,7 @@ fn current_schema_initializes_once_and_rejects_old_versions_without_upgrade() {
     let (dir, s) = setup();
     assert_eq!(
         s.one("PRAGMA user_version", &[]).unwrap()["user_version"],
-        15
+        16
     );
     assert!(s.rows("SELECT * FROM receipt", &[]).unwrap().is_empty());
     assert!(!s.rows("SELECT * FROM logo_sample", &[]).unwrap().is_empty());
@@ -2859,4 +2859,540 @@ fn catalogue_names_are_unique_and_assignments_reuse_existing_records() {
         )
         .unwrap();
     assert_eq!(suggestions[0]["exact_match"], true);
+}
+
+#[test]
+fn trend_queries_current_classification_for_old_receipts_without_saved_statistics() {
+    let (_dir, s) = setup();
+    let mut input = receipt();
+    input["occurredAt"] = json!(1270000000000i64); // 2010, in an older year window.
+    input["lines"][0]["productNameEdit"] = json!("Rice");
+    save(&s, input);
+    let query = json!({"anchor":1780000000000i64,"zone":"UTC","period":"year","window":-2});
+    let first = s.report_action("trend", &query).unwrap();
+    let product = |data: &Value| {
+        data["series"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .find(|s| s["key"] == "product:Rice")
+            .unwrap()
+            .clone()
+    };
+    assert_eq!(
+        product(&first)["category_keys"],
+        json!([format!("category:{}", db::UNCATEGORIZED)])
+    );
+    assert_eq!(
+        first["series"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .filter(|s| s["group"] == "product")
+            .count(),
+        1
+    );
+    assert_eq!(
+        product(&first)["values"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .map(|n| n.as_i64().unwrap())
+            .sum::<i64>(),
+        1000
+    );
+    let parent = s
+        .one("SELECT category_id FROM category WHERE name='杂货'", &[])
+        .unwrap()["category_id"]
+        .clone();
+    let child = s
+        .one(
+            "SELECT category_id FROM category WHERE name='大米及其制品'",
+            &[],
+        )
+        .unwrap()["category_id"]
+        .clone();
+    s.exec(
+        "UPDATE category SET parent_id=? WHERE category_id=?",
+        &[parent.clone(), child.clone()],
+    )
+    .unwrap();
+    // Change only the catalogue; leave historical receipt-line assignments untouched.
+    s.exec(
+        "UPDATE product_name SET category_id=? WHERE name='Rice'",
+        std::slice::from_ref(&child),
+    )
+    .unwrap();
+    let second = s.report_action("trend", &query).unwrap();
+    assert_eq!(
+        product(&second)["category_keys"],
+        json!([format!("category:{}", child.as_str().unwrap())])
+    );
+    let category_sum = |data: &Value, id: &str| {
+        data["series"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .find(|s| s["key"] == format!("category:{id}"))
+            .unwrap()["values"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .map(|n| n.as_i64().unwrap())
+            .sum::<i64>()
+    };
+    assert_eq!(category_sum(&second, db::UNCATEGORIZED), 0);
+    assert_eq!(category_sum(&second, child.as_str().unwrap()), 1000);
+    assert_eq!(category_sum(&second, parent.as_str().unwrap()), 1000);
+    assert_eq!(first["points"], second["points"]); // Classification changes no totals.
+    // Filtering the parent shows the current child, rather than the old assignment.
+    let mut scoped = query.clone();
+    scoped["category"] = parent;
+    let filtered = s.report_action("trend", &scoped).unwrap();
+    assert_eq!(
+        product(&filtered)["category_keys"],
+        json!([format!("category:{}", child.as_str().unwrap())])
+    );
+}
+
+#[test]
+fn report_product_curves_include_their_discounts_without_a_catalogue_name() {
+    let (_dir, s) = setup();
+    let mut r = receipt();
+    r["lines"][1]["kind"] = json!("item_discount");
+    r["lines"][1]["discountTarget"] = r["lines"][0]["id"].clone();
+    save(&s, r);
+    let summary = s
+        .report_action(
+            "summary",
+            &json!({"start":0,"end":1900000000000i64,"zone":"UTC"}),
+        )
+        .unwrap();
+    let products: Vec<_> = summary["groups"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .filter(|g| g["group"] == "product")
+        .collect();
+    assert_eq!(products.len(), 1);
+    assert_eq!(products[0]["label"], "RICE");
+    assert_eq!(products[0]["amount"], 950);
+    assert_eq!(products[0]["line_ids"].as_array().unwrap().len(), 2);
+}
+
+#[test]
+fn trend_keeps_all_categories_even_without_receipts_or_outside_the_window() {
+    let (_dir, s) = setup();
+    let query = json!({"anchor":1780000000000i64,"zone":"UTC","period":"month","window":0});
+    let category_ids = || {
+        s.rows("SELECT category_id FROM category", &[])
+            .unwrap()
+            .into_iter()
+            .map(|row| row["category_id"].as_str().unwrap().to_owned())
+            .collect::<std::collections::BTreeSet<_>>()
+    };
+    let assert_catalogue = |trend: &Value| {
+        let curves = trend["series"].as_array().unwrap();
+        let ids = curves
+            .iter()
+            .filter(|r| r["group"] == "category")
+            .map(|r| {
+                r["key"]
+                    .as_str()
+                    .unwrap()
+                    .strip_prefix("category:")
+                    .unwrap()
+                    .to_owned()
+            })
+            .collect::<std::collections::BTreeSet<_>>();
+        assert_eq!(ids, category_ids());
+        for curve in curves {
+            assert_eq!(
+                curve["values"].as_array().unwrap().len(),
+                trend["points"].as_array().unwrap().len()
+            );
+        }
+    };
+    let empty = s.report_action("trend", &query).unwrap();
+    assert_catalogue(&empty);
+    assert!(
+        empty["series"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .all(|r| r["values"].as_array().unwrap().iter().all(|n| n == 0))
+    );
+    let parent = s
+        .one("SELECT category_id FROM category WHERE name='杂货'", &[])
+        .unwrap()["category_id"]
+        .clone();
+    let child = s
+        .one(
+            "SELECT category_id FROM category WHERE name='大米及其制品'",
+            &[],
+        )
+        .unwrap()["category_id"]
+        .clone();
+    s.exec(
+        "UPDATE category SET parent_id=? WHERE category_id=?",
+        &[parent, child.clone()],
+    )
+    .unwrap();
+    let mut r = receipt();
+    r["lines"][0]["categoryId"] = child;
+    save(&s, r);
+    let mut old_window = query.clone();
+    old_window["window"] = json!(-5);
+    let historical = s.report_action("trend", &old_window).unwrap();
+    assert_catalogue(&historical);
+    assert!(
+        historical["series"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .all(|r| r["values"].as_array().unwrap().iter().all(|n| n == 0))
+    );
+    let current = s.report_action("trend", &query).unwrap();
+    assert_catalogue(&current);
+    let rice = current["series"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .find(|r| r["label"] == "大米及其制品")
+        .unwrap();
+    assert_eq!(rice["path"], "杂货 / 大米及其制品");
+    assert_eq!(rice["depth"], 1);
+    assert_eq!(rice["values"].as_array().unwrap().last().unwrap(), 1000);
+}
+
+#[test]
+fn trend_distinguishes_no_spending_from_purchases_offset_by_refunds() {
+    let (_dir, s) = setup();
+    let mut purchase = receipt();
+    purchase["lines"][0]["productNameEdit"] = json!("Rice");
+    save(&s, purchase.clone());
+    purchase["id"] = json!(db::id());
+    for line in purchase["lines"].as_array_mut().unwrap() {
+        line["id"] = json!(db::id());
+        line["amountMinor"] = json!(-line["amountMinor"].as_i64().unwrap());
+    }
+    purchase["lines"].as_array_mut().unwrap().pop();
+    purchase["totalMinor"] = json!(-1000);
+    save(&s, purchase);
+    let trend = s
+        .report_action(
+            "trend",
+            &json!({"anchor":1780000000000i64,"zone":"UTC","period":"month","window":0}),
+        )
+        .unwrap();
+    let product = trend["series"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .find(|row| row["key"] == "product:Rice")
+        .unwrap();
+    assert!(
+        product["values"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .all(|value| value == 0)
+    );
+    assert_eq!(product["has_activity"], true);
+    let unclassified = trend["series"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .find(|row| row["key"] == format!("category:{}", db::UNCATEGORIZED))
+        .unwrap();
+    assert_eq!(unclassified["has_activity"], true);
+    let fruit = trend["series"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .find(|row| row["label"] == "水果")
+        .unwrap();
+    assert_eq!(fruit["has_activity"], false);
+}
+
+#[test]
+fn receipt_types_are_parallel_contextual_and_live_in_reports() {
+    let (_dir, s) = setup();
+    let grocery = db::GROCERY_RECEIPT_TYPE;
+    let restaurant = "10000000-0000-4000-8000-000000000003";
+    let travel = "10000000-0000-4000-8000-000000000004";
+    let mut first = receipt();
+    first["store"] = json!("Costco");
+    first["lines"][0]["productNameEdit"] = json!("瓶装水");
+    let first = save(&s, first);
+    assert_eq!(first["receiptTypeId"], grocery);
+    assert_eq!(first["lines"][0]["receiptTypeId"], grocery);
+    let mut second = receipt();
+    second["store"] = json!("Restaurant");
+    second["receiptTypeId"] = json!(restaurant);
+    second["lines"][0]["productNameEdit"] = json!("瓶装水");
+    let second = save(&s, second);
+    assert_eq!(second["lines"][0]["receiptTypeId"], restaurant);
+    assert_eq!(
+        first["lines"][0]["categoryId"],
+        second["lines"][0]["categoryId"]
+    );
+    assert_eq!(
+        s.rows("SELECT * FROM product_name WHERE name='瓶装水'", &[])
+            .unwrap()
+            .len(),
+        1
+    );
+    let input = json!({"start":1770000000000i64,"end":1790000000000i64});
+    let report = s.report_action("summary", &input).unwrap();
+    let amounts = report["groups"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .filter(|r| r["group"] == "receipt_type")
+        .map(|r| r["amount"].as_i64().unwrap())
+        .collect::<Vec<_>>();
+    assert_eq!(amounts, vec![950, 950]);
+    assert_eq!(report["net"], 1900);
+    let mut filtered = input.clone();
+    filtered["receipt_type"] = json!(restaurant);
+    let report = s.report_action("summary", &filtered).unwrap();
+    assert_eq!(report["net"], 950);
+    assert!(
+        report["entries"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .all(|r| r["receipt_type_id"] == restaurant)
+    );
+    assert_eq!(
+        s.load(first["id"].as_str().unwrap()).unwrap()["lines"][0]["receiptTypeId"],
+        grocery
+    );
+    let mut changed = first.clone();
+    changed["lines"][0]["receiptTypeId"] = json!(travel);
+    let changed = save(&s, changed);
+    assert_eq!(changed["lines"][0]["receiptTypeId"], travel);
+    assert_eq!(
+        s.load(second["id"].as_str().unwrap()).unwrap()["lines"][0]["receiptTypeId"],
+        restaurant
+    );
+    let mut filtered = input.clone();
+    filtered["receipt_type"] = json!(travel);
+    assert_eq!(s.report_action("summary", &filtered).unwrap()["net"], 1000);
+    // Old distributed clients omit the new fields: preserve saved classifications.
+    let mut legacy = changed.clone();
+    legacy.as_object_mut().unwrap().remove("receiptTypeId");
+    for line in legacy["lines"].as_array_mut().unwrap() {
+        line.as_object_mut().unwrap().remove("receiptTypeId");
+    }
+    assert_eq!(save(&s, legacy)["lines"][0]["receiptTypeId"], travel);
+    let trend = s
+        .report_action(
+            "trend",
+            &json!({"period":"year","anchor":1780000000000i64,"zone":"UTC","window":0}),
+        )
+        .unwrap();
+    assert_eq!(
+        trend["series"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .filter(|r| r["group"] == "receipt_type")
+            .count(),
+        4
+    );
+    assert!(
+        s.report_action(
+            "summary",
+            &json!({"start":1,"end":2,"receipt_type":"missing"})
+        )
+        .is_err()
+    );
+}
+
+#[test]
+fn receipt_types_manage_uniqueness_defaults_and_safe_deletion() {
+    let (_dir, s) = setup();
+    let version = || {
+        s.one("SELECT version FROM catalog_version WHERE id=1", &[])
+            .unwrap()["version"]
+            .clone()
+    };
+    let input = json!({"id":null,"name":"网购","expected_version":version()});
+    s.transaction(|| s.catalog_action("receipt_types", "save", &input))
+        .unwrap();
+    let kind = s
+        .rows("SELECT * FROM receipt_type WHERE name='网购'", &[])
+        .unwrap()[0]["receipt_type_id"]
+        .clone();
+    let costco = s
+        .rows("SELECT merchant_id FROM merchant WHERE name='Costco'", &[])
+        .unwrap()[0]["merchant_id"]
+        .clone();
+    s.transaction(|| {
+        s.catalog_action(
+            "merchants",
+            "classify",
+            &json!({"id":costco,"receipt_type_id":kind,"expected_version":version()}),
+        )
+    })
+    .unwrap();
+    let mut r = receipt();
+    r["store"] = json!("Costco");
+    let r = save(&s, r);
+    assert_eq!(r["receiptTypeId"], kind);
+    let duplicate = s
+        .transaction(|| {
+            s.catalog_action(
+                "receipt_types",
+                "save",
+                &json!({"id":null,"name":" 网购 ","expected_version":version()}),
+            )
+        })
+        .unwrap_err();
+    assert_eq!(duplicate.status, 409);
+    s.transaction(|| {
+        s.catalog_action(
+            "receipt_types",
+            "delete",
+            &json!({"id":kind,"expected_version":version()}),
+        )
+    })
+    .unwrap();
+    assert_eq!(
+        s.load(r["id"].as_str().unwrap()).unwrap()["lines"][0]["receiptTypeId"],
+        db::UNCLASSIFIED_RECEIPT_TYPE
+    );
+    assert_eq!(
+        s.store_receipt_type("costco").unwrap(),
+        db::UNCLASSIFIED_RECEIPT_TYPE
+    );
+    assert_eq!(s.rows("SELECT * FROM receipt", &[]).unwrap().len(), 1);
+    assert_eq!(s.rows("SELECT * FROM receipt_line", &[]).unwrap().len(), 2);
+    assert!(
+        s.transaction(|| s.catalog_action(
+            "receipt_types",
+            "delete",
+            &json!({"id":db::UNCLASSIFIED_RECEIPT_TYPE,"expected_version":version()})
+        ))
+        .is_err()
+    );
+    assert!(s.rows("PRAGMA foreign_key_check", &[]).unwrap().is_empty());
+}
+
+#[test]
+fn recognition_uses_merchant_receipt_type_and_type_totals_include_receipt_reconciliation() {
+    let (_dir, s) = setup();
+    let mut r = receipt();
+    r["store"] = json!("Costco");
+    let decoded=jobs::decode_receipt(&s,r,vision_fixture(json!({"local_time":"2026-05-28 12:00","total":"11.00","lines":[{"name":"WATER","kind":"product","amount":"10.00"}]})),vec!["image".into()],"UTC").unwrap();
+    assert_eq!(decoded["receiptTypeId"], db::GROCERY_RECEIPT_TYPE);
+    assert_eq!(
+        decoded["lines"][0]["receiptTypeId"],
+        db::GROCERY_RECEIPT_TYPE
+    );
+    save(&s, decoded);
+    let report=s.report_action("summary",&json!({"start":1770000000000i64,"end":1790000000000i64,"zone":"UTC","receipt_type":db::GROCERY_RECEIPT_TYPE})).unwrap();
+    assert_eq!(report["net"], 1100);
+    let group = report["groups"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .find(|g| g["group"] == "receipt_type")
+        .unwrap();
+    assert_eq!(group["amount"], 1100);
+    assert_eq!(group["reconciliation"], 100);
+    assert_eq!(report["entries"][0]["amount_minor"], 1000);
+}
+
+#[test]
+fn store_management_excludes_text_only_stores_and_prunes_only_unused_metadata() {
+    let (_dir, s) = setup();
+    let mut input = receipt();
+    input["store"] = json!("Manual store without logo");
+    let receipt = save(&s, input);
+    s.exec("INSERT INTO merchant VALUES ('orphan','nice n n n')", &[])
+        .unwrap();
+    s.exec("INSERT INTO sku VALUES ('unused','orphan','123')", &[])
+        .unwrap();
+    s.exec(
+        "INSERT INTO merchant_alias VALUES ('old text','orphan')",
+        &[],
+    )
+    .unwrap();
+    s.exec(
+        "INSERT INTO merchant_receipt_type VALUES ('orphan',?)",
+        &[json!(db::GROCERY_RECEIPT_TYPE)],
+    )
+    .unwrap();
+    s.exec("INSERT INTO merchant VALUES ('used-sku','SKU owner')", &[])
+        .unwrap();
+    s.exec("INSERT INTO sku VALUES ('used','used-sku','456')", &[])
+        .unwrap();
+    s.exec(
+        "INSERT INTO line_sku VALUES (?,'used')",
+        &[receipt["lines"][0]["id"].clone()],
+    )
+    .unwrap();
+    let stores = s.catalog_action("merchants", "list", &json!({})).unwrap();
+    assert!(
+        stores
+            .as_array()
+            .unwrap()
+            .iter()
+            .any(|m| m["name"] == "Costco")
+    );
+    assert!(
+        !stores
+            .as_array()
+            .unwrap()
+            .iter()
+            .any(|m| m["name"] == "nice n n n" || m["name"] == "Manual store without logo")
+    );
+    s.transaction(|| s.prune_unused_merchants()).unwrap();
+    assert!(
+        s.rows("SELECT * FROM merchant WHERE merchant_id='orphan'", &[])
+            .unwrap()
+            .is_empty()
+    );
+    assert!(
+        s.rows("SELECT * FROM sku WHERE sku_id='unused'", &[])
+            .unwrap()
+            .is_empty()
+    );
+    assert!(
+        s.rows(
+            "SELECT * FROM merchant_alias WHERE alias_key='old text'",
+            &[]
+        )
+        .unwrap()
+        .is_empty()
+    );
+    assert_eq!(
+        s.rows("SELECT * FROM merchant WHERE merchant_id='used-sku'", &[])
+            .unwrap()
+            .len(),
+        1
+    );
+    assert_eq!(
+        s.load(receipt["id"].as_str().unwrap()).unwrap()["store"],
+        "Manual store without logo"
+    );
+    s.transaction(|| {
+        s.receipt_action(
+            "purge",
+            &json!({"id":receipt["id"],"expected_version":receipt["revision"]}),
+        )
+    })
+    .unwrap();
+    assert!(
+        s.rows(
+            "SELECT * FROM merchant WHERE name IN ('SKU owner','Manual store without logo')",
+            &[]
+        )
+        .unwrap()
+        .is_empty()
+    );
+    assert!(s.rows("PRAGMA foreign_key_check", &[]).unwrap().is_empty());
 }

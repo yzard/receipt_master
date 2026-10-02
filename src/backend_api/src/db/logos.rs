@@ -49,6 +49,7 @@ impl Store {
             }
             _ => return Err(missing()),
         }
+        self.prune_unused_merchants()?;
         self.exec(
             "UPDATE catalog_version SET version=version+1 WHERE id=1",
             &[],

@@ -95,6 +95,33 @@ class AppStore extends ChangeNotifier {
     return r;
   }
 
+  Future<List<Map<String, dynamic>>> receiptTypes() async =>
+      rows(await request('receipt_types', 'list', {}));
+  Future<void> saveReceiptType(String? id, String name) async {
+    await request('receipt_types', 'save', {
+      'id': id,
+      'name': name,
+      'expected_version': catalogVersion,
+    });
+  }
+
+  Future<void> deleteReceiptType(String id) async {
+    await request('receipt_types', 'delete', {
+      'id': id,
+      'expected_version': catalogVersion,
+    });
+  }
+
+  Future<List<Map<String, dynamic>>> merchants() async =>
+      rows(await request('merchants', 'list', {}));
+  Future<void> classifyMerchant(String id, String receiptTypeId) async {
+    await request('merchants', 'classify', {
+      'id': id,
+      'receipt_type_id': receiptTypeId,
+      'expected_version': catalogVersion,
+    });
+  }
+
   Future<List<Map<String, dynamic>>> categories() async =>
       rows(await request('categories', 'list', {}));
   Future<List<Map<String, dynamic>>> searchCatalog(
@@ -467,8 +494,9 @@ class AppStore extends ChangeNotifier {
     int start,
     int end,
     String? category,
-    String zone,
-  ) async {
+    String zone, {
+    required String? receiptType,
+  }) async {
     int? offset = 0;
     Map<String, dynamic>? result;
     final entries = <Map<String, dynamic>>[];
@@ -480,6 +508,7 @@ class AppStore extends ChangeNotifier {
           'category': category,
           'zone': zone,
           'offset': offset,
+          'receipt_type': receiptType,
         }),
       );
       result ??= page;

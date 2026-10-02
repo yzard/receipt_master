@@ -24,7 +24,9 @@ void main() {
         client: MockClient((request) async {
           final path = request.url.path;
           dynamic data;
-          if (path.endsWith('/config/get')) {
+          if (path.endsWith('/receipt_types/list')) {
+            data = [];
+          } else if (path.endsWith('/config/get')) {
             data = {'weight_unit': 'kg'};
           } else if (path.endsWith('/categories/list') ||
               path.endsWith('/images/list')) {

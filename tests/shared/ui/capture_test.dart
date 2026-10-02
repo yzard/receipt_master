@@ -95,13 +95,25 @@ void main() {
           ),
         ),
       );
-      for (var i = 0; i < 5; i++) {
-        await tester.pump(const Duration(milliseconds: 100));
-        await tester.runAsync(
-          () => Future<void>.delayed(const Duration(milliseconds: 50)),
-        );
+      // File writes run on real I/O; wait for the capture state instead of
+      // assuming an 80 ms delay is enough on a loaded build machine.
+      Future<void> settleCapture() async {
+        for (var attempt = 0; attempt < 200; attempt++) {
+          await tester.runAsync(
+            () => Future<void>.delayed(const Duration(milliseconds: 25)),
+          );
+          await tester.pump(const Duration(milliseconds: 25));
+          final shoot = find.widgetWithText(FilledButton, '拍摄');
+          if (shoot.evaluate().isNotEmpty &&
+              tester.widget<FilledButton>(shoot).onPressed != null) {
+            await tester.pumpAndSettle();
+            return;
+          }
+        }
+        fail('Capture did not become ready after real I/O completed');
       }
-      await tester.pumpAndSettle();
+
+      await settleCapture();
       expect(
         tester
             .widget<FilledButton>(find.widgetWithText(FilledButton, '完成'))
@@ -113,7 +125,7 @@ void main() {
           await tester.tap(find.text('拍摄'));
           await Future<void>.delayed(const Duration(milliseconds: 80));
         });
-        await tester.pumpAndSettle();
+        await settleCapture();
       }
       expect(submitted, isNull);
       expect(find.text('拍摄收据 · 2 张'), findsOneWidget);
@@ -123,7 +135,7 @@ void main() {
         await tester.tap(find.text('重拍'));
         await Future<void>.delayed(const Duration(milliseconds: 80));
       });
-      await tester.pumpAndSettle();
+      await settleCapture();
       final recovered = CaptureSession(dir.path);
       await tester.runAsync(() => recovered.load());
       expect(recovered.pages.length, 2);
@@ -132,7 +144,7 @@ void main() {
           await tester.tap(target);
           await Future<void>.delayed(const Duration(milliseconds: 80));
         });
-        await tester.pumpAndSettle();
+        await settleCapture();
       }
 
       // Deleting before the selection keeps the same photo selected.
@@ -172,7 +184,7 @@ void main() {
         await tester.tap(find.text('完成'));
         await Future<void>.delayed(const Duration(milliseconds: 80));
       });
-      await tester.pumpAndSettle();
+      await settleCapture();
       expect(submitted!.length, 2);
       expect(img.decodeImage(submitted![0])!.getPixel(0, 0).r, 5);
       expect(img.decodeImage(submitted![1])!.getPixel(0, 0).r, 6);

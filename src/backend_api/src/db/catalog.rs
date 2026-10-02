@@ -33,6 +33,16 @@ impl Store {
         Ok(())
     }
 
+    /// Only discard store metadata unsupported by a logo, receipt or live SKU.
+    pub fn prune_unused_merchants(&self) -> Result<()> {
+        for merchant in self.rows(merchant_queries::UNUSED, &[])? {
+            for query in merchant_queries::DELETE_UNUSED {
+                self.exec(query, &[merchant["merchant_id"].clone()])?;
+            }
+        }
+        Ok(())
+    }
+
     /// Detach inactive receipts while retaining their proposal, classification and weight.
     /// Then remove catalogue entries unsupported by any active confirmed receipt.
     pub fn reconcile_catalog(&self) -> Result<()> {
@@ -43,6 +53,7 @@ impl Store {
         self.exec("DELETE FROM product WHERE NOT EXISTS (SELECT 1 FROM receipt_line l WHERE l.product_id=product.product_id)", &[])?;
         self.exec("DELETE FROM printed_name WHERE NOT EXISTS (SELECT 1 FROM product p WHERE p.printed_name_id=printed_name.printed_name_id)", &[])?;
         self.prune_unused_product_names()?;
+        self.prune_unused_merchants()?;
         Ok(())
     }
 
@@ -107,6 +118,7 @@ impl Store {
             }
         }
         let result=match (component,op){
+ ("receipt_types"|"merchants",_)=>self.receipt_type_action(component,op,v)?,
  ("config","save_weight_unit")=>{
  let unit=text(v,"weight_unit")?;
  if !["g","kg","lb","oz"].contains(&unit){return Err(invalid());}

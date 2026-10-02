@@ -10,30 +10,56 @@ impl Store {
         if !["summary", "details"].contains(&op) {
             return Err(missing());
         }
+        self.report_data(v, false)
+    }
+
+    // Trend categories include every ancestor; ordinary summaries retain their
+    // non-overlapping grouping for the breakdown totals.
+    fn report_data(&self, v: &Value, full_category_tree: bool) -> Result<Value> {
         let start = number(v, "start")?;
         let end = number(v, "end")?;
         if start >= end {
             return Err(invalid());
         }
+        if !v["receipt_type"].is_null() {
+            self.validate_receipt_type(text(v, "receipt_type")?)?;
+        }
         let currency = self.report_currency()?;
         let zone = super::exchange::report_zone(v)?;
         let filter = "r.status='posted' AND r.deleted_at_utc_ms IS NULL AND r.occurred_at_utc_ms>=? AND r.occurred_at_utc_ms<?";
         let args = vec![json!(start), json!(end)];
-        let totals=self.rows(&format!("SELECT r.total_minor,rr.difference_minor,r.currency_code,r.occurred_at_utc_ms FROM receipt r JOIN receipt_reconciliation rr ON rr.receipt_id=r.receipt_id WHERE {filter}"),&args)?;
+        let totals = self.rows(receipt_type_queries::TOTALS, &args)?;
+        let mut line_totals = std::collections::BTreeMap::<String, i64>::new();
+        for row in self.rows(receipt_type_queries::LINE_TOTALS, &args)? {
+            let date = super::exchange::rate_date(number(&row, "occurred_at_utc_ms")?, zone)?;
+            let amount = self.converted_amount(
+                number(&row, "amount_minor")?,
+                text(&row, "currency_code")?,
+                &currency,
+                &date,
+            )?;
+            let sum = line_totals
+                .entry(text(&row, "receipt_id")?.to_owned())
+                .or_default();
+            *sum = sum.checked_add(amount).ok_or_else(invalid)?;
+        }
+        let mut residuals = std::collections::BTreeMap::<String, i64>::new();
         let mut all_net = 0i64;
         let mut all_difference = 0i64;
         for row in &totals {
             let source = text(row, "currency_code")?;
             let at = number(row, "occurred_at_utc_ms")?;
             let date = super::exchange::rate_date(at, zone)?;
-            all_net = all_net
-                .checked_add(self.converted_amount(
-                    number(row, "total_minor")?,
-                    source,
-                    &currency,
-                    &date,
-                )?)
+            let converted =
+                self.converted_amount(number(row, "total_minor")?, source, &currency, &date)?;
+            all_net = all_net.checked_add(converted).ok_or_else(invalid)?;
+            let residual = converted
+                .checked_sub(*line_totals.get(text(row, "receipt_id")?).unwrap_or(&0))
                 .ok_or_else(invalid)?;
+            let sum = residuals
+                .entry(text(row, "receipt_type_id")?.to_owned())
+                .or_default();
+            *sum = sum.checked_add(residual).ok_or_else(invalid)?;
             all_difference = all_difference
                 .checked_add(self.converted_amount(
                     number(row, "difference_minor")?,
@@ -43,13 +69,15 @@ impl Store {
                 )?)
                 .ok_or_else(invalid)?;
         }
-        let mut query = format!(
-            "SELECT l.*,r.currency_code,r.occurred_at_utc_ms,r.raw_store,a.name AS product_name,CAST(ROUND(COALESCE(p.weight_g,w.weight_g)*1000) AS INTEGER) AS weight_mg,ec.category_id,c.name AS category_name,d.target_line_id FROM receipt_line l JOIN receipt r ON r.receipt_id=l.receipt_id JOIN line_effective_category ec ON ec.line_id=l.line_id JOIN category c ON c.category_id=ec.category_id LEFT JOIN line_discount d ON d.discount_line_id=l.line_id LEFT JOIN product p ON p.product_id=COALESCE(l.product_id,(SELECT product_id FROM receipt_line WHERE line_id=d.target_line_id)) LEFT JOIN printed_name n ON n.printed_name_id=p.printed_name_id LEFT JOIN printed_name_product_name m ON m.printed_name_id=n.printed_name_id LEFT JOIN product_name a ON a.product_name_id=m.product_name_id LEFT JOIN line_unmatched_weight w ON w.line_id=l.line_id WHERE {filter}"
-        );
+        let mut query = format!("{} WHERE {filter}", receipt_type_queries::REPORT_ENTRIES);
         let mut args = args;
         if !v["category"].is_null() {
             query.push_str(" AND ec.category_id IN (WITH RECURSIVE t(id) AS (SELECT category_id FROM category WHERE category_id=? UNION ALL SELECT c.category_id FROM category c JOIN t ON c.parent_id=t.id) SELECT id FROM t)");
             args.push(v["category"].clone());
+        }
+        if !v["receipt_type"].is_null() {
+            query.push_str(" AND et.receipt_type_id=?");
+            args.push(v["receipt_type"].clone());
         }
         query.push_str(" ORDER BY r.occurred_at_utc_ms DESC,l.position,l.line_id");
         let mut entries = self.rows(&query, &args)?;
@@ -66,7 +94,7 @@ impl Store {
             sum.checked_add(number(row, "amount_minor")?)
                 .ok_or_else(invalid)
         })?;
-        let rounding_adjustment = if v["category"].is_null() {
+        let rounding_adjustment = if v["category"].is_null() && v["receipt_type"].is_null() {
             all_net
                 .checked_sub(all_difference)
                 .and_then(|sum| sum.checked_sub(converted_line_total))
@@ -74,13 +102,22 @@ impl Store {
         } else {
             0
         };
-        let net = if v["category"].is_null() {
+        let net = if v["category"].is_null() && v["receipt_type"].is_null() {
             json!(all_net)
         } else {
             json!(entries.iter().try_fold(0i64, |sum, r| {
                 sum.checked_add(r["amount_minor"].as_i64().unwrap_or(0))
                     .ok_or_else(invalid)
             })?)
+        };
+        let net = if v["category"].is_null() && !v["receipt_type"].is_null() {
+            json!(
+                number(&json!({"net":net}), "net")?
+                    .checked_add(*residuals.get(text(v, "receipt_type")?).unwrap_or(&0))
+                    .ok_or_else(invalid)?
+            )
+        } else {
+            net
         };
         let preference = self.one("SELECT weight_unit FROM app_preferences WHERE id=1", &[])?;
         let unit = text(&preference, "weight_unit")?;
@@ -100,33 +137,69 @@ impl Store {
             if row["kind"] == "product" && amount < 0 {
                 refunds = refunds.checked_add(amount).ok_or_else(invalid)?;
             }
-            for grouping in ["category", "product"] {
-                let (key, label) = if grouping == "category" {
-                    let mut node = categories
-                        .iter()
-                        .find(|c| c["category_id"] == row["category_id"])
-                        .ok_or_else(invalid)?;
-                    while !node["parent_id"].is_null()
-                        && (v["category"].is_null()
-                            || (node["parent_id"] != v["category"]
-                                && node["category_id"] != v["category"]))
-                    {
-                        node = categories
-                            .iter()
-                            .find(|c| c["category_id"] == node["parent_id"])
-                            .ok_or_else(invalid)?;
-                    }
-                    (
-                        format!("category:{}", text(node, "category_id")?),
-                        text(node, "name")?.to_owned(),
-                    )
-                } else {
-                    let name = row["product_name"]
-                        .as_str()
-                        .unwrap_or_else(|| row["raw_name"].as_str().unwrap_or("未命名商品"));
-                    (format!("product:{name}"), name.to_owned())
-                };
-                let entry=groups.entry(key.clone()).or_insert_with(||json!({"key":key,"group":grouping,"label":label,"amount":0,"line_ids":[],"quantities":{}}));
+            let direct = categories
+                .iter()
+                .find(|c| c["category_id"] == row["category_id"])
+                .ok_or_else(invalid)?;
+            let mut node = direct;
+            let mut category_nodes = vec![direct];
+            while !node["parent_id"].is_null()
+                && (full_category_tree
+                    || v["category"].is_null()
+                    || (node["parent_id"] != v["category"] && node["category_id"] != v["category"]))
+            {
+                node = categories
+                    .iter()
+                    .find(|c| c["category_id"] == node["parent_id"])
+                    .ok_or_else(invalid)?;
+                category_nodes.push(node);
+            }
+            if !full_category_tree {
+                category_nodes = vec![node];
+            }
+            let category_key = format!(
+                "category:{}",
+                text(
+                    if full_category_tree { direct } else { node },
+                    "category_id"
+                )?
+            );
+            let mut group_keys = category_nodes
+                .iter()
+                .map(|c| {
+                    Ok((
+                        "category",
+                        format!("category:{}", text(c, "category_id")?),
+                        text(c, "name")?.to_owned(),
+                    ))
+                })
+                .collect::<Result<Vec<_>>>()?;
+            group_keys.push((
+                "receipt_type",
+                format!("receipt_type:{}", text(row, "receipt_type_id")?),
+                text(row, "receipt_type_name")?.to_owned(),
+            ));
+            // Taxes and receipt-wide adjustments are category curves, not products.
+            if matches!(row["kind"].as_str(), Some("product" | "item_discount")) {
+                let name = row["product_name"]
+                    .as_str()
+                    .unwrap_or_else(|| row["raw_name"].as_str().unwrap_or("未命名商品"));
+                group_keys.push(("product", format!("product:{name}"), name.to_owned()));
+            }
+            for (grouping, key, label) in group_keys {
+                let entry=groups.entry(key.clone()).or_insert_with(||json!({"key":key,"group":grouping,"label":label,"amount":0,"line_ids":[],"quantities":{},"category_keys":[],"has_activity":false}));
+                if grouping == "product"
+                    && !entry["category_keys"]
+                        .as_array()
+                        .unwrap()
+                        .contains(&json!(category_key))
+                {
+                    entry["category_keys"]
+                        .as_array_mut()
+                        .unwrap()
+                        .push(json!(category_key));
+                }
+                entry["has_activity"] = json!(entry["has_activity"] == true || amount != 0);
                 entry["amount"] = json!(
                     number(entry, "amount")?
                         .checked_add(amount)
@@ -155,6 +228,25 @@ impl Store {
                 }
             }
         }
+        // Allocate only receipt-level reconciliation and FX rounding to its
+        // receipt default. Do not invent or distribute product amounts.
+        if v["category"].is_null() {
+            for (kind, residual) in residuals {
+                if residual == 0 || (!v["receipt_type"].is_null() && v["receipt_type"] != kind) {
+                    continue;
+                }
+                let row = self.one(receipt_type_queries::GET, &[json!(kind)])?;
+                let key = format!("receipt_type:{kind}");
+                let entry=groups.entry(key.clone()).or_insert_with(||json!({"key":key,"group":"receipt_type","label":row["name"],"amount":0,"line_ids":[],"quantities":{},"category_keys":[],"has_activity":false}));
+                entry["amount"] = json!(
+                    number(entry, "amount")?
+                        .checked_add(residual)
+                        .ok_or_else(invalid)?
+                );
+                entry["reconciliation"] = json!(residual);
+                entry["has_activity"] = json!(true);
+            }
+        }
         let mut groups = groups.into_values().collect::<Vec<_>>();
         for group in &mut groups {
             group["quantity_labels"] = json!(
@@ -176,7 +268,7 @@ impl Store {
         let limit = v["limit"].as_u64().unwrap_or(200).clamp(1, 500) as usize;
         let total = entries.len();
         Ok(
-            json!({"currency":currency,"net":net,"difference":if v["category"].is_null(){json!(all_difference)}else{Value::Null},"rounding_adjustment":if v["category"].is_null(){json!(rounding_adjustment)}else{Value::Null},"entries":entries.into_iter().skip(offset).take(limit).collect::<Vec<_>>(),"next_offset":if offset.saturating_add(limit)<total{Some(offset+limit)}else{None},"groups":groups,"spend":spend,"discounts":discounts,"refunds":refunds,"start":start,"end":end}),
+            json!({"currency":currency,"net":net,"difference":if v["category"].is_null() && v["receipt_type"].is_null(){json!(all_difference)}else{Value::Null},"rounding_adjustment":if v["category"].is_null() && v["receipt_type"].is_null(){json!(rounding_adjustment)}else{Value::Null},"entries":entries.into_iter().skip(offset).take(limit).collect::<Vec<_>>(),"next_offset":if offset.saturating_add(limit)<total{Some(offset+limit)}else{None},"groups":groups,"spend":spend,"discounts":discounts,"refunds":refunds,"start":start,"end":end}),
         )
     }
 
@@ -185,16 +277,39 @@ impl Store {
         let currency = self.report_currency()?;
         let mut series = std::collections::BTreeMap::<String, Value>::new();
         let count = points.len();
+        // The selector is a catalogue, not just the categories with spending in
+        // this window. Keep empty categories and children as independent curves.
+        for category in self.rows(catalog_queries::CATEGORIES_CONTAINING, &[json!("%")])? {
+            let key = format!("category:{}", text(&category, "category_id")?);
+            series.insert(
+                key.clone(),
+                json!({
+                    "key": key,
+                    "label": category["name"],
+                    "group": "category",
+                    "path": category["path"],
+                    "depth": category["depth"],
+                    "category_keys": [],
+                    "has_activity": false,
+                    "values": vec![0i64; count],
+                }),
+            );
+        }
+        for kind in self.rows(receipt_type_queries::LIST, &[])? {
+            let key = format!("receipt_type:{}", text(&kind, "receipt_type_id")?);
+            series.insert(key.clone(), json!({"key":key,"label":kind["name"],"group":"receipt_type","category_keys":[],"has_activity":false,"values":vec![0i64;count]}));
+        }
         for (index, point) in points.iter_mut().enumerate() {
-            let summary = self.report_action(
-                "summary",
+            let summary = self.report_data(
                 &json!({
                     "start": point["start"],
                     "end": point["end"],
                     "zone": input["zone"],
                     "category": input["category"],
+                    "receipt_type": input["receipt_type"],
                     "limit": 1,
                 }),
+                true,
             )?;
             point["net"] = summary["net"].clone();
             point["spend"] = summary["spend"].clone();
@@ -205,18 +320,43 @@ impl Store {
                         "key": key,
                         "label": group["label"],
                         "group": group["group"],
+                        "category_keys": [],
+                        "has_activity": false,
                         "values": vec![0i64; count],
                     })
                 });
+                for category in group["category_keys"].as_array().ok_or_else(invalid)? {
+                    if !line["category_keys"].as_array().unwrap().contains(category) {
+                        line["category_keys"]
+                            .as_array_mut()
+                            .unwrap()
+                            .push(category.clone());
+                    }
+                }
                 line["values"][index] = group["amount"].clone();
+                line["has_activity"] =
+                    json!(line["has_activity"] == true || group["has_activity"] == true);
             }
         }
+        let mut series = series.into_values().collect::<Vec<_>>();
+        series.sort_by(|a, b| {
+            (
+                a["group"].as_str(),
+                a["path"].as_str().or(a["label"].as_str()),
+                a["key"].as_str(),
+            )
+                .cmp(&(
+                    b["group"].as_str(),
+                    b["path"].as_str().or(b["label"].as_str()),
+                    b["key"].as_str(),
+                ))
+        });
         Ok(json!({
             "currency": currency,
             "period": input["period"],
             "window": input["window"],
             "points": points,
-            "series": series.into_values().collect::<Vec<_>>(),
+            "series": series,
         }))
     }
 }

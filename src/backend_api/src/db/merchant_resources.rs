@@ -46,6 +46,10 @@ pub(super) fn seed(store: &Store) -> Result<()> {
                 merchant
             }
         };
+        store.exec(
+            receipt_type_queries::SET_MERCHANT,
+            &[merchant.clone(), json!(GROCERY_RECEIPT_TYPE)],
+        )?;
         let blob = store.store_blob(bytes, false)?;
         store.exec("INSERT INTO logo_sample(logo_id,blob_id,merchant_id,created_at_utc_ms) VALUES (?,?,?,?)",
             &[json!(logo),json!(blob),merchant,json!(now())])?;

@@ -199,7 +199,8 @@ void main() {
     );
     await tester.pumpAndSettle();
     expect(find.text('票据名称'), findsOneWidget);
-    expect(find.text('商店名称'), findsOneWidget);
+    expect(find.text('商店'), findsOneWidget);
+    expect(find.widgetWithText(ChoiceChip, '商店类别'), findsNothing);
     expect(find.textContaining('0.50 kg'), findsNothing);
     for (final value in ['Rice', '']) {
       await tester.enterText(find.byType(TextField), value);

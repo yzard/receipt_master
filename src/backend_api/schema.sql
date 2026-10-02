@@ -10,6 +10,57 @@ CREATE TABLE merchant (
     name TEXT NOT NULL CHECK (length(trim(name)) > 0)
 );
 
+-- BEGIN RECEIPT TYPES
+CREATE TABLE receipt_type (
+    receipt_type_id TEXT PRIMARY KEY,
+    name TEXT NOT NULL CHECK (length(trim(name)) > 0),
+    system_key TEXT UNIQUE CHECK (system_key IS NULL OR system_key = 'uncategorized')
+);
+CREATE UNIQUE INDEX receipt_type_name_uq ON receipt_type(name COLLATE NOCASE);
+
+INSERT INTO receipt_type VALUES
+    ('10000000-0000-4000-8000-000000000001', '未分类', 'uncategorized'),
+    ('10000000-0000-4000-8000-000000000002', '杂货', NULL),
+    ('10000000-0000-4000-8000-000000000003', '餐馆', NULL),
+    ('10000000-0000-4000-8000-000000000004', '旅行', NULL);
+
+CREATE TRIGGER receipt_type_protect_delete BEFORE DELETE ON receipt_type
+WHEN OLD.system_key IS NOT NULL BEGIN
+    SELECT RAISE(ABORT, 'protected receipt type');
+END;
+CREATE TRIGGER receipt_type_protect_update BEFORE UPDATE ON receipt_type
+WHEN OLD.system_key IS NOT NULL BEGIN
+    SELECT RAISE(ABORT, 'protected receipt type');
+END;
+
+CREATE TABLE merchant_receipt_type (
+    merchant_id TEXT PRIMARY KEY REFERENCES merchant(merchant_id) ON DELETE CASCADE,
+    receipt_type_id TEXT NOT NULL REFERENCES receipt_type(receipt_type_id)
+);
+CREATE INDEX merchant_receipt_type_idx ON merchant_receipt_type(receipt_type_id);
+
+CREATE TABLE receipt_type_assignment (
+    receipt_id TEXT PRIMARY KEY REFERENCES receipt(receipt_id) ON DELETE CASCADE,
+    receipt_type_id TEXT NOT NULL REFERENCES receipt_type(receipt_type_id)
+);
+CREATE INDEX receipt_type_assignment_idx ON receipt_type_assignment(receipt_type_id);
+
+-- A line override is stored only when it differs from its receipt default.
+CREATE TABLE line_receipt_type_assignment (
+    line_id TEXT PRIMARY KEY REFERENCES receipt_line(line_id) ON DELETE CASCADE,
+    receipt_type_id TEXT NOT NULL REFERENCES receipt_type(receipt_type_id)
+);
+CREATE INDEX line_receipt_type_assignment_idx ON line_receipt_type_assignment(receipt_type_id);
+
+CREATE VIEW line_effective_receipt_type AS
+SELECT l.line_id
+     , COALESCE(a.receipt_type_id, r.receipt_type_id,
+                '10000000-0000-4000-8000-000000000001') AS receipt_type_id
+  FROM receipt_line l
+  LEFT JOIN line_receipt_type_assignment a USING(line_id)
+  LEFT JOIN receipt_type_assignment r USING(receipt_id);
+-- END RECEIPT TYPES
+
 CREATE TABLE store_location (
     location_id TEXT PRIMARY KEY,
     merchant_id TEXT NOT NULL REFERENCES merchant(merchant_id),
@@ -411,4 +462,4 @@ CREATE TABLE line_tax_code (
 );
 CREATE INDEX line_sku_sku_idx ON line_sku(sku_id);
 
-PRAGMA user_version=15;
+PRAGMA user_version=16;

@@ -243,6 +243,7 @@ describe("interactive web workflows", () => {
         lines={[{ id: "product", kind: "product", rawName: "Milk" }]}
         currency="USD"
         categories={[]}
+        receiptTypes={[]}
         onSave={save}
         onClose={() => {}}
       />,

@@ -27,56 +27,91 @@ class ReportTrendChart extends StatelessWidget {
   final ValueChanged<int> onSelect;
   final VoidCallback onOlder, onNewer;
 
-  static Color seriesColor(int index, Color tertiary, Color secondary) => [
-    tertiary,
-    secondary,
-    const Color(0xFFD17B24),
-    const Color(0xFF008F85),
-    const Color(0xFFBE4D86),
-    const Color(0xFF6C66C8),
-    const Color(0xFF70972F),
-  ][index % 7];
+  static Color seriesColor(String key, Color tertiary, Color secondary) {
+    var hash = 0;
+    for (final code in key.codeUnits) {
+      hash = (hash * 31 + code) & 0x7fffffff;
+    }
+    return [
+      tertiary,
+      secondary,
+      const Color(0xFFD17B24),
+      const Color(0xFF008F85),
+      const Color(0xFFBE4D86),
+      const Color(0xFF6C66C8),
+      const Color(0xFF70972F),
+    ][hash % 7];
+  }
 
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
-    return LayoutBuilder(
-      builder: (context, constraints) => Semantics(
-        label: '消费趋势折线图，左右滑动查看其他时间，点击数据点查看该期明细',
-        child: GestureDetector(
-          behavior: HitTestBehavior.opaque,
-          onTapUp: (event) {
-            if (points.isEmpty) return;
-            final width = constraints.maxWidth - 64;
-            final x = (event.localPosition.dx - 50).clamp(0.0, width);
-            final index = (x / width * (points.length - 1)).round();
-            onSelect(index);
-          },
-          onHorizontalDragEnd: (details) {
-            final speed = details.primaryVelocity ?? 0;
-            if (speed > 120) onOlder();
-            if (speed < -120) onNewer();
-          },
-          child: SizedBox(
-            height: 268,
-            width: double.infinity,
-            child: CustomPaint(
-              painter: _TrendPainter(
-                points: points,
-                series: series,
-                visibleSeries: visibleSeries,
-                selectedIndex: selectedIndex,
-                scale: math.pow(10, currencies[currency] ?? 2).toInt(),
-                primary: scheme.primary,
-                tertiary: scheme.tertiary,
-                secondary: scheme.secondary,
-                foreground: scheme.onSurfaceVariant,
-                grid: scheme.outlineVariant.withValues(alpha: .6),
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        LayoutBuilder(
+          builder: (context, constraints) => Semantics(
+            label: '消费趋势折线图，左右滑动查看其他时间，点击数据点查看该期明细',
+            child: GestureDetector(
+              behavior: HitTestBehavior.opaque,
+              onTapUp: (event) {
+                if (points.isEmpty) return;
+                final width = constraints.maxWidth - 64;
+                final x = (event.localPosition.dx - 50).clamp(0.0, width);
+                final index = (x / width * (points.length - 1)).round();
+                onSelect(index);
+              },
+              onHorizontalDragEnd: (details) {
+                final speed = details.primaryVelocity ?? 0;
+                if (speed > 120) onOlder();
+                if (speed < -120) onNewer();
+              },
+              child: SizedBox(
+                height: 268,
+                width: double.infinity,
+                child: CustomPaint(
+                  painter: _TrendPainter(
+                    points: points,
+                    series: series,
+                    visibleSeries: visibleSeries,
+                    selectedIndex: selectedIndex,
+                    scale: math.pow(10, currencies[currency] ?? 2).toInt(),
+                    primary: scheme.primary,
+                    tertiary: scheme.tertiary,
+                    secondary: scheme.secondary,
+                    foreground: scheme.onSurfaceVariant,
+                    grid: scheme.outlineVariant.withValues(alpha: .6),
+                  ),
+                ),
               ),
             ),
           ),
         ),
-      ),
+        const SizedBox(height: 8),
+        Semantics(
+          label: '图例',
+          child: Wrap(
+            spacing: 12,
+            runSpacing: 8,
+            children: [
+              _TrendLegend('总金额', scheme.primary),
+              for (final row in series)
+                if (visibleSeries.contains(row['key']) &&
+                    (row['has_activity'] as bool? ??
+                        (row['values'] as List).any((value) => value != 0)))
+                  _TrendLegend(
+                    '${row['group'] == 'category'
+                        ? '商品分类'
+                        : row['group'] == 'receipt_type'
+                        ? '商店类别'
+                        : '商品'} · ${row['label']}',
+                    seriesColor(row['key'], scheme.tertiary, scheme.secondary),
+                  ),
+            ],
+          ),
+        ),
+      ],
     );
   }
 }
@@ -109,11 +144,13 @@ class _TrendPainter extends CustomPainter {
     final plot = Rect.fromLTRB(50, 18, size.width - 14, size.height - 34);
     final lines = <(List<int>, Color, bool)>[
       (points.map((p) => amount(p['net'])).toList(), primary, true),
-      for (final (index, row) in series.indexed)
-        if (visibleSeries.contains(row['key']))
+      for (final row in series)
+        if (visibleSeries.contains(row['key']) &&
+            (row['has_activity'] as bool? ??
+                (row['values'] as List).any((value) => value != 0)))
           (
             (row['values'] as List).map(amount).toList(),
-            ReportTrendChart.seriesColor(index, tertiary, secondary),
+            ReportTrendChart.seriesColor(row['key'], tertiary, secondary),
             false,
           ),
     ];
@@ -217,4 +254,39 @@ class _TrendPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(covariant _TrendPainter old) => true;
+}
+
+class _TrendLegend extends StatelessWidget {
+  const _TrendLegend(this.label, this.color);
+  final String label;
+  final Color color;
+  @override
+  Widget build(BuildContext context) => Tooltip(
+    message: label,
+    child: Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Container(
+          width: 24,
+          height: 3,
+          decoration: BoxDecoration(
+            color: color,
+            borderRadius: BorderRadius.circular(3),
+          ),
+        ),
+        const SizedBox(width: 6),
+        ConstrainedBox(
+          constraints: BoxConstraints(
+            maxWidth: math.max(80, MediaQuery.sizeOf(context).width - 100),
+          ),
+          child: Text(
+            label,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: Theme.of(context).textTheme.labelMedium,
+          ),
+        ),
+      ],
+    ),
+  );
 }
