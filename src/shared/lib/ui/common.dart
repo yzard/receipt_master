@@ -1,3 +1,5 @@
+import '../l10n/strings.dart';
+
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:timezone/timezone.dart' as tz;
@@ -5,14 +7,19 @@ import 'package:timezone/timezone.dart' as tz;
 import '../domain/models.dart';
 import 'app_theme.dart';
 
-String itemDisplayName(String? productName, String? printedName, String kind) {
+String itemDisplayName(
+  BuildContext context,
+  String? productName,
+  String? printedName,
+  String kind,
+) {
   final product = productName?.trim() ?? '';
   final printed = printedName?.trim() ?? '';
   return product.isNotEmpty
       ? product
       : printed.isNotEmpty
       ? printed
-      : kindLabels[kind]!;
+      : context.tr(kindLabels[kind]!);
 }
 
 class ReceiptItemName extends StatelessWidget {
@@ -27,7 +34,7 @@ class ReceiptItemName extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final name = itemDisplayName(productName, printedName, kind);
+    final name = itemDisplayName(context, productName, printedName, kind);
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -55,8 +62,8 @@ String dateText(int utc, String zone) => DateFormat('yyyy-MM-dd HH:mm').format(
 void showError(BuildContext context, Object error) {
   if (!context.mounted) return;
   final text = error is InputError
-      ? error.message
-      : '操作失败，请检查输入或重试。${error.runtimeType}';
+      ? context.translatedMessage(error.message)
+      : context.tr("操作失败，请检查输入或重试。{0}", [error.runtimeType]);
   ScaffoldMessenger.of(context).showSnackBar(
     SnackBar(
       content: Text(text),
@@ -75,11 +82,11 @@ Future<bool> confirm(BuildContext context, String title, String body) async =>
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx, false),
-            child: const Text('取消'),
+            child: Text(context.tr("取消")),
           ),
           FilledButton(
             onPressed: () => Navigator.pop(ctx, true),
-            child: const Text('确认'),
+            child: Text(context.tr("确认")),
           ),
         ],
       ),
@@ -104,11 +111,11 @@ Future<String?> askText(
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(ctx),
-          child: const Text('取消'),
+          child: Text(context.tr("取消")),
         ),
         FilledButton(
           onPressed: () => Navigator.pop(ctx, controller.text),
-          child: const Text('确定'),
+          child: Text(context.tr("确定")),
         ),
       ],
     ),
@@ -124,7 +131,7 @@ Future<String?> chooseCategory(
 ) async => showDialog<String>(
   context: context,
   builder: (ctx) => SimpleDialog(
-    title: const Text('选择商品分类'),
+    title: Text(context.tr("选择商品分类")),
     children: categories
         .map(
           (c) => ListTile(
@@ -189,7 +196,7 @@ class Notice extends StatelessWidget {
       children: [
         const Icon(Icons.info_outline, size: 20),
         const SizedBox(width: 8),
-        Expanded(child: Text(text)),
+        Expanded(child: Text(context.translatedMessage(text))),
       ],
     ),
   );

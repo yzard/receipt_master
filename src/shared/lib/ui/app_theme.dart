@@ -1,3 +1,5 @@
+import '../l10n/strings.dart';
+
 import 'dart:io';
 import 'dart:ui';
 
@@ -5,12 +7,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:path/path.dart' as p;
 
-/// Appearance is a device preference; receipt and recognition data stay on the server.
+/// Appearance and interface language are device preferences.
+/// Receipt and recognition data stay on the server.
 class Appearance extends ChangeNotifier {
   Appearance(this.root);
 
   final String root;
   ThemeMode mode = ThemeMode.system;
+  Locale locale = const Locale('zh');
+
+  File get _languageFile => File(p.join(root, 'language.txt'));
 
   File get _file => File(p.join(root, 'appearance.txt'));
 
@@ -26,7 +32,34 @@ class Appearance extends ChangeNotifier {
     } on FileSystemException {
       mode = ThemeMode.system;
     }
+    try {
+      if (await _languageFile.exists()) {
+        locale = switch ((await _languageFile.readAsString()).trim()) {
+          'en' => const Locale('en'),
+          _ => const Locale('zh'),
+        };
+      }
+    } on FileSystemException {
+      locale = const Locale('zh');
+    }
     notifyListeners();
+  }
+
+  Future<void> setLocale(Locale value) async {
+    if (!ReceiptLocalizations.supportedLocales.contains(value)) {
+      throw ArgumentError.value(value, 'locale', 'Unsupported language');
+    }
+    if (locale == value) return;
+    final previous = locale;
+    locale = value;
+    notifyListeners();
+    try {
+      await _languageFile.writeAsString(value.languageCode, flush: true);
+    } catch (_) {
+      locale = previous;
+      notifyListeners();
+      rethrow;
+    }
   }
 
   Future<void> setMode(ThemeMode value) async {
@@ -271,9 +304,13 @@ class AppearancePicker extends StatelessWidget {
     return Row(
       children: [
         for (final (mode, icon, label) in [
-          (ThemeMode.system, Icons.brightness_auto_outlined, '跟随系统'),
-          (ThemeMode.light, Icons.light_mode_outlined, '浅色'),
-          (ThemeMode.dark, Icons.dark_mode_outlined, '深色'),
+          (
+            ThemeMode.system,
+            Icons.brightness_auto_outlined,
+            context.tr("跟随系统"),
+          ),
+          (ThemeMode.light, Icons.light_mode_outlined, context.tr("浅色")),
+          (ThemeMode.dark, Icons.dark_mode_outlined, context.tr("深色")),
         ])
           Expanded(
             child: Padding(

@@ -1,3 +1,5 @@
+import '../l10n/strings.dart';
+
 import 'package:flutter/material.dart';
 
 import '../data/store.dart';
@@ -49,7 +51,9 @@ class _ReceiptTypesManagerState extends State<ReceiptTypesManager> {
       context: context,
       builder: (ctx) => StatefulBuilder(
         builder: (ctx, update) => AlertDialog(
-          title: Text(type == null ? '添加商店类别' : '编辑商店类别'),
+          title: Text(
+            type == null ? context.tr("添加店铺类别") : context.tr("编辑店铺类别"),
+          ),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -57,8 +61,10 @@ class _ReceiptTypesManagerState extends State<ReceiptTypesManager> {
                 controller: controller,
                 autofocus: true,
                 decoration: InputDecoration(
-                  labelText: '商店类别名称',
-                  errorText: message,
+                  labelText: context.tr("店铺类别名称"),
+                  errorText: message == null
+                      ? null
+                      : context.translatedMessage(message!),
                 ),
               ),
             ],
@@ -66,7 +72,7 @@ class _ReceiptTypesManagerState extends State<ReceiptTypesManager> {
           actions: [
             TextButton(
               onPressed: saving ? null : () => Navigator.pop(ctx),
-              child: const Text('取消'),
+              child: Text(context.tr("取消")),
             ),
             FilledButton(
               onPressed: saving
@@ -86,7 +92,7 @@ class _ReceiptTypesManagerState extends State<ReceiptTypesManager> {
                         if (ctx.mounted) update(() => saving = false);
                       }
                     },
-              child: const Text('保存类别'),
+              child: Text(context.tr("保存类别")),
             ),
           ],
         ),
@@ -101,7 +107,7 @@ class _ReceiptTypesManagerState extends State<ReceiptTypesManager> {
   Widget build(BuildContext context) => Column(
     crossAxisAlignment: CrossAxisAlignment.stretch,
     children: [
-      const Text('商店类别与商品种类独立。商店类别用于新识别收据，修改商店不会改变历史消费。'),
+      Text(context.tr("店铺类别与商品种类独立。店铺类别用于新识别收据，修改店铺不会改变历史消费。")),
       if (busy) const LinearProgressIndicator(),
       if (error != null) Notice(error!),
       Wrap(
@@ -117,8 +123,8 @@ class _ReceiptTypesManagerState extends State<ReceiptTypesManager> {
                   : () async {
                       if (await confirm(
                         context,
-                        '删除商店类别',
-                        '保留所有收据，关联消费和商店变为未分类。',
+                        context.tr("删除店铺类别"),
+                        context.tr("保留所有收据，关联消费和店铺变为未分类。"),
                       )) {
                         await run(
                           () => widget.store.deleteReceiptType(
@@ -135,11 +141,14 @@ class _ReceiptTypesManagerState extends State<ReceiptTypesManager> {
         child: TextButton.icon(
           onPressed: busy ? null : () => edit(null),
           icon: const Icon(Icons.add),
-          label: const Text('添加商店类别'),
+          label: Text(context.tr("添加店铺类别")),
         ),
       ),
       const SizedBox(height: 16),
-      Text('商店类别设置', style: Theme.of(context).textTheme.titleMedium),
+      Text(
+        context.tr("店铺类别设置"),
+        style: Theme.of(context).textTheme.titleMedium,
+      ),
       for (final m in merchants)
         Padding(
           padding: const EdgeInsets.symmetric(vertical: 8),
@@ -151,7 +160,7 @@ class _ReceiptTypesManagerState extends State<ReceiptTypesManager> {
                 child: DropdownButtonFormField<String>(
                   key: ValueKey('${m['merchant_id']}-${m['receipt_type_id']}'),
                   initialValue: m['receipt_type_id'],
-                  decoration: const InputDecoration(labelText: '商店类别'),
+                  decoration: InputDecoration(labelText: context.tr("店铺类别")),
                   items: [
                     for (final t in types)
                       DropdownMenuItem(

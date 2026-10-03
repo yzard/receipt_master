@@ -71,7 +71,7 @@ function writes(op: ReturnType<typeof vi.spyOn>) {
 }
 async function changeStore() {
   await screen.findByDisplayValue("Store");
-  fireEvent.change(screen.getByLabelText("商店名称"), {
+  fireEvent.change(screen.getByLabelText("店铺名称"), {
     target: { value: "Edited" },
   });
 }
@@ -106,7 +106,7 @@ describe("explicit receipt editing", () => {
     expect(back).not.toHaveBeenCalled();
     expect(writes(op)).toEqual([]);
     fireEvent.click(within(dialog).getByRole("button", { name: "继续编辑" }));
-    expect(screen.getByLabelText("商店名称")).toHaveProperty("value", "Edited");
+    expect(screen.getByLabelText("店铺名称")).toHaveProperty("value", "Edited");
     fireEvent.click(screen.getByRole("button", { name: "返回收据" }));
     fireEvent.click(
       within(await screen.findByRole("dialog")).getByRole("button", {
@@ -177,7 +177,7 @@ describe("explicit receipt editing", () => {
       "textContent",
       "保存失败",
     );
-    expect(screen.getByLabelText("商店名称")).toHaveProperty("value", "Edited");
+    expect(screen.getByLabelText("店铺名称")).toHaveProperty("value", "Edited");
     expect(back).not.toHaveBeenCalled();
   });
   it("retries recognition from the stored revision without saving local changes", async () => {
@@ -205,7 +205,7 @@ describe("explicit receipt editing", () => {
         screen.getByRole("button", { name: "旋转照片" }),
       ).not.toHaveProperty("disabled", true),
     );
-    expect(screen.getByLabelText("商店名称")).toHaveProperty("value", "Edited");
+    expect(screen.getByLabelText("店铺名称")).toHaveProperty("value", "Edited");
     expect(writes(op)).toEqual([]);
   });
   it("shows product name before printed name in the item form", async () => {

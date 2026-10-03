@@ -1,3 +1,5 @@
+import '../l10n/strings.dart';
+
 import 'package:flutter/material.dart';
 
 import '../data/store.dart';
@@ -83,7 +85,9 @@ class _CategoryEditorDialogState extends State<CategoryEditorDialog> {
 
   @override
   Widget build(BuildContext context) => AlertDialog(
-    title: Text(widget.category == null ? '添加商品种类' : '编辑商品种类'),
+    title: Text(
+      widget.category == null ? context.tr("添加商品种类") : context.tr("编辑商品种类"),
+    ),
     scrollable: true,
     content: Column(
       mainAxisSize: MainAxisSize.min,
@@ -92,7 +96,7 @@ class _CategoryEditorDialogState extends State<CategoryEditorDialog> {
           store: widget.store,
           component: 'categories',
           controller: name,
-          label: '商品种类',
+          label: context.tr("商品种类"),
           enabled: !submitting,
           rejectExistingName: true,
           currentId: widget.category?['category_id'],
@@ -101,14 +105,14 @@ class _CategoryEditorDialogState extends State<CategoryEditorDialog> {
         ),
         if (error != null)
           Text(
-            error!,
+            context.translatedMessage(error!),
             style: TextStyle(color: Theme.of(context).colorScheme.error),
           ),
         DropdownButtonFormField<String>(
           initialValue: parent ?? '',
-          decoration: const InputDecoration(labelText: '父类'),
+          decoration: InputDecoration(labelText: context.tr("父类")),
           items: [
-            const DropdownMenuItem(value: '', child: Text('顶层')),
+            DropdownMenuItem(value: '', child: Text(context.tr("顶层"))),
             for (final c in widget.categories)
               if (!excluded.contains(c['category_id']))
                 DropdownMenuItem(
@@ -125,9 +129,12 @@ class _CategoryEditorDialogState extends State<CategoryEditorDialog> {
     actions: [
       TextButton(
         onPressed: submitting ? null : () => Navigator.pop(context),
-        child: const Text('取消'),
+        child: Text(context.tr("取消")),
       ),
-      TextButton(onPressed: submitting ? null : save, child: const Text('保存')),
+      TextButton(
+        onPressed: submitting ? null : save,
+        child: Text(context.tr("保存")),
+      ),
     ],
   );
 }

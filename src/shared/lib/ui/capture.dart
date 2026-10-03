@@ -1,3 +1,5 @@
+import '../l10n/strings.dart';
+
 import 'dart:async';
 import 'dart:typed_data';
 
@@ -177,13 +179,13 @@ class _CapturePageState extends State<CapturePage> with WidgetsBindingObserver {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Text(
-                          error!,
+                          context.translatedMessage(error!),
                           textAlign: TextAlign.center,
                           style: const TextStyle(color: Colors.white),
                         ),
                         TextButton(
                           onPressed: scheduleCamera,
-                          child: const Text('重试相机'),
+                          child: Text(context.tr("重试相机")),
                         ),
                       ],
                     ),
@@ -213,7 +215,7 @@ class _CapturePageState extends State<CapturePage> with WidgetsBindingObserver {
                     ),
                     Expanded(
                       child: Text(
-                        '拍摄收据 · ${session.pages.length} 张',
+                        context.tr("拍摄收据 · {0} 张", [session.pages.length]),
                         style: const TextStyle(
                           color: Colors.white,
                           fontSize: 19,
@@ -245,8 +247,8 @@ class _CapturePageState extends State<CapturePage> with WidgetsBindingObserver {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     if (busy) const LinearProgressIndicator(),
-                    const Text(
-                      '分段拍摄时，让相邻照片保留重叠区域',
+                    Text(
+                      context.tr("分段拍摄时，让相邻照片保留重叠区域"),
                       style: TextStyle(color: Colors.white70, fontSize: 12),
                     ),
                     if (session.pages.isNotEmpty)
@@ -294,7 +296,7 @@ class _CapturePageState extends State<CapturePage> with WidgetsBindingObserver {
                                 top: 0,
                                 right: 0,
                                 child: Tooltip(
-                                  message: '删除第 ${i + 1} 张照片',
+                                  message: context.tr("删除第 {0} 张照片", [i + 1]),
                                   child: GestureDetector(
                                     onTap: busy ? null : () => removePhoto(i),
                                     behavior: HitTestBehavior.opaque,
@@ -330,7 +332,7 @@ class _CapturePageState extends State<CapturePage> with WidgetsBindingObserver {
                       ),
                     if (selected >= 0)
                       Text(
-                        '重拍将替换第 ${selected + 1} 张',
+                        context.tr("重拍将替换第 {0} 张", [selected + 1]),
                         style: const TextStyle(
                           color: Colors.white70,
                           fontSize: 12,
@@ -348,7 +350,7 @@ class _CapturePageState extends State<CapturePage> with WidgetsBindingObserver {
                             onPressed: busy || selected < 0 || camera == null
                                 ? null
                                 : () => shoot(true),
-                            child: const Text('重拍'),
+                            child: Text(context.tr("重拍")),
                           ),
                         ),
                         const SizedBox(width: 10),
@@ -357,7 +359,7 @@ class _CapturePageState extends State<CapturePage> with WidgetsBindingObserver {
                             onPressed: busy || camera == null
                                 ? null
                                 : () => shoot(false),
-                            child: const Text('拍摄'),
+                            child: Text(context.tr("拍摄")),
                           ),
                         ),
                         const SizedBox(width: 10),
@@ -366,7 +368,7 @@ class _CapturePageState extends State<CapturePage> with WidgetsBindingObserver {
                             onPressed: busy || session.pages.isEmpty
                                 ? null
                                 : finish,
-                            child: const Text('完成'),
+                            child: Text(context.tr("完成")),
                           ),
                         ),
                       ],

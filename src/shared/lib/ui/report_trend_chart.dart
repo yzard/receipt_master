@@ -1,3 +1,5 @@
+import '../l10n/strings.dart';
+
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
@@ -52,7 +54,7 @@ class ReportTrendChart extends StatelessWidget {
       children: [
         LayoutBuilder(
           builder: (context, constraints) => Semantics(
-            label: '消费趋势折线图，左右滑动查看其他时间，点击数据点查看该期明细',
+            label: context.tr("消费趋势折线图，左右滑动查看其他时间，点击数据点查看该期明细"),
             child: GestureDetector(
               behavior: HitTestBehavior.opaque,
               onTapUp: (event) {
@@ -90,22 +92,22 @@ class ReportTrendChart extends StatelessWidget {
         ),
         const SizedBox(height: 8),
         Semantics(
-          label: '图例',
+          label: context.tr("图例"),
           child: Wrap(
             spacing: 12,
             runSpacing: 8,
             children: [
-              _TrendLegend('总金额', scheme.primary),
+              _TrendLegend(context.tr("总金额"), scheme.primary),
               for (final row in series)
                 if (visibleSeries.contains(row['key']) &&
                     (row['has_activity'] as bool? ??
                         (row['values'] as List).any((value) => value != 0)))
                   _TrendLegend(
                     '${row['group'] == 'category'
-                        ? '商品分类'
+                        ? context.tr("商品分类")
                         : row['group'] == 'receipt_type'
-                        ? '商店类别'
-                        : '商品'} · ${row['label']}',
+                        ? context.tr("店铺类别")
+                        : context.tr("商品")} · ${row['label']}',
                     seriesColor(row['key'], scheme.tertiary, scheme.secondary),
                   ),
             ],

@@ -2,7 +2,7 @@
 
 # NInfer / Qwen3.8 收据实测
 
-日期：2026-09-18。使用上一轮完全相同的 **32 张收据原图**、票面名称标注和通用/商店提示规则。原确认数据库、照片与生产识别配置未修改。
+日期：2026-09-18。使用上一轮完全相同的 **32 张收据原图**、票面名称标注和通用/店铺提示规则。原确认数据库、照片与生产识别配置未修改。
 
 ## 结论
 
@@ -60,11 +60,11 @@ NInfer 本轮原始回复中，能直接解析成 JSON 对象的有 **2/32**；�
 - thinking 关闭、temperature 0、seed 42、上下文与 KV 容量 32768、FP8 KV、并发 1、MTP 3-token 推测解码、优化 proposal head、最大输出 8192 token。
 - 同样先 EXIF 调正原图再传 PNG。NInfer 使用模型自带 16,777,216 像素上限；原图约 12.5 MP，而上一轮 llama.cpp 限制 4096 图像 token。因此分辨率、量化、模板与结构化输出机制都不同，**这是实际部署配置对比，不能把精度或速度差异全部归因于引擎**。
 - 一次设备显存采样为 26,819 MiB（约 26.2 GiB），不是峰值。模型运行时只发布本机回环测试端口；原 backend_api 保持运行，双 OCR 暂停让出 GPU，测试后恢复。
-- 沿用[原图票面名称标注](../tests/backend_api/corpus/annotations/2026-09-18-printed-names.json)，不使用商品名称作为文字答案。标注由 Codex 逐图核验，未经过用户独立复核；未评测中文续行逐字准确率、Logo、多图长收据或新商店泛化。
+- 沿用[原图票面名称标注](../tests/backend_api/corpus/annotations/2026-09-18-printed-names.json)，不使用商品名称作为文字答案。标注由 Codex 逐图核验，未经过用户独立复核；未评测中文续行逐字准确率、Logo、多图长收据或新店铺泛化。
 
 ## 逐张票面名称
 
-| 收据 | 商店 | 双 OCR | llama.cpp Q4_K_M | NInfer NVFP4 | NInfer 商品行数/原图 |
+| 收据 | 店铺 | 双 OCR | llama.cpp Q4_K_M | NInfer NVFP4 | NInfer 商品行数/原图 |
 | --- | --- | ---: | ---: | ---: | ---: |
 | [57bb2995](../tests/backend_api/corpus/baselines/2026-09-18-qwen38-q4/images/57bb2995-1993-4ff0-863e-43764ee31526-0.jpg) | Costco | 5/6 | 6/6 | 6/6 | 6/6 |
 | [834a4c6e](../tests/backend_api/corpus/baselines/2026-09-18-qwen38-q4/images/834a4c6e-9307-40bb-acf6-c143c5f41e73-0.jpg) | skyFOODS | 7/8 | 8/8 | 8/8 | 10/10 |

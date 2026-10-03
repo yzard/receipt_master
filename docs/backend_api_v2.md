@@ -1,4 +1,4 @@
-> 当前采用 Qwen3.8 + NInfer + thinking，由 backend_api 组合通用和商店提示并校验结构化结果；下文保留历史计划。现行设计见 [backend_ocr.md](backend_ocr.md)。
+> 当前采用 Qwen3.8 + NInfer + thinking，由 backend_api 组合通用和店铺提示并校验结构化结果；下文保留历史计划。现行设计见 [backend_ocr.md](backend_ocr.md)。
 
 # 第二版统一数据 API
 
@@ -89,7 +89,7 @@ Compose 将宿主 `playground/backend_api/` 绑定到 API 的 `/data`。其下�
 ## 客户端职责与服务器配置
 
 `playground/backend_api/config.toml` 只配置 API 本身以及 `[ocr]` 的服务 URL 和独立认证密钥。启动时 `BACKEND_OCR_URL` 与 `BACKEND_OCR_API_KEY` 可分别覆盖这两个 TOML 值，供 Docker Compose 部署配置使用；覆盖值仍经过同样验证。模型名称、输出长度、thinking、图片上限等推理参数在 OCR 自己的 `playground/backend_ocr/config.toml`；API 提示词在自己的 `prompt.toml`。两个服务都由启动参数 `--data-dir` 指定各自目录并读取固定文件名 `config.toml`。JWT 签名密钥保存在 API 的 `[general].jwt_secret`，不发给客户端；OCR 服务端 `[general].api_key` 必须与 API 最终使用的密钥相同。TOML 和部署环境中的密钥只允许管理员读取。API 的 `[general].web_path` 指向镜像内 `/app/web` 静态资源。API 通过受认证的 OCR capabilities 接口获取图片上限，不复制模型配置。修改对应配置后重启相应服务。当前本地 NInfer 不按 token 收费，费用估算和预算提醒已移除。
-每次收据识别都先执行 Logo 定位与匹配，然后按识别出的商店选择专用提示词；未匹配时使用通用提示词。API 配置不提供关闭 Logo 的开关。
+每次收据识别都先执行 Logo 定位与匹配，然后按识别出的店铺选择专用提示词；未匹配时使用通用提示词。API 配置不提供关闭 Logo 的开关。
 
 客户端不显示或保存 OCR 模型、provider 地址或服务间密钥。安装包只预置后端 origin 与客户端认证密钥；设置中的“连接并验证”验证后端认证。识别任务入口保留状态和可编辑结果。重量显示单位属于共享展示偏好，仍可在设置修改。
 
@@ -203,7 +203,7 @@ python3 tests/backend_api/smoke_async.py --scenario parallel \
 - `API config.toml` 的 `logos.identity_threshold=0.55`、`minimum_evidence=0.75` 和 `margin=0.05` 共同决定自动认店；同店多样本取最佳，比较不同店名的分差。新分数与旧余弦分数不具可比性。不足或模棱两可时不认店，不回退 OCR 猜店名。
 - API：保留 `logos/list/extract/save/delete`。新增受认证的 `logos/match`（receipt_id），只读返回 selected、各参考样本 score/evidence/coverage/inliers/regions，以及版本化模型标识。模型内部接口为 `/v1/logo/match`，每批最多 8 个参考图，API 自动分批；不得将任意远程图片 URL 传给模型。匹配前后校验样本列表、目录版本与原图片关联，改名、删除或旋转导致变化时拒绝旧结果。
 - 模型权重固定 SHA256 并打入 OCR 镜像；启动时核验本地权重，不联网下载。内容寻址 LRU 缓存最多 128 份局部特征，缓存不属于业务数据库；模型变更或容器重启后从持久裁剪图重新计算。Logo 匹配与两种 OCR 共用串行队列，保持两个容器。
-- “商店名称”仍是图像到店名的人工映射；删除原收据保留已确认样本，删除别名后该图不再作为参考。全新数据库直接安装镜像内审核过的裁剪图及标签；重启不覆盖用户改名或删除。
+- “店铺名称”仍是图像到店名的人工映射；删除原收据保留已确认样本，删除别名后该图不再作为参考。全新数据库直接安装镜像内审核过的裁剪图及标签；重启不覆盖用户改名或删除。
 
 模型依据：[SuperPoint](https://arxiv.org/abs/1712.07629)、[LightGlue](https://github.com/cvg/LightGlue)。分区域折痕验证和前景覆盖计分由本项目实现，不把通用模型能力宣称为纸张折痕保证。
 
@@ -219,20 +219,20 @@ python3 tests/backend_api/smoke_logo_alias.py \
 该测试只创建/清理自己的样本别名与收据，证明新收据使用图像别名而非 OCR 文本店名；不作为不同照片的匹配准确率。现有 17 张调试语料的留一比较在 0.90/0.08 下为 9 次正确自动匹配、8 次拒绝匹配、0 次错误自动匹配，初始阈值依据这一小样本，尚非独立验证。
 
 
-### 商品税码与商店 SKU
+### 商品税码与店铺 SKU
 
-Costco（店名含 Costco、开市客或好市多）商品以 `^\s*(?:([A-Za-z])\s+)?([0-9]+)\s+(\S(?:.*\S)?)\s*$` 拆分票面前缀，例如 `E 2338 WHITE PEACH` → `taxCode=E`、`sku=2338`、`rawName=WHITE PEACH`。税码只保留一个字符，不推断税率/税种。其他商店不自动套用这一规则。识别、拆分和校验全部在 backend_api；客户端仅显示和提交编辑。
+Costco（店名含 Costco、开市客或好市多）商品以 `^\s*(?:([A-Za-z])\s+)?([0-9]+)\s+(\S(?:.*\S)?)\s*$` 拆分票面前缀，例如 `E 2338 WHITE PEACH` → `taxCode=E`、`sku=2338`、`rawName=WHITE PEACH`。税码只保留一个字符，不推断税率/税种。其他店铺不自动套用这一规则。识别、拆分和校验全部在 backend_api；客户端仅显示和提交编辑。
 
-DTO 的 `taxCode`、`sku` 均为可空字符串；SKU 保留前导零。`sku(sku_id, merchant_id, code)` 对 `(merchant_id, code)` 唯一，店名经 merchant 关联，不重复存储；`line_sku(line_id, sku_id)` 关联票面明细，`line_tax_code(line_id, tax_code)` 保留该次交易的税码。未确认店名的手工 SKU 暂存 `line_unmatched_sku(line_id, code)`，设置店名后保存会绑定到相应商店 SKU。SKU 不直接决定品牌、规格或跨店商品身份，按票面名称与重量关联商品，按商品名称跨店汇总。四张表符合 3NF；不要求每件商品有 SKU。
+DTO 的 `taxCode`、`sku` 均为可空字符串；SKU 保留前导零。`sku(sku_id, merchant_id, code)` 对 `(merchant_id, code)` 唯一，店名经 merchant 关联，不重复存储；`line_sku(line_id, sku_id)` 关联票面明细，`line_tax_code(line_id, tax_code)` 保留该次交易的税码。未确认店名的手工 SKU 暂存 `line_unmatched_sku(line_id, code)`，设置店名后保存会绑定到相应店铺 SKU。SKU 不直接决定品牌、规格或跨店商品身份，按票面名称与重量关联商品，按商品名称跨店汇总。四张表符合 3NF；不要求每件商品有 SKU。
 
 确认页可分别修改/清空税码和 SKU；已发布旧客户端不提交新字段时，后端保留现有值，显式 null 才清空。多图去重同时比较 SKU 和税码；合并不同明细时清空标识，避免误继承第一件商品的 SKU。当前 schema 仍只支持初始化和当前版本检查，没有自动迁移入口。
 
 
-### 先确定店名，再选择商店解析规则
+### 先确定店名，再选择店铺解析规则
 
 后台任务的固定顺序为：读取首张照片的原始 OCR/版面 → 提取并匹配 Logo 图像别名（已有确认店名可直接使用）→ 选择 `merchant_rules::Profile` → 按该店铺规则进行商品结构化 → 拆分 SKU/税码并核验、保存。原始 OCR 为 Logo 裁剪提供坐标，不决定店名，也不先解释商品字段。同一张收据的后续照片复用首次确定的店名和解析方案；原始 OCR 结果直接复用，不因识别 Logo 再跑一遍 OCR。
 
-当前内置 Costco 与 Generic 两种解析方案。Costco 的结构化提示明确税码/SKU 不是数量、重量或价格，保留中间原始前缀，随后由确定性正则拆分；未知店名或没有专用规则的商店使用 Generic，不套用 Costco 前缀规则。后续商店规则在 `merchant_rules` 中扩展。每次识别结果保留 `receipt_parser.profile` 便于追踪所用规则。无收据店名上下文的 Chat Completions 调用采用 Generic；不使用 OCR 输出中的店名来选规则。
+当前内置 Costco 与 Generic 两种解析方案。Costco 的结构化提示明确税码/SKU 不是数量、重量或价格，保留中间原始前缀，随后由确定性正则拆分；未知店名或没有专用规则的店铺使用 Generic，不套用 Costco 前缀规则。后续店铺规则在 `merchant_rules` 中扩展。每次识别结果保留 `receipt_parser.profile` 便于追踪所用规则。无收据店名上下文的 Chat Completions 调用采用 Generic；不使用 OCR 输出中的店名来选规则。
 
 
 Costco 税码允许缺失：`2338 WHITE PEACH` 提取 `sku=2338`、`rawName=WHITE PEACH`，`taxCode=null`，不按历史商品补猜税码。名称内的数字完整保留，多次保存不会再次把名称开头数字当成 SKU；其他店铺仍走自身/通用规则。
@@ -265,7 +265,7 @@ Costco 预扫描表格同样按完整边界、商品计数和净明细加税等�
 
 - 名称仅有“票面名称”和“商品名称”两层。`printed_name(printed_name_id, raw_name)` 保存票面名称；`product_name(product_name_id, name, category_id, last_used_at_utc_ms)` 保存共用商品名称、分类和最近使用时间；`printed_name_product_name(printed_name_id, product_name_id)` 是多对一映射。规格表 `product(product_id, printed_name_id, weight_g)` 只保存规格，满足 3NF。
 - 商品名称不存在时，显示与报表回退到票面名称。同一个商品名称跨店、跨票面名称、跨重量分组。商品优惠沿目标商品汇总。
-- 客户端“商品管理”有四个 tab：**票据名称**（票面名称 → 输入或选择商品名称）、**商品名称**（名称标签，X 删除）、**商品分类**（商品名称 → 输入或选择商品种类）、**商品种类**（种类标签，支持添加、删除、编辑与父类管理）。商店 Logo 名称另有入口。
+- 客户端“商品管理”有四个 tab：**票据名称**（票面名称 → 输入或选择商品名称）、**商品名称**（名称标签，X 删除）、**商品分类**（商品名称 → 输入或选择商品种类）、**商品种类**（种类标签，支持添加、删除、编辑与父类管理）。店铺 Logo 名称另有入口。
 - 删除商品名称只删除名称字典项和映射，保留所有收据、明细、照片。修改或清空某一票面名称的商品名称后，服务器在同一事务中清理没有任何票面名称关联的商品名称；仍有其他票面名称引用的名称保留。收据编辑需先处理全部行的映射，再清理，以免行间交换名称丢失分类和名称标识。删除分类后，关联商品名称和明细分类归到未分类，子分类移到顶层；系统保留类别不可删除。
 - 分类属于商品名称，分类调整同时更新其已保存明细；新识别自动读取已有名称和分类。点击分类标签仍可改名和管理父类。
 - 新库预置 22 个普通商品种类：杂货、电器、电子产品、水果、蔬菜、畜禽肉、水产品、调料、日用品、家具、保健品、奶制品、饮料、坚果、豆类及其制品、鸡蛋、大米及其制品、小麦及其制品、粗粮、冰激凌、酱料、零食。普通预置分类可删除，重启不会重新添加。

@@ -1,3 +1,5 @@
+import '../l10n/strings.dart';
+
 import 'package:flutter/material.dart';
 
 import 'app_theme.dart';
@@ -61,7 +63,7 @@ class _ReceiptRowState extends State<ReceiptRow> {
                               }
                             }
                           },
-                    child: Text(deleting ? '删除中' : 'Trash'),
+                    child: Text(deleting ? context.tr("删除中") : 'Trash'),
                   ),
                 ),
               ),
@@ -104,10 +106,10 @@ class _ReceiptRowState extends State<ReceiptRow> {
                                 : Icons.receipt_outlined,
                             size: 20,
                             semanticLabel: widget.failed
-                                ? '识别失败'
+                                ? context.tr("识别失败")
                                 : widget.draft
-                                ? '草稿待确认'
-                                : '已确认',
+                                ? context.tr("草稿待确认")
+                                : context.tr("已确认"),
                           ),
                           const SizedBox(width: 8),
                           Expanded(
@@ -197,7 +199,7 @@ class ReceiptTableHeader extends StatelessWidget {
     child: Semantics(
       button: true,
       label:
-          '$label，${sortBy == key ? (direction == 'asc' ? '升序' : '降序') : '点击排序'}',
+          '$label，${sortBy == key ? (direction == 'asc' ? context.tr("升序") : context.tr("降序")) : context.tr("点击排序")}',
       child: SizedBox(
         height: 44,
         child: Row(
@@ -222,10 +224,10 @@ class ReceiptTableHeader extends StatelessWidget {
     child: DefaultTextStyle(
       style: TextStyle(fontSize: 11, color: AppPalette.muted(context)),
       child: ReceiptColumns(
-        name: heading(context, '店名', 'store'),
-        date: heading(context, '录入时间', 'created_at'),
-        receiptDate: heading(context, '收据时间', 'receipt_time'),
-        amount: heading(context, '总金额', 'total'),
+        name: heading(context, context.tr("店名"), 'store'),
+        date: heading(context, context.tr("录入时间"), 'created_at'),
+        receiptDate: heading(context, context.tr("收据时间"), 'receipt_time'),
+        amount: heading(context, context.tr("总金额"), 'total'),
       ),
     ),
   );

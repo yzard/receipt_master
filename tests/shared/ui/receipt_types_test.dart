@@ -57,6 +57,7 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           home: LogoAliasesPage(
+            embedded: false,
             store: store,
             receiptId: null,
             suggestedName: '',
@@ -64,10 +65,10 @@ void main() {
         ),
       );
       await tester.pumpAndSettle();
-      expect(find.text('商店'), findsOneWidget);
-      expect(find.widgetWithText(ChoiceChip, '商店名称'), findsOneWidget);
+      expect(find.text('店铺'), findsOneWidget);
+      expect(find.widgetWithText(ChoiceChip, '店铺名称'), findsOneWidget);
       expect(find.text('Costco'), findsNothing);
-      await tester.tap(find.widgetWithText(ChoiceChip, '商店类别'));
+      await tester.tap(find.widgetWithText(ChoiceChip, '店铺类别'));
       await tester.pumpAndSettle();
       expect(find.text('Costco'), findsOneWidget);
       await tester.tap(find.byType(DropdownButtonFormField<String>));

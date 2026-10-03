@@ -1,6 +1,6 @@
 # Qwen3.8 / NInfer 生产识别
 
-2026-09-18：生产使用 **Qwen3.8-27B NVFP4 + NInfer + thinking + 通用/商店提示配置**。Unlimited-OCR、PP-OCR、Paddle worker、Rust 通用及商店 parser 已删除；历史对比结果和原图仍保留，不是备用运行路径。
+2026-09-18：生产使用 **Qwen3.8-27B NVFP4 + NInfer + thinking + 通用/店铺提示配置**。Unlimited-OCR、PP-OCR、Paddle worker、Rust 通用及店铺 parser 已删除；历史对比结果和原图仍保留，不是备用运行路径。
 
 ## 两个容器
 
@@ -30,7 +30,7 @@
 
 ## 提示配置
 
-推理设置由 [OCR config.toml](../playground/backend_ocr/config.toml) 管理：`[engine]` 包括模型、图片上限、收据与 Logo 各自的输出 token 上限、thinking、温度和随机种子。`[general]` 包括监听地址和内嵌的 OCR 专用 `api_key`。Backend API 的 `[ocr]` 只有 URL 和同一 `api_key`。Logo 定位、Logo 图片比对、收据通用和商店专用提示词都在 [prompt.toml](../playground/backend_api/prompt.toml)；首次运行从 `docker/defaults/` 安装模板，以后保留 `/data` 内的修改。修改提示词重启 API，修改推理参数重启 OCR。
+推理设置由 [OCR config.toml](../playground/backend_ocr/config.toml) 管理：`[engine]` 包括模型、图片上限、收据与 Logo 各自的输出 token 上限、thinking、温度和随机种子。`[general]` 包括监听地址和内嵌的 OCR 专用 `api_key`。Backend API 的 `[ocr]` 只有 URL 和同一 `api_key`。Logo 定位、Logo 图片比对、收据通用和店铺专用提示词都在 [prompt.toml](../playground/backend_api/prompt.toml)；首次运行从 `docker/defaults/` 安装模板，以后保留 `/data` 内的修改。修改提示词重启 API，修改推理参数重启 OCR。
 
 ```toml
 [[general]]
@@ -46,17 +46,17 @@ prompt = '''
 '''
 ```
 
-`general` 至少一个，按配置顺序拼接。`store` 可为空；匹配到店名时仅附加该商店的一个提示。`aliases` 可省略。匹配忽略大小写、空白与标点，不能用子串猜商店；未知商店仅用通用提示。跨商店重复名称/别名、空提示、未知配置字段会阻止启动。
+`general` 至少一个，按配置顺序拼接。`store` 可为空；匹配到店名时仅附加该店铺的一个提示。`aliases` 可省略。匹配忽略大小写、空白与标点，不能用子串猜店铺；未知店铺仅用通用提示。跨店铺重复名称/别名、空提示、未知配置字段会阻止启动。
 
-当前提供 Costco、skyFOODS、H MART、Hualian、99 Ranch 提示。其他店使用通用提示。添加商店只需添加 TOML 条目，不再编写 Rust parser。
+当前提供 Costco、skyFOODS、H MART、Hualian、99 Ranch 提示。其他店使用通用提示。添加店铺只需添加 TOML 条目，不再编写 Rust parser。
 
 通用提示明确独立 `TOTAL` 后的交易金额优先，排除付款、找零、奖励抵扣、SUBTOTAL/TOTAL SAVINGS 等。Hualian 提示明确称重行先暂存，关联下一条有价格商品，然后清空；中英文续行不拆成商品。
 
 ## 识别顺序
 
 1. 手机上传图片并提交持久任务；立即返回，后台处理，客户端不等待推理。
-2. Qwen 在首张照片应用 EXIF 方向后的顶部 30% 区域定位完整 Logo/文字商标。定位图片最长边为 1600 像素，使用 0–1000 整数坐标，再换算回原图归一化坐标；返回坐标，不返回店名。API 裁剪后提交查询图与参考图片，让 Qwen 返回参考编号，再从图片 Alias 库确定商店。原图库和用户 Alias 保留；每次重新识别都会重新匹配 Logo，即使草稿已有店名。匹配成功更新任务提交时的旧店名，匹配未知则保留原值；识别过程中用户新改的店名仍由任务快照合并保护。商品识别只使用本次匹配店名选择专用提示词；本次匹配未知或该店没有专用配置时使用通用提示词，不沿用旧店名的规则。
-3. API 根据店名选择提示，附加固定的机器 JSON schema，并一次提交该收据全部有序照片。用户图片中的文字仅是证据，不决定商店提示路由。
+2. Qwen 在首张照片应用 EXIF 方向后的顶部 30% 区域定位完整 Logo/文字商标。定位图片最长边为 1600 像素，使用 0–1000 整数坐标，再换算回原图归一化坐标；返回坐标，不返回店名。API 裁剪后提交查询图与参考图片，让 Qwen 返回参考编号，再从图片 Alias 库确定店铺。原图库和用户 Alias 保留；每次重新识别都会重新匹配 Logo，即使草稿已有店名。匹配成功更新任务提交时的旧店名，匹配未知则保留原值；识别过程中用户新改的店名仍由任务快照合并保护。商品识别只使用本次匹配店名选择专用提示词；本次匹配未知或该店没有专用配置时使用通用提示词，不沿用旧店名的规则。
+3. API 根据店名选择提示，附加固定的机器 JSON schema，并一次提交该收据全部有序照片。用户图片中的文字仅是证据，不决定店铺提示路由。
 4. NInfer 开启 thinking。全部照片先应用 EXIF 方向；使用无损 PNG。为适配模型上下文，多图共享 `engine.image_pixel_budget`，按照片数量分配分辨率；不丢照片。原始照片仍完整保存在 `/data`。当前支持最多 16 张、32768 上下文、8192 总输出 token（思考与答案共用）；超限明确失败，不静默截断。
 5. API 只解码完整结束的输出，分离模型思考和最终 JSON；清理单个外层 Markdown 代码框，按 schema 投影删除额外字段，并在结果 `receipt_parsing.removed_fields` 记录路径。不会修正名称拼写、修改金额、猜测缺失字段或截取解释中的 JSON。
 6. 必填字段、类型、金额精度、优惠引用和证据框仍严格校验。结构错误按 API 的 `general.repair_attempts` 最多补充一次协议反馈、重新请求原图；失败即失败。`model_runs` 保留每次原始响应与 token 用量。金额不平不触发猜测性重试，只添加核对提示。
@@ -64,13 +64,13 @@ prompt = '''
 
 ## 保留的 Logo 资源
 
-`src/backend_api/resources/merchants/` 与 `merchant_images.rs` 继续内置已审核 Logo 裁剪和店名。空库初始化可识别已有商店；已有库不会被内置样本覆盖。匹配使用已验证的简短提示词，只比较商标图形和文字，忽略纸张背景与拍摄变形。模型只返回本批次参考编号或 null，店名由对应图片 Alias 决定。无法定位时保存顶部候选区域供核对。
+`src/backend_api/resources/merchants/` 与 `merchant_images.rs` 继续内置已审核 Logo 裁剪和店名。空库初始化可识别已有店铺；已有库不会被内置样本覆盖。匹配使用已验证的简短提示词，只比较商标图形和文字，忽略纸张背景与拍摄变形。模型只返回本批次参考编号或 null，店名由对应图片 Alias 决定。无法定位时保存顶部候选区域供核对。
 
 ## 接口与验证
 
 对外仍是认证的 API、异步任务和 Chat Completions。API 对外使用固定的 `receipt-master` 标识；客户端从服务器查询服务信息，不配置实际 OCR 模型或提示。内部只使用受服务密钥保护的 `/v1/chat/completions` 和 `/capabilities`；旧 `/v1/logo/match` 已删除。
 
-运行代码和测试不依赖旧 parser。保留历史模型评测归档；离线候选评分只接收已经生成的结构化预测。新回归覆盖 32 张 thinking 输出的字段投影、严格校验、错误/截断拒绝、商店提示隔离、Logo 先于商品识别、多图同请求、串行队列和 API 响应性。
+运行代码和测试不依赖旧 parser。保留历史模型评测归档；离线候选评分只接收已经生成的结构化预测。新回归覆盖 32 张 thinking 输出的字段投影、严格校验、错误/截断拒绝、店铺提示隔离、Logo 先于商品识别、多图同请求、串行队列和 API 响应性。
 
 [模型实验结果](ninfer_prompt_thinking_evaluation.md) 是切换前基线；其中两张额外字段失败已由本次生产适配解决。它不代表所有字段都识别正确，仍应通过核对页确认。
 

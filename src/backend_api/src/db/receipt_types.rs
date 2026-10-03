@@ -69,7 +69,7 @@ impl Store {
                     return Err(AppError::new(
                         409,
                         "duplicate_receipt_type",
-                        "商店类别已存在，请选择已有类别",
+                        "店铺类别已存在，请选择已有类别",
                     ));
                 }
                 if v["id"].is_null() {

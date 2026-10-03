@@ -1,3 +1,5 @@
+import '../l10n/strings.dart';
+
 import 'dart:io';
 import 'dart:convert';
 
@@ -138,41 +140,43 @@ class _LoginPageState extends State<LoginPage> {
                     style: Theme.of(context).textTheme.headlineLarge,
                   ),
                   const SizedBox(height: 8),
-                  const Text('登录，继续整理你的生活账目。'),
+                  Text(context.tr("登录，继续整理你的生活账目。")),
                   const SizedBox(height: 28),
                   if (error != null) Notice(error!),
                   TextFormField(
                     controller: endpoint,
-                    decoration: const InputDecoration(labelText: '服务地址'),
+                    decoration: InputDecoration(labelText: context.tr("服务地址")),
                     keyboardType: TextInputType.url,
-                    validator: (v) => v!.trim().isEmpty ? '请填写服务地址' : null,
+                    validator: (v) =>
+                        v!.trim().isEmpty ? context.tr("请填写服务地址") : null,
                   ),
                   const SizedBox(height: 16),
                   TextFormField(
                     controller: username,
-                    decoration: const InputDecoration(labelText: '用户名'),
+                    decoration: InputDecoration(labelText: context.tr("用户名")),
                     autofillHints: const [AutofillHints.username],
                     autocorrect: false,
                     enableSuggestions: false,
                     textInputAction: TextInputAction.next,
-                    validator: (v) => v!.trim().isEmpty ? '请填写用户名' : null,
+                    validator: (v) =>
+                        v!.trim().isEmpty ? context.tr("请填写用户名") : null,
                   ),
                   const SizedBox(height: 16),
                   TextFormField(
                     controller: password,
-                    decoration: const InputDecoration(labelText: '密码'),
+                    decoration: InputDecoration(labelText: context.tr("密码")),
                     obscureText: true,
                     autofillHints: const [AutofillHints.password],
                     autocorrect: false,
                     enableSuggestions: false,
                     textInputAction: TextInputAction.done,
                     onFieldSubmitted: (_) => submit(),
-                    validator: (v) => v!.isEmpty ? '请填写密码' : null,
+                    validator: (v) => v!.isEmpty ? context.tr("请填写密码") : null,
                   ),
                   const SizedBox(height: 24),
                   FilledButton(
                     onPressed: busy ? null : submit,
-                    child: Text(busy ? '正在登录…' : '登录'),
+                    child: Text(busy ? context.tr("正在登录…") : context.tr("登录")),
                   ),
                 ],
               ),
@@ -240,7 +244,7 @@ class _PasswordPageState extends State<PasswordPage> {
     child: Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: !widget.requiredChange,
-        title: const Text('修改密码'),
+        title: Text(context.tr("修改密码")),
       ),
       body: Center(
         child: ConstrainedBox(
@@ -250,7 +254,7 @@ class _PasswordPageState extends State<PasswordPage> {
             padding: const EdgeInsets.all(24),
             children: [
               if (widget.requiredChange)
-                const Notice('首次登录或管理员重置后，必须修改密码才能使用。'),
+                Notice(context.tr("首次登录或管理员重置后，必须修改密码才能使用。")),
               if (error != null) Notice(error!),
               Form(
                 key: form,
@@ -262,7 +266,9 @@ class _PasswordPageState extends State<PasswordPage> {
                         controller: username,
                         readOnly: true,
                         autofillHints: const [AutofillHints.username],
-                        decoration: const InputDecoration(labelText: '用户名'),
+                        decoration: InputDecoration(
+                          labelText: context.tr("用户名"),
+                        ),
                       ),
                       const SizedBox(height: 16),
                       TextFormField(
@@ -272,8 +278,11 @@ class _PasswordPageState extends State<PasswordPage> {
                         autocorrect: false,
                         enableSuggestions: false,
                         textInputAction: TextInputAction.next,
-                        decoration: const InputDecoration(labelText: '当前密码'),
-                        validator: (v) => v!.isEmpty ? '请填写当前密码' : null,
+                        decoration: InputDecoration(
+                          labelText: context.tr("当前密码"),
+                        ),
+                        validator: (v) =>
+                            v!.isEmpty ? context.tr("请填写当前密码") : null,
                       ),
                       const SizedBox(height: 16),
                       TextFormField(
@@ -283,11 +292,12 @@ class _PasswordPageState extends State<PasswordPage> {
                         autocorrect: false,
                         enableSuggestions: false,
                         textInputAction: TextInputAction.next,
-                        decoration: const InputDecoration(
-                          labelText: '新密码（至少 12 个字符）',
+                        decoration: InputDecoration(
+                          labelText: context.tr("新密码（至少 12 个字符）"),
                         ),
-                        validator: (v) =>
-                            (v?.runes.length ?? 0) < 12 ? '至少 12 个字符' : null,
+                        validator: (v) => (v?.runes.length ?? 0) < 12
+                            ? context.tr("至少 12 个字符")
+                            : null,
                       ),
                       const SizedBox(height: 16),
                       TextFormField(
@@ -298,8 +308,11 @@ class _PasswordPageState extends State<PasswordPage> {
                         enableSuggestions: false,
                         textInputAction: TextInputAction.done,
                         onFieldSubmitted: (_) => submit(),
-                        decoration: const InputDecoration(labelText: '再次输入新密码'),
-                        validator: (v) => v != password.text ? '两次密码不一致' : null,
+                        decoration: InputDecoration(
+                          labelText: context.tr("再次输入新密码"),
+                        ),
+                        validator: (v) =>
+                            v != password.text ? context.tr("两次密码不一致") : null,
                       ),
                     ],
                   ),
@@ -308,12 +321,12 @@ class _PasswordPageState extends State<PasswordPage> {
               const SizedBox(height: 24),
               FilledButton(
                 onPressed: busy ? null : submit,
-                child: Text(busy ? '正在保存…' : '修改密码'),
+                child: Text(busy ? context.tr("正在保存…") : context.tr("修改密码")),
               ),
               if (widget.requiredChange)
                 TextButton(
                   onPressed: busy ? null : widget.session.logout,
-                  child: const Text('退出登录'),
+                  child: Text(context.tr("退出登录")),
                 ),
             ],
           ),
@@ -354,7 +367,7 @@ class _UsersPageState extends State<UsersPage> {
     final accepted = await showDialog<bool>(
       context: context,
       builder: (c) => AlertDialog(
-        title: const Text('创建用户'),
+        title: Text(context.tr("创建用户")),
         content: AutofillGroup(
           onDisposeAction: AutofillContextAction.cancel,
           child: Column(
@@ -365,7 +378,7 @@ class _UsersPageState extends State<UsersPage> {
                 autofillHints: const [AutofillHints.newUsername],
                 autocorrect: false,
                 enableSuggestions: false,
-                decoration: const InputDecoration(labelText: '用户名'),
+                decoration: InputDecoration(labelText: context.tr("用户名")),
               ),
               TextField(
                 controller: password,
@@ -373,7 +386,9 @@ class _UsersPageState extends State<UsersPage> {
                 autofillHints: const [AutofillHints.newPassword],
                 autocorrect: false,
                 enableSuggestions: false,
-                decoration: const InputDecoration(labelText: '临时密码（至少 12 个字符）'),
+                decoration: InputDecoration(
+                  labelText: context.tr("临时密码（至少 12 个字符）"),
+                ),
               ),
             ],
           ),
@@ -381,11 +396,11 @@ class _UsersPageState extends State<UsersPage> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(c, false),
-            child: const Text('取消'),
+            child: Text(context.tr("取消")),
           ),
           FilledButton(
             onPressed: () => Navigator.pop(c, true),
-            child: const Text('创建'),
+            child: Text(context.tr("创建")),
           ),
         ],
       ),
@@ -413,10 +428,10 @@ class _UsersPageState extends State<UsersPage> {
   @override
   Widget build(BuildContext context) => Scaffold(
     appBar: AppBar(
-      title: const Text('用户管理'),
+      title: Text(context.tr("用户管理")),
       actions: [
         IconButton(
-          tooltip: '创建用户',
+          tooltip: context.tr("创建用户"),
           onPressed: busy ? null : create,
           icon: const Icon(Icons.person_add_outlined),
         ),
@@ -431,23 +446,23 @@ class _UsersPageState extends State<UsersPage> {
             title: Text(u['username']),
             subtitle: Text(
               u['is_admin'] == true
-                  ? '元用户 · 不可删除'
+                  ? context.tr("元用户 · 不可删除")
                   : u['must_change_password'] == true
-                  ? '首次登录需要改密'
-                  : '普通用户',
+                  ? context.tr("首次登录需要改密")
+                  : context.tr("普通用户"),
             ),
             trailing: u['is_admin'] == true
                 ? const Icon(Icons.shield_outlined)
                 : IconButton(
-                    tooltip: '删除用户',
+                    tooltip: context.tr("删除用户"),
                     icon: const Icon(Icons.delete_outline),
                     onPressed: busy
                         ? null
                         : () async {
                             if (await confirm(
                               context,
-                              '删除用户？',
-                              '该用户的会话会被撤销，收据和照片会删除。',
+                              context.tr("删除用户？"),
+                              context.tr("该用户的会话会被撤销，收据和照片会删除。"),
                             )) {
                               await action(
                                 () => widget.session.deleteUser(u['user_id']),

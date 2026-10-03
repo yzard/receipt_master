@@ -91,7 +91,7 @@ python tests/backend_api/vision_reported.py --url http://127.0.0.1:5000 \
 
 `baselines/2026-09-17-qwen3-vl/` 保存 vision-v5 最终实测：17 张全字段通过 8 张，另外三张关键项通过 1 张。保存模型输出和失败结果，不以正确 JSON 的离线回归代替模型准确率。部署配置、提示词和 smoke 日志同目录存档；详细解释见 [评测报告](../../../docs/vision_evaluation.md)。
 
-`baselines/2026-09-17-store-prompts/` 保存按商店选择模板的 vision-v7：17 张全字段通过 8 张，近期三张关键项通过 0 张。当前评测提供人工确认的店名模拟 Logo Alias，商品答案不传给模型；未知商店回退由 API 测试和多图 smoke 覆盖。效果有改善也有回退，详见 [商店模板评测](../../../docs/store_prompt_evaluation.md)。
+`baselines/2026-09-17-store-prompts/` 保存按店铺选择模板的 vision-v7：17 张全字段通过 8 张，近期三张关键项通过 0 张。当前评测提供人工确认的店名模拟 Logo Alias，商品答案不传给模型；未知店铺回退由 API 测试和多图 smoke 覆盖。效果有改善也有回退，详见 [店铺模板评测](../../../docs/store_prompt_evaluation.md)。
 
 ## 标注与计分约定
 
@@ -152,7 +152,7 @@ python3 tests/backend_api/printed_name_evaluation.py \
 python3 -m unittest discover -s tests/backend_api -p 'test_*evaluation.py'
 ```
 
-模型输入由 `tests/backend_api/qwen38_evaluation.py` 构造，仅包含原图与已知商店、国家、币种；
+模型输入由 `tests/backend_api/qwen38_evaluation.py` 构造，仅包含原图与已知店铺、国家、币种；
 不提供商品名称、票面标准答案、金额标准答案或历史 OCR 输出。临时推理容器配置见
 `docker/qwen38_evaluation.compose.yaml`，只绑定本机回环地址。正常 playground 仍维持原来的两个容器。
 

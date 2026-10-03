@@ -1,3 +1,5 @@
+import '../l10n/strings.dart';
+
 import 'package:flutter/material.dart';
 
 import '../data/store.dart';
@@ -155,14 +157,14 @@ class _ReportsPageState extends State<ReportsPage> with WidgetsBindingObserver {
               enabled: !disabled,
               subtitle: Text(
                 disabled
-                    ? '当前范围无消费'
+                    ? context.tr("当前范围无消费")
                     : product
-                    ? '商品'
+                    ? context.tr("商品")
                     : ((row['depth'] as int? ?? 0) > 0
-                          ? '${row['path']} · 分类合计'
+                          ? context.tr("{0} · 分类合计", [row['path']])
                           : row['group'] == 'receipt_type'
-                          ? '商店类别合计'
-                          : '分类合计'),
+                          ? context.tr("店铺类别合计")
+                          : context.tr("分类合计")),
               ),
               value: !disabled && visibleSeries.contains(row['key']),
               onChanged: disabled
@@ -196,7 +198,10 @@ class _ReportsPageState extends State<ReportsPage> with WidgetsBindingObserver {
                     Expanded(child: option(category, product: false)),
                     if (products.isNotEmpty)
                       Tooltip(
-                        message: '${open ? '收起' : '展开'}${category['label']}商品',
+                        message: context.tr("{0}{1}商品", [
+                          open ? context.tr("收起") : context.tr("展开"),
+                          category['label'],
+                        ]),
                         child: TextButton.icon(
                           onPressed: () => updateSheet(() {
                             if (open) {
@@ -208,7 +213,7 @@ class _ReportsPageState extends State<ReportsPage> with WidgetsBindingObserver {
                           icon: Icon(
                             open ? Icons.expand_less : Icons.expand_more,
                           ),
-                          label: Text('${products.length} 商品'),
+                          label: Text(context.tr("{0} 商品", [products.length])),
                         ),
                       ),
                   ],
@@ -229,13 +234,14 @@ class _ReportsPageState extends State<ReportsPage> with WidgetsBindingObserver {
               height: MediaQuery.sizeOf(ctx).height * .68,
               child: ListView(
                 children: [
-                  const ListTile(
-                    title: Text('趋势曲线'),
+                  ListTile(
+                    title: Text(context.tr("趋势曲线")),
                     subtitle: Text(
-                      '分类默认折叠，点击箭头展开商品；分类与商品可独立勾选。无消费选项灰显，总金额始终显示。',
+                      context.tr("分类默认折叠，点击箭头展开商品；分类与商品可独立勾选。无消费选项灰显，总金额始终显示。"),
                     ),
                   ),
-                  if (rows.isEmpty) const ListTile(title: Text('还没有可选曲线')),
+                  if (rows.isEmpty)
+                    ListTile(title: Text(context.tr("还没有可选曲线"))),
                   for (final t in rows.where(
                     (r) => r['group'] == 'receipt_type',
                   ))
@@ -276,7 +282,12 @@ class _ReportsPageState extends State<ReportsPage> with WidgetsBindingObserver {
             for (final l in lines)
               ListTile(
                 title: Text(
-                  itemDisplayName(l['product_name'], l['raw_name'], l['kind']),
+                  itemDisplayName(
+                    context,
+                    l['product_name'],
+                    l['raw_name'],
+                    l['kind'],
+                  ),
                 ),
                 subtitle: Text(
                   '${l['raw_store']} · ${dateText(l['occurred_at_utc_ms'], widget.zone)}',
@@ -332,10 +343,13 @@ class _ReportsPageState extends State<ReportsPage> with WidgetsBindingObserver {
         physics: const AlwaysScrollableScrollPhysics(),
         padding: const EdgeInsets.fromLTRB(20, 12, 20, 116),
         children: [
-          Text('报表', style: Theme.of(context).textTheme.headlineLarge),
+          Text(
+            context.tr("报表"),
+            style: Theme.of(context).textTheme.headlineLarge,
+          ),
           const SizedBox(height: 4),
           Text(
-            '按交易日期汇总所有已确认收据',
+            context.tr("按交易日期汇总所有已确认收据"),
             style: TextStyle(color: scheme.onSurfaceVariant, fontSize: 13),
           ),
           const SizedBox(height: 20),
@@ -345,9 +359,9 @@ class _ReportsPageState extends State<ReportsPage> with WidgetsBindingObserver {
                 trendSeries.any((t) => t['key'] == 'receipt_type:$receiptType')
                 ? receiptType
                 : '',
-            decoration: const InputDecoration(labelText: '商店类别统计范围'),
+            decoration: InputDecoration(labelText: context.tr("店铺类别统计范围")),
             items: [
-              const DropdownMenuItem(value: '', child: Text('全部商店类别')),
+              DropdownMenuItem(value: '', child: Text(context.tr("全部店铺类别"))),
               for (final t in trendSeries.where(
                 (r) => r['group'] == 'receipt_type',
               ))
@@ -365,10 +379,13 @@ class _ReportsPageState extends State<ReportsPage> with WidgetsBindingObserver {
           ),
           const SizedBox(height: 16),
           if (trendPoints.isNotEmpty) ...[
-            Text('消费趋势', style: Theme.of(context).textTheme.titleLarge),
+            Text(
+              context.tr("消费趋势"),
+              style: Theme.of(context).textTheme.titleLarge,
+            ),
             const SizedBox(height: 8),
             Text(
-              '纵轴 $currency · 横轴 时间 · 点击数据点查看明细',
+              context.tr("纵轴 {0} · 横轴 时间 · 点击数据点查看明细", [currency]),
               style: TextStyle(fontSize: 12, color: AppPalette.muted(context)),
             ),
             const SizedBox(height: 8),
@@ -390,11 +407,11 @@ class _ReportsPageState extends State<ReportsPage> with WidgetsBindingObserver {
             runSpacing: 8,
             children: [
               for (final e in {
-                'day': '日',
-                'week': '周',
-                'month': '月',
-                'quarter': '季',
-                'year': '年',
+                'day': context.tr("日"),
+                'week': context.tr("周"),
+                'month': context.tr("月"),
+                'quarter': context.tr("季"),
+                'year': context.tr("年"),
               }.entries)
                 ChoiceChip(
                   label: Text(e.value),
@@ -413,7 +430,9 @@ class _ReportsPageState extends State<ReportsPage> with WidgetsBindingObserver {
                   onPressed: choosingLines ? null : chooseLines,
                   icon: const Icon(Icons.tune, size: 18),
                   label: Text(
-                    '曲线${selectedSeriesCount == 0 ? '' : ' $selectedSeriesCount'}',
+                    context.tr("曲线{0}", [
+                      selectedSeriesCount == 0 ? '' : ' $selectedSeriesCount',
+                    ]),
                   ),
                 ),
             ],
@@ -425,9 +444,9 @@ class _ReportsPageState extends State<ReportsPage> with WidgetsBindingObserver {
                 trendSeries.any((t) => t['key'] == 'receipt_type:$receiptType')
                 ? receiptType
                 : '',
-            decoration: const InputDecoration(labelText: '商店类别统计范围'),
+            decoration: InputDecoration(labelText: context.tr("店铺类别统计范围")),
             items: [
-              const DropdownMenuItem(value: '', child: Text('全部商店类别')),
+              DropdownMenuItem(value: '', child: Text(context.tr("全部店铺类别"))),
               for (final t in trendSeries.where(
                 (r) => r['group'] == 'receipt_type',
               ))
@@ -450,19 +469,22 @@ class _ReportsPageState extends State<ReportsPage> with WidgetsBindingObserver {
                 TextButton.icon(
                   onPressed: () => changeWindow(-1),
                   icon: const Icon(Icons.chevron_left),
-                  label: const Text('更早趋势'),
+                  label: Text(context.tr("更早趋势")),
                 ),
                 const Spacer(),
                 if (window < 0)
                   TextButton.icon(
                     onPressed: () => changeWindow(1),
                     icon: const Icon(Icons.chevron_right),
-                    label: const Text('更新趋势'),
+                    label: Text(context.tr("更新趋势")),
                   ),
               ],
             ),
             Text(
-              '已选 ${bounds?['label'] ?? ''}${bounds?['unfinished'] == true ? ' · 当前周期未结束' : ''}',
+              context.tr("已选 {0}{1}", [
+                bounds?['label'] ?? '',
+                bounds?['unfinished'] == true ? context.tr(" · 当前周期未结束") : '',
+              ]),
               style: TextStyle(
                 fontWeight: FontWeight.w700,
                 color: scheme.primary,
@@ -483,7 +505,7 @@ class _ReportsPageState extends State<ReportsPage> with WidgetsBindingObserver {
                 const SizedBox(width: 7),
                 Expanded(
                   child: Text(
-                    '统一显示 $currency · 交易日汇率由后端获取',
+                    context.tr("统一显示 {0} · 交易日汇率由后端获取", [currency]),
                     style: TextStyle(
                       fontSize: 12,
                       color: AppPalette.muted(context),
@@ -495,19 +517,19 @@ class _ReportsPageState extends State<ReportsPage> with WidgetsBindingObserver {
           ),
           ListTile(
             contentPadding: EdgeInsets.zero,
-            title: const Text('统计范围'),
+            title: Text(context.tr("统计范围")),
             subtitle: Text(
               category == null
-                  ? '全部分类'
+                  ? context.tr("全部分类")
                   : categories
                             .where((c) => c['category_id'] == category)
                             .firstOrNull?['path'] ??
-                        '分类',
+                        context.tr("分类"),
             ),
             trailing: const Icon(Icons.filter_list),
             onTap: () async {
               final id = await chooseCategory(context, [
-                {'category_id': 'all', 'path': '全部分类'},
+                {'category_id': 'all', 'path': context.tr("全部分类")},
                 ...categories,
               ], category ?? 'all');
               if (id != null) {
@@ -517,13 +539,17 @@ class _ReportsPageState extends State<ReportsPage> with WidgetsBindingObserver {
             },
           ),
           if (error != null) ...[
-            Notice('报表更新失败：$error\n当前显示的可能是上次结果。'),
+            Notice(
+              context.tr("报表更新失败：{0}\n当前显示的可能是上次结果。", [
+                context.translatedMessage(error!),
+              ]),
+            ),
             Align(
               alignment: Alignment.centerLeft,
               child: TextButton.icon(
                 onPressed: () => load(keepCurrent: true),
                 icon: const Icon(Icons.refresh),
-                label: const Text('重试统计'),
+                label: Text(context.tr("重试统计")),
               ),
             ),
           ],
@@ -547,7 +573,7 @@ class _ReportsPageState extends State<ReportsPage> with WidgetsBindingObserver {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    '本期净支出',
+                    context.tr("本期净支出"),
                     style: TextStyle(
                       color: Theme.of(context).colorScheme.onPrimary
                           .withValues(alpha: .8),
@@ -565,7 +591,7 @@ class _ReportsPageState extends State<ReportsPage> with WidgetsBindingObserver {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    '上期 ${money(previous!['net'], currency)}',
+                    context.tr("上期 {0}", [money(previous!['net'], currency)]),
                     style: TextStyle(
                       color: Theme.of(context).colorScheme.onPrimary
                           .withValues(alpha: .8),
@@ -579,19 +605,25 @@ class _ReportsPageState extends State<ReportsPage> with WidgetsBindingObserver {
               spacing: 16,
               runSpacing: 8,
               children: [
-                Text('支出 ${money(spend, currency)}'),
-                Text('优惠 ${money(discounts, currency)}'),
-                Text('商品退款 ${money(refunds, currency)}'),
+                Text(context.tr("支出 {0}", [money(spend, currency)])),
+                Text(context.tr("优惠 {0}", [money(discounts, currency)])),
+                Text(context.tr("商品退款 {0}", [money(refunds, currency)])),
               ],
             ),
             if (report!['difference'] != null && report!['difference'] != 0)
-              Notice('票据待核对差额 ${money(report!['difference'], currency)}'),
+              Notice(
+                context.tr("票据待核对差额 {0}", [
+                  money(report!['difference'], currency),
+                ]),
+              ),
             if (report!['rounding_adjustment'] != null &&
                 report!['rounding_adjustment'] != 0)
               Padding(
                 padding: const EdgeInsets.only(top: 8),
                 child: Text(
-                  '逐项换算舍入差额 ${money(report!['rounding_adjustment'], currency)}',
+                  context.tr("逐项换算舍入差额 {0}", [
+                    money(report!['rounding_adjustment'], currency),
+                  ]),
                   style: TextStyle(
                     fontSize: 12,
                     color: AppPalette.muted(context),
@@ -599,22 +631,34 @@ class _ReportsPageState extends State<ReportsPage> with WidgetsBindingObserver {
                 ),
               ),
             const SizedBox(height: 20),
-            Text('支出去向', style: Theme.of(context).textTheme.titleLarge),
+            Text(
+              context.tr("支出去向"),
+              style: Theme.of(context).textTheme.titleLarge,
+            ),
             const SizedBox(height: 12),
             SegmentedButton<String>(
-              segments: const [
-                ButtonSegment(value: 'receipt_type', label: Text('商店类别')),
-                ButtonSegment(value: 'category', label: Text('商品分类')),
-                ButtonSegment(value: 'product', label: Text('商品')),
+              segments: [
+                ButtonSegment(
+                  value: 'receipt_type',
+                  label: Text(context.tr("店铺类别")),
+                ),
+                ButtonSegment(
+                  value: 'category',
+                  label: Text(context.tr("商品分类")),
+                ),
+                ButtonSegment(value: 'product', label: Text(context.tr("商品"))),
               ],
               selected: {group},
               onSelectionChanged: (g) => setState(() => group = g.first),
             ),
             const SizedBox(height: 12),
             if (ordered.isEmpty)
-              const Padding(
+              Padding(
                 padding: EdgeInsets.all(24),
-                child: Text('这个周期还没有可统计的明细。', textAlign: TextAlign.center),
+                child: Text(
+                  context.tr("这个周期还没有可统计的明细。"),
+                  textAlign: TextAlign.center,
+                ),
               ),
             for (final entry in ordered)
               _SpendRow(
@@ -651,7 +695,7 @@ class _ReportsPageState extends State<ReportsPage> with WidgetsBindingObserver {
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 12),
               child: Text(
-                '点击汇总查看原始明细。整单优惠、税费和差额不分摊到商品。',
+                context.tr("点击汇总查看原始明细。整单优惠、税费和差额不分摊到商品。"),
                 style: TextStyle(
                   fontSize: 12,
                   color: AppPalette.muted(context),

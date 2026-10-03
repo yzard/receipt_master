@@ -9,7 +9,7 @@
     "Noto Sans SC",
     sans-serif;
   color: #16233b;
-  background: #f6f7fb;
+  background: var(--canvas);
   font-synthesis: none;
   --canvas: #f6f7fb;
   --panel: rgba(255, 255, 255, 0.78);
@@ -55,6 +55,7 @@
   box-sizing: border-box;
 }
 body {
+  min-height: 100dvh;
   margin: 0;
   background: var(--canvas);
   color: var(--ink);
@@ -149,7 +150,7 @@ small {
 }
 .toolbar {
   height: 72px;
-  padding: 0 max(16px, calc((100vw - 1360px) / 2));
+  padding: 0 24px;
   display: flex;
   align-items: center;
   gap: 12px;
@@ -185,9 +186,9 @@ small {
   border-left: 1px solid var(--line);
 }
 .workspace {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 114px 32px 80px;
+  width: 100%;
+  margin: 0;
+  padding: 114px 24px 80px;
 }
 .page-heading {
   display: flex;
@@ -203,11 +204,17 @@ small {
   position: fixed;
   inset: 72px 0 0;
   width: 100%;
-  height: 100%;
+  height: auto;
   border: 0;
   border-radius: 0;
+  cursor: default;
   background: rgba(0, 0, 0, 0.22);
   z-index: 21;
+}
+/* The dismiss layer keeps its translucent color in every pointer state. */
+.drawer-shade:hover,
+.drawer-shade:active {
+  background: rgba(0, 0, 0, 0.22);
 }
 .drawer {
   position: fixed;
@@ -295,6 +302,7 @@ small {
   height: 48px;
 }
 .table-scroll {
+  position: relative;
   overflow-x: auto;
 }
 table {
@@ -699,7 +707,7 @@ footer {
   margin-bottom: 24px;
 }
 .mapping-list {
-  max-width: 850px;
+  width: 100%;
 }
 .mapping {
   display: grid;

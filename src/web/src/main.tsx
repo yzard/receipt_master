@@ -21,8 +21,8 @@ import { CatalogSearchInput, catalogNameKey } from "./catalog-search";
 const names: Record<string, string> = {
   receipts: "收据",
   reports: "报表",
-  catalog: "商品管理",
-  stores: "商店",
+  catalog: "商品",
+  stores: "店铺",
   settings: "设置",
   users: "用户管理",
 };
@@ -663,7 +663,7 @@ export function Receipts({
                       className="row-link"
                       onClick={() => open(r.receipt_id)}
                     >
-                      {r.raw_store || "未知商店"}
+                      {r.raw_store || "未知店铺"}
                       {["queued", "running"].includes(r.recognition_status) && (
                         <small>识别中…</small>
                       )}
@@ -763,11 +763,11 @@ export function LineEditor({
             options={Object.entries(kinds)}
           />
           <Select
-            label="商店类别"
+            label="店铺类别"
             value={value.receiptTypeId || ""}
             onChange={(v) => set("receiptTypeId", v || null)}
             options={[
-              ["", "使用商店类别"],
+              ["", "使用店铺类别"],
               ...receiptTypes.map((t): [string, string] => [
                 t.receipt_type_id,
                 t.name,
@@ -1176,7 +1176,7 @@ export function Editor({
         <section className="receipt-fields" aria-label="收据内容">
           <div className="receipt-fields-scroll">
             <Select
-              label="商店类别"
+              label="店铺类别"
               value={r.receiptTypeId || ""}
               options={[
                 ["", "请选择"],
@@ -1196,7 +1196,7 @@ export function Editor({
             />
             <div className="form-grid">
               {[
-                ["store", "商店名称"],
+                ["store", "店铺名称"],
                 ["branch", "分店"],
                 ["address", "地址"],
                 ["country", "国家代码"],
@@ -1262,7 +1262,7 @@ export function Editor({
               />
             </div>
             <button onClick={() => setStoreEdit(true)}>
-              编辑商店 Logo 名称
+              编辑店铺 Logo 名称
             </button>
             <div className="section-heading">
               <h2>
@@ -1482,7 +1482,7 @@ export function Editor({
       )}
       {storeEdit && (
         <Modal
-          title="商店名称"
+          title="店铺名称"
           onClose={() => {
             setStoreEdit(false);
           }}
@@ -1601,7 +1601,7 @@ function Catalog({
     <>
       <Heading
         title="商品管理"
-        subtitle="把不同商店的票面名称，整理为你熟悉的商品。"
+        subtitle="把不同店铺的票面名称，整理为你熟悉的商品。"
       />
       <div className="tabs" role="tablist">
         {tabs.map((name, i) => (
@@ -1919,11 +1919,11 @@ export function Stores({
   return (
     <>
       {!receiptId && (
-        <Heading title="商店" subtitle="管理商店名称与商店类别。" />
+        <Heading title="店铺" subtitle="管理店铺名称与店铺类别。" />
       )}
       {!receiptId && (
-        <div className="tabs" role="tablist" aria-label="商店管理">
-          {["商店名称", "商店类别"].map((name, i) => (
+        <div className="tabs" role="tablist" aria-label="店铺管理">
+          {["店铺名称", "店铺类别"].map((name, i) => (
             <button
               key={name}
               role="tab"
@@ -1964,10 +1964,10 @@ export function Stores({
               <article key={s.logo_id}>
                 <img
                   src={`/api/v1/media/${s.media_id}`}
-                  alt={s.name || "尚未命名的商店标志"}
+                  alt={s.name || "尚未命名的店铺标志"}
                 />
                 <CommitInput
-                  label="商店名称"
+                  label="店铺名称"
                   value={s.name || ""}
                   options={suggested ? [suggested] : []}
                   onCommit={(name) =>
@@ -1983,11 +1983,11 @@ export function Stores({
                 {s.name && (
                   <IconButton
                     icon="trash"
-                    label="删除商店名称样本"
+                    label="删除店铺名称样本"
                     disabled={busy}
                     onClick={() =>
                       void action(async () => {
-                        if (confirm("删除此商店名称样本？"))
+                        if (confirm("删除此店铺名称样本？"))
                           await mutate(() =>
                             api.op("logos", "delete", {
                               id: s.logo_id,
@@ -2005,7 +2005,7 @@ export function Stores({
             <p className="muted">
               {receiptId
                 ? "这张收据还没有提取到 Logo，可尝试重新提取。"
-                : "尚无商店 Logo 样本；确认收据的 Logo 和店名后会显示在这里。"}
+                : "尚无店铺 Logo 样本；确认收据的 Logo 和店名后会显示在这里。"}
             </p>
           )}
         </>
@@ -2030,7 +2030,7 @@ function trendColor(key: string) {
 function curveLabel(row: Row) {
   return row.key === "total"
     ? row.label
-    : `${row.group === "category" ? "商品分类" : row.group === "receipt_type" ? "商店类别" : "商品"} · ${row.label}`;
+    : `${row.group === "category" ? "商品分类" : row.group === "receipt_type" ? "店铺类别" : "商品"} · ${row.label}`;
 }
 export function TrendSeriesMenu({
   series,
@@ -2066,7 +2066,7 @@ export function TrendSeriesMenu({
                 ? `${row.path} · 分类合计`
                 : "分类合计"
               : row.group === "receipt_type"
-                ? "商店类别合计"
+                ? "店铺类别合计"
                 : "商品"}
         </small>
       </label>
@@ -2362,7 +2362,7 @@ export function Reports({ open }: { open: (id: string) => void }) {
       />
       {trend.data && (
         <Select
-          label="商店类别统计范围"
+          label="店铺类别统计范围"
           value={receiptType || ""}
           onChange={(v) => {
             setReceiptType(v || null);
@@ -2370,7 +2370,7 @@ export function Reports({ open }: { open: (id: string) => void }) {
             setDetail(null);
           }}
           options={[
-            ["", "全部商店类别"],
+            ["", "全部店铺类别"],
             ...trend.data.series
               .filter((t: Row) => t.group === "receipt_type")
               .map((t: Row): [string, string] => [t.key.slice(13), t.label]),
@@ -2485,7 +2485,7 @@ export function Reports({ open }: { open: (id: string) => void }) {
                   {group === "category"
                     ? "商品分类"
                     : group === "receipt_type"
-                      ? "商店类别"
+                      ? "店铺类别"
                       : "商品"}
                 </h2>
                 {summary.data.groups
@@ -2533,7 +2533,7 @@ export function Reports({ open }: { open: (id: string) => void }) {
               <thead>
                 <tr>
                   <th>商品</th>
-                  <th>商店</th>
+                  <th>店铺</th>
                   <th>收据时间</th>
                   <th>金额</th>
                 </tr>
@@ -2551,7 +2551,7 @@ export function Reports({ open }: { open: (id: string) => void }) {
                           {e.product_name || e.raw_name}
                         </button>
                       </td>
-                      <td>{e.raw_store || "未知商店"}</td>
+                      <td>{e.raw_store || "未知店铺"}</td>
                       <td>{date(e.occurred_at_utc_ms)}</td>
                       <td>{money(e.amount_minor, summary.data.currency)}</td>
                     </tr>

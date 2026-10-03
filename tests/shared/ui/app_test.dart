@@ -94,6 +94,87 @@ void main() {
   });
 
   testWidgets(
+    'drawer opens store tabs directly and preserves settings navigation',
+    (tester) async {
+      tzdata.initializeTimeZones();
+      var kind = 'grocery';
+      final classified = <Map<String, dynamic>>[];
+      final store = AppStore(
+        '/unused',
+        configuration: () async =>
+            const BackendConnection('https://example.test', 'key'),
+        client: MockClient((req) async {
+          dynamic data;
+          switch (req.url.path) {
+            case '/api/v1/receipts/list':
+              data = {'items': [], 'next_cursor': null};
+            case '/api/v1/config/get':
+              data = {'weight_unit': 'kg', 'report_currency': 'USD'};
+            case '/api/v1/logos/list':
+              data = [];
+            case '/api/v1/receipt_types/list':
+              data = [
+                {'receipt_type_id': 'grocery', 'name': '杂货'},
+                {'receipt_type_id': 'restaurant', 'name': '餐馆'},
+              ];
+            case '/api/v1/merchants/list':
+              data = [
+                {
+                  'merchant_id': 'costco',
+                  'name': 'Costco',
+                  'receipt_type_id': kind,
+                },
+              ];
+            case '/api/v1/merchants/classify':
+              final input = Map<String, dynamic>.from(
+                jsonDecode(req.body)['input'],
+              );
+              classified.add(input);
+              kind = input['receipt_type_id'];
+            default:
+              fail('Unexpected request ${req.url.path}');
+          }
+          return http.Response(
+            jsonEncode({'data': data, 'catalog_version': 1}),
+            200,
+            headers: {'content-type': 'application/json; charset=utf-8'},
+          );
+        }),
+      );
+      await tester.pumpWidget(
+        ReceiptApp(
+          store: store,
+          zone: 'America/New_York',
+          appearance: Appearance(store.cacheRoot),
+        ),
+      );
+      await tester.pumpAndSettle();
+      await tester.tap(find.byTooltip('打开导航菜单'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('店铺'));
+      await tester.pumpAndSettle();
+      expect(find.widgetWithText(ChoiceChip, '店铺名称'), findsOneWidget);
+      expect(find.widgetWithText(ChoiceChip, '店铺类别'), findsOneWidget);
+      expect(find.text('商品管理'), findsNothing);
+      await tester.tap(find.widgetWithText(ChoiceChip, '店铺类别'));
+      await tester.pumpAndSettle();
+      expect(find.text('Costco'), findsOneWidget);
+      await tester.tap(find.byType(DropdownButtonFormField<String>));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('餐馆').last);
+      await tester.pumpAndSettle();
+      expect(classified.single['receipt_type_id'], 'restaurant');
+      expect(classified.single['id'], 'costco');
+      await tester.tap(find.byTooltip('打开导航菜单'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('设置'));
+      await tester.pumpAndSettle();
+      expect(find.text('偏好设置'), findsOneWidget);
+      expect(find.widgetWithText(ChoiceChip, '店铺类别'), findsNothing);
+    },
+  );
+
+  testWidgets(
     'overview requests all four server sort orders and toggles direction',
     (tester) async {
       tzdata.initializeTimeZones();
@@ -202,7 +283,12 @@ void main() {
       expect(find.byType(CapturePage), findsOneWidget);
       expect(find.text("拍摄"), findsOneWidget);
       expect(find.text("完成"), findsOneWidget);
-      await tester.pageBack();
+      await tester.tap(
+        find.byTooltip(
+          MaterialLocalizations.of(tester.element(find.byType(CapturePage)))
+              .backButtonTooltip,
+        ),
+      );
       for (var i = 0; i < 5; i++) {
         await tester.pump(const Duration(milliseconds: 100));
         await tester.runAsync(
@@ -496,6 +582,7 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           home: LogoAliasesPage(
+            embedded: false,
             store: store,
             receiptId: null,
             suggestedName: '',
@@ -521,12 +608,12 @@ void main() {
       await tester.tap(find.text('保存别名'));
       await tester.pumpAndSettle();
       expect(find.text('H MART'), findsOneWidget);
-      await tester.tap(find.byTooltip('删除商店名称样本'));
+      await tester.tap(find.byTooltip('删除店铺名称样本'));
       await tester.pumpAndSettle();
       expect(aliases, isNotEmpty);
       await tester.tap(find.text('取消'));
       await tester.pumpAndSettle();
-      await tester.tap(find.byTooltip('删除商店名称样本'));
+      await tester.tap(find.byTooltip('删除店铺名称样本'));
       await tester.pumpAndSettle();
       await tester.tap(find.text('确认'));
       await tester.pumpAndSettle();

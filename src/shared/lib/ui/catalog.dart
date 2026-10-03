@@ -1,3 +1,5 @@
+import '../l10n/strings.dart';
+
 import 'package:flutter/material.dart';
 
 import '../data/store.dart';
@@ -82,8 +84,8 @@ class _CatalogPageState extends State<CatalogPage> {
   Future<void> removeName(Map<String, dynamic> n) async {
     if (!await confirm(
       context,
-      '删除商品名称',
-      '删除“${n['name']}”及其名称关联；保留所有收据和照片，相关商品恢复显示票面名称。',
+      context.tr("删除商品名称"),
+      context.tr("删除“{0}”及其名称关联；保留所有收据和照片，相关商品恢复显示票面名称。", [n['name']]),
     )) {
       return;
     }
@@ -93,8 +95,8 @@ class _CatalogPageState extends State<CatalogPage> {
   Future<void> removeCategory(Map<String, dynamic> c) async {
     if (!await confirm(
       context,
-      '删除商品种类',
-      '删除“${c['name']}”后，关联商品名称变为未分类；子分类保留并移到顶层。',
+      context.tr("删除商品种类"),
+      context.tr("删除“{0}”后，关联商品名称变为未分类；子分类保留并移到顶层。", [c['name']]),
     )) {
       return;
     }
@@ -124,7 +126,10 @@ class _CatalogPageState extends State<CatalogPage> {
   Widget build(BuildContext context) {
     if (error != null) {
       return Center(
-        child: TextButton(onPressed: load, child: const Text('加载失败，点击重试')),
+        child: TextButton(
+          onPressed: load,
+          child: Text(context.tr("加载失败，点击重试")),
+        ),
       );
     }
     if (loading) return const Center(child: CircularProgressIndicator());
@@ -138,15 +143,16 @@ class _CatalogPageState extends State<CatalogPage> {
         padding: const EdgeInsets.fromLTRB(0, 8, 0, 110),
         children: [
           PageHeading(
-            title: '商品管理',
-            subtitle: '将票面写法归为你熟悉的商品与种类',
+            title: context.tr("商品管理"),
+            subtitle: context.tr("将票面写法归为你熟悉的商品与种类"),
             trailing: TextButton.icon(
               icon: const Icon(Icons.storefront_outlined),
-              label: const Text('商店'),
+              label: Text(context.tr("店铺")),
               onPressed: () async {
                 await Navigator.of(context).push(
                   MaterialPageRoute<void>(
                     builder: (_) => LogoAliasesPage(
+                      embedded: false,
                       store: widget.store,
                       receiptId: null,
                       suggestedName: '',
@@ -164,10 +170,10 @@ class _CatalogPageState extends State<CatalogPage> {
               runSpacing: 4,
               children: [
                 for (final (index, label) in [
-                  '票据名称',
-                  '商品名称',
-                  '商品分类',
-                  '商品种类',
+                  context.tr("票据名称"),
+                  context.tr("商品名称"),
+                  context.tr("商品分类"),
+                  context.tr("商品种类"),
                 ].indexed)
                   ChoiceChip(
                     label: Text(label),
@@ -193,8 +199,9 @@ class _CatalogPageState extends State<CatalogPage> {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 if (tab == 0) ...[
-                  const _Headings('票面名称', '商品名称'),
-                  if (printedNames.isEmpty) const Text('识别或录入收据后，可在这里设置商品名称。'),
+                  _Headings(context.tr("票面名称"), context.tr("商品名称")),
+                  if (printedNames.isEmpty)
+                    Text(context.tr("识别或录入收据后，可在这里设置商品名称。")),
                   ...pendingFirst(
                     printedNames,
                     (p) =>
@@ -203,7 +210,7 @@ class _CatalogPageState extends State<CatalogPage> {
                       key: ValueKey('printed-${p['printed_name_id']}'),
                       label: p['raw_name'],
                       value: p['product_name'] ?? '',
-                      fieldLabel: '商品名称',
+                      fieldLabel: context.tr("商品名称"),
                       store: widget.store,
                       component: 'product_names',
                       enabled: !saving,
@@ -221,7 +228,8 @@ class _CatalogPageState extends State<CatalogPage> {
                   ),
                 ],
                 if (tab == 1) ...[
-                  if (productNames.isEmpty) const Text('还没有商品名称，请先在票据名称中设置。'),
+                  if (productNames.isEmpty)
+                    Text(context.tr("还没有商品名称，请先在票据名称中设置。")),
                   Wrap(
                     spacing: 8,
                     runSpacing: 8,
@@ -247,7 +255,7 @@ class _CatalogPageState extends State<CatalogPage> {
                                   if (mounted) await load();
                                 },
                           deleteIcon: const Icon(Icons.close, size: 18),
-                          deleteButtonTooltipMessage: '删除商品名称',
+                          deleteButtonTooltipMessage: context.tr("删除商品名称"),
                           onDeleted: saving
                               ? null
                               : () => action(() => removeName(n)),
@@ -267,14 +275,14 @@ class _CatalogPageState extends State<CatalogPage> {
                               ? null
                               : () => action(() => editCategory(c)),
                           deleteIcon: const Icon(Icons.close, size: 18),
-                          deleteButtonTooltipMessage: '删除商品种类',
+                          deleteButtonTooltipMessage: context.tr("删除商品种类"),
                           onDeleted: saving || c['system_key'] != null
                               ? null
                               : () => action(() => removeCategory(c)),
                         ),
                       ActionChip(
                         avatar: const Icon(Icons.add, size: 18),
-                        label: const Text('添加种类'),
+                        label: Text(context.tr("添加种类")),
                         onPressed: saving
                             ? null
                             : () => action(() => editCategory(null)),
@@ -283,7 +291,7 @@ class _CatalogPageState extends State<CatalogPage> {
                   ),
                 ],
                 if (tab == 2) ...[
-                  const _Headings('商品名称', '商品种类'),
+                  _Headings(context.tr("商品名称"), context.tr("商品种类")),
                   ...pendingFirst(
                     productNames,
                     (n) =>
@@ -298,8 +306,8 @@ class _CatalogPageState extends State<CatalogPage> {
                                 (c) => c['category_id'] == n['category_id'],
                               )
                               .firstOrNull?['path'] ??
-                          '未分类',
-                      fieldLabel: '商品种类',
+                          context.tr("未分类"),
+                      fieldLabel: context.tr("商品种类"),
                       store: widget.store,
                       component: 'categories',
                       enabled: !saving,
@@ -423,7 +431,7 @@ class _ChoiceRowState extends State<_ChoiceRow> {
           mainAxisSize: MainAxisSize.min,
           children: [
             PopupMenuButton<String>(
-              tooltip: '选择${widget.fieldLabel}',
+              tooltip: context.tr("选择{0}", [widget.fieldLabel]),
               enabled: widget.enabled && widget.options.isNotEmpty,
               padding: EdgeInsets.zero,
               icon: const Icon(Icons.arrow_drop_down),
@@ -437,7 +445,7 @@ class _ChoiceRowState extends State<_ChoiceRow> {
               ],
             ),
             IconButton(
-              tooltip: '保存${widget.fieldLabel}',
+              tooltip: context.tr("保存{0}", [widget.fieldLabel]),
               visualDensity: VisualDensity.compact,
               icon: const Icon(Icons.check, size: 18),
               onPressed: widget.enabled ? () => submit(controller.text) : null,

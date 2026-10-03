@@ -53,7 +53,7 @@ Hualian 的 `FAGE GREEK STRAINED YOGURT 2% MILK FAT` 全部实际印在同一商
 - 按名称一对一匹配，重复购买行重复计数。漏行会降低命中率，多出的商品会降低精确率。税、折扣、押金、付款标签不纳入商品名称标准行。
 - 名称允许照片上已核验、确属同一商品的英文续行，例如 Hualian 的 `FAGE GREEK STRAINED YOGURT 2% MILK FAT`；这不是臆造名称。**没有评测中文续行的逐字正确率**。
 - 店名作为已知上下文传入，Logo 匹配不在本轮范围。模型没有得到名称、金额答案或其他 OCR 输出。
-- 这些收据曾用于 parser 开发，属于本地回归集；不是独立新商店泛化测试。每张仅一幅图，不能据此推断多图长收据效果。
+- 这些收据曾用于 parser 开发，属于本地回归集；不是独立新店铺泛化测试。每张仅一幅图，不能据此推断多图长收据效果。
 
 ## 金额、时间、重量：辅助核验
 
@@ -90,7 +90,7 @@ Hualian 的 `FAGE GREEK STRAINED YOGURT 2% MILK FAT` 全部实际印在同一商
 - 模型：[ggml-org/Qwen3.8-27B-GGUF](https://huggingface.co/ggml-org/Qwen3.8-27B-GGUF)，Q4_K_M；视觉投影器 BF16。固定 revision、权重与运行时校验值见[部署记录](../tests/backend_api/corpus/baselines/2026-09-18-qwen38-q4/deployment.json)。
 - [llama.cpp b11037](https://github.com/ggml-org/llama.cpp/releases/tag/b11037)，CUDA 12.8，RTX 5090 32 GB；Docker 内本地运行，临时端口只绑定回环地址。
 - 串行 1 个请求，关闭 thinking，32K 上下文，4096 图像 token 上限，8192 输出 token，temperature=0、seed=42；JSON Schema 约束输出，无重试。
-- 先按 EXIF 调正原图方向，再编码 PNG；模型内部仍按图像 token 预算处理。通用提示词叠加商店规则，与现有接口 JSON 结构一致。
+- 先按 EXIF 调正原图方向，再编码 PNG；模型内部仍按图像 token 预算处理。通用提示词叠加店铺规则，与现有接口 JSON 结构一致。
 - 32 张整批 **887.8 秒（14.8 分钟）**；单张请求中位数 **24.6 秒**，范围 **8.0–49.6 秒**。批次包含图片准备，请求耗时包括本地传输和推理；均不含模型加载及初次端口排错。未单独预热，首个正式请求也计入。
 - 推理中一次设备显存采样约 **25.1 GiB**，不是峰值。原双 OCR 也占用大量显存，同一张 32 GB GPU 无法直接让这套 Qwen 与现有两模型一起常驻。
 - 双 OCR 对照复用同 SHA256 原图的实际 OCR 缓存：8 张近期识别记录与 24 张旧双模型输出，重新经过当前 parser。**没有重新推理双 OCR，故本报告不作速度对比。**

@@ -1,3 +1,5 @@
+import '../l10n/strings.dart';
+
 import 'package:flutter/material.dart';
 
 import '../data/store.dart';
@@ -116,12 +118,12 @@ class _CatalogSearchFieldState extends State<CatalogSearchField> {
         labelText: widget.label,
         suffixIcon: widget.suffix,
         helperText:
-            error ??
+            (error == null ? null : context.translatedMessage(error!)) ??
             (existingName != null && !widget.rejectExistingName
-                ? '已有同名记录，将使用已有名称，不会重复添加'
+                ? context.tr("已有同名记录，将使用已有名称，不会重复添加")
                 : null),
         errorText: existingName != null && widget.rejectExistingName
-            ? '商品种类名称已存在，请使用其他名称'
+            ? context.tr("商品种类名称已存在，请使用其他名称")
             : null,
       ),
     ),

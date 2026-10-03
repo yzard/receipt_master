@@ -1,6 +1,6 @@
 > 本文件保留第一版历史方案。当前名称、分类、数据库与 API 以 [第二版设计](backend_api_v2.md) 和 `src/backend_api/schema.sql` 为准：仅有票面名称与商品名称两层，不保留店内映射或标准名称层。
 
-> 当前采用 Qwen3.8 + NInfer + thinking，由 backend_api 组合通用和商店提示并校验结构化结果；下文保留历史计划。现行设计见 [backend_ocr.md](backend_ocr.md)。
+> 当前采用 Qwen3.8 + NInfer + thinking，由 backend_api 组合通用和店铺提示并校验结构化结果；下文保留历史计划。现行设计见 [backend_ocr.md](backend_ocr.md)。
 
 # Receipt Master 第一版技术方案与数据库设计
 
@@ -619,4 +619,4 @@ CSV 采用 UTF-8，包含 receipt_id/line_id、UTC 时间与当前时区显示�
 
 ## 商品 SKU 与票面税码补充（2026-09-16）
 
-SKU 可选，作为商店内标识以文本保存（保留前导零），独立 `sku` 表通过 merchant_id 关联商店，唯一键为 `(merchant_id, code)`；票面明细通过 `line_sku` 引用。单字符税码在 `line_tax_code` 保存，与商品名称分开，不解释其税务含义。未知店名的手工 SKU 暂存独立的 `line_unmatched_sku`，待确认店名后绑定；所有关联为 3NF，不把商店名称复制进 SKU 表。具体 API 与解析边界见 `backend_api_v2.md`。
+SKU 可选，作为店铺内标识以文本保存（保留前导零），独立 `sku` 表通过 merchant_id 关联店铺，唯一键为 `(merchant_id, code)`；票面明细通过 `line_sku` 引用。单字符税码在 `line_tax_code` 保存，与商品名称分开，不解释其税务含义。未知店名的手工 SKU 暂存独立的 `line_unmatched_sku`，待确认店名后绑定；所有关联为 3NF，不把店铺名称复制进 SKU 表。具体 API 与解析边界见 `backend_api_v2.md`。

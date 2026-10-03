@@ -16,11 +16,13 @@ import 'package:timezone/data/latest.dart' as tzdata;
 import 'data/store.dart';
 import 'ui/app_theme.dart';
 import 'ui/home.dart';
+import 'l10n/strings.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
   tzdata.initializeTimeZones();
+  Appearance? appearance;
   try {
     final support = await getApplicationSupportDirectory();
     final root = p.join(support.path, 'receipt-master-cache');
@@ -31,15 +33,22 @@ Future<void> main() async {
       configuration: loadBackendConnection,
     );
     final zone = (await FlutterTimezone.getLocalTimezone()).identifier;
-    final appearance = Appearance(root);
+    appearance = Appearance(root);
     await appearance.load();
     await AuthSession.instance.restore();
     runApp(AccountApp(store: store, zone: zone, appearance: appearance));
   } catch (e) {
     runApp(
       MaterialApp(
+        locale: appearance?.locale ?? const Locale('zh'),
+        supportedLocales: ReceiptLocalizations.supportedLocales,
+        localizationsDelegates: ReceiptLocalizations.delegates,
         home: Scaffold(
-          body: Center(child: Text('无法启动应用，请重试。\n${e.runtimeType}')),
+          body: Builder(
+            builder: (context) => Center(
+              child: Text(context.tr('无法启动应用，请重试。\n{0}', [e.runtimeType])),
+            ),
+          ),
         ),
       ),
     );
@@ -65,6 +74,9 @@ class ReceiptApp extends StatelessWidget {
       theme: receiptTheme(Brightness.light),
       darkTheme: receiptTheme(Brightness.dark),
       themeMode: appearance.mode,
+      locale: appearance.locale,
+      supportedLocales: ReceiptLocalizations.supportedLocales,
+      localizationsDelegates: ReceiptLocalizations.delegates,
       builder: (context, child) => AnnotatedRegion<SystemUiOverlayStyle>(
         value: systemBars(Theme.of(context).brightness),
         child: child ?? const SizedBox.shrink(),
@@ -93,6 +105,9 @@ class AccountApp extends StatelessWidget {
       theme: receiptTheme(Brightness.light),
       darkTheme: receiptTheme(Brightness.dark),
       themeMode: appearance.mode,
+      locale: appearance.locale,
+      supportedLocales: ReceiptLocalizations.supportedLocales,
+      localizationsDelegates: ReceiptLocalizations.delegates,
       builder: (context, child) => AnnotatedRegion<SystemUiOverlayStyle>(
         value: systemBars(Theme.of(context).brightness),
         child: child ?? const SizedBox.shrink(),

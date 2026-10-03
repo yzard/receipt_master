@@ -1,3 +1,5 @@
+import '../l10n/strings.dart';
+
 import 'package:flutter/material.dart';
 
 import '../data/store.dart';
@@ -9,11 +11,13 @@ class LogoAliasesPage extends StatefulWidget {
   final AppStore store;
   final String? receiptId;
   final String suggestedName;
+  final bool embedded;
   const LogoAliasesPage({
     super.key,
     required this.store,
     required this.receiptId,
     required this.suggestedName,
+    required this.embedded,
   });
   @override
   State<LogoAliasesPage> createState() => _LogoAliasesPageState();
@@ -52,7 +56,7 @@ class _LogoAliasesPageState extends State<LogoAliasesPage> {
       context: context,
       builder: (context) => StatefulBuilder(
         builder: (context, setDialogState) => AlertDialog(
-          title: const Text('确认 Logo 与店名'),
+          title: Text(context.tr("确认 Logo 与店名")),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -66,21 +70,21 @@ class _LogoAliasesPageState extends State<LogoAliasesPage> {
               TextFormField(
                 initialValue: name,
                 onChanged: (v) => setDialogState(() => name = v),
-                decoration: const InputDecoration(labelText: '统一店名'),
+                decoration: InputDecoration(labelText: context.tr("统一店名")),
               ),
-              const Text('确认裁剪图包含这家店的 Logo。以后明确匹配时自动使用此店名。'),
+              Text(context.tr("确认裁剪图包含这家店的 Logo。以后明确匹配时自动使用此店名。")),
             ],
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context, false),
-              child: const Text('取消'),
+              child: Text(context.tr("取消")),
             ),
             FilledButton(
               onPressed: name.trim().isEmpty
                   ? null
                   : () => Navigator.pop(context, true),
-              child: const Text('保存别名'),
+              child: Text(context.tr("保存别名")),
             ),
           ],
         ),
@@ -113,27 +117,30 @@ class _LogoAliasesPageState extends State<LogoAliasesPage> {
   }
 
   @override
-  Widget build(BuildContext context) => Scaffold(
-    extendBodyBehindAppBar: true,
-    appBar: AppBar(
-      flexibleSpace: const FrostedBar(child: SizedBox.expand()),
-      title: Text(widget.receiptId == null ? '商店' : '收据 Logo'),
-    ),
-    body: AbsorbPointer(
+  Widget build(BuildContext context) {
+    final body = AbsorbPointer(
       absorbing: busy,
       child: ListView(
         padding: EdgeInsets.fromLTRB(
           18,
-          MediaQuery.paddingOf(context).top + 72,
+          widget.embedded ? 8 : MediaQuery.paddingOf(context).top + 72,
           18,
-          32,
+          widget.embedded ? 110 : 32,
         ),
         children: [
+          if (widget.embedded)
+            PageHeading(
+              title: context.tr("店铺"),
+              subtitle: context.tr("管理店铺名称与店铺类别"),
+            ),
           if (widget.receiptId == null) ...[
             Wrap(
               spacing: 8,
               children: [
-                for (final (index, label) in ['商店名称', '商店类别'].indexed)
+                for (final (index, label) in [
+                  context.tr("店铺名称"),
+                  context.tr("店铺类别"),
+                ].indexed)
                   ChoiceChip(
                     label: Text(label),
                     selected: tab == index,
@@ -148,7 +155,7 @@ class _LogoAliasesPageState extends State<LogoAliasesPage> {
           else ...[
             if (busy) const LinearProgressIndicator(),
             if (error != null)
-              TextButton(onPressed: load, child: const Text('加载失败，点击重试')),
+              TextButton(onPressed: load, child: Text(context.tr("加载失败，点击重试"))),
             if (logos == null && error == null)
               const Center(child: CircularProgressIndicator()),
             if (widget.receiptId != null && logos?.isEmpty == true)
@@ -159,10 +166,10 @@ class _LogoAliasesPageState extends State<LogoAliasesPage> {
                   });
                   await load();
                 }),
-                child: const Text('提取收据顶部 Logo'),
+                child: Text(context.tr("提取收据顶部 Logo")),
               ),
             if (logos?.isEmpty == true)
-              const Text('尚无 Logo 样本。新收据识别完成后会提取顶部候选图；确认店名后加入别名库。'),
+              Text(context.tr("尚无 Logo 样本。新收据识别完成后会提取顶部候选图；确认店名后加入别名库。")),
             for (final logo in logos ?? [])
               Card(
                 child: Column(
@@ -175,23 +182,23 @@ class _LogoAliasesPageState extends State<LogoAliasesPage> {
                       ),
                     ),
                     ListTile(
-                      title: Text(logo['name'] ?? '尚未设置店名'),
+                      title: Text(logo['name'] ?? context.tr("尚未设置店名")),
                       subtitle: Text(
                         logo['detection'] == 'header_candidate'
-                            ? '顶部候选区域，请确认是否为 Logo'
-                            : '请确认 Logo 和对应店名',
+                            ? context.tr("顶部候选区域，请确认是否为 Logo")
+                            : context.tr("请确认 Logo 和对应店名"),
                       ),
                       onTap: () => edit(logo as Map),
                       trailing: logo['name'] == null
                           ? const Icon(Icons.edit)
                           : IconButton(
-                              tooltip: '删除商店名称样本',
+                              tooltip: context.tr("删除店铺名称样本"),
                               icon: const Icon(Icons.delete_outline),
                               onPressed: () async {
                                 if (!await confirm(
                                   context,
-                                  '删除这个商店名称样本？',
-                                  '以后识别相似 Logo 时将不再使用这个样本。',
+                                  context.tr("删除这个店铺名称样本？"),
+                                  context.tr("以后识别相似 Logo 时将不再使用这个样本。"),
                                 )) {
                                   return;
                                 }
@@ -216,6 +223,17 @@ class _LogoAliasesPageState extends State<LogoAliasesPage> {
           ],
         ],
       ),
-    ),
-  );
+    );
+    if (widget.embedded) return body;
+    return Scaffold(
+      extendBodyBehindAppBar: true,
+      appBar: AppBar(
+        flexibleSpace: const FrostedBar(child: SizedBox.expand()),
+        title: Text(
+          widget.receiptId == null ? context.tr("店铺") : context.tr("收据 Logo"),
+        ),
+      ),
+      body: body,
+    );
+  }
 }

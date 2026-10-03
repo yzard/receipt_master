@@ -1,3 +1,5 @@
+import '../l10n/strings.dart';
+
 import 'dart:async';
 import 'dart:io';
 import 'dart:typed_data';
@@ -11,6 +13,7 @@ import '../domain/models.dart';
 import 'common.dart';
 import 'editor.dart';
 import 'catalog.dart';
+import 'logo_aliases.dart';
 import 'reports.dart';
 import 'settings.dart';
 import 'receipt_row.dart';
@@ -231,16 +234,20 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   }
 
   String jobLabel(dynamic status) => switch (status) {
-    'queued' => '排队中 · ',
-    'running' => '识别中 · ',
+    'queued' => context.tr("排队中 · "),
+    'running' => context.tr("识别中 · "),
     'failed' => '',
     'applied' => '',
-    'succeeded' => '结果待处理 · ',
+    'succeeded' => context.tr("结果待处理 · "),
     _ => '',
   };
 
   Future<void> deleteReceipt(String id) async {
-    if (!await confirm(context, '永久删除这张收据？', '收据、照片和识别记录会从服务器删除，无法恢复。')) {
+    if (!await confirm(
+      context,
+      context.tr("永久删除这张收据？"),
+      context.tr("收据、照片和识别记录会从服务器删除，无法恢复。"),
+    )) {
       return;
     }
     try {
@@ -278,6 +285,12 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
         zone: zone,
         onReceipt: (id) => open(id),
       ),
+      3 => LogoAliasesPage(
+        store: widget.store,
+        receiptId: null,
+        suggestedName: '',
+        embedded: true,
+      ),
       _ => SettingsPage(
         store: widget.store,
         zone: zone,
@@ -291,7 +304,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
       drawer: NavigationDrawer(
         selectedIndex: page,
         onDestinationSelected: choosePage,
-        children: const [
+        children: [
           Padding(
             padding: EdgeInsets.fromLTRB(28, 48, 20, 24),
             child: Text(
@@ -302,22 +315,27 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
           NavigationDrawerDestination(
             icon: Icon(Icons.receipt_long_outlined),
             selectedIcon: Icon(Icons.receipt_long),
-            label: Text('收据'),
+            label: Text(context.tr("收据")),
           ),
           NavigationDrawerDestination(
             icon: Icon(Icons.insights_outlined),
             selectedIcon: Icon(Icons.insights),
-            label: Text('报表'),
+            label: Text(context.tr("报表")),
           ),
           NavigationDrawerDestination(
             icon: Icon(Icons.category_outlined),
             selectedIcon: Icon(Icons.category),
-            label: Text('商品管理'),
+            label: Text(context.tr("商品管理")),
+          ),
+          NavigationDrawerDestination(
+            icon: Icon(Icons.storefront_outlined),
+            selectedIcon: Icon(Icons.storefront),
+            label: Text(context.tr("店铺")),
           ),
           NavigationDrawerDestination(
             icon: Icon(Icons.tune_outlined),
             selectedIcon: Icon(Icons.tune),
-            label: Text('设置'),
+            label: Text(context.tr("设置")),
           ),
         ],
       ),
@@ -352,14 +370,16 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                         dense: true,
                         leading: const Icon(Icons.cloud_upload_outlined),
                         title: Text(
-                          '后台提交 ${widget.store.submissionStates.length} 张收据',
+                          context.tr("后台提交 {0} 张收据", [
+                            widget.store.submissionStates.length,
+                          ]),
                         ),
                         subtitle: Text(
                           widget.store.submissionStates.values.any(
                                 (v) => v.startsWith('上传失败'),
                               )
-                              ? '部分上传失败，点击重试；照片已保留'
-                              : '上传中，可以继续使用其他页面',
+                              ? context.tr("部分上传失败，点击重试；照片已保留")
+                              : context.tr("上传中，可以继续使用其他页面"),
                         ),
                         onTap: () => widget.store.retrySubmissions(),
                       ),
@@ -386,7 +406,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                         width: 58,
                         height: 58,
                         child: IconButton(
-                          tooltip: '打开导航菜单',
+                          tooltip: context.tr("打开导航菜单"),
                           onPressed: openMenu,
                           icon: const Icon(Icons.menu_rounded, size: 28),
                         ),
@@ -402,7 +422,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                       const SizedBox(width: 5),
                       Expanded(
                         child: _QuickAction(
-                          label: '拍照',
+                          label: context.tr("拍照"),
                           icon: Icons.camera_alt_outlined,
                           primary: true,
                           onTap: importing ? null : () => capture(true),
@@ -410,14 +430,14 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                       ),
                       Expanded(
                         child: _QuickAction(
-                          label: '上传照片',
+                          label: context.tr("上传照片"),
                           icon: Icons.photo_library_outlined,
                           onTap: importing ? null : () => capture(false),
                         ),
                       ),
                       Expanded(
                         child: _QuickAction(
-                          label: '手动',
+                          label: context.tr("手动"),
                           icon: Icons.edit_note_outlined,
                           onTap: importing ? null : () => open(null),
                         ),
@@ -447,10 +467,10 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
         itemBuilder: (context, i) {
           if (i == 0) {
             return PageHeading(
-              title: '收据',
-              subtitle: '每一笔，都清楚',
+              title: context.tr("收据"),
+              subtitle: context.tr("每一笔，都清楚"),
               trailing: IconButton(
-                tooltip: '刷新收据',
+                tooltip: context.tr("刷新收据"),
                 onPressed: refresh,
                 icon: const Icon(Icons.refresh_rounded),
               ),
@@ -459,10 +479,13 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
           if (i == 1 && error != null) {
             return Column(
               children: [
-                const Text('数据加载失败'),
+                Text(context.tr("数据加载失败")),
                 const SizedBox(height: 8),
-                SelectableText(error.toString(), textAlign: TextAlign.center),
-                TextButton(onPressed: refresh, child: const Text('点击重试')),
+                SelectableText(
+                  context.translatedMessage(error.toString()),
+                  textAlign: TextAlign.center,
+                ),
+                TextButton(onPressed: refresh, child: Text(context.tr("点击重试"))),
               ],
             );
           }
@@ -470,10 +493,10 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
             return const Center(child: CircularProgressIndicator());
           }
           if (i == 1 && rows.isEmpty) {
-            return const EmptyState(
+            return EmptyState(
               icon: Icons.receipt_long_outlined,
-              title: '从第一张收据开始',
-              detail: '拍摄、导入照片或手工录入。\n确认每一笔，慢慢看清日常消费。',
+              title: context.tr("从第一张收据开始"),
+              detail: context.tr("拍摄、导入照片或手工录入。\n确认每一笔，慢慢看清日常消费。"),
             );
           }
           if (i == 1) {
@@ -495,13 +518,13 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
           return ReceiptRow(
             key: ValueKey(r['receipt_id']),
             name:
-                '${r['status'] == 'posted' ? '' : jobLabel(r['recognition_status'])}${(r['raw_store'] as String?)?.isNotEmpty == true ? r['raw_store'] : '未填写商店'}',
+                '${r['status'] == 'posted' ? '' : jobLabel(r['recognition_status'])}${(r['raw_store'] as String?)?.isNotEmpty == true ? r['raw_store'] : context.tr("未填写店铺")}',
             date: dateText(r['created_at_utc_ms'], zone),
             receiptDate: dateText(r['occurred_at_utc_ms'], zone),
             failed: r['recognition_status'] == 'failed',
             draft: r['status'] == 'draft',
             amount: r['total_minor'] == null
-                ? '待填写'
+                ? context.tr("待填写")
                 : money(r['total_minor'], r['currency_code']),
             onOpen: () => open(r['receipt_id']),
             onDelete: () => deleteReceipt(r['receipt_id']),

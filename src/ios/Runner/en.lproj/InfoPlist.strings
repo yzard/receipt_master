@@ -1,0 +1,3 @@
+"NSCameraUsageDescription" = "Take receipt photos and recognize their line items.";
+"NSLocalNetworkUsageDescription" = "Connect to your receipt server to save and view receipts and photos.";
+"NSPhotoLibraryUsageDescription" = "Choose receipt photos for recognition.";

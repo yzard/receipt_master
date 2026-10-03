@@ -1,3 +1,4 @@
+import '../l10n/strings.dart';
 import 'logo_aliases.dart';
 
 import 'dart:async';
@@ -168,32 +169,36 @@ class _EditorPageState extends State<EditorPage> {
       context: context,
       builder: (ctx) => StatefulBuilder(
         builder: (ctx, set) => AlertDialog(
-          title: const Text('确认消费时间'),
+          title: Text(context.tr("确认消费时间")),
           content: SingleChildScrollView(
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Text('票面原文：${r.rawTime.isEmpty ? '无' : r.rawTime}'),
+                Text(
+                  context.tr("票面原文：{0}", [
+                    r.rawTime.isEmpty ? context.tr("无") : r.rawTime,
+                  ]),
+                ),
                 const SizedBox(height: 12),
                 TextField(
                   controller: local,
-                  decoration: const InputDecoration(
-                    labelText: '当地日期时间',
+                  decoration: InputDecoration(
+                    labelText: context.tr("当地日期时间"),
                     helperText: 'YYYY-MM-DD HH:mm',
                   ),
                 ),
                 const SizedBox(height: 12),
                 TextField(
                   controller: zoneField,
-                  decoration: const InputDecoration(
-                    labelText: '用于解释票面时间的时区',
-                    helperText: '例如 America/New_York、Asia/Tokyo',
+                  decoration: InputDecoration(
+                    labelText: context.tr("用于解释票面时间的时区"),
+                    helperText: context.tr("例如 America/New_York、Asia/Tokyo"),
                   ),
                 ),
                 CheckboxListTile(
                   value: estimate,
                   onChanged: (v) => set(() => estimate = v!),
-                  title: const Text('时间包含估计值'),
+                  title: Text(context.tr("时间包含估计值")),
                   contentPadding: EdgeInsets.zero,
                 ),
               ],
@@ -202,11 +207,11 @@ class _EditorPageState extends State<EditorPage> {
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(ctx, false),
-              child: const Text('取消'),
+              child: Text(context.tr("取消")),
             ),
             FilledButton(
               onPressed: () => Navigator.pop(ctx, true),
-              child: const Text('确定'),
+              child: Text(context.tr("确定")),
             ),
           ],
         ),
@@ -234,7 +239,7 @@ class _EditorPageState extends State<EditorPage> {
         instant = await showDialog<DateTime>(
           context: context,
           builder: (ctx) => SimpleDialog(
-            title: const Text('此时间出现两次，请选择'),
+            title: Text(context.tr("此时间出现两次，请选择")),
             children: candidates
                 .map(
                   (d) => SimpleDialogOption(
@@ -278,7 +283,7 @@ class _EditorPageState extends State<EditorPage> {
       context: context,
       builder: (ctx) => Dialog.fullscreen(
         child: Scaffold(
-          appBar: AppBar(title: const Text('对照票面 · 高亮为识别位置')),
+          appBar: AppBar(title: Text(context.tr("对照票面 · 高亮为识别位置"))),
           body: InteractiveViewer(
             maxScale: 8,
             child: Center(
@@ -373,7 +378,9 @@ class _EditorPageState extends State<EditorPage> {
                   ),
           );
           return AlertDialog(
-            title: Text(original == null ? '添加明细' : '确认明细'),
+            title: Text(
+              original == null ? context.tr("添加明细") : context.tr("确认明细"),
+            ),
             content: SizedBox(
               width: 440,
               child: SingleChildScrollView(
@@ -384,7 +391,7 @@ class _EditorPageState extends State<EditorPage> {
                       TextButton.icon(
                         onPressed: () => showEvidence(line),
                         icon: const Icon(Icons.image_search),
-                        label: const Text('对照原图位置'),
+                        label: Text(context.tr("对照原图位置")),
                       ),
                     if (line.warnings.isNotEmpty)
                       Notice(line.warnings.join('\n')),
@@ -392,12 +399,14 @@ class _EditorPageState extends State<EditorPage> {
                       Notice(line.display['pricingNote']!),
                     DropdownButtonFormField<String>(
                       initialValue: line.kind,
-                      decoration: const InputDecoration(labelText: '明细类型'),
+                      decoration: InputDecoration(
+                        labelText: context.tr("明细类型"),
+                      ),
                       items: kindLabels.entries
                           .map(
                             (e) => DropdownMenuItem(
                               value: e.key,
-                              child: Text(e.value),
+                              child: Text(context.tr(e.value)),
                             ),
                           )
                           .toList(),
@@ -408,12 +417,13 @@ class _EditorPageState extends State<EditorPage> {
                       }),
                     ),
                     const SizedBox(height: 12),
-                    if (line.kind == 'product') field('productName', '商品名称'),
-                    field('raw', '票面名称'),
+                    if (line.kind == 'product')
+                      field('productName', context.tr("商品名称")),
+                    field('raw', context.tr("票面名称")),
                     if (line.kind == 'product') ...[
-                      field('taxCode', '税码（最多三个字符，可留空）'),
-                      field('sku', '商店 SKU（可留空）'),
-                      field('weight', '重量 $displayUnit（可留空）'),
+                      field('taxCode', context.tr("税码（最多三个字符，可留空）")),
+                      field('sku', context.tr("店铺 SKU（可留空）")),
+                      field('weight', context.tr("重量 {0}（可留空）", [displayUnit])),
                       TextButton.icon(
                         onPressed: () async {
                           List<Map<String, dynamic>> matches;
@@ -436,7 +446,7 @@ class _EditorPageState extends State<EditorPage> {
                           final chosen = await showDialog<Map<String, dynamic>>(
                             context: ctx,
                             builder: (pick) => SimpleDialog(
-                              title: const Text('选择历史规格'),
+                              title: Text(context.tr("选择历史规格")),
                               children: matches
                                   .map(
                                     (m) => SimpleDialogOption(
@@ -458,13 +468,13 @@ class _EditorPageState extends State<EditorPage> {
                           }
                         },
                         icon: const Icon(Icons.history),
-                        label: const Text('选择以前买过的规格'),
+                        label: Text(context.tr("选择以前买过的规格")),
                       ),
-                      field('quantity', '购买数量（可留空）'),
-                      field('unit', '数量单位，例如 ea、g、lb'),
+                      field('quantity', context.tr("购买数量（可留空）")),
+                      field('unit', context.tr("数量单位，例如 ea、g、lb")),
                     ],
-                    field('price', '单价（优惠为负数，可留空）'),
-                    field('amount', '这一行的实际金额'),
+                    field('price', context.tr("单价（优惠为负数，可留空）")),
+                    field('amount', context.tr("这一行的实际金额")),
                     if (line.kind == 'item_discount')
                       DropdownButtonFormField<String>(
                         initialValue:
@@ -475,7 +485,9 @@ class _EditorPageState extends State<EditorPage> {
                             )
                             ? line.discountTarget
                             : null,
-                        decoration: const InputDecoration(labelText: '优惠对应的商品'),
+                        decoration: InputDecoration(
+                          labelText: context.tr("优惠对应的商品"),
+                        ),
                         items: r.lines
                             .where(
                               (l) => l.kind == 'product' && l.id != line.id,
@@ -484,7 +496,9 @@ class _EditorPageState extends State<EditorPage> {
                               (l) => DropdownMenuItem(
                                 value: l.id,
                                 child: Text(
-                                  l.rawName.isEmpty ? '未命名商品' : l.rawName,
+                                  l.rawName.isEmpty
+                                      ? context.tr("未命名商品")
+                                      : l.rawName,
                                   overflow: TextOverflow.ellipsis,
                                 ),
                               ),
@@ -495,7 +509,9 @@ class _EditorPageState extends State<EditorPage> {
                       ),
                     DropdownButtonFormField<String>(
                       initialValue: line.receiptTypeId,
-                      decoration: const InputDecoration(labelText: '商店类别'),
+                      decoration: InputDecoration(
+                        labelText: context.tr("店铺类别"),
+                      ),
                       items: [
                         for (final t in receiptTypes)
                           DropdownMenuItem(
@@ -509,7 +525,7 @@ class _EditorPageState extends State<EditorPage> {
                     if (line.kind != 'item_discount')
                       ListTile(
                         contentPadding: EdgeInsets.zero,
-                        title: const Text('统计分类'),
+                        title: Text(context.tr("统计分类")),
                         subtitle: Text(
                           categories.firstWhere(
                             (p) => p['category_id'] == line.categoryId,
@@ -531,7 +547,7 @@ class _EditorPageState extends State<EditorPage> {
                       CheckboxListTile(
                         value: clearWarnings,
                         onChanged: (v) => set(() => clearWarnings = v!),
-                        title: const Text('已检查并接受以上提示'),
+                        title: Text(context.tr("已检查并接受以上提示")),
                         contentPadding: EdgeInsets.zero,
                       ),
                     if (dialogError != null) Notice(dialogError!),
@@ -542,7 +558,7 @@ class _EditorPageState extends State<EditorPage> {
             actions: [
               TextButton(
                 onPressed: () => Navigator.pop(ctx),
-                child: const Text('取消'),
+                child: Text(context.tr("取消")),
               ),
               FilledButton(
                 onPressed: savingLine
@@ -595,7 +611,7 @@ class _EditorPageState extends State<EditorPage> {
                           if (ctx.mounted) set(() => savingLine = false);
                         }
                       },
-                child: const Text('应用修改'),
+                child: Text(context.tr("应用修改")),
               ),
             ],
           );
@@ -620,7 +636,13 @@ class _EditorPageState extends State<EditorPage> {
       showError(context, const InputError('请先删除或重新关联这个商品的优惠'));
       return;
     }
-    if (!await confirm(context, '删除这条明细？', '删除后保存的草稿或收据将不再包含这一行。')) return;
+    if (!await confirm(
+      context,
+      context.tr("删除这条明细？"),
+      context.tr("删除后保存的草稿或收据将不再包含这一行。"),
+    )) {
+      return;
+    }
     if (!mounted) return;
     setState(() => draft!.lines.remove(line));
     changed();
@@ -644,9 +666,9 @@ class _EditorPageState extends State<EditorPage> {
     if (selected.length != 1) return;
     final amount = await askText(
       context,
-      '拆分：第一行金额',
+      context.tr("拆分：第一行金额"),
       '',
-      '两行金额之和将保持不变；数量需要重新确认',
+      context.tr("两行金额之和将保持不变；数量需要重新确认"),
     );
     if (amount == null) return;
     final result = await editReceipt('split', {
@@ -683,8 +705,15 @@ class _EditorPageState extends State<EditorPage> {
           mounted &&
           !await confirm(
             context,
-            '疑似重复收据',
-            '${dup.map((r) => '${r['raw_store']} · ${money(r['total_minor'], draft!.currency)} · ${dateText(r['occurred_at_utc_ms'], widget.zone)}').join('\n')}\n仍然保存这张收据？',
+            context.tr("疑似重复收据"),
+            context.tr("{0}\n仍然保存这张收据？", [
+              dup
+                  .map(
+                    (r) =>
+                        '${r['raw_store']} · ${money(r['total_minor'], draft!.currency)} · ${dateText(r['occurred_at_utc_ms'], widget.zone)}',
+                  )
+                  .join('\n'),
+            ]),
           )) {
         return;
       }
@@ -694,12 +723,18 @@ class _EditorPageState extends State<EditorPage> {
         throw const InputError('无法计算收据差额，请重试');
       }
       final reasons = <String>[
-        if (difference != 0) '收据总额与明细相差 ${money(difference, draft!.currency)}',
-        if (draft!.lines.any((l) => l.warnings.isNotEmpty)) '有明细尚待核对',
-        if (draft!.timeSource.startsWith('estimated')) '消费时间是估计值',
+        if (difference != 0)
+          context.tr("收据总额与明细相差 {0}", [money(difference, draft!.currency)]),
+        if (draft!.lines.any((l) => l.warnings.isNotEmpty))
+          context.tr("有明细尚待核对"),
+        if (draft!.timeSource.startsWith('estimated')) context.tr("消费时间是估计值"),
       ];
       if (reasons.isNotEmpty &&
-          !await confirm(context, '仍要录入这张收据？', reasons.join('\n'))) {
+          !await confirm(
+            context,
+            context.tr("仍要录入这张收据？"),
+            reasons.join('\n'),
+          )) {
         return;
       }
       await widget.store.save(map, true, DateTime.now().millisecondsSinceEpoch);
@@ -754,7 +789,9 @@ class _EditorPageState extends State<EditorPage> {
                   context: context,
                   builder: (ctx) => Dialog.fullscreen(
                     child: Scaffold(
-                      appBar: AppBar(title: Text('第 ${i + 1} 段')),
+                      appBar: AppBar(
+                        title: Text(context.tr("第 {0} 段", [i + 1])),
+                      ),
                       body: InteractiveViewer(
                         maxScale: 8,
                         child: Center(child: widget.store.image(photo)),
@@ -802,7 +839,7 @@ class _EditorPageState extends State<EditorPage> {
                                   vertical: 6,
                                 ),
                                 child: Text(
-                                  '第 ${i + 1} 张',
+                                  context.tr("第 {0} 张", [i + 1]),
                                   style: const TextStyle(
                                     color: Colors.white,
                                     fontSize: 12,
@@ -853,7 +890,7 @@ class _EditorPageState extends State<EditorPage> {
     mainAxisAlignment: MainAxisAlignment.center,
     children: [
       IconButton(
-        tooltip: '向前移动',
+        tooltip: context.tr("向前移动"),
         icon: const Icon(Icons.chevron_left),
         color: floating ? Colors.white : null,
         disabledColor: floating ? Colors.white38 : null,
@@ -869,7 +906,7 @@ class _EditorPageState extends State<EditorPage> {
               }),
       ),
       IconButton(
-        tooltip: '旋转 90°',
+        tooltip: context.tr("旋转 90°"),
         icon: const Icon(Icons.rotate_right),
         color: floating ? Colors.white : null,
         onPressed: () => act(() async {
@@ -888,11 +925,15 @@ class _EditorPageState extends State<EditorPage> {
         }),
       ),
       IconButton(
-        tooltip: '删除此段',
+        tooltip: context.tr("删除此段"),
         icon: const Icon(Icons.close),
         color: floating ? Colors.white : null,
         onPressed: () async {
-          if (!await confirm(context, '删除这张收据照片？', '照片会从服务器删除，无法恢复。')) {
+          if (!await confirm(
+            context,
+            context.tr("删除这张收据照片？"),
+            context.tr("照片会从服务器删除，无法恢复。"),
+          )) {
             return;
           }
           await act(() async {
@@ -916,21 +957,21 @@ class _EditorPageState extends State<EditorPage> {
     final choice = await showDialog<String>(
       context: context,
       builder: (dialogContext) => AlertDialog(
-        title: const Text('离开收据编辑？'),
-        content: const Text('本页改动尚未保存。'),
+        title: Text(context.tr("离开收据编辑？")),
+        content: Text(context.tr("本页改动尚未保存。")),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(dialogContext),
-            child: const Text('继续编辑'),
+            child: Text(context.tr("继续编辑")),
           ),
           TextButton(
             onPressed: () => Navigator.pop(dialogContext, 'discard'),
-            child: const Text('放弃改动'),
+            child: Text(context.tr("放弃改动")),
           ),
           if (!draft!.posted)
             FilledButton(
               onPressed: () => Navigator.pop(dialogContext, 'save'),
-              child: const Text('保存草稿'),
+              child: Text(context.tr("保存草稿")),
             ),
         ],
       ),
@@ -965,13 +1006,17 @@ class _EditorPageState extends State<EditorPage> {
       if (active) {
         if (mounted) {
           ScaffoldMessenger.of(context)
-              .showSnackBar(const SnackBar(content: Text('正在后台识别，请稍候')));
+              .showSnackBar(SnackBar(content: Text(context.tr("正在后台识别，请稍候"))));
         }
         return;
       }
       if (!mounted) return;
       if (dirty &&
-          !await confirm(context, '放弃未保存修改并重新识别？', '重新识别会放弃本页未保存的改动。')) {
+          !await confirm(
+            context,
+            context.tr("放弃未保存修改并重新识别？"),
+            context.tr("重新识别会放弃本页未保存的改动。"),
+          )) {
         return;
       }
       final saved = await widget.store.load(r.id);
@@ -982,8 +1027,9 @@ class _EditorPageState extends State<EditorPage> {
         requestKey: null,
       );
       if (!mounted) return;
-      ScaffoldMessenger.of(context)
-          .showSnackBar(const SnackBar(content: Text('已提交重新识别，可继续处理其他收据')));
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(context.tr("已提交重新识别，可继续处理其他收据"))));
       Navigator.pop(context);
     });
   }
@@ -993,19 +1039,19 @@ class _EditorPageState extends State<EditorPage> {
     final r = draft;
     if (r == null) {
       return Scaffold(
-        appBar: AppBar(title: const Text('录入收据')),
+        appBar: AppBar(title: Text(context.tr("录入收据"))),
         body: Center(
           child: error == null
               ? const CircularProgressIndicator()
               : Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    const Text('收据加载失败'),
+                    Text(context.tr("收据加载失败")),
                     const SizedBox(height: 8),
                     FilledButton.icon(
                       onPressed: load,
                       icon: const Icon(Icons.refresh),
-                      label: const Text('重试'),
+                      label: Text(context.tr("重试")),
                     ),
                   ],
                 ),
@@ -1034,23 +1080,25 @@ class _EditorPageState extends State<EditorPage> {
         extendBodyBehindAppBar: true,
         appBar: AppBar(
           flexibleSpace: const FrostedBar(child: SizedBox.expand()),
-          title: Text(r.posted ? '编辑收据' : '收据草稿'),
+          title: Text(r.posted ? context.tr("编辑收据") : context.tr("收据草稿")),
           actions: [
             IconButton(
-              tooltip: images.isEmpty ? '没有照片可供识别' : '重新识别',
+              tooltip: images.isEmpty
+                  ? context.tr("没有照片可供识别")
+                  : context.tr("重新识别"),
               icon: const Icon(Icons.refresh),
               onPressed: busy || images.isEmpty ? null : retryRecognition,
             ),
             IconButton(
-              tooltip: '永久删除',
+              tooltip: context.tr("永久删除"),
               icon: const Icon(Icons.delete_outline),
               onPressed: busy
                   ? null
                   : () async {
                       if (await confirm(
                         context,
-                        '永久删除收据？',
-                        '收据、照片和识别记录将从服务器删除，无法恢复。',
+                        context.tr("永久删除收据？"),
+                        context.tr("收据、照片和识别记录将从服务器删除，无法恢复。"),
                       )) {
                         await act(() async {
                           await widget.store.purge(r.id);
@@ -1077,14 +1125,19 @@ class _EditorPageState extends State<EditorPage> {
                 ),
                 children: [
                   if (busy) const LinearProgressIndicator(),
-                  if (error != null) Notice('草稿尚未保存：$error'),
+                  if (error != null)
+                    Notice(
+                      context.tr("草稿尚未保存：{0}", [
+                        context.translatedMessage(error!),
+                      ]),
+                    ),
                   Text(
-                    '核对这张收据',
+                    context.tr("核对这张收据"),
                     style: Theme.of(context).textTheme.headlineSmall,
                   ),
                   const SizedBox(height: 5),
                   Text(
-                    '查看原图，确认关键金额，再保存记录。',
+                    context.tr("查看原图，确认关键金额，再保存记录。"),
                     style: TextStyle(
                       color: AppPalette.muted(context),
                       fontSize: 13,
@@ -1098,13 +1151,13 @@ class _EditorPageState extends State<EditorPage> {
                     Notice(photo['quality_warning']),
                   const SizedBox(height: 16),
                   if (images.isNotEmpty && fields['store']!.text.isEmpty)
-                    const Notice('尚未匹配店名，请确认 Logo 并设置商店名称。'),
-                  text('store', '店名 / 连锁店'),
+                    Notice(context.tr("尚未匹配店名，请确认 Logo 并设置店铺名称。")),
+                  text('store', context.tr("店名 / 连锁店")),
                   const SizedBox(height: 12),
                   DropdownButtonFormField<String>(
                     key: ValueKey('receipt-type-${r.receiptTypeId}'),
                     initialValue: r.receiptTypeId,
-                    decoration: const InputDecoration(labelText: '商店类别'),
+                    decoration: InputDecoration(labelText: context.tr("店铺类别")),
                     items: [
                       for (final t in receiptTypes)
                         DropdownMenuItem(
@@ -1125,12 +1178,13 @@ class _EditorPageState extends State<EditorPage> {
                   if (images.isNotEmpty)
                     TextButton.icon(
                       icon: const Icon(Icons.image_search),
-                      label: const Text('商店名称'),
+                      label: Text(context.tr("店铺名称")),
                       onPressed: () => act(() async {
                         final name = await Navigator.push<String>(
                           context,
                           MaterialPageRoute(
                             builder: (_) => LogoAliasesPage(
+                              embedded: false,
                               store: widget.store,
                               receiptId: r.id,
                               suggestedName: fields['store']!.text,
@@ -1145,21 +1199,21 @@ class _EditorPageState extends State<EditorPage> {
                     ),
                   ExpansionTile(
                     tilePadding: EdgeInsets.zero,
-                    title: const Text('更多票据信息'),
+                    title: Text(context.tr("更多票据信息")),
                     subtitle: Text(
-                      '分店、地址、国家和票面币种',
+                      context.tr("分店、地址、国家和票面币种"),
                       style: TextStyle(
                         fontSize: 12,
                         color: AppPalette.muted(context),
                       ),
                     ),
                     children: [
-                      text('branch', '分店名'),
-                      text('address', '票面地址'),
+                      text('branch', context.tr("分店名")),
+                      text('address', context.tr("票面地址")),
                       Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Expanded(child: text('country', '国家代码')),
+                          Expanded(child: text('country', context.tr("国家代码"))),
                           const SizedBox(width: 12),
                           Expanded(
                             child: DropdownButtonFormField<String>(
@@ -1167,8 +1221,8 @@ class _EditorPageState extends State<EditorPage> {
                                 '$currencyPickerVersion-${r.currency}',
                               ),
                               initialValue: r.currency,
-                              decoration: const InputDecoration(
-                                labelText: '币种',
+                              decoration: InputDecoration(
+                                labelText: context.tr("币种"),
                               ),
                               items: currencies.keys
                                   .map(
@@ -1190,8 +1244,8 @@ class _EditorPageState extends State<EditorPage> {
                                           r.totalMinor != null) &&
                                       !await confirm(
                                         context,
-                                        '修正票面币种？',
-                                        '金额数字保持不变，仅修正币种标记，不进行汇率换算。',
+                                        context.tr("修正票面币种？"),
+                                        context.tr("金额数字保持不变，仅修正币种标记，不进行汇率换算。"),
                                       )) {
                                     if (mounted) {
                                       setState(() {
@@ -1230,14 +1284,14 @@ class _EditorPageState extends State<EditorPage> {
                     child: ListTile(
                       title: Text(dateText(r.occurredAt, widget.zone)),
                       subtitle: Text(
-                        '${widget.zone}${r.timeSource.startsWith('estimated') ? ' · 时间含估计值' : ''}',
+                        '${widget.zone}${r.timeSource.startsWith('estimated') ? context.tr(" · 时间含估计值") : ''}',
                       ),
                       trailing: const Icon(Icons.edit_outlined),
                       onTap: changeTime,
                     ),
                   ),
                   const SizedBox(height: 12),
-                  text('total', '收据总额'),
+                  text('total', context.tr("收据总额")),
                   TextButton(
                     onPressed: () => act(() async {
                       final result = await editReceipt('total_from_lines', {});
@@ -1248,19 +1302,19 @@ class _EditorPageState extends State<EditorPage> {
                       });
                       changed();
                     }),
-                    child: const Text('明确使用明细合计作为总额'),
+                    child: Text(context.tr("明确使用明细合计作为总额")),
                   ),
                   ListTile(
                     contentPadding: EdgeInsets.zero,
-                    title: const Text(
-                      '商品与调整',
+                    title: Text(
+                      context.tr("商品与调整"),
                       style: TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.w700,
                       ),
                     ),
                     trailing: IconButton(
-                      tooltip: '添加明细',
+                      tooltip: context.tr("添加明细"),
                       onPressed: () => editLine(null),
                       icon: const Icon(Icons.add_circle_outline),
                     ),
@@ -1271,17 +1325,17 @@ class _EditorPageState extends State<EditorPage> {
                       children: [
                         TextButton(
                           onPressed: () => act(split),
-                          child: const Text('拆分所选行'),
+                          child: Text(context.tr("拆分所选行")),
                         ),
                         TextButton(
                           onPressed: () => act(merge),
-                          child: const Text('合并所选行'),
+                          child: Text(context.tr("合并所选行")),
                         ),
                         TextButton(
                           onPressed: () {
                             setState(selected.clear);
                           },
-                          child: const Text('取消选择'),
+                          child: Text(context.tr("取消选择")),
                         ),
                       ],
                     ),
@@ -1309,18 +1363,18 @@ class _EditorPageState extends State<EditorPage> {
                           kind: l.kind,
                         ),
                         subtitle: Text(
-                          '${kindLabels[l.kind]}${(l.display['receiptTypeName'] ?? '').isEmpty ? '' : ' · ${l.display['receiptTypeName']}'}${(l.taxCode ?? '').isEmpty ? '' : ' · 税码 ${l.taxCode}'}${(l.sku ?? '').isEmpty ? '' : ' · SKU ${l.sku}'}',
+                          '${context.tr(kindLabels[l.kind]!)}${(l.display['receiptTypeName'] ?? '').isEmpty ? '' : ' · ${l.display['receiptTypeName']}'}${(l.taxCode ?? '').isEmpty ? '' : context.tr(" · 税码 {0}", [l.taxCode])}${(l.sku ?? '').isEmpty ? '' : ' · SKU ${l.sku}'}',
                         ),
                         trailing: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             Text(
                               l.amountMinor == null
-                                  ? '缺少金额'
+                                  ? context.tr("缺少金额")
                                   : money(l.amountMinor, r.currency),
                             ),
                             IconButton(
-                              tooltip: '删除明细',
+                              tooltip: context.tr("删除明细"),
                               onPressed: busy ? null : () => removeLine(l),
                               icon: const Icon(Icons.close, size: 18),
                             ),
@@ -1330,16 +1384,19 @@ class _EditorPageState extends State<EditorPage> {
                       ),
                     ),
                   if (r.lines.isEmpty)
-                    const Padding(
+                    Padding(
                       padding: EdgeInsets.all(16),
-                      child: Text('还没有明细，可手工添加。'),
+                      child: Text(context.tr("还没有明细，可手工添加。")),
                     ),
                   if (r.totalMinor != null)
                     Notice(
-                      '已录入明细 ${money(r.knownTotal, r.currency)}\n待核对差额 ${money(r.difference, r.currency)}',
+                      context.tr("已录入明细 {0}\n待核对差额 {1}", [
+                        money(r.knownTotal, r.currency),
+                        money(r.difference, r.currency),
+                      ]),
                     ),
                   Text(
-                    '追溯编号：${r.id}',
+                    context.tr("追溯编号：{0}", [r.id]),
                     style: TextStyle(
                       fontSize: 11,
                       color: AppPalette.muted(context),
@@ -1382,7 +1439,7 @@ class _EditorPageState extends State<EditorPage> {
                         padding: const EdgeInsets.symmetric(horizontal: 8),
                       ),
                       onPressed: busy ? null : discardChanges,
-                      child: const Text('放弃改动'),
+                      child: Text(context.tr("放弃改动")),
                     ),
                     const SizedBox(width: 2),
                     if (!r.posted) ...[
@@ -1393,7 +1450,7 @@ class _EditorPageState extends State<EditorPage> {
                           padding: const EdgeInsets.symmetric(horizontal: 8),
                         ),
                         onPressed: busy ? null : saveDraftAndExit,
-                        child: const Text('保存草稿'),
+                        child: Text(context.tr("保存草稿")),
                       ),
                       const SizedBox(width: 2),
                     ],
@@ -1404,7 +1461,9 @@ class _EditorPageState extends State<EditorPage> {
                         padding: const EdgeInsets.symmetric(horizontal: 12),
                       ),
                       onPressed: busy ? null : save,
-                      child: Text(busy ? '处理中…' : '录入并退出'),
+                      child: Text(
+                        busy ? context.tr("处理中…") : context.tr("录入并退出"),
+                      ),
                     ),
                   ],
                 ),

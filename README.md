@@ -9,7 +9,7 @@ Web、Android 和 iOS 通过统一 API 管理收据。Rust `backend_api` 保存 
 - 接口与持久化：[docs/backend_api_v2.md](docs/backend_api_v2.md)
 - OCR/模型部署：[docs/backend_ocr.md](docs/backend_ocr.md)
 - NAS API + 本机 OCR 部署：[docs/nas_deployment.md](docs/nas_deployment.md)
-- 镜像内置商店 Logo 样本和可配置提示词，空数据库首次启动即可使用；现有 Alias 不会因重启被覆盖。
+- 镜像内置店铺 Logo 样本和可配置提示词，空数据库首次启动即可使用；现有 Alias 不会因重启被覆盖。
 
 ### 构建和运行
 
@@ -85,7 +85,7 @@ RESET_ADMIN_PASSWORD=true ./run_playground.sh
 
 公网部署需在 API 前配置 HTTPS 反向代理，保留 `Host` 并设置 `X-Forwarded-Proto: https`；这样浏览器相机和 Secure cookie 才能正常使用。API 端口应仅由可信代理访问。先完成 admin 改密，再开放公网；OCR 端口保持内部可见。
 
-Web 支持收据四列排序、多图拍摄/上传、异步识别、编辑确认、商品目录、商店 Logo 名称、互动趋势与明细、主题、重量和报表币种、备份恢复、CSV 以及管理员用户管理。断网的待上传照片保存在浏览器 IndexedDB，绑定原账户，恢复登录后可以重试。
+Web 支持收据四列排序、多图拍摄/上传、异步识别、编辑确认、商品目录、店铺 Logo 名称、互动趋势与明细、主题、重量和报表币种、备份恢复、CSV 以及管理员用户管理。断网的待上传照片保存在浏览器 IndexedDB，绑定原账户，恢复登录后可以重试。
 
 部署公网域名时，在构建/启动时指定手机可访问的站点地址，例如：
 
@@ -111,4 +111,4 @@ API 连接与认证配置在 [API config.toml](playground/backend_api/config.tom
 
 当前：[Qwen3.8 / NInfer 与可配置提示架构](docs/backend_ocr.md)。历史对照：[Unlimited-OCR / PP-OCRv6](docs/ocr_model_comparison.md)。
 
-Logo 定位/比对及通用与商店提示配置：[playground/backend_api/prompt.toml](playground/backend_api/prompt.toml)，采用 `[[general]]` / `[[store]]`，修改后重启 API。模型开启 thinking，旧双 OCR 与 parser 已移除。
+Logo 定位/比对及通用与店铺提示配置：[playground/backend_api/prompt.toml](playground/backend_api/prompt.toml)，采用 `[[general]]` / `[[store]]`，修改后重启 API。模型开启 thinking，旧双 OCR 与 parser 已移除。

@@ -38,11 +38,11 @@ it("binds store defaults and handles duplicate errors without writing any receip
         kind = input!.receipt_type_id;
         return null;
       }
-      throw new Error("商店类别已存在，请选择已有类别");
+      throw new Error("店铺类别已存在，请选择已有类别");
     });
   render(<ReceiptTypesManager />);
   const select = await screen.findByRole("combobox", {
-    name: "Costco的商店类别",
+    name: "Costco的店铺类别",
   });
   fireEvent.change(select, { target: { value: "restaurant" } });
   await waitFor(() =>
@@ -52,14 +52,14 @@ it("binds store defaults and handles duplicate errors without writing any receip
     id: "store",
     receipt_type_id: "restaurant",
   });
-  fireEvent.click(screen.getByRole("button", { name: "添加商店类别" }));
-  fireEvent.change(screen.getByLabelText("商店类别名称"), {
+  fireEvent.click(screen.getByRole("button", { name: "添加店铺类别" }));
+  fireEvent.change(screen.getByLabelText("店铺类别名称"), {
     target: { value: "杂货" },
   });
   fireEvent.click(screen.getByRole("button", { name: "保存类别" }));
   expect(await screen.findByRole("alert")).toHaveProperty(
     "textContent",
-    expect.stringContaining("商店类别已存在"),
+    expect.stringContaining("店铺类别已存在"),
   );
   expect(op.mock.calls.some((c) => c[0] === "receipts")).toBe(false);
 });
@@ -95,7 +95,7 @@ it("filters both summaries and trends by receipt type and exposes its own curve 
       };
     });
   const view = render(<Reports open={vi.fn()} />);
-  const range = await screen.findByLabelText("商店类别统计范围");
+  const range = await screen.findByLabelText("店铺类别统计范围");
   fireEvent.change(range, { target: { value: "restaurant" } });
   await waitFor(() =>
     expect(
@@ -125,7 +125,7 @@ it("filters both summaries and trends by receipt type and exposes its own curve 
       onSelect={vi.fn()}
     />,
   );
-  expect(screen.getByText("商店类别 · 餐馆")).toBeTruthy();
+  expect(screen.getByText("店铺类别 · 餐馆")).toBeTruthy();
 });
 
 it("places name samples and store types in separate tabs on the stores page", async () => {
@@ -135,16 +135,16 @@ it("places name samples and store types in separate tabs on the stores page", as
       component === "receipt_types" ? types : [],
     );
   render(<Stores />);
-  expect(screen.getByRole("heading", { name: "商店" })).toBeTruthy();
+  expect(screen.getByRole("heading", { name: "店铺" })).toBeTruthy();
   expect(
-    screen.getByRole("tab", { name: "商店名称" }).getAttribute("aria-selected"),
+    screen.getByRole("tab", { name: "店铺名称" }).getAttribute("aria-selected"),
   ).toBe("true");
-  expect(screen.queryByRole("button", { name: "添加商店类别" })).toBeNull();
-  fireEvent.click(screen.getByRole("tab", { name: "商店类别" }));
+  expect(screen.queryByRole("button", { name: "添加店铺类别" })).toBeNull();
+  fireEvent.click(screen.getByRole("tab", { name: "店铺类别" }));
   expect(
-    await screen.findByRole("button", { name: "添加商店类别" }),
+    await screen.findByRole("button", { name: "添加店铺类别" }),
   ).toBeTruthy();
   expect(op.mock.calls.some((c) => c[0] === "merchants")).toBe(true);
-  fireEvent.click(screen.getByRole("tab", { name: "商店名称" }));
-  expect(screen.queryByRole("button", { name: "添加商店类别" })).toBeNull();
+  fireEvent.click(screen.getByRole("tab", { name: "店铺名称" }));
+  expect(screen.queryByRole("button", { name: "添加店铺类别" })).toBeNull();
 });

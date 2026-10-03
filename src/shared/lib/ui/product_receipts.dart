@@ -1,3 +1,5 @@
+import '../l10n/strings.dart';
+
 import 'package:flutter/material.dart';
 
 import '../data/store.dart';
@@ -64,7 +66,10 @@ class _ProductReceiptsPageState extends State<ProductReceiptsPage> {
     ),
     body: error != null
         ? Center(
-            child: TextButton(onPressed: load, child: const Text('加载失败，点击重试')),
+            child: TextButton(
+              onPressed: load,
+              child: Text(context.tr("加载失败，点击重试")),
+            ),
           )
         : receipts == null
         ? const Center(child: CircularProgressIndicator())
@@ -78,9 +83,9 @@ class _ProductReceiptsPageState extends State<ProductReceiptsPage> {
               ),
               children: [
                 if (receipts!.isEmpty)
-                  const Padding(
+                  Padding(
                     padding: EdgeInsets.all(24),
-                    child: Text('没有包含此商品名称的收据'),
+                    child: Text(context.tr("没有包含此商品名称的收据")),
                   ),
                 for (final r in receipts!)
                   ListTile(
@@ -93,14 +98,17 @@ class _ProductReceiptsPageState extends State<ProductReceiptsPage> {
                     title: Text(
                       (r['raw_store'] as String?)?.isNotEmpty == true
                           ? r['raw_store']
-                          : '未填写商店',
+                          : context.tr("未填写店铺"),
                     ),
                     subtitle: Text(
-                      '录入 ${dateText(r['created_at_utc_ms'], widget.zone)}\n收据 ${dateText(r['occurred_at_utc_ms'], widget.zone)}',
+                      context.tr("录入 {0}\n收据 {1}", [
+                        dateText(r['created_at_utc_ms'], widget.zone),
+                        dateText(r['occurred_at_utc_ms'], widget.zone),
+                      ]),
                     ),
                     trailing: Text(
                       r['total_minor'] == null
-                          ? '待填写'
+                          ? context.tr("待填写")
                           : money(r['total_minor'], r['currency_code']),
                     ),
                     onTap: () => open(r['receipt_id']),

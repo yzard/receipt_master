@@ -1,3 +1,5 @@
+import '../l10n/strings.dart';
+
 import 'dart:io';
 import 'dart:convert';
 import 'dart:typed_data';
@@ -80,8 +82,12 @@ class _SettingsPageState extends State<SettingsPage> {
       }
       if (!await confirm(
         context,
-        '发现客户端更新',
-        '版本 ${update.release.versionName}（${update.release.versionCode}），约 ${(update.release.bytes / 1048576).toStringAsFixed(1)} MB。现在下载并安装？',
+        context.tr("发现客户端更新"),
+        context.tr("版本 {0}（{1}），约 {2} MB。现在下载并安装？", [
+          update.release.versionName,
+          update.release.versionCode,
+          (update.release.bytes / 1048576).toStringAsFixed(1),
+        ]),
       )) {
         return;
       }
@@ -134,8 +140,8 @@ class _SettingsPageState extends State<SettingsPage> {
     if (file == null || !mounted) return;
     if (!await confirm(
       context,
-      '整体恢复备份',
-      '当前收据、商品和照片会被备份替换，不合并。替换前会在后端保留一份恢复点。此操作影响登录同一账户的所有设备。',
+      context.tr("整体恢复备份"),
+      context.tr("当前收据、商品和照片会被备份替换，不合并。替换前会在后端保留一份恢复点。此操作影响登录同一账户的所有设备。"),
     )) {
       return;
     }
@@ -168,13 +174,78 @@ class _SettingsPageState extends State<SettingsPage> {
       child: ListView(
         padding: const EdgeInsets.fromLTRB(16, 20, 16, 116),
         children: [
-          const PageHeading(title: '设置', subtitle: '让记录方式适合你'),
+          PageHeading(
+            title: context.tr("设置"),
+            subtitle: context.tr("让记录方式适合你"),
+          ),
           if (busy) const LinearProgressIndicator(),
           if (message != null) Notice(message!),
-          Text('外观', style: Theme.of(context).textTheme.headlineSmall),
+          Text(context.tr("账户"), style: Theme.of(context).textTheme.titleLarge),
+          const SizedBox(height: 12),
+          Row(
+            children: [
+              Expanded(
+                child: Text(
+                  AuthSession.instance.user?['username'] ?? '',
+                  key: const ValueKey('settings-username'),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: Theme.of(context).textTheme.headlineSmall,
+                ),
+              ),
+              const SizedBox(width: 8),
+              IconButton.filledTonal(
+                tooltip: context.tr("修改密码"),
+                onPressed: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => PasswordPage(
+                      session: AuthSession.instance,
+                      requiredChange: false,
+                    ),
+                  ),
+                ),
+                icon: const Icon(Icons.password_outlined),
+              ),
+              const SizedBox(width: 8),
+              IconButton.filledTonal(
+                tooltip: context.tr("退出登录"),
+                onPressed: () => action(AuthSession.instance.logout),
+                icon: const Icon(Icons.logout),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          Text(
+            AuthSession.instance.endpoint,
+            style: Theme.of(context).textTheme.bodySmall
+                ?.copyWith(color: AppPalette.muted(context)),
+          ),
+          if (AuthSession.instance.user?['is_admin'] == true) ...[
+            const SizedBox(height: 12),
+            ListTile(
+              contentPadding: EdgeInsets.zero,
+              leading: const Icon(Icons.manage_accounts_outlined),
+              title: Text(context.tr("用户管理")),
+              trailing: const Icon(Icons.chevron_right),
+              onTap: () => Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => UsersPage(session: AuthSession.instance),
+                ),
+              ),
+            ),
+          ],
+          const SizedBox(height: 20),
+          const Divider(),
+          const SizedBox(height: 20),
+          Text(
+            context.tr("外观"),
+            style: Theme.of(context).textTheme.headlineSmall,
+          ),
           const SizedBox(height: 6),
           Text(
-            '选择适合当前环境的显示方式。',
+            context.tr("选择适合当前环境的显示方式。"),
             style: TextStyle(color: AppPalette.muted(context)),
           ),
           const SizedBox(height: 14),
@@ -185,27 +256,47 @@ class _SettingsPageState extends State<SettingsPage> {
             },
           ),
           const SizedBox(height: 28),
-          Text('偏好设置', style: Theme.of(context).textTheme.titleLarge),
+          DropdownButtonFormField<Locale>(
+            key: ValueKey('language-${widget.appearance.locale.languageCode}'),
+            initialValue: widget.appearance.locale,
+            decoration: const InputDecoration(labelText: 'Language'),
+            items: const [
+              DropdownMenuItem(value: Locale('zh'), child: Text('中文')),
+              DropdownMenuItem(value: Locale('en'), child: Text('English')),
+            ],
+            onChanged: (locale) async {
+              if (locale == null) return;
+              try {
+                await widget.appearance.setLocale(locale);
+              } catch (e) {
+                if (context.mounted) showError(context, e);
+              }
+            },
+          ),
+          _PreferenceHint(context.tr('界面语言仅保存在此设备，不改变收据内容。')),
+          const SizedBox(height: 28),
+          Text(
+            context.tr("偏好设置"),
+            style: Theme.of(context).textTheme.titleLarge,
+          ),
           const SizedBox(height: 12),
           if (Platform.isAndroid) ...[
             OutlinedButton.icon(
               onPressed: busy ? null : checkAndroidUpdate,
               icon: const Icon(Icons.system_update),
-              label: const Text('检查客户端更新'),
+              label: Text(context.tr("检查客户端更新")),
             ),
             const SizedBox(height: 16),
           ],
           OutlinedButton.icon(
             onPressed: () => action(widget.store.retryUploads),
             icon: const Icon(Icons.cloud_upload_outlined),
-            label: const Text('重试未完成的照片上传'),
+            label: Text(context.tr("重试未完成的照片上传")),
           ),
+          const SizedBox(height: 24),
           DropdownButtonFormField<String>(
             initialValue: widget.store.weightUnit,
-            decoration: const InputDecoration(
-              labelText: '全局重量显示单位',
-              helperText: '收据与商品统一显示此单位；数据库统一保存克数。',
-            ),
+            decoration: InputDecoration(labelText: context.tr("全局重量显示单位")),
             items: const ['g', 'kg', 'lb', 'oz']
                 .map((unit) => DropdownMenuItem(value: unit, child: Text(unit)))
                 .toList(),
@@ -219,14 +310,12 @@ class _SettingsPageState extends State<SettingsPage> {
                     }
                   },
           ),
-          const SizedBox(height: 16),
+          _PreferenceHint(context.tr("收据与商品统一显示此单位；数据库统一保存克数。")),
+          const SizedBox(height: 24),
           DropdownButtonFormField<String>(
             key: ValueKey('report-currency-${widget.store.reportCurrency}'),
             initialValue: widget.store.reportCurrency,
-            decoration: const InputDecoration(
-              labelText: '报表显示币种',
-              helperText: '所有已确认收据按交易日汇率换算后统一统计。',
-            ),
+            decoration: InputDecoration(labelText: context.tr("报表显示币种")),
             items: currencies.keys
                 .map((code) => DropdownMenuItem(value: code, child: Text(code)))
                 .toList(),
@@ -238,71 +327,31 @@ class _SettingsPageState extends State<SettingsPage> {
                     }
                   },
           ),
+          _PreferenceHint(context.tr("所有已确认收据按交易日汇率换算后统一统计。")),
           const SizedBox(height: 24),
-          const Text(
-            '账户',
-            style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-          ),
-          ListTile(
-            title: const Text('当前账户'),
-            subtitle: Text(AuthSession.instance.user?['username'] ?? ''),
-            leading: const Icon(Icons.person_outline),
-          ),
-          ListTile(
-            title: const Text('修改密码'),
-            onTap: () => Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (_) => PasswordPage(
-                  session: AuthSession.instance,
-                  requiredChange: false,
-                ),
-              ),
-            ),
-          ),
-          if (AuthSession.instance.user?['is_admin'] == true)
-            ListTile(
-              title: const Text('用户管理'),
-              onTap: () => Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (_) => UsersPage(session: AuthSession.instance),
-                ),
-              ),
-            ),
-          ListTile(
-            title: const Text('退出登录'),
-            leading: const Icon(Icons.logout),
-            onTap: () => action(AuthSession.instance.logout),
-          ),
           Text(
-            AuthSession.instance.endpoint,
-            style: Theme.of(context).textTheme.bodySmall,
-          ),
-          const SizedBox(height: 24),
-          const Text(
-            '后端数据',
+            context.tr("后端数据"),
             style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
           ),
           ListTile(
             leading: const Icon(Icons.backup_outlined),
-            title: const Text('导出完整备份'),
-            subtitle: const Text('包含照片和草稿；不含密钥'),
+            title: Text(context.tr("导出完整备份")),
+            subtitle: Text(context.tr("包含照片和草稿；不含密钥")),
             onTap: () => action(backupData),
           ),
           ListTile(
             leading: const Icon(Icons.restore),
-            title: const Text('从备份整体恢复'),
+            title: Text(context.tr("从备份整体恢复")),
             onTap: () => action(restoreData),
           ),
           ListTile(
             leading: const Icon(Icons.history),
-            title: const Text('导出最近一次后端备份'),
+            title: Text(context.tr("导出最近一次后端备份")),
             onTap: () => action(exportRecovery),
           ),
           ListTile(
             leading: const Icon(Icons.table_view_outlined),
-            title: const Text('导出明细 CSV'),
+            title: Text(context.tr("导出明细 CSV")),
             onTap: () => action(csv),
           ),
           const SizedBox(height: 24),
@@ -311,4 +360,20 @@ class _SettingsPageState extends State<SettingsPage> {
       ),
     );
   }
+}
+
+/// Separate help text grows with translations and the device's text size.
+class _PreferenceHint extends StatelessWidget {
+  const _PreferenceHint(this.text);
+  final String text;
+
+  @override
+  Widget build(BuildContext context) => Padding(
+    padding: const EdgeInsets.fromLTRB(18, 8, 18, 0),
+    child: Text(
+      text,
+      style: Theme.of(context).textTheme.bodySmall
+          ?.copyWith(color: AppPalette.muted(context)),
+    ),
+  );
 }

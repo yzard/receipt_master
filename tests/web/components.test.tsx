@@ -14,11 +14,12 @@ import {
   TrendChart,
   LineEditor,
   AndroidDownloadLink,
+  App,
 } from "../../src/web/src/main";
 import { api, emptyLine } from "../../src/web/src/api";
 vi.mock("../../src/web/src/uploads", () => ({
   pending: async () => [],
-  retry: vi.fn(),
+  retry: vi.fn(async () => {}),
   enqueue: vi.fn(),
 }));
 afterEach(() => {
@@ -26,6 +27,42 @@ afterEach(() => {
   vi.restoreAllMocks();
 });
 describe("interactive web workflows", () => {
+  it("opens the product navigation and dismisses the drawer without losing the page", async () => {
+    const previous = api.user;
+    vi.spyOn(api, "refresh").mockImplementation(async () => {
+      api.user = {
+        user_id: "layout-user",
+        username: "layout-user",
+        is_admin: false,
+        must_change_password: false,
+      };
+      api.onUser(api.user);
+    });
+    vi.spyOn(api, "op").mockImplementation(async (component) =>
+      component === "receipts" ? { items: [], next_cursor: null } : [],
+    );
+    try {
+      render(<App />);
+      fireEvent.click(
+        await screen.findByRole("button", { name: "打开导航菜单" }),
+      );
+      expect(screen.getByRole("navigation", { name: "主导航" })).toBeTruthy();
+      expect(screen.getByRole("button", { name: "商品" })).toBeTruthy();
+      expect(screen.queryByRole("button", { name: "商品管理" })).toBeNull();
+      fireEvent.click(screen.getByRole("button", { name: "关闭导航菜单" }));
+      expect(screen.queryByRole("navigation", { name: "主导航" })).toBeNull();
+      expect(screen.getByRole("heading", { name: "收据" })).toBeTruthy();
+      fireEvent.click(screen.getByRole("button", { name: "打开导航菜单" }));
+      fireEvent.click(screen.getByRole("button", { name: "商品" }));
+      expect(
+        await screen.findByRole("heading", { name: "商品管理" }),
+      ).toBeTruthy();
+      expect(screen.queryByRole("navigation", { name: "主导航" })).toBeNull();
+    } finally {
+      cleanup();
+      api.user = previous;
+    }
+  });
   it("refreshes the login cookie before a same-origin APK download and stops on authentication failure", async () => {
     let ready!: () => void;
     const session = vi.spyOn(api, "ready").mockImplementation(
@@ -299,7 +336,7 @@ describe("confirmed receipts and admin management", () => {
       });
     render(<Editor id="confirmed" isNew={false} onBack={() => {}} />);
     await screen.findByDisplayValue("Store");
-    fireEvent.change(screen.getByLabelText("商店名称"), {
+    fireEvent.change(screen.getByLabelText("店铺名称"), {
       target: { value: "Corrected Store" },
     });
     fireEvent.click(screen.getByRole("button", { name: "录入并退出" }));

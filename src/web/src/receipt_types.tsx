@@ -32,9 +32,9 @@ export function ReceiptTypesManager() {
     }
   }
   return (
-    <section aria-label="商店类别管理">
+    <section aria-label="店铺类别管理">
       <p className="muted">
-        商店类别与商品种类独立；商店类别用来填充新识别收据的默认值，修改商店不会改变历史消费。
+        店铺类别与商品种类独立；店铺类别用来填充新识别收据的默认值，修改店铺不会改变历史消费。
       </p>
       {error && (
         <p className="notice" role="alert">
@@ -55,12 +55,12 @@ export function ReceiptTypesManager() {
             </button>
             {!t.system_key && (
               <button
-                aria-label={`删除商店类别 ${t.name}`}
+                aria-label={`删除店铺类别 ${t.name}`}
                 disabled={busy}
                 onClick={() => {
                   if (
                     confirm(
-                      "删除此类别？保留所有收据，关联消费和商店变为未分类。",
+                      "删除此类别？保留所有收据，关联消费和店铺变为未分类。",
                     )
                   )
                     void action(() =>
@@ -84,7 +84,7 @@ export function ReceiptTypesManager() {
           setName("");
         }}
       >
-        添加商店类别
+        添加店铺类别
       </button>
       {edit && (
         <form
@@ -101,9 +101,9 @@ export function ReceiptTypesManager() {
           }}
         >
           <label>
-            商店类别名称
+            店铺类别名称
             <input
-              aria-label="商店类别名称"
+              aria-label="店铺类别名称"
               value={name}
               onChange={(e) => setName(e.target.value)}
               required
@@ -118,13 +118,13 @@ export function ReceiptTypesManager() {
           </button>
         </form>
       )}
-      <h2>商店类别设置</h2>
+      <h2>店铺类别设置</h2>
       <div className="mapping-list">
         {merchants.map((m) => (
           <label className="mapping" key={m.merchant_id}>
             <span>{m.name}</span>
             <select
-              aria-label={`${m.name}的商店类别`}
+              aria-label={`${m.name}的店铺类别`}
               disabled={busy}
               value={m.receipt_type_id}
               onChange={(e) =>

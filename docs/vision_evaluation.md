@@ -2,7 +2,7 @@
 
 # Qwen3-VL 端到端识别验收
 
-> 本文保留 vision-v5 基线。当前按店铺选择模板的 vision-v7 结果见 [商店提示词实测](store_prompt_evaluation.md)。
+> 本文保留 vision-v5 基线。当前按店铺选择模板的 vision-v7 结果见 [店铺提示词实测](store_prompt_evaluation.md)。
 
 评测时间：2026-09-16 晚（纽约），2026-09-17 UTC。版本：`vision-v5`。
 

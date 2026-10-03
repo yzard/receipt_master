@@ -1,0 +1,3 @@
+"NSCameraUsageDescription" = "拍摄收据并识别商品明细。";
+"NSLocalNetworkUsageDescription" = "连接你设置的收据服务器，保存和查看收据与照片。";
+"NSPhotoLibraryUsageDescription" = "选择收据照片进行识别。";
