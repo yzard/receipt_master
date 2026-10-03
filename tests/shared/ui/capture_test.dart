@@ -4,7 +4,10 @@ import 'dart:typed_data';
 
 import 'package:camera_platform_interface/camera_platform_interface.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_test/flutter_test.dart';
+import 'package:flutter_test/flutter_test.dart' hide testWidgets;
+
+import '../platform_test.dart';
+
 import 'package:image/image.dart' as img;
 import 'package:receipt_master/ui/capture.dart';
 import 'package:receipt_master/data/capture_session.dart';

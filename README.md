@@ -18,7 +18,7 @@ Web、Android 和 iOS 通过统一 API 管理收据。Rust `backend_api` 保存 
 ./run_playground.sh
 ```
 
-`build_docker.sh` 执行后端检查、Docker 内 Android 和 Web 构建，并构建 API/OCR 两个镜像。`run_playground.sh` 总是先构建，再以前台 Compose 启动服务并持续显示日志；Ctrl+C 停止服务，保留数据。iOS 使用独立的 `build_ios.sh /absolute/path/to/flutter`，需要 macOS/Xcode。
+`build_docker.sh` 执行后端检查、Docker 内 Android 和 Web 构建，并构建 API/OCR 两个镜像。`run_playground.sh` 总是先构建，再以前台 Compose 启动服务并持续显示日志；Ctrl+C 停止服务，保留数据。iOS 使用独立的 `build_ios.sh /absolute/path/to/flutter`，需要 macOS/Xcode。模拟器构建使用 `./build_ios.sh /absolute/path/to/flutter --simulator`，同时运行 iOS 控件模式的共享回归。配置默认读取 `build/mobile-config/backend_defaults.json`，也可通过 `RECEIPT_BOOTSTRAP_FILE` 指定，仅包含 `endpoint`，启动后使用账户登录。详见 [iOS 验证说明](docs/ios_validation.md)。
 启动脚本向两个容器传入当前用户的 `PUID` 和 `PGID`，服务以该 UID/GID 运行。直接使用 Compose 时需先设置这两个环境变量。
 
 ### 发布镜像

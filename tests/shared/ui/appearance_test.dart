@@ -1,7 +1,10 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_test/flutter_test.dart';
+import 'package:flutter_test/flutter_test.dart' hide testWidgets;
+
+import '../platform_test.dart';
+
 import 'package:receipt_master/ui/app_theme.dart';
 
 class InMemoryAppearance extends Appearance {

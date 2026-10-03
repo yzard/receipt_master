@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
-if (( $# != 1 )); then
-  echo 'Usage: ./build_ios.sh /absolute/path/to/flutter (requires macOS/Xcode)' >&2
+if (( $# < 1 || $# > 2 )) || [[ ${2:-} != "" && ${2:-} != --simulator ]]; then
+  echo 'Usage: ./build_ios.sh /absolute/path/to/flutter [--simulator] (requires macOS/Xcode)' >&2
   exit 2
 fi
 if [[ $(uname -s) != Darwin ]]; then
@@ -24,8 +24,12 @@ cd "$project_dir/src/shared"
 cd "$project_dir/tests/shared"
 "$flutter_bin" pub get --enforce-lockfile
 "$flutter_bin" analyze
-"$flutter_bin" test domain database ui
+"$flutter_bin" test --dart-define=TEST_PLATFORM=ios domain database ui
 cd "$project_dir/build/flutter"
 "$flutter_bin" pub get --enforce-lockfile
 python3 "$project_dir/docker/prepare_ios_defaults.py" "$project_dir/build/flutter" "$bootstrap_file"
-"$flutter_bin" build ios --debug --no-codesign
+if [[ ${2:-} == --simulator ]]; then
+  "$flutter_bin" build ios --simulator --debug
+else
+  "$flutter_bin" build ios --debug --no-codesign
+fi

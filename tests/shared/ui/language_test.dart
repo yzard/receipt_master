@@ -2,7 +2,10 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_test/flutter_test.dart';
+import 'package:flutter_test/flutter_test.dart' hide testWidgets;
+
+import '../platform_test.dart';
+
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
 import 'package:receipt_master/data/backend_connection.dart';
@@ -246,6 +249,8 @@ void main() {
     expect(find.text('Password'), findsOneWidget);
     await tester.tap(find.widgetWithText(FilledButton, 'Sign in'));
     await tester.pumpAndSettle();
+    // iOS announces form errors after a one-second accessibility delay.
+    await tester.pump(const Duration(seconds: 1));
     expect(find.text('Enter your username'), findsOneWidget);
     expect(find.text('Enter your password'), findsOneWidget);
     expect(

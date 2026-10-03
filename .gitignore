@@ -17,3 +17,4 @@ playground/android-release-state.json
 /playground/backend_ocr/
 
 **/node_modules/
+*.pyc

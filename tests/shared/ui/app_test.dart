@@ -6,7 +6,10 @@ import 'package:receipt_master/ui/capture.dart';
 import 'package:receipt_master/ui/logo_aliases.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker_platform_interface/image_picker_platform_interface.dart';
-import 'package:flutter_test/flutter_test.dart';
+import 'package:flutter_test/flutter_test.dart' hide testWidgets;
+
+import '../platform_test.dart';
+
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
 import 'package:receipt_master/main.dart';

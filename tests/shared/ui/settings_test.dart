@@ -2,7 +2,10 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:flutter_test/flutter_test.dart';
+import 'package:flutter_test/flutter_test.dart' hide testWidgets;
+
+import '../platform_test.dart';
+
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
 import 'package:receipt_master/data/auth_session.dart';
@@ -147,6 +150,8 @@ void main() {
           );
         }
         await tester.scrollUntilVisible(weight, -100, scrollable: scroll);
+        await Scrollable.ensureVisible(tester.element(weight), alignment: 0.5);
+        await tester.pumpAndSettle();
         await tester.tap(weight);
         await tester.pumpAndSettle();
         await tester.tap(find.text('lb').last);
