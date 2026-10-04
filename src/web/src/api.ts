@@ -1,3 +1,4 @@
+import { formatLocale } from "./i18n";
 import { newId } from "./id";
 
 export type Row = Record<string, any>;
@@ -215,7 +216,7 @@ export const currencies = [
 export const money = (n: number | null, c = "USD") =>
   n == null
     ? "—"
-    : new Intl.NumberFormat(undefined, {
+    : new Intl.NumberFormat(formatLocale(), {
         style: "currency",
         currency: c,
       }).format(
@@ -229,7 +230,7 @@ export const money = (n: number | null, c = "USD") =>
       );
 export const date = (n: number | null) =>
   n
-    ? new Date(n).toLocaleString(undefined, {
+    ? new Date(n).toLocaleString(formatLocale(), {
         year: "numeric",
         month: "2-digit",
         day: "2-digit",

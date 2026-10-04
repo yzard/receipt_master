@@ -2,7 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
-import 'english.dart';
+import 'catalog.dart';
 
 /// Only explicit interface messages are translated. Never use this on names
 /// supplied by the receipt or edited by the user.
@@ -10,7 +10,8 @@ class ReceiptLocalizations {
   const ReceiptLocalizations(this.locale);
 
   final Locale locale;
-  static const supportedLocales = [Locale('zh'), Locale('en')];
+  static List<Locale> get supportedLocales =>
+      TranslationCatalog.instance.locales;
   static const delegates = <LocalizationsDelegate<dynamic>>[
     _ReceiptLocalizationsDelegate(),
     GlobalMaterialLocalizations.delegate,
@@ -23,9 +24,8 @@ class ReceiptLocalizations {
       const ReceiptLocalizations(Locale('zh'));
 
   String text(String source, [List<Object?> arguments = const []]) {
-    final template = locale.languageCode == 'en'
-        ? englishMessages[source] ?? source
-        : source;
+    final template =
+        TranslationCatalog.instance.table(locale)[source] ?? source;
     return template.replaceAllMapped(RegExp(r'\{(\d+)\}'), (match) {
       final index = int.parse(match[1]!);
       return index < arguments.length ? '${arguments[index] ?? ''}' : match[0]!;
@@ -35,13 +35,13 @@ class ReceiptLocalizations {
   /// Errors and recognition warnings can be received before a language change.
   /// Translate known templates at render time, preserving their embedded values.
   String message(String source) {
-    if (locale.languageCode != 'en') return source;
-    if (englishMessages.containsKey(source)) return text(source);
-    for (final entry in _messagePatterns) {
+    if (TranslationCatalog.instance.table(locale).containsKey(source))
+      return text(source);
+    for (final entry in _messagePatterns(locale)) {
       final match = entry.pattern.firstMatch(source);
       if (match != null) {
         return text(entry.source, [
-          for (var i = 1; i <= match.groupCount; i++) message(match[i]!),
+          for (var i = 1; i <= match.groupCount; i++) match[i],
         ]);
       }
     }
@@ -49,8 +49,9 @@ class ReceiptLocalizations {
   }
 
   String _messageLine(String line) {
-    if (englishMessages.containsKey(line)) return text(line);
-    for (final entry in _messagePatterns) {
+    if (TranslationCatalog.instance.table(locale).containsKey(line))
+      return text(line);
+    for (final entry in _messagePatterns(locale)) {
       final match = entry.pattern.firstMatch(line);
       if (match != null) {
         return text(entry.source, [
@@ -62,8 +63,17 @@ class ReceiptLocalizations {
   }
 }
 
-final _messagePatterns = [
-  for (final source in englishMessages.keys.where((s) => s.contains('{0}')))
+List<({String source, RegExp pattern})> _messagePatterns(Locale locale) => [
+  for (final source
+      in TranslationCatalog.instance
+          .table(locale)
+          .keys
+          .where(
+            (s) =>
+                s.contains('{0}') &&
+                RegExp('错误|不符|差额|相差|失败|无法|缺少|缺失|重复|无效|不存在|上传|下载|后端')
+                    .hasMatch(s),
+          ))
     (
       source: source,
       pattern: RegExp(

@@ -30,6 +30,7 @@ COPY src/shared/resources/ ./resources/
 COPY src/shared/analysis_options.yaml ./
 COPY tests/shared/ /workspace/tests/shared/
 COPY tests/backend_api/receipt_schema.json /workspace/tests/backend_api/receipt_schema.json
+COPY src/backend_api/resources/localizations.json /workspace/src/backend_api/resources/localizations.json
 RUN --mount=type=cache,target=/root/.pub-cache,sharing=locked \
     dart format --output=none --set-exit-if-changed lib /workspace/tests/shared \
     && flutter analyze \

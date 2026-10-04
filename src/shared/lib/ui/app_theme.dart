@@ -1,4 +1,5 @@
 import '../l10n/strings.dart';
+import '../l10n/catalog.dart';
 
 import 'dart:io';
 import 'dart:ui';
@@ -34,10 +35,10 @@ class Appearance extends ChangeNotifier {
     }
     try {
       if (await _languageFile.exists()) {
-        locale = switch ((await _languageFile.readAsString()).trim()) {
-          'en' => const Locale('en'),
-          _ => const Locale('zh'),
-        };
+        final code = (await _languageFile.readAsString()).trim();
+        locale = RegExp(r'^[a-z]{2,3}(?:-[A-Za-z0-9]{2,8})*$').hasMatch(code)
+            ? InterfaceLanguage(code, code).locale
+            : TranslationCatalog.instance.defaultLocale;
       }
     } on FileSystemException {
       locale = const Locale('zh');
@@ -54,7 +55,7 @@ class Appearance extends ChangeNotifier {
     locale = value;
     notifyListeners();
     try {
-      await _languageFile.writeAsString(value.languageCode, flush: true);
+      await _languageFile.writeAsString(value.toLanguageTag(), flush: true);
     } catch (_) {
       locale = previous;
       notifyListeners();

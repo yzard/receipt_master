@@ -136,6 +136,10 @@ def main():
 
         try:
             origin = start()
+            status, _, resource = Browser(origin).request('/api/v1/localizations/get', {})
+            assert status == 200
+            expected = json.loads((root / 'src/backend_api/resources/localizations.json').read_text())
+            assert resource['data'] == expected
             process = docker('exec', name, 'cat', '/proc/1/status')
             for field, identity in [('Uid', os.getuid()), ('Gid', os.getgid())]:
                 values = re.search(rf'^{field}:\s+(.+)$', process, re.MULTILINE).group(1).split()

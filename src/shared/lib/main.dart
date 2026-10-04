@@ -17,6 +17,7 @@ import 'data/store.dart';
 import 'ui/app_theme.dart';
 import 'ui/home.dart';
 import 'l10n/strings.dart';
+import 'l10n/catalog.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -67,14 +68,14 @@ class ReceiptApp extends StatelessWidget {
   });
   @override
   Widget build(BuildContext context) => AnimatedBuilder(
-    animation: appearance,
+    animation: Listenable.merge([appearance, TranslationCatalog.instance]),
     builder: (context, _) => MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Receipt Master',
       theme: receiptTheme(Brightness.light),
       darkTheme: receiptTheme(Brightness.dark),
       themeMode: appearance.mode,
-      locale: appearance.locale,
+      locale: TranslationCatalog.instance.resolveLocale(appearance.locale),
       supportedLocales: ReceiptLocalizations.supportedLocales,
       localizationsDelegates: ReceiptLocalizations.delegates,
       builder: (context, child) => AnnotatedRegion<SystemUiOverlayStyle>(
@@ -98,14 +99,14 @@ class AccountApp extends StatelessWidget {
   });
   @override
   Widget build(BuildContext context) => AnimatedBuilder(
-    animation: appearance,
+    animation: Listenable.merge([appearance, TranslationCatalog.instance]),
     builder: (context, _) => MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Receipt Master',
       theme: receiptTheme(Brightness.light),
       darkTheme: receiptTheme(Brightness.dark),
       themeMode: appearance.mode,
-      locale: appearance.locale,
+      locale: TranslationCatalog.instance.resolveLocale(appearance.locale),
       supportedLocales: ReceiptLocalizations.supportedLocales,
       localizationsDelegates: ReceiptLocalizations.delegates,
       builder: (context, child) => AnnotatedRegion<SystemUiOverlayStyle>(

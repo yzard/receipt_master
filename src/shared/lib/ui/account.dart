@@ -1,3 +1,6 @@
+import 'dart:async';
+
+import '../l10n/catalog.dart';
 import '../l10n/strings.dart';
 
 import 'dart:io';
@@ -33,6 +36,33 @@ class AccountGate extends StatefulWidget {
 class _AccountGateState extends State<AccountGate> {
   String? account;
   AppStore? scoped;
+  @override
+  void initState() {
+    super.initState();
+    widget.session.addListener(loadTranslations);
+    loadTranslations();
+  }
+
+  void loadTranslations() {
+    unawaited(() async {
+      try {
+        await TranslationCatalog.instance.load(
+          origin: await widget.session.origin(),
+          client: widget.session.client,
+          cacheRoot: widget.store.cacheRoot,
+        );
+      } catch (_) {
+        // Login stays usable through an outage; Settings provides an explicit retry.
+      }
+    }());
+  }
+
+  @override
+  void dispose() {
+    widget.session.removeListener(loadTranslations);
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) => ListenableBuilder(
     listenable: widget.session,

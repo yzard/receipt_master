@@ -7,6 +7,7 @@ pub mod editing;
 pub mod error;
 pub mod exchange;
 pub mod jobs;
+pub mod localizations;
 pub mod logos;
 mod merchant_images;
 pub mod pipeline;
@@ -153,7 +154,10 @@ async fn authenticate(
         || path == "/android-update.json"
         || path.starts_with("/updates/");
     if path == "/health"
-        || matches!(path.as_str(), "/api/auth/login" | "/api/auth/refresh")
+        || matches!(
+            path.as_str(),
+            "/api/auth/login" | "/api/auth/refresh" | "/api/v1/localizations/get"
+        )
         || (!path.starts_with("/api/") && !path.starts_with("/v1/") && !android_asset)
     {
         return next.run(req).await;
@@ -369,6 +373,7 @@ pub fn application(state: Arc<State>) -> Router {
         )
         .fallback(web)
         .route("/health", get(health))
+        .route("/api/v1/localizations/get", post(localizations::get))
         .route("/api/v1/{component}/{operation}", post(data_api::execute))
         .route("/api/v1/media/{id}", get(data_api::media))
         .route("/api/v1/images/upload", post(data_api::upload))

@@ -1,7 +1,9 @@
+import { tr, message, useLanguage } from "./i18n";
 import React, { useEffect, useState } from "react";
 import { api, type Row } from "./api";
-
 export function ReceiptTypesManager() {
+  useLanguage();
+
   const [types, setTypes] = useState<Row[]>([]),
     [merchants, setMerchants] = useState<Row[]>([]);
   const [busy, setBusy] = useState(false),
@@ -32,13 +34,15 @@ export function ReceiptTypesManager() {
     }
   }
   return (
-    <section aria-label="店铺类别管理">
+    <section aria-label={tr("店铺类别管理")}>
       <p className="muted">
-        店铺类别与商品种类独立；店铺类别用来填充新识别收据的默认值，修改店铺不会改变历史消费。
+        {tr(
+          "店铺类别与商品种类独立；店铺类别用来填充新识别收据的默认值，修改店铺不会改变历史消费。",
+        )}
       </p>
       {error && (
         <p className="notice" role="alert">
-          {error}
+          {message(error)}
         </p>
       )}
       <div className="tags">
@@ -55,12 +59,14 @@ export function ReceiptTypesManager() {
             </button>
             {!t.system_key && (
               <button
-                aria-label={`删除店铺类别 ${t.name}`}
+                aria-label={tr("删除店铺类别 {0}", [t.name])}
                 disabled={busy}
                 onClick={() => {
                   if (
                     confirm(
-                      "删除此类别？保留所有收据，关联消费和店铺变为未分类。",
+                      tr(
+                        "删除此类别？保留所有收据，关联消费和店铺变为未分类。",
+                      ),
                     )
                   )
                     void action(() =>
@@ -84,7 +90,7 @@ export function ReceiptTypesManager() {
           setName("");
         }}
       >
-        添加店铺类别
+        {tr("添加店铺类别")}
       </button>
       {edit && (
         <form
@@ -101,9 +107,9 @@ export function ReceiptTypesManager() {
           }}
         >
           <label>
-            店铺类别名称
+            {tr("店铺类别名称")}
             <input
-              aria-label="店铺类别名称"
+              aria-label={tr("店铺类别名称")}
               value={name}
               onChange={(e) => setName(e.target.value)}
               required
@@ -111,20 +117,20 @@ export function ReceiptTypesManager() {
             />
           </label>
           <button type="button" onClick={() => setEdit(null)}>
-            取消
+            {tr("取消")}
           </button>
           <button disabled={busy} type="submit">
-            保存类别
+            {tr("保存类别")}
           </button>
         </form>
       )}
-      <h2>店铺类别设置</h2>
+      <h2>{tr("店铺类别设置")}</h2>
       <div className="mapping-list">
         {merchants.map((m) => (
           <label className="mapping" key={m.merchant_id}>
             <span>{m.name}</span>
             <select
-              aria-label={`${m.name}的店铺类别`}
+              aria-label={tr("{0}的店铺类别", [m.name])}
               disabled={busy}
               value={m.receipt_type_id}
               onChange={(e) =>

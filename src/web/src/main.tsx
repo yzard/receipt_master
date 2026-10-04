@@ -1,3 +1,13 @@
+import {
+  tr,
+  message,
+  useLanguage,
+  setLanguage,
+  availableLanguages,
+  translationError,
+  loadTranslations,
+  formatLocale,
+} from "./i18n";
 import { ReceiptTypesManager } from "./receipt_types";
 import React, { useState, useEffect, useRef, useId, FormEvent } from "react";
 import {
@@ -18,23 +28,27 @@ import {
 import { enqueue, pending, retry, Submission } from "./uploads";
 import "./style.css";
 import { CatalogSearchInput, catalogNameKey } from "./catalog-search";
-const names: Record<string, string> = {
-  receipts: "收据",
-  reports: "报表",
-  catalog: "商品",
-  stores: "店铺",
-  settings: "设置",
-  users: "用户管理",
-};
-const kinds: Record<string, string> = {
-  product: "商品",
-  other_adjustment: "其他调整",
-  item_discount: "商品优惠",
-  order_discount: "整单优惠",
-  tax: "税费",
-  tip: "小费",
-  deposit: "押金",
-};
+function names(): Record<string, string> {
+  return {
+    receipts: tr("收据"),
+    reports: tr("报表"),
+    catalog: tr("商品"),
+    stores: tr("店铺"),
+    settings: tr("设置"),
+    users: tr("用户管理"),
+  };
+}
+function kinds(): Record<string, string> {
+  return {
+    product: tr("商品"),
+    other_adjustment: tr("其他调整"),
+    item_discount: tr("商品优惠"),
+    order_discount: tr("整单优惠"),
+    tax: tr("税费"),
+    tip: tr("小费"),
+    deposit: tr("押金"),
+  };
+}
 const paths: Record<string, string> = {
   menu: "M4 6h16M4 12h16M4 18h16",
   camera: "M4 7h4l2-3h4l2 3h4v13H4z M16 13a4 4 0 1 1-8 0 4 4 0 0 1 8 0",
@@ -108,12 +122,14 @@ async function action(f: () => Promise<any>) {
   }
 }
 export function AndroidDownloadLink({ className }: { className: string }) {
+  useLanguage();
+
   return (
     <a
       className={className}
       href="/receipt_master.apk"
       download="receipt_master.apk"
-      title="安装后使用同一用户名和密码登录"
+      title={tr("安装后使用同一用户名和密码登录")}
       onClick={(event) => {
         event.preventDefault();
         void action(async () => {
@@ -128,7 +144,7 @@ export function AndroidDownloadLink({ className }: { className: string }) {
       }}
     >
       <Icon name="download" />
-      下载 Android APK
+      {tr("下载 Android APK")}
     </a>
   );
 }
@@ -216,7 +232,7 @@ function Modal({
     >
       <header>
         <h2 id={titleId}>{title}</h2>
-        <IconButton icon="close" label="关闭" onClick={onClose} />
+        <IconButton icon="close" label={tr("关闭")} onClick={onClose} />
       </header>
       {children}
     </dialog>
@@ -255,17 +271,17 @@ function StateView({
 }) {
   return error ? (
     <div className="notice error" role="alert">
-      {error} <button onClick={onRetry}>重试</button>
+      {message(error)} <button onClick={onRetry}>{tr("重试")}</button>
     </div>
   ) : busy ? (
     <div className="loading" role="status">
-      正在加载…
+      {tr("正在加载…")}
     </div>
   ) : empty ? (
     <div className="empty">
       <Icon name="receipt" />
       <h3>{empty}</h3>
-      <p>记录一张收据，让每次消费都有迹可循。</p>
+      <p>{tr("记录一张收据，让每次消费都有迹可循。")}</p>
     </div>
   ) : null;
 }
@@ -307,6 +323,8 @@ export function SignIn({
   change?: boolean;
   onDone?: () => void;
 }) {
+  useLanguage();
+
   const [name, setName] = useState(""),
     [password, setPassword] = useState(""),
     [newPassword, setNew] = useState(""),
@@ -347,11 +365,11 @@ export function SignIn({
           <Icon name="receipt" />
         </div>
         <p className="eyebrow">RECEIPT MASTER</p>
-        <h1>{change ? "设置你的新密码" : "生活账目，一目了然。"}</h1>
+        <h1>{change ? tr("设置你的新密码") : tr("生活账目，一目了然。")}</h1>
         <p className="muted">
           {change
-            ? "首次登录或密码被重置后，修改密码才能继续。"
-            : "登录，继续整理收据、商品与消费趋势。"}
+            ? tr("首次登录或密码被重置后，修改密码才能继续。")
+            : tr("登录，继续整理收据、商品与消费趋势。")}
         </p>
         <form
           id={change ? "change-password-form" : "login-form"}
@@ -362,7 +380,7 @@ export function SignIn({
           onSubmit={submit}
         >
           <Field
-            label="用户名"
+            label={tr("用户名")}
             id={change ? "change-username" : "login-username"}
             name="username"
             value={change ? (api.user?.username ?? name) : name}
@@ -376,7 +394,7 @@ export function SignIn({
             autoFocus={!change}
           />
           <Field
-            label={change ? "当前密码" : "密码"}
+            label={change ? tr("当前密码") : tr("密码")}
             id={change ? "current-password" : "login-password"}
             name="password"
             value={password}
@@ -388,7 +406,7 @@ export function SignIn({
           {change && (
             <>
               <Field
-                label="新密码 · 至少 12 个字符"
+                label={tr("新密码 · 至少 12 个字符")}
                 id="new-password"
                 name="new-password"
                 value={newPassword}
@@ -399,7 +417,7 @@ export function SignIn({
                 autoComplete="new-password"
               />
               <Field
-                label="再次输入新密码"
+                label={tr("再次输入新密码")}
                 id="confirm-password"
                 name="confirm-password"
                 value={repeat}
@@ -413,11 +431,11 @@ export function SignIn({
           )}
           {error && (
             <p className="notice error" role="alert">
-              {error}
+              {message(error)}
             </p>
           )}
           <button className="primary" disabled={busy}>
-            {busy ? "正在处理…" : change ? "修改密码" : "登录"}
+            {busy ? tr("正在处理…") : change ? tr("修改密码") : tr("登录")}
           </button>
         </form>
         {change && (
@@ -425,10 +443,12 @@ export function SignIn({
             className="text-button"
             onClick={() => void action(() => api.logout())}
           >
-            退出登录
+            {tr("退出登录")}
           </button>
         )}
-        <p className="auth-footer">收据、照片与分析，仅属于你的账户。</p>
+        <p className="auth-footer">
+          {tr("收据、照片与分析，仅属于你的账户。")}
+        </p>
       </section>
     </main>
   );
@@ -508,18 +528,18 @@ function Camera({ onClose }: { onClose: () => void }) {
     }
   }
   return (
-    <Modal title="拍摄收据" onClose={onClose} wide>
+    <Modal title={tr("拍摄收据")} onClose={onClose} wide>
       <video ref={video} autoPlay playsInline muted className="viewfinder" />
-      {error && <p className="notice error">{error}</p>}
+      {error && <p className="notice error">{message(error)}</p>}
       <div className="photo-strip">
         {urls.map((u, i) => (
           <div key={u} className={selected === i ? "selected" : ""}>
             <button className="photo-select" onClick={() => setSelected(i)}>
-              <img src={u} alt={`第 ${i + 1} 张`} />
+              <img src={u} alt={tr("第 {0} 张", [i + 1])} />
             </button>
             <IconButton
               icon="close"
-              label={`删除第 ${i + 1} 张照片`}
+              label={tr("删除第 {0} 张照片", [i + 1])}
               onClick={() => {
                 setPhotos((p) => p.filter((_, j) => j !== i));
                 setSelected(0);
@@ -530,17 +550,17 @@ function Camera({ onClose }: { onClose: () => void }) {
       </div>
       <footer>
         <button onClick={() => shoot(true)} disabled={!photos.length || busy}>
-          重拍
+          {tr("重拍")}
         </button>
         <button
           className="primary"
           onClick={() => shoot()}
           disabled={busy || !!error}
         >
-          拍摄
+          {tr("拍摄")}
         </button>
         <button onClick={() => void done()} disabled={!photos.length || busy}>
-          完成 · {photos.length} 张
+          {tr("完成 · {0} 张", [photos.length])}
         </button>
       </footer>
     </Modal>
@@ -549,12 +569,14 @@ function Camera({ onClose }: { onClose: () => void }) {
 export function Receipts({
   open,
   productId = null,
-  title = "收据",
+  title = tr("收据"),
 }: {
   open: (id: string) => void;
   productId?: string | null;
   title?: string;
 }) {
+  useLanguage();
+
   const [sort, setSort] = useState("created_at"),
     [direction, setDirection] = useState("desc");
   const list = useLoad(
@@ -580,7 +602,7 @@ export function Receipts({
     }
   }
   async function remove(r: Row) {
-    if (confirm("永久删除这张收据及其照片？")) {
+    if (confirm(tr("永久删除这张收据及其照片？"))) {
       await api.op("receipts", "purge", {
         id: r.receipt_id,
         expected_version: r.version,
@@ -592,19 +614,23 @@ export function Receipts({
     <>
       <Heading
         title={title}
-        subtitle="每张票据，都是生活的一个细节。"
+        subtitle={tr("每张票据，都是生活的一个细节。")}
         action={
-          <IconButton icon="refresh" label="刷新收据" onClick={list.reload} />
+          <IconButton
+            icon="refresh"
+            label={tr("刷新收据")}
+            onClick={list.reload}
+          />
         }
       />
       {submissions.length > 0 && (
         <div className="notice">
-          {submissions.length} 张收据正在上传或等待重试。
-          <button onClick={() => void action(retry)}>重试上传</button>
+          {tr("{0} 张收据正在上传或等待重试。", [submissions.length])}
+          <button onClick={() => void action(retry)}>{tr("重试上传")}</button>
           {submissions
             .filter((s) => s.error)
             .map((s) => (
-              <p key={s.id}>{s.error}</p>
+              <p key={s.id}>{message(s.error ?? "")}</p>
             ))}
         </div>
       )}
@@ -613,17 +639,17 @@ export function Receipts({
         busy={!list.data && list.busy}
         onRetry={list.reload}
       />
-      {list.data?.length === 0 && <StateView empty="还没有收据" />}
+      {list.data?.length === 0 && <StateView empty={tr("还没有收据")} />}
       {!!list.data?.length && (
         <div className="table-scroll">
           <table className="receipt-table">
             <thead>
               <tr>
                 {[
-                  ["store", "店名"],
-                  ["created_at", "录入时间"],
-                  ["receipt_time", "收据时间"],
-                  ["total", "总金额"],
+                  ["store", tr("店名")],
+                  ["created_at", tr("录入时间")],
+                  ["receipt_time", tr("收据时间")],
+                  ["total", tr("总金额")],
                 ].map(([key, label]) => (
                   <th
                     key={key}
@@ -642,7 +668,7 @@ export function Receipts({
                   </th>
                 ))}
                 <th>
-                  <span className="sr-only">操作</span>
+                  <span className="sr-only">{tr("操作")}</span>
                 </th>
               </tr>
             </thead>
@@ -663,9 +689,9 @@ export function Receipts({
                       className="row-link"
                       onClick={() => open(r.receipt_id)}
                     >
-                      {r.raw_store || "未知店铺"}
+                      {r.raw_store || tr("未知店铺")}
                       {["queued", "running"].includes(r.recognition_status) && (
-                        <small>识别中…</small>
+                        <small>{tr("识别中…")}</small>
                       )}
                     </button>
                   </td>
@@ -677,7 +703,7 @@ export function Receipts({
                   <td>
                     <IconButton
                       icon="trash"
-                      label="删除收据"
+                      label={tr("删除收据")}
                       onClick={() => void action(() => remove(r))}
                     />
                   </td>
@@ -707,6 +733,8 @@ export function LineEditor({
   onSave: (line: Row) => void;
   onClose: () => void;
 }) {
+  useLanguage();
+
   const [value, setValue] = useState<Row>(structuredClone(line)),
     [fields, setFields] = useState<Row>(structuredClone(line.display)),
     [busy, setBusy] = useState(false),
@@ -732,23 +760,23 @@ export function LineEditor({
     }
   }
   return (
-    <Modal title="编辑商品" onClose={onClose}>
+    <Modal title={tr("编辑商品")} onClose={onClose}>
       <form onSubmit={save}>
         <CatalogSearchInput
-          label="商品名称"
+          label={tr("商品名称")}
           component="product_names"
           value={value.productNameEdit ?? value.display?.productName ?? ""}
           onChange={(v) => set("productNameEdit", v)}
         />
         <Field
-          label="票面名称"
+          label={tr("票面名称")}
           value={value.rawName}
           onChange={(v) => set("rawName", v)}
           required
         />
         <div className="form-grid">
           <Select
-            label="类型"
+            label={tr("类型")}
             value={value.kind}
             onChange={(v) => {
               const system = categories.find((c: Row) => c.system_key === v);
@@ -760,14 +788,14 @@ export function LineEditor({
                   system?.category_id || "00000000-0000-4000-8000-000000000001",
               }));
             }}
-            options={Object.entries(kinds)}
+            options={Object.entries(kinds())}
           />
           <Select
-            label="店铺类别"
+            label={tr("店铺类别")}
             value={value.receiptTypeId || ""}
             onChange={(v) => set("receiptTypeId", v || null)}
             options={[
-              ["", "使用店铺类别"],
+              ["", tr("使用店铺类别")],
               ...receiptTypes.map((t): [string, string] => [
                 t.receipt_type_id,
                 t.name,
@@ -775,18 +803,18 @@ export function LineEditor({
             ]}
           />
           <Select
-            label="商品分类"
+            label={tr("商品分类")}
             value={value.categoryId}
             onChange={(v) => set("categoryId", v)}
             options={categories.map((c) => [c.category_id, c.path])}
           />
           {value.kind === "item_discount" && (
             <Select
-              label="折扣对应商品"
+              label={tr("折扣对应商品")}
               value={value.discountTarget || ""}
               onChange={(v) => set("discountTarget", v || null)}
               options={[
-                ["", "请选择商品"],
+                ["", tr("请选择商品")],
                 ...lines
                   .filter((l: Row) => l.kind === "product" && l.id !== value.id)
                   .map((l: Row): [string, string] => [
@@ -797,7 +825,7 @@ export function LineEditor({
             />
           )}
           <Field
-            label="税码"
+            label={tr("税码")}
             value={value.taxCode ?? ""}
             maxLength={3}
             onChange={(v) => set("taxCode", v || null)}
@@ -808,11 +836,11 @@ export function LineEditor({
             onChange={(v) => set("sku", v || null)}
           />
           {[
-            ["amountText", `金额 (${currency})`],
-            ["weightText", `重量 (${fields.weightUnit})`],
-            ["quantityText", "数量"],
-            ["quantityUnit", "计价单位"],
-            ["priceText", "单价"],
+            ["amountText", tr("金额 ({0})", [currency])],
+            ["weightText", tr("重量 ({0})", [fields.weightUnit])],
+            ["quantityText", tr("数量")],
+            ["quantityUnit", tr("计价单位")],
+            ["priceText", tr("单价")],
           ].map(([key, label]) => (
             <Field
               key={key}
@@ -829,32 +857,34 @@ export function LineEditor({
             checked={value.isWeighed}
             onChange={(e) => set("isWeighed", e.target.checked)}
           />
-          称重商品
+          {tr("称重商品")}
         </label>
         {value.warnings?.length > 0 && (
           <div className="notice">
             {value.warnings.map((w: string) => (
-              <p key={w}>{w}</p>
+              <p key={w}>{message(w)}</p>
             ))}
             <button type="button" onClick={() => set("warnings", [])}>
-              已核对，清除提示
+              {tr("已核对，清除提示")}
             </button>
           </div>
         )}
-        {error && <p className="notice error">{error}</p>}
+        {error && <p className="notice error">{message(error)}</p>}
         <footer>
           <button type="button" onClick={onClose}>
-            取消
+            {tr("取消")}
           </button>
           <button className="primary" disabled={busy}>
-            应用修改
+            {tr("应用修改")}
           </button>
         </footer>
       </form>
     </Modal>
   );
 }
-type EditorHandle = { leave: (exit: () => void) => void };
+type EditorHandle = {
+  leave: (exit: () => void) => void;
+};
 export function Editor({
   id,
   isNew,
@@ -866,6 +896,8 @@ export function Editor({
   onBack: () => void;
   ref?: React.Ref<EditorHandle>;
 }) {
+  useLanguage();
+
   const loaded = useLoad(
     async () =>
       Promise.all([
@@ -958,12 +990,14 @@ export function Editor({
         reasons.push("消费时间是估计值");
       if (
         dup.length &&
-        !confirm(`发现 ${dup.length} 张可能重复的收据，仍确认保存？`)
+        !confirm(tr("发现 {0} 张可能重复的收据，仍确认保存？", [dup.length]))
       )
         return;
       if (
         reasons.length &&
-        !confirm(`仍要录入这张收据？\n${reasons.join("\n")}`)
+        !confirm(
+          tr("仍要录入这张收据？\n{0}", [reasons.map(message).join("\n")]),
+        )
       )
         return;
     }
@@ -1049,10 +1083,10 @@ export function Editor({
     if (
       !confirm(
         dirty
-          ? "放弃未保存修改并重新识别？重新识别会放弃本页未保存的改动。"
+          ? tr("放弃未保存修改并重新识别？重新识别会放弃本页未保存的改动。")
           : r?.posted
-            ? "重新识别会将已确认收据放回草稿。继续？"
-            : "重新识别这张收据？",
+            ? tr("重新识别会将已确认收据放回草稿。继续？")
+            : tr("重新识别这张收据？"),
       )
     )
       return;
@@ -1068,7 +1102,7 @@ export function Editor({
   if (!r)
     return (
       <>
-        <IconButton icon="back" label="返回" onClick={back} />
+        <IconButton icon="back" label={tr("返回")} onClick={back} />
         <StateView
           busy={loaded.busy}
           error={loaded.error}
@@ -1079,25 +1113,25 @@ export function Editor({
   return (
     <>
       <div className="editor-heading">
-        <IconButton icon="back" label="返回收据" onClick={back} />
+        <IconButton icon="back" label={tr("返回收据")} onClick={back} />
         <div>
-          <h1>{r.store || "收据草稿"}</h1>
+          <h1>{r.store || tr("收据草稿")}</h1>
           <small>{id}</small>
         </div>
         <span className="spacer" />
         <IconButton
           icon="refresh"
-          label="重新识别"
+          label={tr("重新识别")}
           disabled={busy || !images.length}
           onClick={() => void doAction(recognize)}
         />
         <IconButton
           icon="trash"
-          label="删除收据"
+          label={tr("删除收据")}
           disabled={busy}
           onClick={() =>
             void doAction(async () => {
-              if (confirm("永久删除这张收据？")) {
+              if (confirm(tr("永久删除这张收据？"))) {
                 await api.op("receipts", "purge", {
                   id,
                   expected_version: r.revision,
@@ -1110,13 +1144,13 @@ export function Editor({
       </div>
       {error && (
         <p className="notice error" role="alert">
-          {error}
+          {message(error)}
         </p>
       )}
       <div className="editor-layout">
-        <aside className="receipt-photos" aria-label="收据照片">
+        <aside className="receipt-photos" aria-label={tr("收据照片")}>
           {images.length === 0 && (
-            <p className="muted">手动录入的收据没有照片。</p>
+            <p className="muted">{tr("手动录入的收据没有照片。")}</p>
           )}
           {images.map((img: Row, i: number) => (
             <figure key={img.image_id}>
@@ -1126,15 +1160,15 @@ export function Editor({
               >
                 <img
                   src={`/api/v1/media/${img.media_id}`}
-                  alt={`收据第 ${i + 1} 张`}
+                  alt={tr("收据第 {0} 张", [i + 1])}
                 />
               </button>
               <figcaption>
-                <span>第 {i + 1} 张</span>
+                <span>{tr("第 {0} 张", [i + 1])}</span>
                 <div>
                   <IconButton
                     icon="rotate"
-                    label="旋转照片"
+                    label={tr("旋转照片")}
                     disabled={busy}
                     onClick={() =>
                       void doAction(() =>
@@ -1144,7 +1178,7 @@ export function Editor({
                   />
                   {i > 0 && (
                     <button
-                      title="向前移动照片"
+                      title={tr("向前移动照片")}
                       disabled={busy}
                       onClick={() =>
                         void doAction(() => {
@@ -1159,11 +1193,11 @@ export function Editor({
                   )}
                   <IconButton
                     icon="trash"
-                    label="删除照片"
+                    label={tr("删除照片")}
                     disabled={busy}
                     onClick={() =>
                       void doAction(async () => {
-                        if (confirm("删除这张照片？"))
+                        if (confirm(tr("删除这张照片？")))
                           await imageAction("remove", { id: img.image_id });
                       })
                     }
@@ -1173,13 +1207,13 @@ export function Editor({
             </figure>
           ))}
         </aside>
-        <section className="receipt-fields" aria-label="收据内容">
+        <section className="receipt-fields" aria-label={tr("收据内容")}>
           <div className="receipt-fields-scroll">
             <Select
-              label="店铺类别"
+              label={tr("店铺类别")}
               value={r.receiptTypeId || ""}
               options={[
-                ["", "请选择"],
+                ["", tr("请选择")],
                 ...(loaded.data[3] || []).map((t: Row): [string, string] => [
                   t.receipt_type_id,
                   t.name,
@@ -1196,10 +1230,10 @@ export function Editor({
             />
             <div className="form-grid">
               {[
-                ["store", "店铺名称"],
-                ["branch", "分店"],
-                ["address", "地址"],
-                ["country", "国家代码"],
+                ["store", tr("店铺名称")],
+                ["branch", tr("分店")],
+                ["address", tr("地址")],
+                ["country", tr("国家代码")],
               ].map(([key, label]) => (
                 <Field
                   key={key}
@@ -1211,7 +1245,7 @@ export function Editor({
                 />
               ))}
               <Select
-                label="币种"
+                label={tr("币种")}
                 value={r.currency}
                 options={currencies.map((c) => [c, c])}
                 onChange={(v) =>
@@ -1219,7 +1253,7 @@ export function Editor({
                 }
               />
               <Field
-                label="票面总金额"
+                label={tr("票面总金额")}
                 value={total}
                 onChange={(v) => {
                   setTotal(v);
@@ -1228,7 +1262,7 @@ export function Editor({
                 inputMode="decimal"
               />
               <Field
-                label={`收据时间 · ${zone}`}
+                label={tr("收据时间 · {0}", [zone])}
                 type="datetime-local"
                 value={localInput(r.occurredAt)}
                 onChange={(v) =>
@@ -1250,23 +1284,24 @@ export function Editor({
                 }
               />
               <Select
-                label="时间来源"
+                label={tr("时间来源")}
                 value={r.timeSource}
                 onChange={(v) => update("timeSource", v)}
                 options={Object.entries({
-                  recognized: "票面识别",
-                  user_entered: "手动确认",
-                  estimated_clock: "估计 · 录入时间",
-                  estimated_instant: "用户指定估计时间",
+                  recognized: tr("票面识别"),
+                  user_entered: tr("手动确认"),
+                  estimated_clock: tr("估计 · 录入时间"),
+                  estimated_instant: tr("用户指定估计时间"),
                 })}
               />
             </div>
             <button onClick={() => setStoreEdit(true)}>
-              编辑店铺 Logo 名称
+              {tr("编辑店铺 Logo 名称")}
             </button>
             <div className="section-heading">
               <h2>
-                商品明细 <small>{r.lines.length}</small>
+                {tr("商品明细")}
+                <small>{r.lines.length}</small>
               </h2>
               <button
                 onClick={() =>
@@ -1280,11 +1315,13 @@ export function Editor({
                 }
               >
                 <Icon name="add" />
-                添加
+                {tr("添加")}
               </button>
             </div>
             {r.lines.length === 0 && (
-              <p className="muted">还没有商品明细。识别完成后会显示在这里。</p>
+              <p className="muted">
+                {tr("还没有商品明细。识别完成后会显示在这里。")}
+              </p>
             )}
             {r.lines.map((l: Row) => (
               <div
@@ -1294,7 +1331,7 @@ export function Editor({
                 <input
                   type="checkbox"
                   checked={selected.includes(l.id)}
-                  aria-label={`选择 ${l.rawName}`}
+                  aria-label={tr("选择 {0}", [l.rawName])}
                   onChange={(e) =>
                     setSelected((s) =>
                       e.target.checked
@@ -1305,19 +1342,19 @@ export function Editor({
                 />
                 <button className="line-main" onClick={() => setLine(l)}>
                   <strong>
-                    {l.display?.productName || l.rawName || "未命名商品"}
+                    {l.display?.productName || l.rawName || tr("未命名商品")}
                   </strong>
                   {l.display?.productName && <small>{l.rawName}</small>}
                   <div className="line-meta">
-                    {kinds[l.kind]}{" "}
+                    {kinds()[l.kind]}{" "}
                     {l.display?.receiptTypeName &&
                       `· ${l.display.receiptTypeName}`}{" "}
-                    {l.taxCode && `· 税码 ${l.taxCode}`}{" "}
+                    {l.taxCode && tr("· 税码 {0}", [l.taxCode])}{" "}
                     {l.sku && `· SKU ${l.sku}`}{" "}
                   </div>
                   {l.warnings.map((w: string) => (
                     <p className="warning-text" key={w}>
-                      {w}
+                      {message(w)}
                     </p>
                   ))}
                 </button>
@@ -1326,9 +1363,9 @@ export function Editor({
                 </span>
                 <IconButton
                   icon="trash"
-                  label="删除商品"
+                  label={tr("删除商品")}
                   onClick={() => {
-                    if (confirm("删除这一项？"))
+                    if (confirm(tr("删除这一项？")))
                       update(
                         "lines",
                         r.lines.filter(
@@ -1344,32 +1381,36 @@ export function Editor({
               <button
                 disabled={selected.length !== 1}
                 onClick={() => {
-                  const amount = prompt("拆分出的金额");
+                  const amount = prompt(tr("拆分出的金额"));
                   if (amount !== null)
                     void doAction(() =>
                       edit("split", { selected, amount_text: amount }),
                     );
                 }}
               >
-                拆分
+                {tr("拆分")}
               </button>
               <button
                 disabled={selected.length < 2}
                 onClick={() => void doAction(() => edit("merge", { selected }))}
               >
-                合并
+                {tr("合并")}
               </button>
               <button
                 onClick={() => void doAction(() => edit("total_from_lines"))}
               >
-                按明细计算总额
+                {tr("按明细计算总额")}
               </button>
             </div>
             {r.summary && !dirty && (
               <div className="reconciliation">
-                <span>明细合计 {money(r.summary.knownTotal, r.currency)}</span>
+                <span>
+                  {tr("明细合计")}
+                  {money(r.summary.knownTotal, r.currency)}
+                </span>
                 <strong className={r.summary.difference ? "warning-text" : ""}>
-                  差额 {money(r.summary.difference, r.currency)}
+                  {tr("差额")}
+                  {money(r.summary.difference, r.currency)}
                 </strong>
               </div>
             )}
@@ -1380,7 +1421,7 @@ export function Editor({
               disabled={busy}
               onClick={() => void doAction(() => discard(onBack))}
             >
-              放弃改动
+              {tr("放弃改动")}
             </button>
             {!r.posted && (
               <button
@@ -1391,7 +1432,7 @@ export function Editor({
                   })
                 }
               >
-                保存草稿
+                {tr("保存草稿")}
               </button>
             )}
             <button
@@ -1404,23 +1445,23 @@ export function Editor({
                 })
               }
             >
-              {busy ? "正在保存…" : "录入并退出"}
+              {busy ? tr("正在保存…") : tr("录入并退出")}
             </button>
           </footer>
         </section>
       </div>
       {leaving && (
-        <Modal title="离开收据编辑？" onClose={() => setLeaving(false)}>
-          <p>本页改动尚未保存。</p>
+        <Modal title={tr("离开收据编辑？")} onClose={() => setLeaving(false)}>
+          <p>{tr("本页改动尚未保存。")}</p>
           <footer>
             <button disabled={busy} onClick={() => setLeaving(false)}>
-              继续编辑
+              {tr("继续编辑")}
             </button>
             <button
               disabled={busy}
               onClick={() => void doAction(() => discard(exitTarget.current))}
             >
-              放弃改动
+              {tr("放弃改动")}
             </button>
             {!r.posted && (
               <button
@@ -1432,15 +1473,18 @@ export function Editor({
                   })
                 }
               >
-                保存草稿
+                {tr("保存草稿")}
               </button>
             )}
           </footer>
         </Modal>
       )}
       {timeChoices && (
-        <Modal title="确认重复的本地时间" onClose={() => setTimeChoices(null)}>
-          <p>夏令时切换使这个时间出现两次，请选择实际交易时间。</p>
+        <Modal
+          title={tr("确认重复的本地时间")}
+          onClose={() => setTimeChoices(null)}
+        >
+          <p>{tr("夏令时切换使这个时间出现两次，请选择实际交易时间。")}</p>
           {timeChoices.times.map((t) => (
             <button
               key={t}
@@ -1476,13 +1520,13 @@ export function Editor({
         />
       )}
       {photo && (
-        <Modal title="收据照片" onClose={() => setPhoto(null)} wide>
-          <img className="full-photo" src={photo} alt="完整收据" />
+        <Modal title={tr("收据照片")} onClose={() => setPhoto(null)} wide>
+          <img className="full-photo" src={photo} alt={tr("完整收据")} />
         </Modal>
       )}
       {storeEdit && (
         <Modal
-          title="店铺名称"
+          title={tr("店铺名称")}
           onClose={() => {
             setStoreEdit(false);
           }}
@@ -1563,7 +1607,7 @@ function CommitInput({
         onKeyDown={(e) => {
           if (e.key === "Enter") e.currentTarget.blur();
         }}
-        placeholder="选择或输入新的名称"
+        placeholder={tr("选择或输入新的名称")}
       />
       <datalist id={id}>
         {options.map((o) => (
@@ -1590,7 +1634,7 @@ function Catalog({
       ]),
     [],
   );
-  const tabs = ["票据名称", "商品名称", "商品分类", "商品种类"];
+  const tabs = [tr("票据名称"), tr("商品名称"), tr("商品分类"), tr("商品种类")];
   async function save(f: () => Promise<any>) {
     await f();
     data.reload();
@@ -1600,8 +1644,8 @@ function Catalog({
   return (
     <>
       <Heading
-        title="商品管理"
-        subtitle="把不同店铺的票面名称，整理为你熟悉的商品。"
+        title={tr("商品管理")}
+        subtitle={tr("把不同店铺的票面名称，整理为你熟悉的商品。")}
       />
       <div className="tabs" role="tablist">
         {tabs.map((name, i) => (
@@ -1618,8 +1662,8 @@ function Catalog({
       </div>
       <input
         className="search"
-        aria-label="搜索商品"
-        placeholder="搜索名称…"
+        aria-label={tr("搜索商品")}
+        placeholder={tr("搜索名称…")}
         value={search}
         onChange={(e) => setSearch(e.target.value)}
       />
@@ -1658,7 +1702,10 @@ function Catalog({
                           >
                             <span>{tab === 0 ? r.raw_name : r.name}</span>
                             <CommitInput
-                              label={`${tab === 0 ? r.raw_name : r.name}的${tab === 0 ? "商品名称" : "商品种类"}`}
+                              label={tr("{0}的{1}", [
+                                tab === 0 ? r.raw_name : r.name,
+                                tab === 0 ? tr("商品名称") : tr("商品种类"),
+                              ])}
                               value={
                                 tab === 0
                                   ? r.product_name || ""
@@ -1727,10 +1774,12 @@ function Catalog({
                   </button>
                   <IconButton
                     icon="close"
-                    label={`删除商品名称 ${p.name}`}
+                    label={tr("删除商品名称 {0}", [p.name])}
                     onClick={() =>
                       void action(async () => {
-                        if (confirm("解除该商品名称的所有关联？收据会保留。"))
+                        if (
+                          confirm(tr("解除该商品名称的所有关联？收据会保留。"))
+                        )
                           await save(() =>
                             api.op("product_names", "delete", {
                               id: p.product_name_id,
@@ -1750,7 +1799,7 @@ function Catalog({
                 {filtered(data.data[2], "name").map((c: Row) => (
                   <span className="tag" key={c.category_id}>
                     <button
-                      title="编辑名称与父类"
+                      title={tr("编辑名称与父类")}
                       onClick={() => setCategory(c)}
                     >
                       {c.path}
@@ -1758,10 +1807,12 @@ function Catalog({
                     {!c.system_key && (
                       <IconButton
                         icon="close"
-                        label={`删除商品种类 ${c.name}`}
+                        label={tr("删除商品种类 {0}", [c.name])}
                         onClick={() =>
                           void action(async () => {
-                            if (confirm("删除此种类？关联商品会变为未分类。"))
+                            if (
+                              confirm(tr("删除此种类？关联商品会变为未分类。"))
+                            )
                               await save(() =>
                                 api.op("categories", "delete", {
                                   id: c.category_id,
@@ -1781,12 +1832,12 @@ function Catalog({
                 }
               >
                 <Icon name="add" />
-                添加商品种类
+                {tr("添加商品种类")}
               </button>
             </>
           )}
           {!data.data[tab === 0 ? 0 : tab === 3 ? 2 : 1].length && (
-            <p className="muted">确认收据后，商品名称会出现在这里。</p>
+            <p className="muted">{tr("确认收据后，商品名称会出现在这里。")}</p>
           )}
         </>
       )}
@@ -1833,7 +1884,7 @@ function CategoryForm({
   );
   return (
     <Modal
-      title={value.category_id ? "编辑商品种类" : "添加商品种类"}
+      title={value.category_id ? tr("编辑商品种类") : tr("添加商品种类")}
       onClose={onClose}
     >
       <form
@@ -1848,7 +1899,7 @@ function CategoryForm({
         }}
       >
         <CatalogSearchInput
-          label="种类名称"
+          label={tr("种类名称")}
           component="categories"
           value={name}
           onChange={(v) => {
@@ -1862,15 +1913,17 @@ function CategoryForm({
         />
         {(duplicate || error) && (
           <p role="alert">
-            {duplicate ? "商品种类名称已存在，请使用其他名称" : error}
+            {duplicate
+              ? tr("商品种类名称已存在，请使用其他名称")
+              : message(error)}
           </p>
         )}
         <Select
-          label="父类"
+          label={tr("父类")}
           value={parent}
           onChange={setParent}
           options={[
-            ["", "顶层分类"],
+            ["", tr("顶层分类")],
             ...categories
               .filter(
                 (c) => c.category_id !== value.category_id && !c.parent_id,
@@ -1880,13 +1933,13 @@ function CategoryForm({
         />
         <footer>
           <button type="button" onClick={onClose}>
-            取消
+            {tr("取消")}
           </button>
           <button
             className="primary"
             disabled={busy || duplicate || !name.trim()}
           >
-            保存
+            {tr("保存")}
           </button>
         </footer>
       </form>
@@ -1900,6 +1953,8 @@ export function Stores({
   receiptId?: string | null;
   suggested?: string;
 }) {
+  useLanguage();
+
   const list = useLoad(
     () => api.op("logos", "list", { receipt_id: receiptId }),
     [receiptId],
@@ -1919,11 +1974,11 @@ export function Stores({
   return (
     <>
       {!receiptId && (
-        <Heading title="店铺" subtitle="管理店铺名称与店铺类别。" />
+        <Heading title={tr("店铺")} subtitle={tr("管理店铺名称与店铺类别。")} />
       )}
       {!receiptId && (
-        <div className="tabs" role="tablist" aria-label="店铺管理">
-          {["店铺名称", "店铺类别"].map((name, i) => (
+        <div className="tabs" role="tablist" aria-label={tr("店铺管理")}>
+          {[tr("店铺名称"), tr("店铺类别")].map((name, i) => (
             <button
               key={name}
               role="tab"
@@ -1951,7 +2006,7 @@ export function Stores({
                 )
               }
             >
-              重新提取 Logo
+              {tr("重新提取 Logo")}
             </button>
           )}
           <StateView
@@ -1964,10 +2019,10 @@ export function Stores({
               <article key={s.logo_id}>
                 <img
                   src={`/api/v1/media/${s.media_id}`}
-                  alt={s.name || "尚未命名的店铺标志"}
+                  alt={s.name || tr("尚未命名的店铺标志")}
                 />
                 <CommitInput
-                  label="店铺名称"
+                  label={tr("店铺名称")}
                   value={s.name || ""}
                   options={suggested ? [suggested] : []}
                   onCommit={(name) =>
@@ -1983,11 +2038,11 @@ export function Stores({
                 {s.name && (
                   <IconButton
                     icon="trash"
-                    label="删除店铺名称样本"
+                    label={tr("删除店铺名称样本")}
                     disabled={busy}
                     onClick={() =>
                       void action(async () => {
-                        if (confirm("删除此店铺名称样本？"))
+                        if (confirm(tr("删除此店铺名称样本？")))
                           await mutate(() =>
                             api.op("logos", "delete", {
                               id: s.logo_id,
@@ -2004,8 +2059,10 @@ export function Stores({
           {list.data?.length === 0 && (
             <p className="muted">
               {receiptId
-                ? "这张收据还没有提取到 Logo，可尝试重新提取。"
-                : "尚无店铺 Logo 样本；确认收据的 Logo 和店名后会显示在这里。"}
+                ? tr("这张收据还没有提取到 Logo，可尝试重新提取。")
+                : tr(
+                    "尚无店铺 Logo 样本；确认收据的 Logo 和店名后会显示在这里。",
+                  )}
             </p>
           )}
         </>
@@ -2030,7 +2087,7 @@ function trendColor(key: string) {
 function curveLabel(row: Row) {
   return row.key === "total"
     ? row.label
-    : `${row.group === "category" ? "商品分类" : row.group === "receipt_type" ? "店铺类别" : "商品"} · ${row.label}`;
+    : `${row.group === "category" ? tr("商品分类") : row.group === "receipt_type" ? tr("店铺类别") : tr("商品")} · ${row.label}`;
 }
 export function TrendSeriesMenu({
   series,
@@ -2041,6 +2098,8 @@ export function TrendSeriesMenu({
   visible: Set<string>;
   onToggle: (key: string) => void;
 }) {
+  useLanguage();
+
   const [expanded, setExpanded] = useState(new Set<string>());
   function option(row: Row) {
     const disabled = !(
@@ -2060,27 +2119,27 @@ export function TrendSeriesMenu({
         {row.label}
         <small>
           {disabled
-            ? "当前范围无消费"
+            ? tr("当前范围无消费")
             : row.group === "category"
               ? row.depth > 0
-                ? `${row.path} · 分类合计`
-                : "分类合计"
+                ? tr("{0} · 分类合计", [row.path])
+                : tr("分类合计")
               : row.group === "receipt_type"
-                ? "店铺类别合计"
-                : "商品"}
+                ? tr("店铺类别合计")
+                : tr("商品")}
         </small>
       </label>
     );
   }
   return (
-    <div className="series-menu" aria-label="曲线选择">
+    <div className="series-menu" aria-label={tr("曲线选择")}>
       <label className="check">
         <input
           type="checkbox"
           checked={visible.has("total")}
           onChange={() => onToggle("total")}
         />
-        总金额
+        {tr("总金额")}
       </label>
       <div className="series-category-list">
         {series.filter((r) => r.group === "receipt_type").map(option)}
@@ -2105,7 +2164,10 @@ export function TrendSeriesMenu({
                     <button
                       type="button"
                       className="series-expand"
-                      aria-label={`${open ? "收起" : "展开"}${category.label}商品`}
+                      aria-label={tr("{0}{1}商品", [
+                        open ? tr("收起") : tr("展开"),
+                        category.label,
+                      ])}
                       aria-expanded={open}
                       onClick={() =>
                         setExpanded((previous) => {
@@ -2116,11 +2178,11 @@ export function TrendSeriesMenu({
                         })
                       }
                     >
-                      {products.length} 商品{" "}
+                      {tr("{0} 商品", [products.length])}{" "}
                       <span aria-hidden="true">{open ? "⌃" : "⌄"}</span>
                     </button>
                   ) : (
-                    <span className="series-count">0 商品</span>
+                    <span className="series-count">{tr("0 商品")}</span>
                   )}
                 </div>
                 {open && (
@@ -2144,9 +2206,11 @@ export function TrendChart({
   index: number;
   onSelect: (i: number) => void;
 }) {
+  useLanguage();
+
   const points: Row[] = data.points,
     lines: Row[] = [
-      { key: "total", label: "总金额", values: points.map((p) => p.net) },
+      { key: "total", label: tr("总金额"), values: points.map((p) => p.net) },
       ...data.series,
     ].filter(
       (s) =>
@@ -2166,7 +2230,7 @@ export function TrendChart({
           className="trend-chart"
           viewBox="0 0 980 290"
           role="img"
-          aria-label="消费趋势，可选择时间点查看明细"
+          aria-label={tr("消费趋势，可选择时间点查看明细")}
         >
           {[0, 0.5, 1].map((v) => {
             const n = min + (max - min) * v;
@@ -2243,7 +2307,7 @@ export function TrendChart({
           ))}
         </svg>
       </div>
-      <ul className="trend-legend" aria-label="图例">
+      <ul className="trend-legend" aria-label={tr("图例")}>
         {lines.map((row) => (
           <li key={row.key}>
             <span
@@ -2255,11 +2319,13 @@ export function TrendChart({
           </li>
         ))}
       </ul>
-      {!lines.length && <p className="muted">请选择要显示的曲线。</p>}
+      {!lines.length && <p className="muted">{tr("请选择要显示的曲线。")}</p>}
     </div>
   );
 }
 export function Reports({ open }: { open: (id: string) => void }) {
+  useLanguage();
+
   const [period, setPeriod] = useState("month"),
     [windowIndex, setWindow] = useState(0),
     [index, setIndex] = useState(-1),
@@ -2343,12 +2409,12 @@ export function Reports({ open }: { open: (id: string) => void }) {
       }}
     >
       <Heading
-        title="报表"
-        subtitle="从每一次消费，看见长时间的变化。"
+        title={tr("报表")}
+        subtitle={tr("从每一次消费，看见长时间的变化。")}
         action={
           <IconButton
             icon="refresh"
-            label="重新统计并刷新报表"
+            label={tr("重新统计并刷新报表")}
             onClick={() => {
               trend.reload();
             }}
@@ -2362,7 +2428,7 @@ export function Reports({ open }: { open: (id: string) => void }) {
       />
       {trend.data && (
         <Select
-          label="店铺类别统计范围"
+          label={tr("店铺类别统计范围")}
           value={receiptType || ""}
           onChange={(v) => {
             setReceiptType(v || null);
@@ -2370,7 +2436,7 @@ export function Reports({ open }: { open: (id: string) => void }) {
             setDetail(null);
           }}
           options={[
-            ["", "全部店铺类别"],
+            ["", tr("全部店铺类别")],
             ...trend.data.series
               .filter((t: Row) => t.group === "receipt_type")
               .map((t: Row): [string, string] => [t.key.slice(13), t.label]),
@@ -2391,11 +2457,11 @@ export function Reports({ open }: { open: (id: string) => void }) {
       <div className="report-controls">
         <div className="segmented">
           {Object.entries({
-            day: "日",
-            week: "周",
-            month: "月",
-            quarter: "季",
-            year: "年",
+            day: tr("日"),
+            week: tr("周"),
+            month: tr("月"),
+            quarter: tr("季"),
+            year: tr("年"),
           }).map(([key, name]) => (
             <button
               key={key}
@@ -2417,7 +2483,7 @@ export function Reports({ open }: { open: (id: string) => void }) {
             setIndex(-1);
           }}
         >
-          ← 更早
+          {tr("← 更早")}
         </button>
         <button
           disabled={windowIndex === 0}
@@ -2426,7 +2492,7 @@ export function Reports({ open }: { open: (id: string) => void }) {
             setIndex(-1);
           }}
         >
-          较近 →
+          {tr("较近 →")}
         </button>
         <button
           onClick={() => {
@@ -2434,10 +2500,12 @@ export function Reports({ open }: { open: (id: string) => void }) {
             setSeriesMenu(!seriesMenu);
           }}
         >
-          曲线选择
+          {tr("曲线选择")}
         </button>
       </div>
-      {seriesMenu && trend.busy && <p role="status">正在重新查询曲线…</p>}
+      {seriesMenu && trend.busy && (
+        <p role="status">{tr("正在重新查询曲线…")}</p>
+      )}
       {seriesMenu && !trend.busy && !trend.error && (
         <TrendSeriesMenu
           series={trend.data?.series || []}
@@ -2446,9 +2514,11 @@ export function Reports({ open }: { open: (id: string) => void }) {
         />
       )}
       <div className="section-heading">
-        <h2>{selected?.label || "当前期间"}</h2>
+        <h2>{selected?.label || tr("当前期间")}</h2>
         {category && (
-          <button onClick={() => setCategory(null)}>返回所有分类</button>
+          <button onClick={() => setCategory(null)}>
+            {tr("返回所有分类")}
+          </button>
         )}
       </div>
       <StateView
@@ -2460,9 +2530,9 @@ export function Reports({ open }: { open: (id: string) => void }) {
         <>
           <div className="report-summary">
             {[
-              ["net", "总支出"],
-              ["discounts", "优惠"],
-              ["refunds", "退款"],
+              ["net", tr("总支出")],
+              ["discounts", tr("优惠")],
+              ["refunds", tr("退款")],
             ].map(([key, label]) => (
               <div key={key}>
                 <span>{label}</span>
@@ -2474,7 +2544,7 @@ export function Reports({ open }: { open: (id: string) => void }) {
           </div>
           {summary.data.difference !== 0 && summary.data.difference != null && (
             <p className="notice">
-              明细与票面金额差额：
+              {tr("明细与票面金额差额：")}
               {money(summary.data.difference, summary.data.currency)}
             </p>
           )}
@@ -2483,10 +2553,10 @@ export function Reports({ open }: { open: (id: string) => void }) {
               <section key={group}>
                 <h2>
                   {group === "category"
-                    ? "商品分类"
+                    ? tr("商品分类")
                     : group === "receipt_type"
-                      ? "店铺类别"
-                      : "商品"}
+                      ? tr("店铺类别")
+                      : tr("商品")}
                 </h2>
                 {summary.data.groups
                   .filter((g: Row) => g.group === group)
@@ -2519,7 +2589,7 @@ export function Reports({ open }: { open: (id: string) => void }) {
                     </button>
                   ))}
                 {!summary.data.entries.length && (
-                  <p className="muted">此期间没有已确认的消费明细。</p>
+                  <p className="muted">{tr("此期间没有已确认的消费明细。")}</p>
                 )}
               </section>
             ))}
@@ -2532,10 +2602,10 @@ export function Reports({ open }: { open: (id: string) => void }) {
             <table>
               <thead>
                 <tr>
-                  <th>商品</th>
-                  <th>店铺</th>
-                  <th>收据时间</th>
-                  <th>金额</th>
+                  <th>{tr("商品")}</th>
+                  <th>{tr("店铺")}</th>
+                  <th>{tr("收据时间")}</th>
+                  <th>{tr("金额")}</th>
                 </tr>
               </thead>
               <tbody>
@@ -2551,7 +2621,7 @@ export function Reports({ open }: { open: (id: string) => void }) {
                           {e.product_name || e.raw_name}
                         </button>
                       </td>
-                      <td>{e.raw_store || "未知店铺"}</td>
+                      <td>{e.raw_store || tr("未知店铺")}</td>
                       <td>{date(e.occurred_at_utc_ms)}</td>
                       <td>{money(e.amount_minor, summary.data.currency)}</td>
                     </tr>
@@ -2573,6 +2643,8 @@ function Settings({
   setTheme: (v: string) => void;
   onChangePassword: () => void;
 }) {
+  const language = useLanguage();
+
   const preferences = useLoad(() => api.op("config", "get"), []);
   const [busy, setBusy] = useState(false);
   const restoreFile = useRef<HTMLInputElement>(null);
@@ -2597,24 +2669,51 @@ function Settings({
   }
   return (
     <>
-      <Heading title="设置" subtitle="统一显示方式，管理属于你的数据。" />
+      <Heading
+        title={tr("设置")}
+        subtitle={tr("统一显示方式，管理属于你的数据。")}
+      />
       <StateView error={preferences.error} onRetry={preferences.reload} />
       <section className="settings-section">
-        <h2>外观与偏好</h2>
+        <h2>{tr("外观与偏好")}</h2>
+        {availableLanguages().length > 0 ? (
+          <Select
+            label="Language"
+            value={language}
+            onChange={(value) => void action(async () => setLanguage(value))}
+            options={availableLanguages().map((entry) => [
+              entry.code,
+              entry.name,
+            ])}
+          />
+        ) : (
+          <p role="status">{tr("正在加载界面语言…")}</p>
+        )}
+        {translationError() && (
+          <p className="notice" role="alert">
+            {message(translationError())}{" "}
+            <button onClick={() => void action(loadTranslations)}>
+              {tr("重试")}
+            </button>
+          </p>
+        )}
+        <p className="muted">
+          {tr("界面语言仅保存在此浏览器，不改变收据内容。")}
+        </p>
         <Select
-          label="主题"
+          label={tr("主题")}
           value={theme}
           onChange={setTheme}
           options={[
-            ["system", "跟随系统"],
-            ["light", "浅色"],
-            ["dark", "深色"],
+            ["system", tr("跟随系统")],
+            ["light", tr("浅色")],
+            ["dark", tr("深色")],
           ]}
         />
         {preferences.data && (
           <>
             <Select
-              label="全局重量显示单位"
+              label={tr("全局重量显示单位")}
               value={preferences.data.weight_unit}
               options={["g", "kg", "lb", "oz"].map((u) => [u, u])}
               onChange={(v) =>
@@ -2630,7 +2729,7 @@ function Settings({
               }
             />
             <Select
-              label="报表显示币种 · 按交易日汇率统一换算"
+              label={tr("报表显示币种 · 按交易日汇率统一换算")}
               value={preferences.data.report_currency}
               options={currencies.map((c) => [c, c])}
               onChange={(v) =>
@@ -2647,32 +2746,34 @@ function Settings({
             />
           </>
         )}
-        <p className="muted">时间按当前时区 {zone} 显示；数据库统一存 UTC。</p>
+        <p className="muted">
+          {tr("时间按当前时区 {0} 显示；数据库统一存 UTC。", [zone])}
+        </p>
       </section>
       <section className="settings-section">
-        <h2>账户</h2>
+        <h2>{tr("账户")}</h2>
         <p>
           {api.user?.username}{" "}
-          {api.user?.is_admin && <span className="badge">元用户</span>}
+          {api.user?.is_admin && <span className="badge">{tr("元用户")}</span>}
         </p>
         <div className="inline-actions">
-          <button onClick={onChangePassword}>修改密码</button>
+          <button onClick={onChangePassword}>{tr("修改密码")}</button>
           <button onClick={() => void action(() => api.logout())}>
             <Icon name="logout" />
-            退出登录
+            {tr("退出登录")}
           </button>
         </div>
       </section>
       <section className="settings-section">
-        <h2>数据</h2>
+        <h2>{tr("数据")}</h2>
         <p className="muted">
-          备份包含本账户的收据、草稿与照片，不含身份库或其他用户的数据。
+          {tr("备份包含本账户的收据、草稿与照片，不含身份库或其他用户的数据。")}
         </p>
         <div className="data-actions">
           {[
-            ["create_backup", "导出完整备份"],
-            ["latest_backup", "导出最近恢复点"],
-            ["csv", "导出明细 CSV"],
+            ["create_backup", tr("导出完整备份")],
+            ["latest_backup", tr("导出最近恢复点")],
+            ["csv", tr("导出明细 CSV")],
           ].map(([op, label]) => (
             <button
               key={op}
@@ -2683,10 +2784,10 @@ function Settings({
             </button>
           ))}
           <button disabled={busy} onClick={() => restoreFile.current?.click()}>
-            从备份整体恢复
+            {tr("从备份整体恢复")}
           </button>
           <button disabled={busy} onClick={() => void action(retry)}>
-            重试未完成上传
+            {tr("重试未完成上传")}
           </button>
           <AndroidDownloadLink className="button" />
         </div>
@@ -2701,7 +2802,9 @@ function Settings({
             if (
               file &&
               confirm(
-                "备份会替换本账户当前收据和照片，后端将先保存恢复点。继续？",
+                tr(
+                  "备份会替换本账户当前收据和照片，后端将先保存恢复点。继续？",
+                ),
               )
             )
               void action(() =>
@@ -2724,6 +2827,8 @@ function Settings({
   );
 }
 export function Users() {
+  useLanguage();
+
   const list = useLoad(() => api.auth("users", undefined, "GET"), []);
   const [show, setShow] = useState(false),
     [name, setName] = useState(""),
@@ -2732,12 +2837,12 @@ export function Users() {
   return (
     <>
       <Heading
-        title="用户管理"
-        subtitle="只有元用户 admin 可以创建和删除用户。"
+        title={tr("用户管理")}
+        subtitle={tr("只有元用户 admin 可以创建和删除用户。")}
         action={
           <button className="primary" onClick={() => setShow(true)}>
             <Icon name="add" />
-            创建用户
+            {tr("创建用户")}
           </button>
         }
       />
@@ -2749,29 +2854,33 @@ export function Users() {
       <table>
         <thead>
           <tr>
-            <th>用户名</th>
-            <th>权限</th>
-            <th>密码状态</th>
-            <th>操作</th>
+            <th>{tr("用户名")}</th>
+            <th>{tr("权限")}</th>
+            <th>{tr("密码状态")}</th>
+            <th>{tr("操作")}</th>
           </tr>
         </thead>
         <tbody>
           {list.data?.map((u: User) => (
             <tr key={u.user_id}>
               <td>{u.username}</td>
-              <td>{u.is_admin ? "元用户" : "普通用户"}</td>
-              <td>{u.must_change_password ? "首次登录需改密" : "已设置"}</td>
+              <td>{u.is_admin ? tr("元用户") : tr("普通用户")}</td>
+              <td>
+                {u.must_change_password ? tr("首次登录需改密") : tr("已设置")}
+              </td>
               <td>
                 {u.is_admin ? (
-                  <span className="muted">不可删除</span>
+                  <span className="muted">{tr("不可删除")}</span>
                 ) : (
                   <IconButton
                     icon="trash"
-                    label={`删除用户 ${u.username}`}
+                    label={tr("删除用户 {0}", [u.username])}
                     onClick={() =>
                       void action(async () => {
                         if (
-                          confirm(`删除 ${u.username} 及其全部收据和照片？`)
+                          confirm(
+                            tr("删除 {0} 及其全部收据和照片？", [u.username]),
+                          )
                         ) {
                           await api.auth(
                             `users/${u.user_id}`,
@@ -2790,7 +2899,7 @@ export function Users() {
         </tbody>
       </table>
       {show && (
-        <Modal title="创建用户" onClose={() => setShow(false)}>
+        <Modal title={tr("创建用户")} onClose={() => setShow(false)}>
           <form
             id="create-user-form"
             name="create-user"
@@ -2820,7 +2929,7 @@ export function Users() {
             }}
           >
             <Field
-              label="用户名"
+              label={tr("用户名")}
               id="create-user-username"
               name="username"
               value={name}
@@ -2833,7 +2942,7 @@ export function Users() {
               pattern="[A-Za-z0-9._-]{3,64}"
             />
             <Field
-              label="临时密码 · 至少 12 个字符"
+              label={tr("临时密码 · 至少 12 个字符")}
               id="create-user-password"
               name="new-password"
               value={password}
@@ -2843,13 +2952,13 @@ export function Users() {
               type="password"
               autoComplete="section-created-user new-password"
             />
-            <p className="muted">用户首次登录必须更改这个临时密码。</p>
+            <p className="muted">{tr("用户首次登录必须更改这个临时密码。")}</p>
             <footer>
               <button type="button" onClick={() => setShow(false)}>
-                取消
+                {tr("取消")}
               </button>
               <button className="primary" disabled={busy}>
-                创建
+                {tr("创建")}
               </button>
             </footer>
           </form>
@@ -2859,6 +2968,8 @@ export function Users() {
   );
 }
 function Workspace() {
+  useLanguage();
+
   const [page, setPage] = useState("receipts"),
     [drawer, setDrawer] = useState(false),
     [camera, setCamera] = useState(false),
@@ -2908,7 +3019,7 @@ function Workspace() {
       <div className="toolbar">
         <IconButton
           icon="menu"
-          label="打开导航菜单"
+          label={tr("打开导航菜单")}
           onClick={() => setDrawer(!drawer)}
         />
         <a
@@ -2926,17 +3037,17 @@ function Workspace() {
           <>
             <IconButton
               icon="camera"
-              label="拍照"
+              label={tr("拍照")}
               onClick={() => setCamera(true)}
             />
             <IconButton
               icon="upload"
-              label="上传照片"
+              label={tr("上传照片")}
               onClick={() => upload.current?.click()}
             />
             <IconButton
               icon="add"
-              label="手动录入"
+              label={tr("手动录入")}
               onClick={() => void action(manual)}
             />
           </>
@@ -2963,15 +3074,15 @@ function Workspace() {
         <>
           <button
             className="drawer-shade"
-            aria-label="关闭导航菜单"
+            aria-label={tr("关闭导航菜单")}
             onClick={() => setDrawer(false)}
           />
-          <nav className="drawer" aria-label="主导航">
+          <nav className="drawer" aria-label={tr("主导航")}>
             <div className="drawer-brand">
               <Icon name="receipt" />
               <strong>Receipt Master</strong>
             </div>
-            {Object.entries(names)
+            {Object.entries(names())
               .filter(([key]) => key !== "users" || api.user?.is_admin)
               .map(([key, label]) => (
                 <button
@@ -2984,17 +3095,20 @@ function Workspace() {
                 </button>
               ))}
             <AndroidDownloadLink className="android-download" />
-            <small>{api.user?.username} · 私人数据空间</small>
+            <small>
+              {api.user?.username}
+              {tr("· 私人数据空间")}
+            </small>
           </nav>
         </>
       )}
       <main className={`workspace ${editor ? "editing" : ""}`}>
         {notice && (
           <div className="notice toast" role="status">
-            <span>{notice}</span>
+            <span>{message(notice)}</span>
             <IconButton
               icon="close"
-              label="关闭提示"
+              label={tr("关闭提示")}
               onClick={() => setNotice("")}
             />
           </div>
@@ -3010,12 +3124,14 @@ function Workspace() {
         ) : page === "receipts" ? (
           <>
             {product && (
-              <button onClick={() => setProduct(null)}>← 所有收据</button>
+              <button onClick={() => setProduct(null)}>
+                {tr("← 所有收据")}
+              </button>
             )}
             <Receipts
               open={setEditor}
               productId={product?.id}
-              title={product ? `商品 · ${product.label}` : "收据"}
+              title={product ? tr("商品 · {0}", [product.label]) : tr("收据")}
             />
           </>
         ) : page === "catalog" ? (
@@ -3041,7 +3157,7 @@ function Workspace() {
       </main>
       {camera && <Camera onClose={() => setCamera(false)} />}{" "}
       {change && (
-        <Modal title="修改密码" onClose={() => setChange(false)}>
+        <Modal title={tr("修改密码")} onClose={() => setChange(false)}>
           <SignIn change onDone={() => setChange(false)} />
         </Modal>
       )}
@@ -3049,6 +3165,14 @@ function Workspace() {
   );
 }
 export function App() {
+  const language = useLanguage();
+  useEffect(() => {
+    void loadTranslations().catch(() => {});
+  }, []);
+  useEffect(() => {
+    document.documentElement.lang = formatLocale();
+  }, [language]);
+
   const [user, setUser] = useState<User | null>(null),
     [boot, setBoot] = useState(true);
   useEffect(() => {

@@ -9,6 +9,55 @@ use tower::ServiceExt;
 const SECRET: &str = "synthetic-test-signing-key-not-real-secret";
 const PASS: &str = "admin-password-changed-123";
 
+#[tokio::test]
+async fn public_localizations_include_language_choices_and_complete_tables() {
+    let (_root, app) = setup();
+    let (status, response) = call(&app, "POST", "/api/v1/localizations/get", json!({}), None).await;
+    assert_eq!(status, 200);
+    let catalog = &response["data"];
+    assert_eq!(catalog["schema_version"], 1);
+    let codes: Vec<_> = catalog["available_languages"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|entry| entry["code"].as_str().unwrap())
+        .collect();
+    assert!(codes.contains(&catalog["default_language"].as_str().unwrap()));
+    let source = catalog["translations"]["zh"].as_object().unwrap();
+    let placeholder = regex::Regex::new(r"\{\d+\}").unwrap();
+    for code in codes {
+        let table = catalog["translations"][code].as_object().unwrap();
+        assert_eq!(table.len(), source.len());
+        for (key, value) in source {
+            let translated = table[key].as_str().unwrap();
+            let mut original_args: Vec<_> = placeholder
+                .find_iter(value.as_str().unwrap())
+                .map(|m| m.as_str())
+                .collect();
+            let mut translated_args: Vec<_> = placeholder
+                .find_iter(translated)
+                .map(|m| m.as_str())
+                .collect();
+            original_args.sort_unstable();
+            translated_args.sort_unstable();
+            assert_eq!(original_args, translated_args, "{code}: {key}");
+        }
+    }
+    assert_eq!(catalog["translations"]["en"]["设置"], "Settings");
+    assert_eq!(
+        call(
+            &app,
+            "POST",
+            "/api/v1/receipts/list",
+            json!({"input": {}}),
+            None
+        )
+        .await
+        .0,
+        401
+    );
+}
+
 #[test]
 fn concurrent_auth_and_receipt_connections_do_not_deadlock() {
     // 3.51.1 could deadlock in unixOpen/unixClose when WAL connections overlap.

@@ -1,3 +1,4 @@
+import '../l10n/catalog.dart';
 import '../l10n/strings.dart';
 
 import 'dart:io';
@@ -256,23 +257,42 @@ class _SettingsPageState extends State<SettingsPage> {
             },
           ),
           const SizedBox(height: 28),
-          DropdownButtonFormField<Locale>(
-            key: ValueKey('language-${widget.appearance.locale.languageCode}'),
-            initialValue: widget.appearance.locale,
-            decoration: const InputDecoration(labelText: 'Language'),
-            items: const [
-              DropdownMenuItem(value: Locale('zh'), child: Text('中文')),
-              DropdownMenuItem(value: Locale('en'), child: Text('English')),
-            ],
-            onChanged: (locale) async {
-              if (locale == null) return;
-              try {
-                await widget.appearance.setLocale(locale);
-              } catch (e) {
-                if (context.mounted) showError(context, e);
-              }
-            },
-          ),
+          if (TranslationCatalog.instance.languages.isNotEmpty)
+            DropdownButtonFormField<Locale>(
+              key: ValueKey(
+                'language-${widget.appearance.locale.toLanguageTag()}',
+              ),
+              initialValue: TranslationCatalog.instance.resolveLocale(
+                widget.appearance.locale,
+              ),
+              decoration: const InputDecoration(labelText: 'Language'),
+              items: TranslationCatalog.instance.languages
+                  .map(
+                    (entry) => DropdownMenuItem(
+                      value: entry.locale,
+                      child: Text(entry.name),
+                    ),
+                  )
+                  .toList(),
+              onChanged: (locale) async {
+                if (locale == null) return;
+                try {
+                  await widget.appearance.setLocale(locale);
+                } catch (e) {
+                  if (context.mounted) showError(context, e);
+                }
+              },
+            ),
+          if (TranslationCatalog.instance.languages.isEmpty)
+            Text(context.tr('正在加载界面语言…')),
+          if (TranslationCatalog.instance.error != null)
+            ListTile(
+              title: Text(context.tr('无法加载界面语言，请重试。')),
+              trailing: TextButton(
+                onPressed: () => action(TranslationCatalog.instance.retry),
+                child: Text(context.tr('重试')),
+              ),
+            ),
           _PreferenceHint(context.tr('界面语言仅保存在此设备，不改变收据内容。')),
           const SizedBox(height: 28),
           Text(

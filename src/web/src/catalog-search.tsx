@@ -1,6 +1,6 @@
+import { tr, message, useLanguage } from "./i18n";
 import React, { useEffect, useId, useState } from "react";
 import { api, Row } from "./api";
-
 export function catalogNameKey(value: string): string {
   return value
     .normalize("NFKC")
@@ -8,7 +8,6 @@ export function catalogNameKey(value: string): string {
     .replace(/\s+/gu, " ")
     .replace(/[A-Z]/g, (letter) => letter.toLowerCase());
 }
-
 export function CatalogSearchInput({
   label,
   value,
@@ -34,6 +33,8 @@ export function CatalogSearchInput({
   rejectExistingName?: boolean;
   currentId?: string;
 }) {
+  useLanguage();
+
   const id = useId();
   const [focused, setFocused] = useState(false);
   const [rows, setRows] = useState<Row[]>([]);
@@ -46,9 +47,9 @@ export function CatalogSearchInput({
   );
   const duplicate = Boolean(existing && rejectExistingName);
   const notice = duplicate
-    ? "商品种类名称已存在，请使用其他名称"
+    ? tr("商品种类名称已存在，请使用其他名称")
     : existing
-      ? "已有同名记录，将使用已有名称，不会重复添加"
+      ? tr("已有同名记录，将使用已有名称，不会重复添加")
       : "";
   useEffect(() => {
     let active = true;
@@ -151,10 +152,10 @@ export function CatalogSearchInput({
           ))}
         </div>
       )}
-      {focused && error && <small role="status">{error}</small>}
+      {focused && error && <small role="status">{message(error)}</small>}
       {notice && (
         <small id={`${id}-notice`} role={duplicate ? "alert" : "status"}>
-          {notice}
+          {message(notice)}
         </small>
       )}
     </div>

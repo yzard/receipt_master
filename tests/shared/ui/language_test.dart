@@ -10,12 +10,97 @@ import 'package:receipt_master/data/auth_session.dart';
 import 'package:receipt_master/ui/account.dart';
 import 'package:receipt_master/data/store.dart';
 import 'package:receipt_master/l10n/strings.dart';
+import 'package:receipt_master/l10n/catalog.dart';
 import 'package:receipt_master/main.dart';
 import 'package:receipt_master/ui/app_theme.dart';
 import 'package:receipt_master/ui/common.dart';
 import 'package:timezone/data/latest.dart' as tzdata;
 
 void main() {
+  testWidgets(
+    'Settings uses backend language choices including a newly added language',
+    (tester) async {
+      tzdata.initializeTimeZones();
+      tester.view.physicalSize = const Size(430, 950);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+      final file = File('../../src/backend_api/resources/localizations.json');
+      final original = jsonDecode(file.readAsStringSync());
+      final data = jsonDecode(file.readAsStringSync());
+      data['available_languages'].add({
+        'code': 'fr',
+        'name': 'Français',
+        'locale': 'fr-FR',
+      });
+      data['translations']['fr'] = {
+        ...data['translations']['en'] as Map,
+        '设置': 'Paramètres',
+      };
+      TranslationCatalog.instance.install(data);
+      addTearDown(() => TranslationCatalog.instance.install(original));
+      final root = Directory.systemTemp.createTempSync(
+        'receipt-server-language-ui-',
+      );
+      addTearDown(() => root.deleteSync(recursive: true));
+      var requests = 0;
+      final client = MockClient((request) async {
+        requests++;
+        return http.Response(
+          jsonEncode({
+            'data': request.url.path.endsWith('/receipts/list')
+                ? {'items': [], 'next_cursor': null}
+                : {'weight_unit': 'kg', 'report_currency': 'USD'},
+          }),
+          200,
+        );
+      });
+      addTearDown(client.close);
+      final store = AppStore(
+        root.path,
+        configuration: () async =>
+            const BackendConnection('https://example.test', 'key'),
+        client: client,
+      );
+      final appearance = Appearance(root.path);
+      await tester.pumpWidget(
+        ReceiptApp(
+          store: store,
+          zone: 'America/New_York',
+          appearance: appearance,
+        ),
+      );
+      await tester.pumpAndSettle();
+      await tester.tap(find.byTooltip('打开导航菜单'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('设置'));
+      await tester.pumpAndSettle();
+      final before = requests;
+      await tester.ensureVisible(find.byType(DropdownButtonFormField<Locale>));
+      await tester.tap(find.byType(DropdownButtonFormField<Locale>));
+      await tester.pumpAndSettle();
+      expect(find.text('Français'), findsOneWidget);
+      await tester.tap(find.text('Français'));
+      await tester.runAsync(() async {
+        for (var i = 0; i < 100; i++) {
+          if (await File('${root.path}/language.txt').exists()) break;
+          await Future<void>.delayed(const Duration(milliseconds: 10));
+        }
+      });
+      await tester.pumpAndSettle();
+      await tester.drag(find.byType(ListView).first, const Offset(0, 800));
+      await tester.pumpAndSettle();
+      expect(find.text('Paramètres'), findsOneWidget);
+      expect(appearance.locale, const Locale('fr'));
+      expect(requests, before);
+      expect(
+        MaterialLocalizations.of(tester.element(find.text('Paramètres')))
+            .cancelButtonLabel,
+        'Annuler',
+      );
+      await tester.pumpWidget(const SizedBox());
+    },
+  );
   test(
     'device language persists, invalid settings fall back, writes roll back',
     () async {
