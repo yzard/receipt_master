@@ -26,13 +26,20 @@ shared = root / 'src/shared'
 for name in ['pubspec.yaml', 'pubspec.lock', 'analysis_options.yaml', '.metadata']:
     shutil.copy2(shared / name, workspace / name)
 # Direct links keep Dart edits and hot reload connected to canonical source files.
-for name in ['lib', 'resources']:
+for name in ['lib']:
     target = workspace / name
     if target.is_symlink():
         target.unlink()
     elif target.exists():
         raise RuntimeError(f'Refusing to replace unexpected directory: {target}')
     target.symlink_to(shared / name, target_is_directory=True)
+# Bootstrap injection must never write through to the canonical resources.
+target = workspace / 'resources'
+if target.is_symlink():
+    target.unlink()
+elif target.exists():
+    shutil.rmtree(target)
+shutil.copytree(shared / 'resources', target)
 for name in ['android', 'ios', 'linux']:
     target = workspace / name
     if target.is_symlink():

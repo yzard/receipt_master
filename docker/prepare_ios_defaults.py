@@ -8,8 +8,9 @@ from urllib.parse import urlparse
 
 workspace, source = map(Path, sys.argv[1:])
 config = json.loads(source.read_text())
-url = urlparse(config['endpoint'])
-if url.scheme not in ('http', 'https') or not url.hostname or url.username or url.password:
+endpoint = config.get('endpoint', '')
+url = urlparse(endpoint)
+if endpoint and (url.scheme not in ('http', 'https') or not url.hostname or url.username or url.password):
     raise SystemExit('Invalid backend endpoint')
 resources = workspace / 'resources'
 if resources.is_symlink():
@@ -20,6 +21,7 @@ shutil.copyfile(source, resources / 'backend_defaults.json')
 plist_path = workspace / 'ios/Runner/Info.plist'
 with plist_path.open('rb') as file:
     info = plistlib.load(file)
+info.pop('NSAppTransportSecurity', None)
 if url.scheme == 'http':
     info['NSAppTransportSecurity'] = {
         'NSExceptionDomains': {
