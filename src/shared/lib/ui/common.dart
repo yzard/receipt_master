@@ -1,3 +1,8 @@
+import 'dart:async';
+import 'dart:io';
+
+import 'package:http/http.dart' as http;
+
 import '../l10n/strings.dart';
 
 import 'package:flutter/material.dart';
@@ -61,7 +66,11 @@ String dateText(int utc, String zone) => DateFormat('yyyy-MM-dd HH:mm').format(
 );
 void showError(BuildContext context, Object error) {
   if (!context.mounted) return;
-  final text = error is InputError
+  final text = error is TimeoutException
+      ? 'Timeout'
+      : error is SocketException || error is http.ClientException
+      ? context.tr('网络不可用，显示缓存')
+      : error is InputError
       ? context.translatedMessage(error.message)
       : context.tr("操作失败，请检查输入或重试。{0}", [error.runtimeType]);
   ScaffoldMessenger.of(context).showSnackBar(

@@ -1241,3 +1241,17 @@ footer {
   opacity: 0.5;
   cursor: default;
 }
+
+.offline-notice {
+  position: fixed;
+  top: 80px;
+  right: 16px;
+  z-index: 21;
+  max-width: calc(100vw - 32px);
+  padding: 10px 16px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--panel);
+  color: var(--ink);
+  pointer-events: none;
+}

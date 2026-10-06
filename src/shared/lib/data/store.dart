@@ -1,10 +1,12 @@
+import 'network_error.dart';
+
 import 'dart:async';
 import 'dart:convert';
 
-import 'auth_session.dart';
-
 import 'dart:io';
 import 'dart:typed_data';
+
+import 'package:crypto/crypto.dart';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -12,12 +14,82 @@ import 'package:http/http.dart' as http;
 import '../domain/models.dart';
 import 'backend_connection.dart';
 
-/// The backend owns every business record. Only pending uploads live on this device.
+/// The backend owns business records. Devices retain read caches and pending uploads.
 class AppStore extends ChangeNotifier {
   final String cacheRoot;
   final http.Client client;
   final Future<BackendConnection> Function() configuration;
+  Future<BackendConnection> Function(String)? recoverAuthentication;
+  String? offlineMessage;
   int catalogVersion = 0;
+
+  static bool connectionFailure(Object error) =>
+      error is TimeoutException ||
+      error is SocketException ||
+      error is http.ClientException;
+
+  static const cachedReads = {
+    'config/get',
+    'receipts/list',
+    'receipts/get',
+    'images/list',
+    'receipt_types/list',
+    'merchants/list',
+    'categories/list',
+    'printed_names/list',
+    'product_names/list',
+    'products/suggest',
+    'categories/suggest',
+    'product_names/suggest',
+    'reports/summary',
+    'reports/trend',
+    'recognition/get',
+  };
+
+  File readCache(String path, Map<String, dynamic> input) => File(
+    '$cacheRoot/reads/${sha256.convert(utf8.encode(jsonEncode([path, input])))}.json',
+  );
+
+  final _readResponses = <String, String>{};
+  Future<void> _cacheWrites = Future.value();
+  bool _cacheInvalidated = false;
+  Future<void> flushCache() => _cacheWrites;
+
+  void cacheResponse(File file, dynamic data) {
+    final encoded = jsonEncode(data);
+    _readResponses[file.path] = encoded;
+    _cacheWrites = _cacheWrites.then((_) async {
+      try {
+        await file.parent.create(recursive: true);
+        await file.writeAsString(encoded, flush: true);
+      } on FileSystemException {
+        // A cache write must not turn a completed server operation into a failure.
+      }
+    });
+  }
+
+  void invalidateReadCache() {
+    _readResponses.clear();
+    _cacheInvalidated = true;
+    _cacheWrites = _cacheWrites.then((_) async {
+      final directory = Directory('$cacheRoot/reads');
+      try {
+        if (await directory.exists()) await directory.delete(recursive: true);
+      } on FileSystemException {
+        // Server writes do not depend on cache cleanup.
+      }
+    });
+  }
+
+  Future<String> cachedResponse(File file) async {
+    final memory = _readResponses[file.path];
+    if (memory != null) return memory;
+    if (_cacheInvalidated) {
+      throw FileSystemException('Cache invalidated', file.path);
+    }
+    return file.readAsString();
+  }
+
   String weightUnit = 'kg';
   String reportCurrency = 'USD';
   Future<void> loadPreferences() async {
@@ -51,40 +123,88 @@ class AppStore extends ChangeNotifier {
     Map<String, dynamic> input, {
     String? key,
   }) async {
-    final config = await configuration();
-    final origin = config.endpointUri.replace(
-      path: '/',
-      query: '',
-      fragment: '',
-    );
-    if (config.key.isEmpty) throw const InputError('请在设置中填写后端地址和访问密钥');
-    final req = http.Request(
-      'POST',
-      origin.resolve('/api/v1/$component/$operation'),
-    )..followRedirects = false;
-    req.headers.addAll({
-      'Authorization': 'Bearer ${config.key}',
-      'Content-Type': 'application/json',
-    });
-    req.body = jsonEncode({'request_key': key ?? newId(), 'input': input});
-    final response = await http.Response.fromStream(
-      await client.send(req).timeout(const Duration(seconds: 30)),
-    ).timeout(const Duration(minutes: 3));
-    final data =
-        jsonDecode(utf8.decode(response.bodyBytes)) as Map<String, dynamic>;
-    if (response.statusCode == 401 &&
-        AuthSession.instance.token == config.key) {
-      await AuthSession.instance.clear();
+    final path = '$component/$operation';
+    final cache = readCache(path, input);
+    try {
+      final data = await requestOnline(path, input, key ?? newId());
+      offlineMessage = null;
+      if (cachedReads.contains(path)) {
+        cacheResponse(cache, data);
+      } else {
+        invalidateReadCache();
+      }
+      if (data['catalog_version'] is int) {
+        catalogVersion = data['catalog_version'];
+      }
+      return data['data'];
+    } catch (error) {
+      if (!connectionFailure(error)) rethrow;
+      offlineMessage = error is TimeoutException ? 'Timeout' : '网络不可用，显示缓存';
+      if (cachedReads.contains(path)) {
+        try {
+          final data = jsonDecode(await cachedResponse(cache));
+          if (data['catalog_version'] is int) {
+            catalogVersion = data['catalog_version'];
+          }
+          return data['data'];
+        } on FileSystemException {
+          // No cached response is available for this query.
+        } on FormatException {
+          // Ignore an interrupted cache write.
+        }
+      }
+      throw InputError(offlineMessage!);
     }
-    if (response.statusCode < 200 || response.statusCode >= 300) {
-      throw InputError(
-        data['error']?['message'] ?? '后端请求失败 ${response.statusCode}',
+  }
+
+  Future<Map<String, dynamic>> requestOnline(
+    String path,
+    Map<String, dynamic> input,
+    String key,
+  ) async {
+    var config = await configuration();
+    for (var attempt = 0; attempt < 2; attempt++) {
+      final origin = config.endpointUri.replace(
+        path: '/',
+        query: '',
+        fragment: '',
       );
+      if (config.key.isEmpty) throw const InputError('请先登录');
+      final req = http.Request('POST', origin.resolve('/api/v1/$path'))
+        ..followRedirects = false;
+      req.headers.addAll({
+        'Authorization': 'Bearer ${config.key}',
+        'Content-Type': 'application/json',
+      });
+      req.body = jsonEncode({'request_key': key, 'input': input});
+      final response =
+          await http.Response.fromStream(
+            await client
+                .send(req)
+                .timeout(
+                  const Duration(seconds: 30),
+                  onTimeout: () => throw RequestTimeout(),
+                ),
+          ).timeout(
+            const Duration(minutes: 3),
+            onTimeout: () => throw RequestTimeout(),
+          );
+      if (response.statusCode == 401 &&
+          attempt == 0 &&
+          recoverAuthentication != null) {
+        config = await recoverAuthentication!(config.key);
+        continue;
+      }
+      final data =
+          jsonDecode(utf8.decode(response.bodyBytes)) as Map<String, dynamic>;
+      if (response.statusCode < 200 || response.statusCode >= 300) {
+        throw InputError(
+          data['error']?['message'] ?? '后端请求失败 ${response.statusCode}',
+        );
+      }
+      return data;
     }
-    if (data['catalog_version'] is int) {
-      catalogVersion = data['catalog_version'];
-    }
-    return data['data'];
+    throw const InputError('请先登录');
   }
 
   List<Map<String, dynamic>> rows(dynamic value) =>
@@ -186,6 +306,27 @@ class AppStore extends ChangeNotifier {
   );
   Future<Map<String, dynamic>> load(String id) async =>
       receipt(await request('receipts', 'get', {'id': id}));
+  Future<List<Map<String, dynamic>>?> cachedReceipts({
+    required String sortBy,
+    required String direction,
+  }) async {
+    try {
+      final data = jsonDecode(
+        await cachedResponse(
+          readCache('receipts/overview', {
+            'sort_by': sortBy,
+            'direction': direction,
+          }),
+        ),
+      );
+      return data is Map && data['data'] is List ? rows(data['data']) : null;
+    } on FileSystemException {
+      return null;
+    } on FormatException {
+      return null;
+    }
+  }
+
   Future<List<Map<String, dynamic>>> receipts(
     bool trash, {
     required String sortBy,
@@ -209,6 +350,15 @@ class AppStore extends ChangeNotifier {
       result.addAll(entries);
       cursor = page['next_cursor'];
     } while (cursor != null);
+    if (!trash && productNameId == null) {
+      cacheResponse(
+        readCache('receipts/overview', {
+          'sort_by': sortBy,
+          'direction': direction,
+        }),
+        {'data': result},
+      );
+    }
     return result;
   }
 
@@ -291,15 +441,17 @@ class AppStore extends ChangeNotifier {
   Future<Map<String, dynamic>> sendUpload(String id, {bool rebase = false}) {
     return uploads.putIfAbsent(
       id,
-      () => _sendUpload(id, rebase: rebase).whenComplete(() {
-        uploads.remove(id);
-      }),
+      () => _sendUpload(id, rebase: rebase, retryAuthentication: true)
+          .whenComplete(() {
+            uploads.remove(id);
+          }),
     );
   }
 
   Future<Map<String, dynamic>> _sendUpload(
     String id, {
     bool rebase = false,
+    required bool retryAuthentication,
   }) async {
     final metadata = File('$cacheRoot/pending/$id.json');
     final file = File('$cacheRoot/pending/$id.photo');
@@ -317,19 +469,30 @@ class AppStore extends ChangeNotifier {
     req.headers['Authorization'] = 'Bearer ${config.key}';
     req.fields['metadata'] = jsonEncode({'request_key': id, 'input': input});
     req.files.add(await http.MultipartFile.fromPath('photo', file.path));
-    final response = await http.Response.fromStream(
-      await client.send(req).timeout(const Duration(minutes: 3)),
-    );
+    final response =
+        await http.Response.fromStream(
+          await client
+              .send(req)
+              .timeout(
+                const Duration(minutes: 3),
+                onTimeout: () => throw RequestTimeout(),
+              ),
+        ).timeout(
+          const Duration(minutes: 3),
+          onTimeout: () => throw RequestTimeout(),
+        );
     final value = jsonDecode(utf8.decode(response.bodyBytes));
     if (response.statusCode == 409 && rebase) {
       final current = await load(input['receipt_id']);
       input['expected_version'] = current['revision'];
       await metadata.writeAsString(jsonEncode(input), flush: true);
-      return _sendUpload(id);
+      return _sendUpload(id, retryAuthentication: retryAuthentication);
     }
     if (response.statusCode == 401 &&
-        AuthSession.instance.token == config.key) {
-      await AuthSession.instance.clear();
+        retryAuthentication &&
+        recoverAuthentication != null) {
+      await recoverAuthentication!(config.key);
+      return _sendUpload(id, rebase: rebase, retryAuthentication: false);
     }
     if (response.statusCode != 200) {
       throw InputError(value['error']?['message'] ?? '上传失败；照片已留存，可重试');
@@ -468,17 +631,50 @@ class AppStore extends ChangeNotifier {
   }
 
   Future<Uint8List> imageBytes(String id) async {
-    final config = await configuration();
-    final uri = config.endpointUri.replace(
-      path: '/api/v1/media/$id',
-      query: '',
-      fragment: '',
-    );
-    final req = http.Request('GET', uri)..followRedirects = false;
-    req.headers['Authorization'] = 'Bearer ${config.key}';
-    final response = await http.Response.fromStream(await client.send(req));
-    if (response.statusCode != 200) throw const InputError('无法加载照片');
-    return response.bodyBytes;
+    final file = File('$cacheRoot/media/${sha256.convert(utf8.encode(id))}');
+    try {
+      var config = await configuration();
+      for (var attempt = 0; attempt < 2; attempt++) {
+        final uri = config.endpointUri.replace(
+          path: '/api/v1/media/$id',
+          query: '',
+          fragment: '',
+        );
+        final req = http.Request('GET', uri)..followRedirects = false;
+        req.headers['Authorization'] = 'Bearer ${config.key}';
+        final response =
+            await http.Response.fromStream(
+              await client
+                  .send(req)
+                  .timeout(
+                    const Duration(seconds: 30),
+                    onTimeout: () => throw RequestTimeout(),
+                  ),
+            ).timeout(
+              const Duration(minutes: 3),
+              onTimeout: () => throw RequestTimeout(),
+            );
+        if (response.statusCode == 401 &&
+            attempt == 0 &&
+            recoverAuthentication != null) {
+          config = await recoverAuthentication!(config.key);
+          continue;
+        }
+        if (response.statusCode != 200) throw const InputError('无法加载照片');
+        try {
+          await file.parent.create(recursive: true);
+          await file.writeAsBytes(response.bodyBytes, flush: true);
+        } on FileSystemException {
+          // Photos remain usable when the device cannot write its cache.
+        }
+        return response.bodyBytes;
+      }
+      throw const InputError('请先登录');
+    } catch (error) {
+      if (!connectionFailure(error)) rethrow;
+      if (await file.exists()) return file.readAsBytes();
+      throw InputError(error is TimeoutException ? 'Timeout' : '网络不可用，显示缓存');
+    }
   }
 
   Widget image(Map<String, dynamic> photo, {BoxFit? fit, double? width}) =>

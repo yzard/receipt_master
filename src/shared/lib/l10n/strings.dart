@@ -35,8 +35,9 @@ class ReceiptLocalizations {
   /// Errors and recognition warnings can be received before a language change.
   /// Translate known templates at render time, preserving their embedded values.
   String message(String source) {
-    if (TranslationCatalog.instance.table(locale).containsKey(source))
+    if (TranslationCatalog.instance.table(locale).containsKey(source)) {
       return text(source);
+    }
     for (final entry in _messagePatterns(locale)) {
       final match = entry.pattern.firstMatch(source);
       if (match != null) {
@@ -49,8 +50,9 @@ class ReceiptLocalizations {
   }
 
   String _messageLine(String line) {
-    if (TranslationCatalog.instance.table(locale).containsKey(line))
+    if (TranslationCatalog.instance.table(locale).containsKey(line)) {
       return text(line);
+    }
     for (final entry in _messagePatterns(locale)) {
       final match = entry.pattern.firstMatch(line);
       if (match != null) {

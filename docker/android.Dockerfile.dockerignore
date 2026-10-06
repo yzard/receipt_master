@@ -10,6 +10,11 @@ src/shared/*
 !src/shared/lib/**
 !src/shared/resources/
 !src/shared/resources/**
+!src/backend_api/
+src/backend_api/*
+!src/backend_api/resources/
+src/backend_api/resources/*
+!src/backend_api/resources/localizations.json
 !src/android/
 !src/android/**
 src/android/local.properties

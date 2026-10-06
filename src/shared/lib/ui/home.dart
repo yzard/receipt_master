@@ -40,6 +40,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   late String zone;
   List<Map<String, dynamic>>? receipts;
   Object? error;
+  bool displayingCache = false;
   bool importing = false;
   Timer? polling;
   String sortBy = "created_at";
@@ -51,12 +52,31 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     super.initState();
     zone = widget.zone;
     WidgetsBinding.instance.addObserver(this);
+    restoreReceiptCache();
     refresh();
     widget.store.addListener(submissionChanged);
     recoverPicker();
     widget.store.retryUploads().catchError((Object e) {
       if (mounted) showError(context, e);
     });
+  }
+
+  Future<void> restoreReceiptCache() async {
+    final requestedSort = sortBy, requestedDirection = direction;
+    final cached = await widget.store.cachedReceipts(
+      sortBy: requestedSort,
+      direction: requestedDirection,
+    );
+    if (mounted &&
+        receipts == null &&
+        cached != null &&
+        requestedSort == sortBy &&
+        requestedDirection == direction) {
+      setState(() {
+        receipts = cached;
+        displayingCache = true;
+      });
+    }
   }
 
   @override
@@ -119,6 +139,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
 
   void updatePolling() {
     final active =
+        widget.store.offlineMessage != null ||
         widget.store.submissionStates.isNotEmpty ||
         (receipts?.any(
               (r) => ['queued', 'running'].contains(r['recognition_status']),
@@ -148,6 +169,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     refreshing = true;
     try {
       final requestedSort = sortBy, requestedDirection = direction;
+      final reconnecting = widget.store.offlineMessage != null;
       final result = await widget.store.receipts(
         false,
         productNameId: null,
@@ -159,12 +181,25 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
           requestedDirection == direction) {
         setState(() {
           receipts = result;
+          displayingCache = false;
           error = null;
           updatePolling();
         });
+        if (reconnecting && widget.store.offlineMessage == null) {
+          unawaited(
+            widget.store.retryUploads().catchError((Object e) {
+              if (mounted) showError(context, e);
+            }),
+          );
+        }
       }
     } catch (e) {
-      if (mounted) setState(() => error = e);
+      if (mounted) {
+        setState(() {
+          error = e;
+          updatePolling();
+        });
+      }
     } finally {
       refreshing = false;
       if (mounted && refreshAgain) {
@@ -325,7 +360,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
           NavigationDrawerDestination(
             icon: Icon(Icons.category_outlined),
             selectedIcon: Icon(Icons.category),
-            label: Text(context.tr("商品管理")),
+            label: Text(context.tr("商品")),
           ),
           NavigationDrawerDestination(
             icon: Icon(Icons.storefront_outlined),
@@ -391,16 +426,15 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
           ),
           Positioned(
             left: 14,
-            right: page == 0 ? 14 : null,
+            right: 14,
             bottom: bottomInset + 14,
-            child: FrostedBar(
-              radius: BorderRadius.circular(25),
-              child: Padding(
-                padding: const EdgeInsets.all(5),
-                child: Row(
-                  mainAxisSize: page == 0 ? MainAxisSize.max : MainAxisSize.min,
-                  children: [
-                    GestureDetector(
+            child: Row(
+              children: [
+                FrostedBar(
+                  radius: BorderRadius.circular(25),
+                  child: Padding(
+                    padding: const EdgeInsets.all(5),
+                    child: GestureDetector(
                       onLongPress: openMenu,
                       child: SizedBox(
                         width: 58,
@@ -412,40 +446,47 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                         ),
                       ),
                     ),
-                    if (page == 0) ...[
-                      const SizedBox(width: 5),
-                      Container(
-                        width: 1,
-                        height: 30,
-                        color: scheme.outlineVariant,
-                      ),
-                      const SizedBox(width: 5),
-                      Expanded(
-                        child: _QuickAction(
-                          label: context.tr("拍照"),
-                          icon: Icons.camera_alt_outlined,
-                          primary: true,
-                          onTap: importing ? null : () => capture(true),
-                        ),
-                      ),
-                      Expanded(
-                        child: _QuickAction(
-                          label: context.tr("上传照片"),
-                          icon: Icons.photo_library_outlined,
-                          onTap: importing ? null : () => capture(false),
-                        ),
-                      ),
-                      Expanded(
-                        child: _QuickAction(
-                          label: context.tr("手动"),
-                          icon: Icons.edit_note_outlined,
-                          onTap: importing ? null : () => open(null),
-                        ),
-                      ),
-                    ],
-                  ],
+                  ),
                 ),
-              ),
+                const Spacer(),
+                if (page == 0)
+                  FrostedBar(
+                    radius: BorderRadius.circular(25),
+                    child: Padding(
+                      padding: const EdgeInsets.all(5),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          SizedBox(
+                            width: 58,
+                            child: _QuickAction(
+                              label: context.tr("拍照"),
+                              icon: Icons.camera_alt_outlined,
+                              primary: true,
+                              onTap: importing ? null : () => capture(true),
+                            ),
+                          ),
+                          SizedBox(
+                            width: 58,
+                            child: _QuickAction(
+                              label: context.tr("上传照片"),
+                              icon: Icons.photo_library_outlined,
+                              onTap: importing ? null : () => capture(false),
+                            ),
+                          ),
+                          SizedBox(
+                            width: 58,
+                            child: _QuickAction(
+                              label: context.tr("手动"),
+                              icon: Icons.edit_note_outlined,
+                              onTap: importing ? null : () => open(null),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+              ],
             ),
           ),
         ],
@@ -455,20 +496,31 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
 
   Widget receiptList() {
     final rows = receipts ?? [];
+    final status = error != null
+        ? context.translatedMessage(error.toString())
+        : widget.store.offlineMessage != null
+        ? context.tr(widget.store.offlineMessage!)
+        : displayingCache
+        ? context.tr('显示缓存，正在连接')
+        : null;
+    final subtitle = receipts == null
+        ? status ?? context.tr('正在加载…')
+        : [
+            context.tr('共 {0} 张收据', [rows.length]),
+            ?status,
+          ].join('\n');
     return RefreshIndicator(
       onRefresh: refresh,
       child: ListView.separated(
         physics: const AlwaysScrollableScrollPhysics(),
         padding: const EdgeInsets.fromLTRB(16, 8, 16, 112),
-        itemCount: error != null || receipts == null || rows.isEmpty
-            ? 2
-            : rows.length + 2,
+        itemCount: receipts == null || rows.isEmpty ? 2 : rows.length + 2,
         separatorBuilder: (_, i) => const Divider(height: 1),
         itemBuilder: (context, i) {
           if (i == 0) {
             return PageHeading(
               title: context.tr("收据"),
-              subtitle: context.tr("每一笔，都清楚"),
+              subtitle: subtitle,
               trailing: IconButton(
                 tooltip: context.tr("刷新收据"),
                 onPressed: refresh,
@@ -476,7 +528,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
               ),
             );
           }
-          if (i == 1 && error != null) {
+          if (i == 1 && error != null && rows.isEmpty) {
             return Column(
               children: [
                 Text(context.tr("数据加载失败")),

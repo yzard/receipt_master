@@ -197,3 +197,84 @@ describe("session recovery boundaries", () => {
     expect(transport).toHaveBeenCalledTimes(1);
   });
 });
+
+describe("offline reads and timeout recovery", () => {
+  it("retains cached account and reads across reloads, tries the server, and never caches writes", async () => {
+    const entries = new Map<string, string>();
+    const storage: Storage = {
+      get length() {
+        return entries.size;
+      },
+      key: (i) => [...entries.keys()][i] ?? null,
+      getItem: (key) => entries.get(key) ?? null,
+      setItem: (key, value) => {
+        entries.set(key, value);
+      },
+      removeItem: (key) => {
+        entries.delete(key);
+      },
+      clear: () => entries.clear(),
+    };
+    const online = new Client(
+      vi
+        .fn()
+        .mockResolvedValue(
+          new Response(
+            JSON.stringify({ data: ["receipt"], catalog_version: 3 }),
+          ),
+        ),
+    );
+    online.offlineStorage = storage;
+    online.accept(session("jwt"));
+    expect(await online.op("receipts", "list")).toEqual(["receipt"]);
+    const transport = vi.fn().mockRejectedValue(new TypeError("offline"));
+    const offline = new Client(transport);
+    offline.offlineStorage = storage;
+    offline.restoreCachedAccount();
+    expect(offline.user?.username).toBe("admin");
+    expect(await offline.op("receipts", "list")).toEqual(["receipt"]);
+    await expect(offline.op("receipts", "save")).rejects.toThrow("offline");
+    expect(transport).toHaveBeenCalledTimes(2);
+    expect(offline.user?.username).toBe("admin");
+    expect(transport.mock.calls[0][1].body).toBe(
+      transport.mock.calls[1][1].body,
+    );
+    offline.clear();
+    expect(storage.getItem("rm-offline-account")).toBeNull();
+    expect([...entries.keys()].filter((k) => k.startsWith("rm-read:"))).toEqual(
+      [],
+    );
+  });
+  it("aborts a timed-out request without clearing the session and connects on the next attempt", async () => {
+    vi.useFakeTimers();
+    try {
+      let timeout = true;
+      const transport = vi.fn(
+        async (_path: RequestInfo | URL, init?: RequestInit) => {
+          if (!timeout)
+            return new Response(
+              JSON.stringify({ data: [], catalog_version: 1 }),
+            );
+          return new Promise<Response>((_, reject) =>
+            init?.signal?.addEventListener("abort", () =>
+              reject(new DOMException("aborted", "AbortError")),
+            ),
+          );
+        },
+      );
+      const client = new Client(transport);
+      client.accept(session("jwt"));
+      const request = expect(client.op("receipts", "list")).rejects.toThrow(
+        "Timeout",
+      );
+      await vi.advanceTimersByTimeAsync(30000);
+      await request;
+      expect(client.user?.username).toBe("admin");
+      expect(client.token).toBe("jwt");
+      timeout = false;
+      expect(await client.op("receipts", "list")).toEqual([]);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+});

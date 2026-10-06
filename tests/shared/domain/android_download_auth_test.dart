@@ -101,7 +101,9 @@ void main() {
     },
   );
   test('a revoked login stops downloads and clears that session', () async {
-    final client = MockClient((_) async => http.Response('revoked', 401));
+    final client = MockClient(
+      (_) async => http.Response('{"error":{"message":"revoked"}}', 401),
+    );
     final auth = session(client);
     await expectLater(
       AndroidDownloads(auth, client, origin).get('/receipt_master.apk'),

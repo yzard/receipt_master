@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -36,8 +37,11 @@ Future<void> main() async {
     final zone = (await FlutterTimezone.getLocalTimezone()).identifier;
     appearance = Appearance(root);
     await appearance.load();
-    await AuthSession.instance.restore();
+    await AuthSession.instance.restore(refreshOnline: false);
     runApp(AccountApp(store: store, zone: zone, appearance: appearance));
+    if (AuthSession.instance.refreshToken.isNotEmpty) {
+      unawaited(AuthSession.instance.refresh().catchError((Object _) {}));
+    }
   } catch (e) {
     runApp(
       MaterialApp(

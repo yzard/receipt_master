@@ -83,8 +83,9 @@ class TranslationCatalog extends ChangeNotifier {
       nextTranslations[entry['code']] = Map<String, String>.from(table);
     }
     if (nextLanguages.isEmpty ||
-        !nextTranslations.containsKey(data['default_language']))
+        !nextTranslations.containsKey(data['default_language'])) {
       throw const FormatException('翻译资源无效');
+    }
     languages = List.unmodifiable(nextLanguages);
     translations = nextTranslations;
     defaultLanguage = data['default_language'];
@@ -110,22 +111,29 @@ class TranslationCatalog extends ChangeNotifier {
     _retry = () => load(origin: origin, client: client, cacheRoot: cacheRoot);
     if (_activeOrigin != key) {
       _activeOrigin = key;
-      if (_loaded.containsKey(key)) install(_loaded[key]);
+      if (_loaded.containsKey(key)) {
+        install(_loaded[key]);
+      } else {
+        languages = [];
+        translations = {};
+        defaultLanguage = 'zh';
+        error = null;
+        notifyListeners();
+      }
     }
     if (_loaded.containsKey(key)) return Future.value();
-    return _pending[key] ??= _load(
-      base,
-      client,
-      cacheRoot,
-    ).whenComplete(() => _pending.remove(key));
+    return _pending[key] ??= _load(base, client, cacheRoot).whenComplete(() {
+      _pending.remove(key);
+    });
   }
 
   Future<void> _load(Uri origin, http.Client client, String cacheRoot) async {
     final id = sha256.convert(utf8.encode(origin.toString()));
     final cache = File('$cacheRoot/localizations-$id.json');
     try {
-      if (await cache.exists() && _activeOrigin == origin.toString()) {
-        install(jsonDecode(await cache.readAsString()));
+      if (await cache.exists()) {
+        final data = jsonDecode(await cache.readAsString());
+        if (_activeOrigin == origin.toString()) install(data);
       }
     } on FileSystemException {
       /* Offline without a readable cache uses source text. */
@@ -140,8 +148,9 @@ class TranslationCatalog extends ChangeNotifier {
             body: '{}',
           )
           .timeout(const Duration(seconds: 10));
-      if (response.statusCode != 200)
+      if (response.statusCode != 200) {
         throw const HttpException('无法加载界面语言，请重试。');
+      }
       final data = jsonDecode(utf8.decode(response.bodyBytes))['data'];
       // Validate without letting a late response replace another server's resources.
       final validated = TranslationCatalog();

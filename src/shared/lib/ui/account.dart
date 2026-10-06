@@ -12,6 +12,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../data/auth_session.dart';
+import '../data/backend_connection.dart';
 import '../data/store.dart';
 import 'app_theme.dart';
 import 'common.dart';
@@ -79,22 +80,26 @@ class _AccountGateState extends State<AccountGate> {
         final cacheKey = sha256.convert(utf8.encode(account!));
         final root = '${widget.store.cacheRoot}/accounts/$cacheKey';
         Directory(root).createSync(recursive: true);
+        Future<BackendConnection> connection(String? rejectedToken) async {
+          if ('${widget.session.endpoint}|${widget.session.user?['user_id']}' !=
+              scopeAccount) {
+            throw StateError('账户已变更，上传已暂停');
+          }
+          final result = rejectedToken == null
+              ? await widget.session.connection()
+              : await widget.session.recoverAuthentication(rejectedToken);
+          if ('${widget.session.endpoint}|${widget.session.user?['user_id']}' !=
+              scopeAccount) {
+            throw StateError('账户已变更，上传已暂停');
+          }
+          return result;
+        }
+
         scoped = AppStore(
           root,
           client: widget.store.client,
-          configuration: () async {
-            if ('${widget.session.endpoint}|${widget.session.user?['user_id']}' !=
-                scopeAccount) {
-              throw StateError('账户已变更，上传已暂停');
-            }
-            final connection = await widget.session.connection();
-            if ('${widget.session.endpoint}|${widget.session.user?['user_id']}' !=
-                scopeAccount) {
-              throw StateError('账户已变更，上传已暂停');
-            }
-            return connection;
-          },
-        );
+          configuration: () => connection(null),
+        )..recoverAuthentication = connection;
       }
       return HomePage(
         key: ValueKey(account),

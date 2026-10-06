@@ -10,7 +10,7 @@ import {
   waitFor,
   act,
 } from "@testing-library/react";
-import { App, SignIn, LineEditor } from "../../src/web/src/main";
+import { App, SignIn, LineEditor, Receipts } from "../../src/web/src/main";
 import { api, emptyLine } from "../../src/web/src/api";
 import {
   availableLanguages,
@@ -48,6 +48,14 @@ afterEach(() => {
   vi.unstubAllGlobals();
 });
 describe("backend-owned interface languages", () => {
+  it("shows the receipt count from the shared language resource", async () => {
+    vi.spyOn(api, "op").mockResolvedValue({ items: [], next_cursor: null });
+    render(<Receipts open={() => {}} />);
+    await screen.findByText("共 0 张收据");
+    act(() => setLanguage("en"));
+    expect(screen.getByText("Total receipts: 0")).toBeTruthy();
+  });
+
   it("loads all translations once and offers exactly the server's available languages", async () => {
     const data = resource();
     data.available_languages.push({

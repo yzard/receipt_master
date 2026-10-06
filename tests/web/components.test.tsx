@@ -198,10 +198,14 @@ describe("interactive web workflows", () => {
     ];
     const op = vi
       .spyOn(api, "op")
-      .mockResolvedValue({ items: rows, next_cursor: null });
+      .mockImplementation(async (_component, _operation, input) => ({
+        items: input?.cursor ? rows.slice(1) : rows.slice(0, 1),
+        next_cursor: input?.cursor ? null : "next-page",
+      }));
     const open = vi.fn();
     render(<Receipts open={open} />);
     await screen.findByText("Draft store");
+    expect(screen.getByText("共 2 张收据")).toBeTruthy();
     expect(op.mock.calls[0][2]).toMatchObject({
       sort_by: "created_at",
       direction: "desc",
@@ -228,6 +232,13 @@ describe("interactive web workflows", () => {
     expect(screen.getByText("Failed store").closest("tr")?.className).toContain(
       "failed",
     );
+    op.mockRejectedValue(new Error("Timeout"));
+    fireEvent.click(screen.getByRole("button", { name: "刷新收据" }));
+    await screen.findByText("Timeout");
+    expect(screen.getByText("共 2 张收据")).toBeTruthy();
+    op.mockResolvedValue({ items: [], next_cursor: null });
+    fireEvent.click(screen.getByRole("button", { name: "刷新收据" }));
+    await screen.findByText("共 0 张收据");
   });
   it("supports keyboard chart selection and optional category curves", () => {
     const select = vi.fn();

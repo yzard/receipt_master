@@ -614,7 +614,11 @@ export function Receipts({
     <>
       <Heading
         title={title}
-        subtitle={tr("每张票据，都是生活的一个细节。")}
+        subtitle={
+          list.data === null
+            ? tr("正在加载…")
+            : tr("共 {0} 张收据", [list.data.length])
+        }
         action={
           <IconButton
             icon="refresh"
@@ -3174,19 +3178,33 @@ export function App() {
   }, [language]);
 
   const [user, setUser] = useState<User | null>(null),
-    [boot, setBoot] = useState(true);
+    [boot, setBoot] = useState(true),
+    [offline, setOffline] = useState("");
   useEffect(() => {
     api.onUser = setUser;
+    api.onConnectivity = setOffline;
+    api.restoreCachedAccount();
+    if (api.user) setBoot(false);
     void api
       .refresh()
       .catch(() => {})
       .finally(() => setBoot(false));
     return () => {
       api.onUser = () => {};
+      api.onConnectivity = () => {};
     };
   }, []);
   if (boot) return <StateView busy />;
   if (!user) return <SignIn />;
   if (user.must_change_password) return <SignIn change />;
-  return <Workspace key={user.user_id} />;
+  return (
+    <>
+      {offline && (
+        <div className="offline-notice" role="status">
+          {tr(offline)}
+        </div>
+      )}
+      <Workspace key={user.user_id} />
+    </>
+  );
 }

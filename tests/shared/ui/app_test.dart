@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
@@ -37,6 +38,11 @@ class CancelPicker extends ImagePickerPlatform {
 }
 
 void main() {
+  late Directory cacheDirectory;
+  setUp(() {
+    cacheDirectory = Directory.systemTemp.createTempSync('home-cache');
+    addTearDown(() => cacheDirectory.deleteSync(recursive: true));
+  });
   testWidgets('page title scrolls away while the menu opens a left drawer', (
     tester,
   ) async {
@@ -46,7 +52,7 @@ void main() {
     addTearDown(tester.view.resetPhysicalSize);
     addTearDown(tester.view.resetDevicePixelRatio);
     final store = AppStore(
-      '/unused',
+      cacheDirectory.path,
       configuration: () async =>
           const BackendConnection('https://example.test', 'key'),
       client: MockClient(
@@ -83,6 +89,7 @@ void main() {
     );
     await tester.pumpAndSettle();
     expect(find.text('收据'), findsOneWidget);
+    expect(find.text('共 30 张收据'), findsOneWidget);
     await tester.drag(find.byType(ListView).first, const Offset(0, -420));
     await tester.pumpAndSettle();
     expect(find.text('收据'), findsNothing);
@@ -90,7 +97,11 @@ void main() {
     await tester.tap(find.byTooltip('打开导航菜单'));
     await tester.pumpAndSettle();
     expect(find.text('报表'), findsOneWidget);
-    expect(find.text('商品管理'), findsOneWidget);
+    expect(
+      find.widgetWithText(NavigationDrawerDestination, '商品'),
+      findsOneWidget,
+    );
+    expect(find.text('商品管理'), findsNothing);
   });
 
   testWidgets(
@@ -100,7 +111,7 @@ void main() {
       var kind = 'grocery';
       final classified = <Map<String, dynamic>>[];
       final store = AppStore(
-        '/unused',
+        cacheDirectory.path,
         configuration: () async =>
             const BackendConnection('https://example.test', 'key'),
         client: MockClient((req) async {
@@ -180,7 +191,7 @@ void main() {
       tzdata.initializeTimeZones();
       final sorts = <List<String>>[];
       final store = AppStore(
-        '/unused',
+        cacheDirectory.path,
         configuration: () async =>
             const BackendConnection('https://example.test', 'key'),
         client: MockClient((req) async {
@@ -309,6 +320,139 @@ void main() {
     },
   );
 
+  testWidgets('cached overview stays visible before timeout and during retry', (
+    tester,
+  ) async {
+    tzdata.initializeTimeZones();
+    final reply = Completer<http.Response>();
+    var online = true;
+    final store = AppStore(
+      cacheDirectory.path,
+      configuration: () async =>
+          const BackendConnection('https://example.test', 'jwt'),
+      client: MockClient((_) async {
+        if (!online) return reply.future;
+        return http.Response(
+          jsonEncode({
+            'data': {
+              'items': [
+                {
+                  'receipt_id': 'cached-id',
+                  'version': 1,
+                  'raw_store': 'Cached Store',
+                  'status': 'posted',
+                  'recognition_status': 'applied',
+                  'created_at_utc_ms': 1780000000000,
+                  'occurred_at_utc_ms': 1780000000000,
+                  'total_minor': 100,
+                  'currency_code': 'USD',
+                },
+              ],
+              'next_cursor': null,
+            },
+            'catalog_version': 1,
+          }),
+          200,
+        );
+      }),
+    );
+    await store.receipts(
+      false,
+      sortBy: 'created_at',
+      direction: 'desc',
+      productNameId: null,
+    );
+    online = false;
+    await tester.pumpWidget(
+      ReceiptApp(
+        store: store,
+        zone: 'America/New_York',
+        appearance: Appearance(store.cacheRoot),
+      ),
+    );
+    await tester.runAsync(() async {
+      await Future<void>.delayed(const Duration(milliseconds: 20));
+    });
+    await tester.pump();
+    expect(find.text('Cached Store'), findsOneWidget);
+    expect(find.text('共 1 张收据\n显示缓存，正在连接'), findsOneWidget);
+    reply.completeError(TimeoutException('no signal'));
+    await tester.runAsync(() async {
+      await Future<void>.delayed(const Duration(milliseconds: 20));
+    });
+    await tester.pump();
+    expect(find.text('Cached Store'), findsOneWidget);
+    expect(find.textContaining('Timeout'), findsOneWidget);
+    online = true;
+    await tester.pump(const Duration(seconds: 3));
+    await tester.pumpAndSettle();
+    expect(find.text('Cached Store'), findsOneWidget);
+    expect(find.textContaining('Timeout'), findsNothing);
+    await tester.pumpWidget(const SizedBox());
+  });
+  testWidgets(
+    'receipt count includes all pages and refreshes to zero in both languages',
+    (tester) async {
+      tzdata.initializeTimeZones();
+      for (final language in ['zh', 'en']) {
+        var total = 3;
+        final store = AppStore(
+          '${cacheDirectory.path}/$language',
+          configuration: () async =>
+              const BackendConnection('https://example.test', 'jwt'),
+          client: MockClient((request) async {
+            final input = jsonDecode(request.body)['input'];
+            expect(input['trash'], false);
+            final start = input['cursor'] == null ? 0 : 2;
+            return http.Response(
+              jsonEncode({
+                'data': {
+                  'items': [
+                    for (var i = start; i < total && i < start + 2; i++)
+                      {
+                        'receipt_id': 'count-$i',
+                        'version': 1,
+                        'raw_store': 'Store $i',
+                        'status': i == 0 ? 'posted' : 'draft',
+                        'recognition_status': i == 2 ? 'failed' : 'applied',
+                        'created_at_utc_ms': 1780000000000,
+                        'occurred_at_utc_ms': 1780000000000,
+                        'total_minor': 100,
+                        'currency_code': 'USD',
+                      },
+                  ],
+                  'next_cursor': start == 0 && total > 2 ? 'second-page' : null,
+                },
+              }),
+              200,
+            );
+          }),
+        );
+        await tester.pumpWidget(
+          ReceiptApp(
+            store: store,
+            zone: 'America/New_York',
+            appearance: Appearance(store.cacheRoot)..locale = Locale(language),
+          ),
+        );
+        await tester.pumpAndSettle();
+        expect(
+          find.text(language == 'zh' ? '共 3 张收据' : 'Total receipts: 3'),
+          findsOneWidget,
+        );
+        total = 0;
+        await tester.tap(
+          find.byTooltip(language == 'zh' ? '刷新收据' : 'Refresh receipts'),
+        );
+        await tester.pumpAndSettle();
+        expect(
+          find.text(language == 'zh' ? '共 0 张收据' : 'Total receipts: 0'),
+          findsOneWidget,
+        );
+        await tester.pumpWidget(const SizedBox());
+      }
+    },
+  );
   testWidgets('backend failure is visible without creating a local database', (
     tester,
   ) async {
@@ -334,16 +478,37 @@ void main() {
     );
     await tester.pumpAndSettle();
     expect(find.textContaining('数据加载失败'), findsWidgets);
-    final menu = tester.getRect(find.byTooltip('打开导航菜单'));
-    for (final label in ['拍照', '上传照片', '手动']) {
-      final action = find.byTooltip(label);
-      expect(action, findsOneWidget);
-      expect(find.text(label), findsNothing);
-      final rect = tester.getRect(action);
-      expect(rect.right, lessThanOrEqualTo(320));
-      expect(rect.center.dy, closeTo(menu.center.dy, 1));
+    for (final width in [320.0, 430.0, 840.0]) {
+      tester.view.physicalSize = Size(width, 720);
+      await tester.pumpAndSettle();
+      final menuControl = find.byTooltip('打开导航菜单');
+      final menu = tester.getRect(menuControl);
+      final menuBar = tester.getRect(
+        find.ancestor(of: menuControl, matching: find.byType(FrostedBar)),
+      );
+      final actionBar = tester.getRect(
+        find.ancestor(
+          of: find.byTooltip('拍照'),
+          matching: find.byType(FrostedBar),
+        ),
+      );
+      expect(menuBar.left, 14);
+      expect(actionBar.right, width - 14);
+      expect(actionBar.left - menuBar.right, greaterThanOrEqualTo(16));
+      expect(actionBar.center.dy, menuBar.center.dy);
+      for (final label in ['拍照', '上传照片', '手动']) {
+        final action = find.byTooltip(label);
+        expect(action, findsOneWidget);
+        expect(find.text(label), findsNothing);
+        final rect = tester.getRect(action);
+        expect(rect.left, greaterThanOrEqualTo(actionBar.left));
+        expect(rect.right, lessThanOrEqualTo(actionBar.right));
+        expect(rect.center.dy, closeTo(menu.center.dy, 1));
+        expect(rect.width, greaterThanOrEqualTo(48));
+        expect(rect.height, greaterThanOrEqualTo(48));
+      }
+      expect(tester.takeException(), isNull);
     }
-    expect(tester.takeException(), isNull);
     await tester.pumpWidget(const SizedBox());
   });
   testWidgets(
@@ -482,7 +647,7 @@ void main() {
     tzdata.initializeTimeZones();
     var deleted = false, purgeCalls = 0;
     final store = AppStore(
-      '/unused',
+      cacheDirectory.path,
       configuration: () async =>
           const BackendConnection('https://example.test', 'key'),
       client: MockClient((req) async {
@@ -549,7 +714,7 @@ void main() {
         {'logo_id': 'logo', 'media_id': 'crop', 'name': null},
       ];
       final store = AppStore(
-        '/unused',
+        cacheDirectory.path,
         configuration: () async =>
             const BackendConnection('https://example.test', 'key'),
         client: MockClient((request) async {

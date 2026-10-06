@@ -18,24 +18,31 @@ class AndroidDownloads {
   AndroidDownloads(this.session, this.client, this.origin);
 
   Future<http.StreamedResponse> get(String path) async {
-    final connection = await session.connection();
+    var connection = await session.connection();
     final target = origin.resolve(path);
-    if (connection.uri.origin != origin.origin ||
-        target.origin != origin.origin) {
-      throw const InputError('请登录当前收据服务器后更新客户端');
+    for (var attempt = 0; attempt < 2; attempt++) {
+      if (connection.uri.origin != origin.origin ||
+          target.origin != origin.origin) {
+        throw const InputError('请登录当前收据服务器后更新客户端');
+      }
+      final request = http.Request('GET', target)
+        ..followRedirects = false
+        ..headers['Authorization'] = 'Bearer ${connection.key}';
+      final response = await client.send(request);
+      if (response.statusCode == 401 && attempt == 0) {
+        await response.stream.drain<void>();
+        connection = await session.recoverAuthentication(connection.key);
+        continue;
+      }
+      if (response.statusCode == 401) {
+        throw const AuthenticationError(401, '登录已过期，请重新登录后下载客户端');
+      }
+      if (response.statusCode == 403) {
+        throw const AuthenticationError(403, '请先修改密码再下载客户端');
+      }
+      return response;
     }
-    final request = http.Request('GET', target)
-      ..followRedirects = false
-      ..headers['Authorization'] = 'Bearer ${connection.key}';
-    final response = await client.send(request);
-    if (response.statusCode == 401) {
-      if (session.token == connection.key) await session.clear();
-      throw const AuthenticationError(401, '登录已过期，请重新登录后下载客户端');
-    }
-    if (response.statusCode == 403) {
-      throw const AuthenticationError(403, '请先修改密码再下载客户端');
-    }
-    return response;
+    throw const AuthenticationError(401, '登录已过期，请重新登录后下载客户端');
   }
 }
 

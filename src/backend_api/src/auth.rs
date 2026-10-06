@@ -170,17 +170,25 @@ impl Identities {
         rows.collect::<Result<Vec<_>, _>>().map_err(db::sql_error)
     }
     fn session(&self, user: &Principal, secret: &str) -> db::Result<Value> {
-        self.session_for(user, secret, db::id())
+        self.session_for(user, secret, db::id(), None)
     }
-    fn session_for(&self, user: &Principal, secret: &str, sid: String) -> db::Result<Value> {
+    fn session_for(
+        &self,
+        user: &Principal,
+        secret: &str,
+        sid: String,
+        retry_token: Option<String>,
+    ) -> db::Result<Value> {
         self.db
             .execute(queries::PURGE_EXPIRED_SESSIONS, [db::now()])
             .map_err(db::sql_error)?;
-        let refresh = format!(
-            "{}{}",
-            uuid::Uuid::new_v4().simple(),
-            uuid::Uuid::new_v4().simple()
-        );
+        let refresh = retry_token.unwrap_or_else(|| {
+            format!(
+                "{}{}",
+                uuid::Uuid::new_v4().simple(),
+                uuid::Uuid::new_v4().simple()
+            )
+        });
         self.db
             .execute(
                 queries::UPSERT_SESSION,
@@ -287,12 +295,29 @@ impl Identities {
         }
         self.principal(&claims.sub)
     }
-    pub fn refresh(&self, token: &str, secret: &str) -> db::Result<Value> {
+    pub fn refresh(
+        &self,
+        token: &str,
+        secret: &str,
+        request_key: Option<&str>,
+    ) -> db::Result<Value> {
+        let retry_token = request_key.map(|key| {
+            if key.len() != 36 || uuid::Uuid::parse_str(key).is_err() {
+                return Err(AppError::invalid("续期请求编号无效"));
+            }
+            // A retry can recover only the current rotation for this credential and key.
+            // Use HS256 with a separate purpose, not an access-token claims structure.
+            jsonwebtoken::encode(
+                &Header::new(Algorithm::HS256),
+                &json!({"purpose":"receipt-refresh-retry-v1", "previous":digest(token), "request_key":key}),
+                &EncodingKey::from_secret(secret.as_bytes()),
+            ).map_err(db::io_error)
+        }).transpose()?;
         self.db
             .execute_batch(queries::BEGIN_TRANSACTION)
             .map_err(db::sql_error)?;
         let result = (|| {
-            let id: Option<(String, String)> = self
+            let mut id: Option<(String, String)> = self
                 .db
                 .query_row(
                     queries::REFRESH_SESSION,
@@ -301,9 +326,22 @@ impl Identities {
                 )
                 .optional()
                 .map_err(db::sql_error)?;
+            if id.is_none()
+                && let Some(retry) = &retry_token
+            {
+                id = self
+                    .db
+                    .query_row(
+                        queries::REFRESH_SESSION,
+                        params![digest(retry), db::now()],
+                        |r| Ok((r.get(0)?, r.get(1)?)),
+                    )
+                    .optional()
+                    .map_err(db::sql_error)?;
+            }
             let (id, sid) = id.ok_or_else(unauthorized)?;
             let user = self.principal(&id)?;
-            self.session_for(&user, secret, sid)
+            self.session_for(&user, secret, sid, retry_token)
         })();
         match result {
             Ok(v) => {
@@ -514,6 +552,7 @@ pub struct Login {
 #[serde(deny_unknown_fields)]
 pub struct Refresh {
     refresh_token: Option<String>,
+    request_key: Option<String>,
 }
 #[derive(Deserialize)]
 #[serde(deny_unknown_fields)]
@@ -560,10 +599,11 @@ pub async fn refresh(
         .ok_or_else(unauthorized)?;
     let root = state.identity_dir.clone();
     let secret = state.config.general.jwt_secret.clone();
-    let data =
-        tokio::task::spawn_blocking(move || Identities::open(&root)?.refresh(&token, &secret))
-            .await
-            .map_err(db::io_error)??;
+    let data = tokio::task::spawn_blocking(move || {
+        Identities::open(&root)?.refresh(&token, &secret, body.request_key.as_deref())
+    })
+    .await
+    .map_err(db::io_error)??;
     Ok(cookies(data, &headers))
 }
 pub async fn me(Extension(user): Extension<Principal>) -> Json<Principal> {

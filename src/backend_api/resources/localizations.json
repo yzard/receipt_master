@@ -156,7 +156,7 @@
       "选择或输入新的名称": "选择或输入新的名称",
       "票据名称": "票据名称",
       "商品种类": "商品种类",
-      "商品管理": "商品管理",
+      "商品管理": "商品",
       "把不同店铺的票面名称，整理为你熟悉的商品。": "把不同店铺的票面名称，整理为你熟悉的商品。",
       "搜索商品": "搜索商品",
       "搜索名称…": "搜索名称…",
@@ -578,7 +578,11 @@
       "正在加载界面语言…": "正在加载界面语言…",
       "无法加载界面语言，请重试。": "无法加载界面语言，请重试。",
       "翻译资源无效": "翻译资源无效",
-      "无法保存界面语言": "无法保存界面语言"
+      "无法保存界面语言": "无法保存界面语言",
+      "网络不可用，显示缓存": "网络不可用，显示缓存",
+      "Timeout": "Timeout",
+      "显示缓存，正在连接": "显示缓存，正在连接",
+      "共 {0} 张收据": "共 {0} 张收据"
     },
     "en": {
       "收据": "Receipts",
@@ -722,7 +726,7 @@
       "选择或输入新的名称": "Select or enter a new name",
       "票据名称": "Printed names",
       "商品种类": "Product categories",
-      "商品管理": "Products",
+      "商品管理": "Product",
       "把不同店铺的票面名称，整理为你熟悉的商品。": "Organize names from different stores into familiar products.",
       "搜索商品": "Search products",
       "搜索名称…": "Search names…",
@@ -1144,7 +1148,11 @@
       "正在加载界面语言…": "Loading interface languages…",
       "无法加载界面语言，请重试。": "Unable to load interface languages. Please retry.",
       "翻译资源无效": "Invalid translation resources",
-      "无法保存界面语言": "Unable to save interface language"
+      "无法保存界面语言": "Unable to save interface language",
+      "网络不可用，显示缓存": "Offline. Showing cached data.",
+      "Timeout": "Timeout",
+      "显示缓存，正在连接": "Showing cached data. Connecting…",
+      "共 {0} 张收据": "Total receipts: {0}"
     }
   }
 }

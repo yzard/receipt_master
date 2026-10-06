@@ -720,7 +720,7 @@ async fn media_jobs_catalog_backups_and_restart_obey_user_scope() {
     Identities::initialize(root.path(), false).unwrap();
     let refreshed = Identities::open(root.path())
         .unwrap()
-        .refresh(b["refresh_token"].as_str().unwrap(), SECRET)
+        .refresh(b["refresh_token"].as_str().unwrap(), SECRET, None)
         .unwrap();
     assert_eq!(refreshed["user"]["user_id"], user.user_id);
     // Deleted tenant cleanup is retryable after restart, preserves admin data, and permits username reuse.
@@ -790,4 +790,85 @@ async fn browser_cookie_contract_is_secure_and_does_not_expose_refresh_token() {
         .await
         .unwrap();
     assert_eq!(response.status().as_u16(), 200);
+}
+
+#[tokio::test]
+async fn lost_refresh_response_can_retry_after_restart_but_not_after_rotation_or_revocation() {
+    let (root, app) = setup();
+    let (_, login) = call(
+        &app,
+        "POST",
+        "/api/auth/login",
+        json!({"username":"admin", "password":"admin"}),
+        None,
+    )
+    .await;
+    let key = db::id();
+    let input = json!({"refresh_token":login["refresh_token"], "request_key":key});
+    let (status, first) = call(&app, "POST", "/api/auth/refresh", input.clone(), None).await;
+    assert_eq!(status, 200);
+    let retry = Identities::open(root.path())
+        .unwrap()
+        .refresh(login["refresh_token"].as_str().unwrap(), SECRET, Some(&key))
+        .unwrap();
+    assert_eq!(retry["refresh_token"], first["refresh_token"]);
+    assert!(
+        Identities::open(root.path())
+            .unwrap()
+            .refresh(
+                login["refresh_token"].as_str().unwrap(),
+                SECRET,
+                Some(&db::id())
+            )
+            .is_err()
+    );
+    let (_, next) = call(
+        &app,
+        "POST",
+        "/api/auth/refresh",
+        json!({"refresh_token":first["refresh_token"], "request_key":db::id()}),
+        None,
+    )
+    .await;
+    assert_ne!(next["refresh_token"], first["refresh_token"]);
+    assert_eq!(
+        call(&app, "POST", "/api/auth/refresh", input.clone(), None)
+            .await
+            .0,
+        401
+    );
+    assert_eq!(
+        call(
+            &app,
+            "POST",
+            "/api/auth/refresh",
+            json!({"refresh_token":next["refresh_token"], "request_key":"invalid"}),
+            None
+        )
+        .await
+        .0,
+        400
+    );
+    let principal = receipt_backend_api::auth::Principal {
+        user_id: "admin".into(),
+        username: "admin".into(),
+        is_admin: true,
+        must_change_password: true,
+    };
+    Identities::open(root.path())
+        .unwrap()
+        .change_password(&principal, "admin", PASS, SECRET)
+        .unwrap();
+    assert_eq!(
+        call(
+            &app,
+            "POST",
+            "/api/auth/refresh",
+            json!({"refresh_token":next["refresh_token"]}),
+            None
+        )
+        .await
+        .0,
+        401
+    );
 }

@@ -143,7 +143,7 @@ class _CatalogPageState extends State<CatalogPage> {
         padding: const EdgeInsets.fromLTRB(0, 8, 0, 110),
         children: [
           PageHeading(
-            title: context.tr("商品管理"),
+            title: context.tr("商品"),
             subtitle: context.tr("将票面写法归为你熟悉的商品与种类"),
             trailing: TextButton.icon(
               icon: const Icon(Icons.storefront_outlined),

@@ -32,7 +32,11 @@ void main() {
         expect(request.method, 'POST');
         expect(request.url.path, '/api/v1/localizations/get');
         expect(request.headers.containsKey('Authorization'), isFalse);
-        return http.Response(jsonEncode({'data': data}), 200);
+        return http.Response.bytes(
+          utf8.encode(jsonEncode({'data': data})),
+          200,
+          headers: {'content-type': 'application/json; charset=utf-8'},
+        );
       });
       addTearDown(client.close);
       Future<void> load() => catalog.load(
@@ -61,6 +65,20 @@ void main() {
       );
       expect(offline.translations['en']!['设置'], 'Settings');
       expect(offline.languages.last.name, 'Français');
+      final cache = root.listSync().whereType<File>().single;
+      cache.writeAsStringSync('{"schema_version":1}');
+      final broken = TranslationCatalog();
+      addTearDown(broken.dispose);
+      await expectLater(
+        broken.load(
+          origin: Uri.parse('https://example.test'),
+          client: offlineClient,
+          cacheRoot: root.path,
+        ),
+        throwsA(isA<SocketException>()),
+      );
+      expect(broken.languages, isEmpty);
+      expect(broken.translations, isEmpty);
       expect(
         () => offline.install({
           'schema_version': 1,
@@ -88,7 +106,11 @@ void main() {
       final client = MockClient(
         (request) async => request.url.host == 'old.test'
             ? old.future
-            : http.Response(jsonEncode({'data': newer}), 200),
+            : http.Response.bytes(
+                utf8.encode(jsonEncode({'data': newer})),
+                200,
+                headers: {'content-type': 'application/json; charset=utf-8'},
+              ),
       );
       addTearDown(client.close);
       final pending = catalog.load(
@@ -101,7 +123,13 @@ void main() {
         client: client,
         cacheRoot: root.path,
       );
-      old.complete(http.Response(jsonEncode({'data': resource()}), 200));
+      old.complete(
+        http.Response.bytes(
+          utf8.encode(jsonEncode({'data': resource()})),
+          200,
+          headers: {'content-type': 'application/json; charset=utf-8'},
+        ),
+      );
       await pending;
       expect(catalog.translations['en']!['设置'], 'New server settings');
       await catalog.load(
@@ -110,6 +138,20 @@ void main() {
         cacheRoot: root.path,
       );
       expect(catalog.translations['en']!['设置'], 'Settings');
+      final offline = MockClient(
+        (_) async => throw const SocketException('offline'),
+      );
+      addTearDown(offline.close);
+      await expectLater(
+        catalog.load(
+          origin: Uri.parse('https://different.test'),
+          client: offline,
+          cacheRoot: root.path,
+        ),
+        throwsA(isA<SocketException>()),
+      );
+      expect(catalog.languages, isEmpty);
+      expect(catalog.translations, isEmpty);
     },
   );
 }

@@ -1,3 +1,5 @@
+import 'network_error.dart';
+
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
@@ -27,7 +29,7 @@ class AuthSession extends ChangeNotifier {
   int expiresAt = 0;
   Future<void>? _refreshing;
   int _epoch = 0;
-  Future<void> restore() async {
+  Future<void> restore({required bool refreshOnline}) async {
     final defaults = await loadDefaults();
     final savedEndpoint = await credentialStore.read(key: 'endpoint');
     endpoint = savedEndpoint ?? defaults.endpoint;
@@ -35,8 +37,26 @@ class AuthSession extends ChangeNotifier {
         ? savedEndpoint
         : null;
     refreshToken = await credentialStore.read(key: 'refresh_token') ?? '';
-    await credentialStore.delete(key: 'api_key');
     if (refreshToken.isNotEmpty) {
+      try {
+        final saved = await credentialStore.read(key: 'account');
+        if (saved != null) {
+          final value = jsonDecode(saved);
+          if (value is Map &&
+              value['user_id'] is String &&
+              value['username'] is String &&
+              value['must_change_password'] is bool) {
+            user = Map<String, dynamic>.from(value);
+          } else {
+            await credentialStore.delete(key: 'account');
+          }
+        }
+      } on FormatException {
+        await credentialStore.delete(key: 'account');
+      }
+    }
+    await credentialStore.delete(key: 'api_key');
+    if (refreshOnline && refreshToken.isNotEmpty) {
       try {
         await refresh();
       } on AuthenticationError catch (e) {
@@ -64,28 +84,45 @@ class AuthSession extends ChangeNotifier {
     final epoch = _epoch;
     final uri = (await origin()).resolve('/api/auth/$path');
     if (epoch != _epoch) throw const InputError('账户已变更');
-    final response = await client
+    Future<http.Response> send(String access) => client
         .post(
           uri,
           headers: {
             'Content-Type': 'application/json',
             'X-Receipt-Client': 'mobile',
-            if (authenticated) 'Authorization': 'Bearer $token',
+            if (authenticated) 'Authorization': 'Bearer $access',
           },
-          body: jsonEncode(data),
+          body: jsonEncode(
+            path == 'logout' ? {'refresh_token': refreshToken} : data,
+          ),
         )
-        .timeout(const Duration(seconds: 30));
+        .timeout(
+          const Duration(seconds: 30),
+          onTimeout: () => throw RequestTimeout(),
+        );
+    final response = authenticated
+        ? await authorizedResponse(send)
+        : await send(token);
     final body = jsonDecode(utf8.decode(response.bodyBytes));
     if (response.statusCode < 200 || response.statusCode >= 300) {
-      if (response.statusCode == 401 && authenticated && epoch == _epoch) {
-        await clear();
-      }
       throw AuthenticationError(
         response.statusCode,
         body['error']?['message'] ?? '认证请求失败',
       );
     }
     return body;
+  }
+
+  Future<http.Response> authorizedResponse(
+    Future<http.Response> Function(String) send,
+  ) async {
+    final epoch = _epoch;
+    final rejectedToken = token;
+    final response = await send(rejectedToken);
+    if (response.statusCode != 401 || epoch != _epoch) return response;
+    final fresh = await recoverAuthentication(rejectedToken);
+    if (epoch != _epoch) throw const InputError('账户已变更');
+    return send(fresh.key);
   }
 
   Future<void> accept(dynamic body) async {
@@ -100,6 +137,8 @@ class AuthSession extends ChangeNotifier {
         ? endpoint
         : null;
     await credentialStore.write(key: 'refresh_token', value: refreshToken);
+    await credentialStore.write(key: 'account', value: jsonEncode(user));
+    await credentialStore.delete(key: 'refresh_request_key');
     notifyListeners();
   }
 
@@ -119,7 +158,15 @@ class AuthSession extends ChangeNotifier {
     if (refreshToken.isEmpty) throw const InputError('请先登录');
     final epoch = _epoch;
     try {
-      final body = await call('refresh', {'refresh_token': refreshToken});
+      final key =
+          await credentialStore.read(key: 'refresh_request_key') ?? newId();
+      if (epoch != _epoch) throw const InputError('账户已变更');
+      await credentialStore.write(key: 'refresh_request_key', value: key);
+      if (epoch != _epoch) throw const InputError('账户已变更');
+      final body = await call('refresh', {
+        'refresh_token': refreshToken,
+        'request_key': key,
+      });
       if (epoch != _epoch) throw const InputError('账户已变更');
       await accept(body);
     } on AuthenticationError catch (e) {
@@ -138,6 +185,11 @@ class AuthSession extends ChangeNotifier {
       token,
       allowedHttpEndpoint: _savedHttpEndpoint ?? defaults.endpoint,
     );
+  }
+
+  Future<BackendConnection> recoverAuthentication(String rejectedToken) async {
+    if (token == rejectedToken) await refresh();
+    return connection();
   }
 
   Future<void> changePassword(String old, String password) async {
@@ -168,22 +220,26 @@ class AuthSession extends ChangeNotifier {
     expiresAt = 0;
     user = null;
     await credentialStore.delete(key: 'refresh_token');
+    await credentialStore.delete(key: 'account');
+    await credentialStore.delete(key: 'refresh_request_key');
     notifyListeners();
   }
 
   Future<List<Map<String, dynamic>>> users() async {
     final c = await connection();
-    final response = await client
-        .get(
-          c.uri.resolve('/api/auth/users'),
-          headers: {'Authorization': 'Bearer ${c.key}'},
-        )
-        .timeout(const Duration(seconds: 30));
+    final response = await authorizedResponse(
+      (access) => client
+          .get(
+            c.uri.resolve('/api/auth/users'),
+            headers: {'Authorization': 'Bearer $access'},
+          )
+          .timeout(
+            const Duration(seconds: 30),
+            onTimeout: () => throw RequestTimeout(),
+          ),
+    );
     final body = jsonDecode(utf8.decode(response.bodyBytes));
     if (response.statusCode != 200) {
-      if (response.statusCode == 401 && token == c.key) {
-        await clear();
-      }
       throw InputError(body['error']?['message'] ?? '无法读取用户');
     }
     return (body as List).map((u) => Map<String, dynamic>.from(u)).toList();
@@ -199,16 +255,18 @@ class AuthSession extends ChangeNotifier {
 
   Future<void> deleteUser(String id) async {
     final c = await connection();
-    final response = await client
-        .delete(
-          c.uri.resolve('/api/auth/users/$id'),
-          headers: {'Authorization': 'Bearer ${c.key}'},
-        )
-        .timeout(const Duration(seconds: 30));
+    final response = await authorizedResponse(
+      (access) => client
+          .delete(
+            c.uri.resolve('/api/auth/users/$id'),
+            headers: {'Authorization': 'Bearer $access'},
+          )
+          .timeout(
+            const Duration(seconds: 30),
+            onTimeout: () => throw RequestTimeout(),
+          ),
+    );
     if (response.statusCode != 200) {
-      if (response.statusCode == 401 && token == c.key) {
-        await clear();
-      }
       throw InputError(
         jsonDecode(response.body)['error']?['message'] ?? '无法删除用户',
       );

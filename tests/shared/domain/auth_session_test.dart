@@ -4,6 +4,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:receipt_master/ui/account.dart';
+import 'package:receipt_master/ui/home.dart';
 import 'package:receipt_master/ui/app_theme.dart';
 import 'package:receipt_master/data/store.dart';
 
@@ -64,7 +65,7 @@ void main() {
   test('upgrade preserves a previously saved HTTP server but rejects new HTTP hosts', () async {
     vault['endpoint'] = 'http://192.168.1.20:5000/';
     final auth = makeSession(MockClient((_) async => http.Response('{}', 500)));
-    await auth.restore();
+    await auth.restore(refreshOnline: true);
     expect((await auth.origin()).toString(), 'http://192.168.1.20:5000/');
     auth.endpoint = 'http://other.example.test:5000/';
     await expectLater(auth.origin(), throwsException);
@@ -99,6 +100,31 @@ void main() {
       expect(vault.containsKey('refresh_token'), false);
     },
   );
+  test('offline restart restores the account and reuses the interrupted refresh key', () async {
+    var offline = false;
+    final keys = <String>[];
+    final client = MockClient((request) async {
+      keys.add(jsonDecode(request.body)['request_key'] as String);
+      if (offline) throw TimeoutException('no signal');
+      return http.Response(jsonEncode(session('fresh', change: false)), 200);
+    });
+    final first = makeSession(client)..endpoint = 'https://example.test';
+    await first.accept(session('old', change: false));
+    offline = true;
+    await expectLater(first.refresh(), throwsA(isA<TimeoutException>()));
+    final restored = makeSession(client);
+    await restored.restore(refreshOnline: true);
+    expect(restored.user!['username'], 'alice');
+    expect(restored.refreshToken, 'old-refresh');
+    expect(keys[0], keys[1]);
+    offline = false;
+    await restored.connection();
+    expect(keys[2], keys[0]);
+    expect(restored.token, 'fresh');
+    expect(vault.containsKey('refresh_request_key'), false);
+    await restored.clear();
+    expect(vault.containsKey('account'), false);
+  });
   test('a late refresh cannot restore an explicitly cleared account', () async {
     final reply = Completer<http.Response>();
     final requested = Completer<void>();
@@ -118,6 +144,58 @@ void main() {
     expect(auth.user, isNull);
     expect(vault.containsKey('refresh_token'), false);
   });
+  testWidgets(
+    'an old account write cannot recover under a newly logged-in account',
+    (tester) async {
+      final root = Directory.systemTemp.createTempSync('auth-retry-scope');
+      addTearDown(() => root.deleteSync(recursive: true));
+      final response = Completer<http.Response>();
+      final requested = Completer<void>();
+      var writes = 0;
+      final client = MockClient((request) async {
+        if (request.url.path.endsWith('/save')) {
+          writes++;
+          requested.complete();
+          return response.future;
+        }
+        return http.Response('{"data":{"items":[],"next_cursor":null}}', 200);
+      });
+      final auth = makeSession(client)..endpoint = 'https://example.test';
+      await auth.accept(session('alice', change: false));
+      await tester.pumpWidget(
+        MaterialApp(
+          home: AccountGate(
+            store: AppStore(
+              root.path,
+              client: client,
+              configuration: auth.connection,
+            ),
+            zone: 'UTC',
+            appearance: Appearance(root.path),
+            session: auth,
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+      final scoped = tester.widget<HomePage>(find.byType(HomePage)).store;
+      final pending = scoped.request('receipts', 'save', {
+        'receipt': {'id': 'old'},
+      });
+      await requested.future;
+      final changed = session('bob', change: false);
+      changed['user']['user_id'] = 'bob';
+      changed['user']['username'] = 'bob';
+      await auth.accept(changed);
+      await tester.pumpAndSettle();
+      final failure = expectLater(pending, throwsA(isA<StateError>()));
+      response.complete(http.Response('{"error":{"message":"expired"}}', 401));
+      await failure;
+      expect(writes, 1);
+      expect(auth.user!['user_id'], 'bob');
+      expect(auth.token, 'bob');
+      await tester.pumpWidget(const SizedBox());
+    },
+  );
   testWidgets('mobile forced-password gate hides business screens', (
     tester,
   ) async {
