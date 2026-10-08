@@ -13,6 +13,7 @@ mod merchant_images;
 pub mod pipeline;
 pub mod prompts;
 pub mod receipt_lines;
+pub mod recognition_trace;
 pub mod sku;
 pub mod weights;
 
@@ -275,7 +276,8 @@ async fn completions(
     body: Result<Json<Value>, JsonRejection>,
 ) -> Result<Json<Value>, AppError> {
     let Json(body) = body.map_err(|_| AppError::invalid("Invalid JSON request body."))?;
-    pipeline::recognize(state, body).await.map(Json)
+    let mut trace = recognition_trace::RecognitionTrace::new(db::id(), None, None);
+    pipeline::recognize(state, body, &mut trace).await.map(Json)
 }
 async fn apk(AxumState(state): AxumState<Arc<State>>, req: Request) -> Response {
     let file = ServeFile::new(&state.config.general.apk_path);

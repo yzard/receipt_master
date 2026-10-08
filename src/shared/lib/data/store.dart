@@ -22,6 +22,13 @@ class AppStore extends ChangeNotifier {
   Future<BackendConnection> Function(String)? recoverAuthentication;
   String? offlineMessage;
   int catalogVersion = 0;
+  final receiptUpdates = ValueNotifier<ReceiptUpdate?>(null);
+
+  @override
+  void dispose() {
+    receiptUpdates.dispose();
+    super.dispose();
+  }
 
   static bool connectionFailure(Object error) =>
       error is TimeoutException ||
@@ -301,9 +308,21 @@ class AppStore extends ChangeNotifier {
     Map<String, dynamic> input,
     bool publish,
     int now,
-  ) async => receipt(
-    await request('receipts', publish ? 'confirm' : 'save', {'receipt': input}),
-  );
+  ) async {
+    final saved = receipt(
+      await request('receipts', publish ? 'confirm' : 'save', {
+        'receipt': input,
+      }),
+    );
+    receiptUpdates.value = ReceiptUpdate(
+      id: saved['id'],
+      receipt: saved,
+      deleted: false,
+      recognitionStatus: null,
+    );
+    return saved;
+  }
+
   Future<Map<String, dynamic>> load(String id) async =>
       receipt(await request('receipts', 'get', {'id': id}));
   Future<List<Map<String, dynamic>>?> cachedReceipts({
@@ -371,6 +390,12 @@ class AppStore extends ChangeNotifier {
       'id': id,
       'expected_version': versions[id],
     });
+    receiptUpdates.value = ReceiptUpdate(
+      id: id,
+      receipt: null,
+      deleted: true,
+      recognitionStatus: null,
+    );
   }
 
   Future<List<Map<String, dynamic>>> images(String receipt) async =>
@@ -726,6 +751,12 @@ class AppStore extends ChangeNotifier {
       'expected_version': version,
       'zone': zone,
     }, key: requestKey);
+    receiptUpdates.value = ReceiptUpdate(
+      id: receiptId,
+      receipt: null,
+      deleted: false,
+      recognitionStatus: 'queued',
+    );
     return job['job_id'];
   }
 

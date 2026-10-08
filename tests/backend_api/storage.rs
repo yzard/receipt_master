@@ -50,6 +50,33 @@ fn invalid_relationship_rolls_back_entire_receipt() {
     assert!(s.rows("SELECT * FROM product", &[]).unwrap().is_empty());
 }
 #[test]
+fn obscured_skyfoods_amount_can_save_draft_but_requires_amount_before_posting() {
+    let (_dir, s) = setup();
+    let mut r = receipt();
+    r["store"] = json!("skyFOODS");
+    r["lines"][0]["rawName"] = json!("FRAGRANT PEAR (1POUNDS)");
+    r["lines"][0]["quantityMicros"] = json!(1220000);
+    r["lines"][0]["quantityUnit"] = json!("lb");
+    r["lines"][0]["amountMinor"] = Value::Null;
+    r["lines"][0]["unitPriceScaled"] = Value::Null;
+    r["lines"][0]["warnings"] = json!(["单价与金额被印章遮挡", "缺少金额"]);
+    let draft = s.transaction(|| s.save(r, false)).unwrap();
+    let error = s.transaction(|| s.save(draft.clone(), true)).unwrap_err();
+    assert_eq!(error.code, "missing_line_amount");
+    assert_eq!(s.load(draft["id"].as_str().unwrap()).unwrap(), draft);
+    assert!(
+        s.rows("SELECT * FROM printed_name", &[])
+            .unwrap()
+            .is_empty()
+    );
+    let mut corrected = draft;
+    corrected["lines"][0]["amountMinor"] = json!(0);
+    corrected["totalMinor"] = json!(-50);
+    let posted = save(&s, corrected);
+    assert_eq!(posted["posted"], true);
+    assert_eq!(posted["lines"][0]["amountMinor"], 0);
+}
+#[test]
 fn names_weights_and_currency_reports() {
     let (_dir, s) = setup();
     let first = save(&s, receipt());

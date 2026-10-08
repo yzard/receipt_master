@@ -31,6 +31,40 @@ class _ProductReceiptsPageState extends State<ProductReceiptsPage> {
   void initState() {
     super.initState();
     load();
+    widget.store.receiptUpdates.addListener(receiptUpdated);
+  }
+
+  @override
+  void dispose() {
+    widget.store.receiptUpdates.removeListener(receiptUpdated);
+    super.dispose();
+  }
+
+  void receiptUpdated() {
+    final update = widget.store.receiptUpdates.value;
+    if (!mounted || update == null || receipts == null) return;
+    final r = update.receipt;
+    final matches =
+        r == null ||
+        (r['lines'] as List).any(
+          (line) =>
+              line['kind'] == 'product' &&
+              (line['productNameEdit'] ?? line['display']?['productName']) ==
+                  widget.name,
+        );
+    setState(
+      () => receipts = applyReceiptUpdate(
+        receipts!,
+        matches
+            ? update
+            : ReceiptUpdate(
+                id: update.id,
+                receipt: null,
+                deleted: true,
+                recognitionStatus: null,
+              ),
+      ),
+    );
   }
 
   Future<void> load() async {
@@ -54,7 +88,6 @@ class _ProductReceiptsPageState extends State<ProductReceiptsPage> {
 
   Future<void> open(String id) async {
     await widget.onReceipt(id);
-    if (mounted) await load();
   }
 
   @override

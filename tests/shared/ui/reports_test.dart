@@ -266,7 +266,10 @@ void main() {
       await tester.tap(find.text('瓶装水'));
       await tester.pumpAndSettle();
       expect(opened, 'mapped');
-      expect(summaries, 6); // Opening the selector and returning from a receipt both query fresh data.
+      expect(
+        summaries,
+        4,
+      ); // Returning from an editor preserves the loaded report.
     },
   );
 

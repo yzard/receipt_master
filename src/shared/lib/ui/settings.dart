@@ -197,13 +197,11 @@ class _SettingsPageState extends State<SettingsPage> {
               const SizedBox(width: 8),
               IconButton.filledTonal(
                 tooltip: context.tr("修改密码"),
-                onPressed: () => Navigator.push(
+                onPressed: () => openPageOverlay<void>(
                   context,
-                  MaterialPageRoute(
-                    builder: (_) => PasswordPage(
-                      session: AuthSession.instance,
-                      requiredChange: false,
-                    ),
+                  PasswordPage(
+                    session: AuthSession.instance,
+                    requiredChange: false,
                   ),
                 ),
                 icon: const Icon(Icons.password_outlined),
@@ -229,11 +227,9 @@ class _SettingsPageState extends State<SettingsPage> {
               leading: const Icon(Icons.manage_accounts_outlined),
               title: Text(context.tr("用户管理")),
               trailing: const Icon(Icons.chevron_right),
-              onTap: () => Navigator.push(
+              onTap: () => openPageOverlay<void>(
                 context,
-                MaterialPageRoute(
-                  builder: (_) => UsersPage(session: AuthSession.instance),
-                ),
+                UsersPage(session: AuthSession.instance),
               ),
             ),
           ],

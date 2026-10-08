@@ -16,8 +16,20 @@ pub fn safe_path(root: &Path, relative: &str) -> Result<PathBuf> {
     Ok(root.join(relative))
 }
 pub fn atomic_file(path: &Path, bytes: &[u8]) -> Result<()> {
+    atomic_file_mode(path, bytes, 0o666)
+}
+pub fn atomic_private_file(path: &Path, bytes: &[u8]) -> Result<()> {
+    atomic_file_mode(path, bytes, 0o600)
+}
+fn atomic_file_mode(path: &Path, bytes: &[u8], mode: u32) -> Result<()> {
+    use std::os::unix::fs::OpenOptionsExt;
     let tmp = path.with_extension(format!("{}.tmp", id()));
-    let mut file = std::fs::File::create(&tmp).map_err(io_error)?;
+    let mut file = std::fs::OpenOptions::new()
+        .write(true)
+        .create_new(true)
+        .mode(mode)
+        .open(&tmp)
+        .map_err(io_error)?;
     file.write_all(bytes).map_err(io_error)?;
     file.sync_all().map_err(io_error)?;
     std::fs::rename(&tmp, path).map_err(io_error)?;

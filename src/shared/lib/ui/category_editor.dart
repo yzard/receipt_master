@@ -72,7 +72,7 @@ class _CategoryEditorDialogState extends State<CategoryEditorDialog> {
         value,
         parent,
       );
-      if (mounted) Navigator.pop(context);
+      if (mounted) Navigator.pop(context, true);
     } catch (e) {
       if (mounted) {
         setState(() {

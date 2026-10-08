@@ -218,6 +218,13 @@ impl Store {
             return Err(invalid());
         }
         for l in &r.lines {
+            if publish && l.amount_minor.is_none() {
+                return Err(AppError::new(
+                    400,
+                    "missing_line_amount",
+                    "明细缺少金额，请补全金额后录入；也可以保存草稿",
+                ));
+            }
             if ![
                 "product",
                 "item_discount",
@@ -230,7 +237,6 @@ impl Store {
             .contains(&l.kind.as_str())
                 || l.weight_mg.is_some_and(|w| w <= 0)
                 || l.quantity_micros.is_some_and(|w| w <= 0)
-                || (publish && l.amount_minor.is_none())
             {
                 return Err(invalid());
             }

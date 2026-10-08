@@ -358,11 +358,38 @@ class _EditorPageState extends State<EditorPage> {
           Widget field(String key, String label) => Padding(
             padding: const EdgeInsets.only(bottom: 12),
             child: key == 'productName'
-                ? CatalogSearchField(
-                    store: widget.store,
-                    component: 'product_names',
-                    controller: c[key]!,
-                    label: label,
+                ? ValueListenableBuilder<TextEditingValue>(
+                    valueListenable: c[key]!,
+                    builder: (context, value, child) {
+                      final missing =
+                          line.kind == 'product' && value.text.trim().isEmpty;
+                      final theme = Theme.of(context);
+                      return Theme(
+                        data: missing
+                            ? theme.copyWith(
+                                inputDecorationTheme: theme.inputDecorationTheme
+                                    .copyWith(
+                                      filled: true,
+                                      fillColor: AppPalette.errorSurface(
+                                        context,
+                                      ),
+                                    ),
+                              )
+                            : theme,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            CatalogSearchField(
+                              store: widget.store,
+                              component: 'product_names',
+                              controller: c[key]!,
+                              label: label,
+                            ),
+                            if (missing) Text(context.tr('缺少商品名称')),
+                          ],
+                        ),
+                      );
+                    },
                   )
                 : TextField(
                     controller: c[key],
@@ -1180,15 +1207,13 @@ class _EditorPageState extends State<EditorPage> {
                       icon: const Icon(Icons.image_search),
                       label: Text(context.tr("店铺名称")),
                       onPressed: () => act(() async {
-                        final name = await Navigator.push<String>(
+                        final name = await openPageOverlay<String>(
                           context,
-                          MaterialPageRoute(
-                            builder: (_) => LogoAliasesPage(
-                              embedded: false,
-                              store: widget.store,
-                              receiptId: r.id,
-                              suggestedName: fields['store']!.text,
-                            ),
+                          LogoAliasesPage(
+                            embedded: false,
+                            store: widget.store,
+                            receiptId: r.id,
+                            suggestedName: fields['store']!.text,
                           ),
                         );
                         if (name != null && mounted) {
@@ -1341,7 +1366,9 @@ class _EditorPageState extends State<EditorPage> {
                     ),
                   for (final l in r.lines)
                     Card(
-                      color: l.warnings.isNotEmpty
+                      color: l.missingProductName
+                          ? AppPalette.errorSurface(context)
+                          : l.warnings.isNotEmpty
                           ? AppPalette.warningSurface(context)
                           : Theme.of(context).colorScheme.surfaceContainerLow,
                       elevation: 0,
@@ -1357,8 +1384,7 @@ class _EditorPageState extends State<EditorPage> {
                           }),
                         ),
                         title: ReceiptItemName(
-                          productName:
-                              l.productNameEdit ?? l.display['productName'],
+                          productName: l.productName,
                           printedName: l.rawName,
                           kind: l.kind,
                         ),

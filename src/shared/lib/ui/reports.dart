@@ -294,9 +294,7 @@ class _ReportsPageState extends State<ReportsPage> with WidgetsBindingObserver {
                 ),
                 trailing: Text(money(l['amount_minor'], currency)),
                 onTap: () async {
-                  Navigator.pop(ctx);
                   await widget.onReceipt(l['receipt_id']);
-                  if (mounted) await load(keepCurrent: true);
                 },
               ),
           ],

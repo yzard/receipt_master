@@ -34,6 +34,7 @@ struct Mock {
     bad_json: bool,
     invalid_responses: usize,
     finish: bool,
+    receipt_schema_error: bool,
     arithmetic_failures: usize,
     fail: bool,
     logo_id: Option<String>,
@@ -66,10 +67,11 @@ async fn fixture(repair_attempts: usize) -> Fixture {
             let selected=v["messages"][1]["content"].as_array().and_then(|parts|parts.iter().enumerate().skip(2).find(|(_,p)|p["image_url"]["url"].as_str().is_some_and(|url|Some(url)==m.logo_id.as_deref())).map(|(i,_)|format!("r{:02}",(i-1)/2)));
             let total=if m.arithmetic_failures>0 {"6.50"}else{"5.50"};
             let line=|kind:&str,amount:&str,target:Value|json!({"name":"MILK","product_name":null,"kind":kind,"quantity":null,"quantity_unit":null,"unit_price":null,"amount":amount,"confidence":null,"discount_target_index":target,"review_notes":[],"sku":null,"tax_code":null,"is_weighed":false,"evidence":[],"package_weight":null,"package_weight_unit":null,"amount_basis":"gross"});
-            let prediction=if matching {json!({"reference_id":selected})}else if logo {json!({"box":[50,20,950,500]})}else{json!({"store":null,"branch":null,"address":null,"country":"US","currency":"USD","local_time":null,"total":total,"lines":[line("product","3.00",Value::Null),line("product","3.00",Value::Null),line("item_discount","-0.50",json!(1))]})};
+            let mut prediction=if matching {json!({"reference_id":selected})}else if logo {json!({"box":[50,20,950,500]})}else{json!({"store":null,"branch":null,"address":null,"country":"US","currency":"USD","local_time":null,"total":total,"lines":[line("product","3.00",Value::Null),line("product","3.00",Value::Null),line("item_discount","-0.50",json!(1))]})};
+            if !logo && !matching && m.receipt_schema_error {prediction["lines"][0]["amount"]=json!(3);}
             let invalid=m.bad_json || m.invalid_responses>0;
             m.invalid_responses=m.invalid_responses.saturating_sub(1);
-            let raw=json!({"choices":[{"finish_reason":if m.finish {"length"}else{"stop"},"message":{"content":if invalid {"not json".into()}else{prediction.to_string()},"reasoning_content":"private inference"}}],"usage":{"prompt_tokens":10,"completion_tokens":20,"total_tokens":30}});
+            let raw=json!({"choices":[{"finish_reason":if m.finish && !logo && !matching {"length"}else{"stop"},"message":{"content":if invalid {"not json".into()}else{prediction.to_string()},"reasoning_content":"private inference"}}],"usage":{"prompt_tokens":10,"completion_tokens":20,"total_tokens":30}});
             ((if m.fail {axum::http::StatusCode::SERVICE_UNAVAILABLE}else{axum::http::StatusCode::OK},Json(raw)),if matching {m.logo_delay_ms}else{m.delay_ms})
         };
         tokio::time::sleep(std::time::Duration::from_millis(delay)).await; response
@@ -1255,4 +1257,154 @@ async fn schema_repair_is_bounded_preserves_all_images_and_accounts_for_all_runs
         4,
         "A second failure must not trigger unlimited retries"
     );
+}
+
+#[tokio::test]
+async fn failed_receipt_inference_preserves_private_diagnostics_and_real_error() {
+    use receipt_backend_api::db::{Store, text};
+    use std::os::unix::fs::PermissionsExt;
+    for truncated in [true, false] {
+        let f = fixture(1).await;
+        {
+            let mut mock = f.mock.lock().unwrap();
+            mock.finish = truncated;
+            mock.receipt_schema_error = !truncated;
+        }
+        let root = f.dir.path().join("data");
+        let s = Store::open(&root).unwrap();
+        let receipt = s.transaction(|| s.save(domain_receipt(), false)).unwrap();
+        let mut image = std::io::Cursor::new(Vec::new());
+        image::DynamicImage::new_rgb8(30, 50)
+            .write_to(&mut image, image::ImageFormat::Png)
+            .unwrap();
+        s.transaction(|| {
+            s.upload(
+                &json!({"receipt_id":receipt["id"],"expected_version":1}),
+                image.get_ref(),
+            )
+        })
+        .unwrap();
+        drop(s);
+        let (status, started) = request(&f,"POST","/api/v1/recognition/start",
+            Some(json!({"request_key":"audit-regression","input":{"receipt_id":receipt["id"],"expected_version":2,"zone":"America/New_York"}})),true).await;
+        assert_eq!(status, 200, "{started}");
+        let job_id = &started["data"]["job_id"];
+        let mut failed = false;
+        for _ in 0..3000 {
+            let job = request(
+                &f,
+                "POST",
+                "/api/v1/recognition/get",
+                Some(json!({"input":{"id":job_id}})),
+                true,
+            )
+            .await
+            .1;
+            assert!(!job.to_string().contains("private inference"));
+            if job["data"]["status"] == "failed" {
+                assert_eq!(job["data"]["error_code"], "invalid_structured_output");
+                failed = true;
+                break;
+            }
+            tokio::time::sleep(std::time::Duration::from_millis(10)).await;
+        }
+        assert!(failed);
+        let s = Store::open(&root).unwrap();
+        let run = s
+            .one(
+                "SELECT * FROM recognition_run WHERE receipt_id=?",
+                &[receipt["id"].clone()],
+            )
+            .unwrap();
+        assert_eq!(run["status"], "failed");
+        assert_eq!(run["error_code"], "invalid_structured_output");
+        let path = root.join(text(&run, "result_relative_path").unwrap());
+        assert_eq!(
+            std::fs::metadata(&path).unwrap().permissions().mode() & 0o777,
+            0o600
+        );
+        let audit: Value = serde_json::from_slice(&std::fs::read(&path).unwrap()).unwrap();
+        assert_eq!(audit["receipt_id"], receipt["id"]);
+        assert_eq!(audit["job_id"], *job_id);
+        assert_eq!(audit["run_id"], run["run_id"]);
+        assert_eq!(audit["image_count"], 1);
+        assert_eq!(audit["attempts"].as_array().unwrap().len(), 2);
+        for attempt in audit["attempts"].as_array().unwrap() {
+            assert_eq!(attempt["output_truncated"], truncated);
+            assert_eq!(attempt["usage"]["completion_tokens"], 20);
+            assert_eq!(
+                attempt["response"]["choices"][0]["message"]["reasoning_content"],
+                "private inference"
+            );
+            if !truncated {
+                assert!(
+                    attempt["validation"]["schema_errors"]
+                        .as_array()
+                        .unwrap()
+                        .iter()
+                        .any(|e| e["instance_path"] == "/lines/0/amount")
+                );
+            }
+        }
+        assert!(!audit.to_string().contains(OCR_KEY));
+        assert!(!audit.to_string().contains("data:image"));
+        s.transaction(|| s.cleanup_media()).unwrap();
+        assert!(
+            path.is_file(),
+            "Referenced failure evidence must survive cleanup"
+        );
+    }
+}
+
+#[test]
+fn inference_logs_metadata_without_receipt_text_or_credentials() {
+    use receipt_backend_api::{error::AppError, recognition_trace::RecognitionTrace};
+    use std::io::Write;
+    struct Capture(Arc<Mutex<Vec<u8>>>);
+    impl Write for Capture {
+        fn write(&mut self, bytes: &[u8]) -> std::io::Result<usize> {
+            self.0.lock().unwrap().extend_from_slice(bytes);
+            Ok(bytes.len())
+        }
+        fn flush(&mut self) -> std::io::Result<()> {
+            Ok(())
+        }
+    }
+    let output = Arc::new(Mutex::new(Vec::new()));
+    let writer = output.clone();
+    let subscriber = tracing_subscriber::fmt()
+        .without_time()
+        .with_ansi(false)
+        .with_writer(move || Capture(writer.clone()))
+        .finish();
+    tracing::subscriber::with_default(subscriber, || {
+        let mut trace = RecognitionTrace::new(
+            "run-test".into(),
+            Some("receipt-test".into()),
+            Some("job-test".into()),
+        );
+        trace.configure("H MART", 1);
+        let raw = json!({"choices":[{"finish_reason":"length","message":{
+            "content":"private receipt contents", "reasoning_content":OCR_KEY}}],
+            "usage":{"prompt_tokens":15849,"completion_tokens":16384}});
+        let error = AppError::new(502, "invalid_structured_output", "Incomplete model output");
+        trace.record(Some(&raw), Some(&error), 92000);
+        trace.fail(&error);
+    });
+    let logged = String::from_utf8(output.lock().unwrap().clone()).unwrap();
+    for expected in [
+        "run-test",
+        "receipt-test",
+        "job-test",
+        "H MART",
+        "length",
+        "16384",
+        "92000",
+        "invalid_structured_output",
+        "Incomplete model output",
+    ] {
+        assert!(logged.contains(expected), "Missing {expected}: {logged}");
+    }
+    assert!(!logged.contains("private receipt contents"));
+    assert!(!logged.contains(OCR_KEY));
 }

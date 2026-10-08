@@ -12,6 +12,7 @@ import 'package:receipt_master/data/backend_connection.dart';
 import 'package:receipt_master/data/store.dart';
 import 'package:receipt_master/domain/models.dart';
 import 'package:receipt_master/ui/editor.dart';
+import 'package:receipt_master/ui/app_theme.dart';
 import 'package:timezone/data/latest.dart' as tzdata;
 
 class TestStore extends AppStore {
@@ -34,6 +35,123 @@ class TestStore extends AppStore {
 }
 
 void main() {
+  for (final brightness in [Brightness.light, Brightness.dark]) {
+    testWidgets('missing product name highlight ${brightness.name}', (
+      tester,
+    ) async {
+      tzdata.initializeTimeZones();
+      tester.view.physicalSize = const Size(900, 1100);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+      LineDraft item(String raw, String? name, String kind) => LineDraft.empty()
+        ..rawName = raw
+        ..kind = kind
+        ..amountMinor = 100
+        ..display = {
+          'productName': name,
+          'weightText': '',
+          'weightUnit': 'kg',
+          'quantityText': '',
+          'quantityUnit': '',
+          'priceText': '',
+          'amountText': '1.00',
+        };
+      final missing = item('MISSING RAW', null, 'product')..warnings = ['核对金额'];
+      final cleared = item('CLEARED RAW', 'Stale mapping', 'product')
+        ..productNameEdit = '   ';
+      final known = item('KNOWN RAW', 'Known product', 'product')
+        ..warnings = ['核对金额'];
+      final tax = item('TAX RAW', null, 'tax');
+      final receipt = ReceiptDraft.empty(DateTime.now()).toMap()
+        ..['lines'] = [
+          missing.toMap(),
+          cleared.toMap(),
+          known.toMap(),
+          tax.toMap(),
+        ];
+      final store = TestStore(
+        MockClient((request) async {
+          final path = request.url.path;
+          dynamic data;
+          if (path.endsWith('/receipts/get')) {
+            data = receipt;
+          } else if (path.endsWith('/config/get')) {
+            data = {'weight_unit': 'kg'};
+          } else if (path.endsWith('/categories/list')) {
+            data = [
+              {'category_id': systemCategories['uncategorized'], 'path': '未分类'},
+            ];
+          } else if (path.endsWith('/receipts/display_line') ||
+              path.endsWith('/receipts/prepare_line')) {
+            data = jsonDecode(request.body)['input']['line'];
+          } else {
+            data = [];
+          }
+          return http.Response(
+            jsonEncode({'data': data}),
+            200,
+            headers: {'content-type': 'application/json; charset=utf-8'},
+          );
+        }),
+      );
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: receiptTheme(brightness),
+          home: EditorPage(
+            store: store,
+            zone: 'America/New_York',
+            receiptId: receipt['id'],
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+      final scrollable = find
+          .descendant(
+            of: find.byKey(const ValueKey('receipt-edit-form')),
+            matching: find.byType(Scrollable),
+          )
+          .first;
+      await tester.scrollUntilVisible(
+        find.text('TAX RAW'),
+        300,
+        scrollable: scrollable,
+      );
+      await tester.pumpAndSettle();
+      Card card(String text) => tester.widget<Card>(
+        find.ancestor(of: find.text(text), matching: find.byType(Card)).first,
+      );
+      final context = tester.element(find.text('MISSING RAW'));
+      expect(card('MISSING RAW').color, AppPalette.errorSurface(context));
+      expect(card('CLEARED RAW').color, AppPalette.errorSurface(context));
+      expect(find.text('Stale mapping'), findsNothing);
+      expect(card('Known product').color, AppPalette.warningSurface(context));
+      expect(card('TAX RAW').color, isNot(AppPalette.errorSurface(context)));
+      await tester.ensureVisible(find.text('MISSING RAW'));
+      await tester.tap(find.text('MISSING RAW'));
+      await tester.pumpAndSettle();
+      final field = find.widgetWithText(TextField, '商品名称');
+      Color? fill() =>
+          Theme.of(tester.element(field)).inputDecorationTheme.fillColor;
+      expect(fill(), AppPalette.errorSurface(tester.element(field)));
+      await tester.enterText(field, 'Rice');
+      await tester.pumpAndSettle();
+      expect(find.text('缺少商品名称'), findsNothing);
+      expect(fill(), isNot(AppPalette.errorSurface(tester.element(field))));
+      await tester.enterText(field, '   ');
+      await tester.pumpAndSettle();
+      expect(fill(), AppPalette.errorSurface(tester.element(field)));
+      expect(find.text('缺少商品名称'), findsOneWidget);
+      await tester.enterText(field, 'Rice');
+      await tester.tap(find.text('应用修改'));
+      await tester.pumpAndSettle();
+      expect(find.byType(AlertDialog), findsNothing);
+      expect(
+        card('Rice').color,
+        AppPalette.warningSurface(tester.element(find.text('Rice'))),
+      );
+    });
+  }
   for (final width in [430.0, 600.0, 700.0, 1200.0]) {
     testWidgets('receipt editor layout at $width logical pixels', (
       tester,
@@ -600,13 +718,17 @@ void main() {
     expect(find.byType(EditorPage), findsNothing);
   });
 
-  for (final scenario in ['warning', 'missing difference']) {
+  for (final scenario in ['warning', 'missing difference', 'missing amount']) {
     testWidgets('receipt confirmation $scenario', (tester) async {
       tzdata.initializeTimeZones();
       final line = LineDraft.empty()
         ..rawName = 'Milk'
         ..amountMinor = 100;
       if (scenario == 'warning') line.warnings = ['核对金额'];
+      if (scenario == 'missing amount') {
+        line.rawName = 'FRAGRANT PEAR (1POUNDS)';
+        line.amountMinor = null;
+      }
       final receipt = ReceiptDraft.empty(DateTime.now()).toMap()
         ..['revision'] = 2
         ..['timeSource'] = 'recognized'
@@ -632,7 +754,7 @@ void main() {
               'totalMinor': 100,
               'summary': {
                 'knownTotal': 100,
-                'difference': scenario == 'warning' ? 0 : null,
+                'difference': scenario == 'missing difference' ? null : 0,
               },
             };
           } else if (path.endsWith('/receipts/confirm')) {
@@ -692,7 +814,14 @@ void main() {
         expect(find.byType(EditorPage), findsNothing);
       } else {
         expect(find.text('仍要录入这张收据？'), findsNothing);
-        expect(find.textContaining('无法计算收据差额'), findsOneWidget);
+        expect(
+          find.textContaining(
+            scenario == 'missing amount'
+                ? '以下明细缺少金额：FRAGRANT PEAR (1POUNDS)'
+                : '无法计算收据差额',
+          ),
+          findsOneWidget,
+        );
         expect(find.byType(EditorPage), findsOneWidget);
       }
     });

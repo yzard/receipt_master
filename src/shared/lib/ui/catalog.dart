@@ -31,10 +31,20 @@ class _CatalogPageState extends State<CatalogPage> {
   bool loading = true, saving = false;
   String? error;
   int tab = 0;
+  final visitedTabs = <int>{0};
+  final scrollControllers = List.generate(4, (_) => ScrollController());
   @override
   void initState() {
     super.initState();
     load();
+  }
+
+  @override
+  void dispose() {
+    for (final controller in scrollControllers) {
+      controller.dispose();
+    }
+    super.dispose();
   }
 
   Future<void> load() async {
@@ -71,7 +81,7 @@ class _CatalogPageState extends State<CatalogPage> {
   }
 
   Future<void> editCategory(Map<String, dynamic>? category) async {
-    await showDialog<void>(
+    final saved = await showDialog<bool>(
       context: context,
       builder: (_) => CategoryEditorDialog(
         store: widget.store,
@@ -79,6 +89,7 @@ class _CatalogPageState extends State<CatalogPage> {
         categories: categories,
       ),
     );
+    if (saved == true) await load();
   }
 
   Future<void> removeName(Map<String, dynamic> n) async {
@@ -123,7 +134,23 @@ class _CatalogPageState extends State<CatalogPage> {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) => IndexedStack(
+    index: tab,
+    children: [
+      for (var index = 0; index < 4; index++)
+        visitedTabs.contains(index)
+            ? KeyedSubtree(
+                key: ValueKey('tab-$index'),
+                child: PrimaryScrollController(
+                  controller: scrollControllers[index],
+                  child: buildTab(context, index),
+                ),
+              )
+            : const SizedBox.shrink(),
+    ],
+  );
+
+  Widget buildTab(BuildContext context, int tab) {
     if (error != null) {
       return Center(
         child: TextButton(
@@ -149,17 +176,15 @@ class _CatalogPageState extends State<CatalogPage> {
               icon: const Icon(Icons.storefront_outlined),
               label: Text(context.tr("店铺")),
               onPressed: () async {
-                await Navigator.of(context).push(
-                  MaterialPageRoute<void>(
-                    builder: (_) => LogoAliasesPage(
-                      embedded: false,
-                      store: widget.store,
-                      receiptId: null,
-                      suggestedName: '',
-                    ),
+                await openPageOverlay<void>(
+                  context,
+                  LogoAliasesPage(
+                    embedded: false,
+                    store: widget.store,
+                    receiptId: null,
+                    suggestedName: '',
                   ),
                 );
-                await load();
               },
             ),
           ),
@@ -187,7 +212,10 @@ class _CatalogPageState extends State<CatalogPage> {
                       size: 17,
                     ),
                     selected: tab == index,
-                    onSelected: (_) => setState(() => tab = index),
+                    onSelected: (_) => setState(() {
+                      visitedTabs.add(index);
+                      this.tab = index;
+                    }),
                   ),
               ],
             ),
@@ -240,19 +268,16 @@ class _CatalogPageState extends State<CatalogPage> {
                           onPressed: saving
                               ? null
                               : () async {
-                                  await Navigator.push<void>(
+                                  await openPageOverlay<void>(
                                     context,
-                                    MaterialPageRoute(
-                                      builder: (_) => ProductReceiptsPage(
-                                        store: widget.store,
-                                        productNameId: n['product_name_id'],
-                                        name: n['name'],
-                                        zone: widget.zone,
-                                        onReceipt: widget.onReceipt,
-                                      ),
+                                    ProductReceiptsPage(
+                                      store: widget.store,
+                                      productNameId: n['product_name_id'],
+                                      name: n['name'],
+                                      zone: widget.zone,
+                                      onReceipt: widget.onReceipt,
                                     ),
                                   );
-                                  if (mounted) await load();
                                 },
                           deleteIcon: const Icon(Icons.close, size: 18),
                           deleteButtonTooltipMessage: context.tr("删除商品名称"),
@@ -271,9 +296,7 @@ class _CatalogPageState extends State<CatalogPage> {
                       for (final c in categories)
                         InputChip(
                           label: Text(c['path']),
-                          onPressed: saving
-                              ? null
-                              : () => action(() => editCategory(c)),
+                          onPressed: saving ? null : () => editCategory(c),
                           deleteIcon: const Icon(Icons.close, size: 18),
                           deleteButtonTooltipMessage: context.tr("删除商品种类"),
                           onDeleted: saving || c['system_key'] != null
@@ -283,9 +306,7 @@ class _CatalogPageState extends State<CatalogPage> {
                       ActionChip(
                         avatar: const Icon(Icons.add, size: 18),
                         label: Text(context.tr("添加种类")),
-                        onPressed: saving
-                            ? null
-                            : () => action(() => editCategory(null)),
+                        onPressed: saving ? null : () => editCategory(null),
                       ),
                     ],
                   ),

@@ -582,7 +582,11 @@
       "网络不可用，显示缓存": "网络不可用，显示缓存",
       "Timeout": "Timeout",
       "显示缓存，正在连接": "显示缓存，正在连接",
-      "共 {0} 张收据": "共 {0} 张收据"
+      "共 {0} 张收据": "共 {0} 张收据",
+      "以下明细缺少金额：{0}。请补全金额后录入，也可以保存草稿。": "以下明细缺少金额：{0}。请补全金额后录入，也可以保存草稿。",
+      "明细缺少金额，请补全金额后录入；也可以保存草稿": "明细缺少金额，请补全金额后录入；也可以保存草稿",
+      "第 {0} 项": "第 {0} 项",
+      "缺少商品名称": "缺少商品名称"
     },
     "en": {
       "收据": "Receipts",
@@ -1152,7 +1156,11 @@
       "网络不可用，显示缓存": "Offline. Showing cached data.",
       "Timeout": "Timeout",
       "显示缓存，正在连接": "Showing cached data. Connecting…",
-      "共 {0} 张收据": "Total receipts: {0}"
+      "共 {0} 张收据": "Total receipts: {0}",
+      "以下明细缺少金额：{0}。请补全金额后录入，也可以保存草稿。": "Amounts are missing for: {0}. Enter the amounts before recording, or save a draft.",
+      "明细缺少金额，请补全金额后录入；也可以保存草稿": "Line amounts are missing. Enter the amounts before recording, or save a draft.",
+      "第 {0} 项": "Item {0}",
+      "缺少商品名称": "Missing product name"
     }
   }
 }

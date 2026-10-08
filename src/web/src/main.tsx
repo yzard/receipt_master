@@ -285,11 +285,45 @@ function StateView({
     </div>
   ) : null;
 }
+const PageActivity = React.createContext(true);
+function receiptChanged(change: Row) {
+  window.dispatchEvent(new CustomEvent("receipt-change", { detail: change }));
+}
+function patchReceiptRows(rows: Row[], change: Row): Row[] {
+  const result = rows.map((row) => ({ ...row }));
+  const index = result.findIndex((row) => row.receipt_id === change.id);
+  if (change.deleted)
+    return result.filter((row) => row.receipt_id !== change.id);
+  if (index < 0 && !change.receipt) return result;
+  const row = index < 0 ? {} : result[index];
+  const r = change.receipt;
+  if (r)
+    Object.assign(row, {
+      receipt_id: r.id,
+      raw_store: r.store,
+      raw_branch: r.branch,
+      currency_code: r.currency,
+      created_at_utc_ms: r.createdAt,
+      occurred_at_utc_ms: r.occurredAt,
+      total_minor: r.totalMinor,
+      status: r.posted ? "posted" : "draft",
+      version: r.revision,
+      difference_minor: r.summary?.difference,
+    });
+  if (change.recognition_status)
+    Object.assign(row, {
+      recognition_status: change.recognition_status,
+      status: "draft",
+    });
+  if (index < 0) result.unshift(row);
+  return result;
+}
 function useLoad(loader: () => Promise<any>, deps: any[], interval = 0) {
   const [data, setData] = useState<any>(null),
     [error, setError] = useState(""),
     [busy, setBusy] = useState(false),
     [revision, setRevision] = useState(0);
+  const active = React.useContext(PageActivity);
   const reload = () => setRevision((n) => n + 1);
   useEffect(() => {
     let current = true;
@@ -308,12 +342,15 @@ function useLoad(loader: () => Promise<any>, deps: any[], interval = 0) {
       }
     }
     void load();
-    const timer = interval ? setInterval(load, interval) : null;
     return () => {
       current = false;
-      if (timer) clearInterval(timer);
     };
   }, [...deps, revision]);
+  useEffect(() => {
+    if (!active || !interval) return;
+    const timer = setInterval(reload, interval);
+    return () => clearInterval(timer);
+  }, [active, interval]);
   return { data, error, busy, reload, setData };
 }
 export function SignIn({
@@ -568,21 +605,23 @@ function Camera({ onClose }: { onClose: () => void }) {
 }
 export function Receipts({
   open,
-  productId = null,
+  product,
   title = tr("收据"),
 }: {
   open: (id: string) => void;
-  productId?: string | null;
+  product: { id: string; label: string } | null;
   title?: string;
 }) {
   useLanguage();
+  const productId = product?.id || null;
 
   const [sort, setSort] = useState("created_at"),
     [direction, setDirection] = useState("desc");
+  const [polling, setPolling] = useState(0);
   const list = useLoad(
     () => receiptList({ sort_by: sort, direction, product_name_id: productId }),
     [sort, direction, productId],
-    5000,
+    polling,
   );
   const [submissions, setSubmissions] = useState<Submission[]>([]);
   useEffect(() => {
@@ -593,6 +632,27 @@ export function Receipts({
     load();
     window.addEventListener("submissions", load);
     return () => window.removeEventListener("submissions", load);
+  }, []);
+  useEffect(() => {
+    setPolling(
+      api.offlineMessage ||
+        submissions.length ||
+        list.data?.some((r: Row) =>
+          ["queued", "running"].includes(r.recognition_status),
+        )
+        ? 5000
+        : 0,
+    );
+  }, [list.data, submissions, api.offlineMessage]);
+  useEffect(() => {
+    const changed = (event: Event) => {
+      const change = (event as CustomEvent).detail;
+      list.setData((rows: Row[] | null) =>
+        patchReceiptRows(rows || [], change),
+      );
+    };
+    window.addEventListener("receipt-change", changed);
+    return () => window.removeEventListener("receipt-change", changed);
   }, []);
   function order(field: string) {
     if (field === sort) setDirection((d) => (d === "desc" ? "asc" : "desc"));
@@ -607,7 +667,7 @@ export function Receipts({
         id: r.receipt_id,
         expected_version: r.version,
       });
-      list.reload();
+      receiptChanged({ id: r.receipt_id, deleted: true });
     }
   }
   return (
@@ -720,6 +780,12 @@ export function Receipts({
     </>
   );
 }
+function productName(line: Row): string {
+  return (line.productNameEdit ?? line.display?.productName ?? "").trim();
+}
+function missingProductName(line: Row): boolean {
+  return line.kind === "product" && !productName(line);
+}
 export function LineEditor({
   line,
   lines,
@@ -766,12 +832,19 @@ export function LineEditor({
   return (
     <Modal title={tr("编辑商品")} onClose={onClose}>
       <form onSubmit={save}>
-        <CatalogSearchInput
-          label={tr("商品名称")}
-          component="product_names"
-          value={value.productNameEdit ?? value.display?.productName ?? ""}
-          onChange={(v) => set("productNameEdit", v)}
-        />
+        <div
+          className={
+            missingProductName(value) ? "missing-product-name" : undefined
+          }
+        >
+          <CatalogSearchInput
+            label={tr("商品名称")}
+            component="product_names"
+            value={value.productNameEdit ?? value.display?.productName ?? ""}
+            onChange={(v) => set("productNameEdit", v)}
+          />
+          {missingProductName(value) && <small>{tr("缺少商品名称")}</small>}
+        </div>
         <Field
           label={tr("票面名称")}
           value={value.rawName}
@@ -976,6 +1049,20 @@ export function Editor({
       action: "preview",
       total_text: total,
     });
+    if (publish || r?.posted) {
+      const missing = preview.lines
+        .filter((item: Row) => item.amountMinor == null)
+        .map(
+          (item: Row, index: number) =>
+            item.rawName || tr("第 {0} 项", [index + 1]),
+        );
+      if (missing.length)
+        throw new Error(
+          tr("以下明细缺少金额：{0}。请补全金额后录入，也可以保存草稿。", [
+            missing.join("、"),
+          ]),
+        );
+    }
     if (publish) {
       const dup = await api.op("receipts", "check_duplicates", {
         receipt: preview,
@@ -1014,6 +1101,7 @@ export function Editor({
     );
     setR(result);
     setDirty(false);
+    receiptChanged({ id: result.id, receipt: result });
     return result;
   }
   async function doAction(f: () => Promise<any>) {
@@ -1029,11 +1117,10 @@ export function Editor({
     }
   }
   async function discard(exit: () => void) {
-    if (isNew && r)
-      await api.op("receipts", "purge", {
-        id,
-        expected_version: r.revision,
-      });
+    if (isNew && r) {
+      await api.op("receipts", "purge", { id, expected_version: r.revision });
+      receiptChanged({ id, deleted: true });
+    }
     exit();
   }
   function leave(exit: () => void) {
@@ -1100,6 +1187,7 @@ export function Editor({
       expected_version: current.revision,
       zone,
     });
+    receiptChanged({ id, recognition_status: "queued" });
     notify("已加入识别队列，可继续处理其他收据。");
     onBack();
   }
@@ -1140,6 +1228,7 @@ export function Editor({
                   id,
                   expected_version: r.revision,
                 });
+                receiptChanged({ id, deleted: true });
                 onBack();
               }
             })
@@ -1330,7 +1419,7 @@ export function Editor({
             {r.lines.map((l: Row) => (
               <div
                 key={l.id}
-                className={`line ${l.warnings.length ? "warning" : ""}`}
+                className={`line ${missingProductName(l) ? "missing-product-name" : l.warnings.length ? "warning" : ""}`}
               >
                 <input
                   type="checkbox"
@@ -1346,9 +1435,9 @@ export function Editor({
                 />
                 <button className="line-main" onClick={() => setLine(l)}>
                   <strong>
-                    {l.display?.productName || l.rawName || tr("未命名商品")}
+                    {productName(l) || l.rawName || tr("未命名商品")}
                   </strong>
-                  {l.display?.productName && <small>{l.rawName}</small>}
+                  {productName(l) && <small>{l.rawName}</small>}
                   <div className="line-meta">
                     {kinds()[l.kind]}{" "}
                     {l.display?.receiptTypeName &&
@@ -1621,13 +1710,36 @@ function CommitInput({
     </>
   );
 }
+function usePreservedTabs() {
+  const [tab, select] = useState(0);
+  const bar = useRef<HTMLDivElement>(null);
+  const positions = useRef<Record<number, number>>({});
+  const changed = useRef(false);
+  const container = () =>
+    bar.current?.closest("dialog") ||
+    document.scrollingElement ||
+    document.documentElement;
+  function setTab(next: number) {
+    if (next === tab) return;
+    positions.current[tab] = container().scrollTop;
+    changed.current = true;
+    select(next);
+  }
+  React.useLayoutEffect(() => {
+    if (changed.current) {
+      container().scrollTop = positions.current[tab] || 0;
+      changed.current = false;
+    }
+  }, [tab]);
+  return { tab, setTab, bar };
+}
 function Catalog({
   onProduct,
 }: {
   onProduct: (id: string, label: string) => void;
 }) {
-  const [tab, setTab] = useState(0),
-    [search, setSearch] = useState(""),
+  const { tab, setTab, bar } = usePreservedTabs();
+  const [search, setSearch] = useState(""),
     [category, setCategory] = useState<Row | null>(null);
   const data = useLoad(
     async () =>
@@ -1651,7 +1763,7 @@ function Catalog({
         title={tr("商品管理")}
         subtitle={tr("把不同店铺的票面名称，整理为你熟悉的商品。")}
       />
-      <div className="tabs" role="tablist">
+      <div className="tabs" role="tablist" ref={bar}>
         {tabs.map((name, i) => (
           <button
             key={name}
@@ -1678,99 +1790,112 @@ function Catalog({
       />
       {data.data && (
         <>
-          {(tab === 0 || tab === 2) &&
-            (() => {
-              const rows = filtered(
-                  data.data[tab === 0 ? 0 : 1],
-                  tab === 0 ? "raw_name" : "name",
-                ),
-                missing = (r: Row) =>
-                  tab === 0
-                    ? !r.product_name
-                    : r.category_id === "00000000-0000-4000-8000-000000000001";
-              return (
-                <div className="mapping-list">
-                  {[true, false].map((incomplete, index) => (
-                    <React.Fragment key={String(incomplete)}>
-                      {index === 1 &&
-                        rows.some(missing) &&
-                        rows.some((r) => !missing(r)) && (
-                          <hr className="thin-separator" />
-                        )}
-                      {rows
-                        .filter((r) => missing(r) === incomplete)
-                        .map((r: Row) => (
-                          <div
-                            className="mapping"
-                            key={r.printed_name_id || r.product_name_id}
-                          >
-                            <span>{tab === 0 ? r.raw_name : r.name}</span>
-                            <CommitInput
-                              label={tr("{0}的{1}", [
-                                tab === 0 ? r.raw_name : r.name,
-                                tab === 0 ? tr("商品名称") : tr("商品种类"),
-                              ])}
-                              value={
-                                tab === 0
-                                  ? r.product_name || ""
-                                  : missing(r)
-                                    ? ""
-                                    : data.data[2].find(
-                                        (c: Row) =>
-                                          c.category_id === r.category_id,
-                                      )?.path || r.category_name
-                              }
-                              options={
-                                tab === 0
-                                  ? data.data[1].map((n: Row) => n.name)
-                                  : data.data[2].map((c: Row) => c.path)
-                              }
-                              searchComponent={
-                                tab === 0 ? "product_names" : "categories"
-                              }
-                              onCommit={(v, selected) =>
-                                save(() =>
-                                  tab === 0
-                                    ? api.op(
-                                        "printed_names",
-                                        "set_product_name",
-                                        {
-                                          id: r.printed_name_id,
-                                          name: v,
+          {[0, 2].map((mappingTab) => (
+            <div key={mappingTab} hidden={tab !== mappingTab}>
+              {(() => {
+                const rows = filtered(
+                    data.data[mappingTab === 0 ? 0 : 1],
+                    mappingTab === 0 ? "raw_name" : "name",
+                  ),
+                  missing = (r: Row) =>
+                    mappingTab === 0
+                      ? !r.product_name
+                      : r.category_id ===
+                        "00000000-0000-4000-8000-000000000001";
+                return (
+                  <div className="mapping-list">
+                    {[true, false].map((incomplete, index) => (
+                      <React.Fragment key={String(incomplete)}>
+                        {index === 1 &&
+                          rows.some(missing) &&
+                          rows.some((r) => !missing(r)) && (
+                            <hr className="thin-separator" />
+                          )}
+                        {rows
+                          .filter((r) => missing(r) === incomplete)
+                          .map((r: Row) => (
+                            <div
+                              className="mapping"
+                              key={r.printed_name_id || r.product_name_id}
+                            >
+                              <span>
+                                {mappingTab === 0 ? r.raw_name : r.name}
+                              </span>
+                              <CommitInput
+                                label={tr("{0}的{1}", [
+                                  mappingTab === 0 ? r.raw_name : r.name,
+                                  mappingTab === 0
+                                    ? tr("商品名称")
+                                    : tr("商品种类"),
+                                ])}
+                                value={
+                                  mappingTab === 0
+                                    ? r.product_name || ""
+                                    : missing(r)
+                                      ? ""
+                                      : data.data[2].find(
+                                          (c: Row) =>
+                                            c.category_id === r.category_id,
+                                        )?.path || r.category_name
+                                }
+                                options={
+                                  mappingTab === 0
+                                    ? data.data[1].map((n: Row) => n.name)
+                                    : data.data[2].map((c: Row) => c.path)
+                                }
+                                searchComponent={
+                                  mappingTab === 0
+                                    ? "product_names"
+                                    : "categories"
+                                }
+                                onCommit={(v, selected) =>
+                                  save(() =>
+                                    mappingTab === 0
+                                      ? api.op(
+                                          "printed_names",
+                                          "set_product_name",
+                                          {
+                                            id: r.printed_name_id,
+                                            name: v,
+                                            expected_version: api.version,
+                                          },
+                                        )
+                                      : api.op("product_names", "classify", {
+                                          id: r.product_name_id,
+                                          ...(v
+                                            ? (() => {
+                                                const c =
+                                                  selected ||
+                                                  data.data[2].find(
+                                                    (c: Row) => c.path === v,
+                                                  );
+                                                return c
+                                                  ? {
+                                                      category_id:
+                                                        c.category_id,
+                                                    }
+                                                  : { category_name: v };
+                                              })()
+                                            : {
+                                                category_id:
+                                                  "00000000-0000-4000-8000-000000000001",
+                                              }),
                                           expected_version: api.version,
-                                        },
-                                      )
-                                    : api.op("product_names", "classify", {
-                                        id: r.product_name_id,
-                                        ...(v
-                                          ? (() => {
-                                              const c =
-                                                selected ||
-                                                data.data[2].find(
-                                                  (c: Row) => c.path === v,
-                                                );
-                                              return c
-                                                ? { category_id: c.category_id }
-                                                : { category_name: v };
-                                            })()
-                                          : {
-                                              category_id:
-                                                "00000000-0000-4000-8000-000000000001",
-                                            }),
-                                        expected_version: api.version,
-                                      }),
-                                )
-                              }
-                            />
-                          </div>
-                        ))}
-                    </React.Fragment>
-                  ))}
-                </div>
-              );
-            })()}
-          {tab === 1 && (
-            <div className="tags">
+                                        }),
+                                  )
+                                }
+                              />
+                            </div>
+                          ))}
+                      </React.Fragment>
+                    ))}
+                  </div>
+                );
+              })()}
+            </div>
+          ))}
+          {data.data && (
+            <div className="tags" hidden={tab !== 1}>
               {filtered(data.data[1], "name").map((p: Row) => (
                 <span className="tag" key={p.product_name_id}>
                   <button onClick={() => onProduct(p.product_name_id, p.name)}>
@@ -1797,8 +1922,8 @@ function Catalog({
               ))}
             </div>
           )}
-          {tab === 3 && (
-            <>
+          {data.data && (
+            <div hidden={tab !== 3}>
               <div className="tags">
                 {filtered(data.data[2], "name").map((c: Row) => (
                   <span className="tag" key={c.category_id}>
@@ -1838,7 +1963,7 @@ function Catalog({
                 <Icon name="add" />
                 {tr("添加商品种类")}
               </button>
-            </>
+            </div>
           )}
           {!data.data[tab === 0 ? 0 : tab === 3 ? 2 : 1].length && (
             <p className="muted">{tr("确认收据后，商品名称会出现在这里。")}</p>
@@ -1963,7 +2088,8 @@ export function Stores({
     () => api.op("logos", "list", { receipt_id: receiptId }),
     [receiptId],
   );
-  const [tab, setTab] = useState(0);
+  const { tab, setTab, bar } = usePreservedTabs();
+  const [typesVisited, setTypesVisited] = useState(false);
   const [busy, setBusy] = useState(false);
   async function mutate(f: () => Promise<any>) {
     if (busy) return;
@@ -1981,96 +2107,105 @@ export function Stores({
         <Heading title={tr("店铺")} subtitle={tr("管理店铺名称与店铺类别。")} />
       )}
       {!receiptId && (
-        <div className="tabs" role="tablist" aria-label={tr("店铺管理")}>
+        <div
+          className="tabs"
+          role="tablist"
+          aria-label={tr("店铺管理")}
+          ref={bar}
+        >
           {[tr("店铺名称"), tr("店铺类别")].map((name, i) => (
             <button
               key={name}
               role="tab"
               aria-selected={tab === i}
               className={tab === i ? "active" : ""}
-              onClick={() => setTab(i)}
+              onClick={() => {
+                setTab(i);
+                if (i === 1) setTypesVisited(true);
+              }}
             >
               {name}
             </button>
           ))}
         </div>
       )}
-      {!receiptId && tab === 1 ? (
-        <ReceiptTypesManager />
-      ) : (
-        <>
-          {receiptId && (
-            <button
-              disabled={busy}
-              onClick={() =>
-                void action(() =>
+      {typesVisited && (
+        <div hidden={tab !== 1}>
+          <ReceiptTypesManager />
+        </div>
+      )}
+      <div hidden={!receiptId && tab === 1}>
+        {receiptId && (
+          <button
+            disabled={busy}
+            onClick={() =>
+              void action(() =>
+                mutate(() =>
+                  api.op("logos", "extract", { receipt_id: receiptId }),
+                ),
+              )
+            }
+          >
+            {tr("重新提取 Logo")}
+          </button>
+        )}
+        <StateView
+          busy={!list.data && list.busy}
+          error={list.error}
+          onRetry={list.reload}
+        />
+        <div className="store-grid">
+          {list.data?.map((s: Row) => (
+            <article key={s.logo_id}>
+              <img
+                src={`/api/v1/media/${s.media_id}`}
+                alt={s.name || tr("尚未命名的店铺标志")}
+              />
+              <CommitInput
+                label={tr("店铺名称")}
+                value={s.name || ""}
+                options={suggested ? [suggested] : []}
+                onCommit={(name) =>
                   mutate(() =>
-                    api.op("logos", "extract", { receipt_id: receiptId }),
-                  ),
-                )
-              }
-            >
-              {tr("重新提取 Logo")}
-            </button>
-          )}
-          <StateView
-            busy={!list.data && list.busy}
-            error={list.error}
-            onRetry={list.reload}
-          />
-          <div className="store-grid">
-            {list.data?.map((s: Row) => (
-              <article key={s.logo_id}>
-                <img
-                  src={`/api/v1/media/${s.media_id}`}
-                  alt={s.name || tr("尚未命名的店铺标志")}
-                />
-                <CommitInput
-                  label={tr("店铺名称")}
-                  value={s.name || ""}
-                  options={suggested ? [suggested] : []}
-                  onCommit={(name) =>
-                    mutate(() =>
-                      api.op("logos", "save", {
-                        id: s.logo_id,
-                        name,
-                        expected_version: api.version,
-                      }),
-                    )
+                    api.op("logos", "save", {
+                      id: s.logo_id,
+                      name,
+                      expected_version: api.version,
+                    }),
+                  )
+                }
+              />
+              {s.name && (
+                <IconButton
+                  icon="trash"
+                  label={tr("删除店铺名称样本")}
+                  disabled={busy}
+                  onClick={() =>
+                    void action(async () => {
+                      if (confirm(tr("删除此店铺名称样本？")))
+                        await mutate(() =>
+                          api.op("logos", "delete", {
+                            id: s.logo_id,
+                            expected_version: api.version,
+                          }),
+                        );
+                    })
                   }
                 />
-                {s.name && (
-                  <IconButton
-                    icon="trash"
-                    label={tr("删除店铺名称样本")}
-                    disabled={busy}
-                    onClick={() =>
-                      void action(async () => {
-                        if (confirm(tr("删除此店铺名称样本？")))
-                          await mutate(() =>
-                            api.op("logos", "delete", {
-                              id: s.logo_id,
-                              expected_version: api.version,
-                            }),
-                          );
-                      })
-                    }
-                  />
+              )}
+            </article>
+          ))}
+        </div>
+        {list.data?.length === 0 && (
+          <p className="muted">
+            {receiptId
+              ? tr("这张收据还没有提取到 Logo，可尝试重新提取。")
+              : tr(
+                  "尚无店铺 Logo 样本；确认收据的 Logo 和店名后会显示在这里。",
                 )}
-              </article>
-            ))}
-          </div>
-          {list.data?.length === 0 && (
-            <p className="muted">
-              {receiptId
-                ? tr("这张收据还没有提取到 Logo，可尝试重新提取。")
-                : tr(
-                    "尚无店铺 Logo 样本；确认收据的 Logo 和店名后会显示在这里。",
-                  )}
-            </p>
-          )}
-        </>
-      )}
+          </p>
+        )}
+      </div>
     </>
   );
 }
@@ -2329,6 +2464,7 @@ export function TrendChart({
 }
 export function Reports({ open }: { open: (id: string) => void }) {
   useLanguage();
+  const active = React.useContext(PageActivity);
 
   const [period, setPeriod] = useState("month"),
     [windowIndex, setWindow] = useState(0),
@@ -2383,7 +2519,7 @@ export function Reports({ open }: { open: (id: string) => void }) {
   const categories = useLoad(() => api.op("categories", "list"), [trend.data]);
   useEffect(() => {
     const refresh = () => {
-      if (document.visibilityState === "visible") trend.reload();
+      if (active && document.visibilityState === "visible") trend.reload();
     };
     window.addEventListener("focus", refresh);
     document.addEventListener("visibilitychange", refresh);
@@ -2391,7 +2527,7 @@ export function Reports({ open }: { open: (id: string) => void }) {
       window.removeEventListener("focus", refresh);
       document.removeEventListener("visibilitychange", refresh);
     };
-  }, []);
+  }, [active]);
   function toggle(key: string) {
     setVisible((s) => {
       const n = new Set(s);
@@ -2971,6 +3107,48 @@ export function Users() {
     </>
   );
 }
+let openOverlays = 0;
+let backgroundOverflow = "";
+function PageOverlay({
+  children,
+  onClose,
+  label,
+  editing = false,
+}: {
+  children: React.ReactNode;
+  onClose: () => void;
+  label: string;
+  editing?: boolean;
+}) {
+  const dialog = useRef<HTMLDialogElement>(null);
+  useEffect(() => {
+    if (openOverlays++ === 0) {
+      backgroundOverflow = document.body.style.overflow;
+      document.body.style.overflow = "hidden";
+    }
+    dialog.current?.showModal();
+    return () => {
+      dialog.current?.close();
+      if (--openOverlays === 0)
+        document.body.style.overflow = backgroundOverflow;
+    };
+  }, []);
+  return (
+    <dialog
+      ref={dialog}
+      className="page-overlay"
+      aria-label={label}
+      onCancel={(event) => {
+        event.preventDefault();
+        onClose();
+      }}
+    >
+      <div className={editing ? "workspace editing" : "overlay-content"}>
+        {children}
+      </div>
+    </dialog>
+  );
+}
 function Workspace() {
   useLanguage();
 
@@ -2979,19 +3157,35 @@ function Workspace() {
     [camera, setCamera] = useState(false),
     [editor, setEditor] = useState<string | null>(null),
     [newManual, setNewManual] = useState<string | null>(null),
-    [product, setProduct] = useState<Row | null>(null),
+    [product, setProduct] = useState<{ id: string; label: string } | null>(
+      null,
+    ),
     [theme, setThemeValue] = useState(
       localStorage.getItem("theme") || "system",
     ),
     [change, setChange] = useState(false),
     [notice, setNotice] = useState("");
+  const visited = useRef(new Set(["receipts"]));
+  visited.current.add(page);
+  const positions = useRef<Record<string, number>>({});
+  React.useLayoutEffect(() => {
+    window.scrollTo(0, positions.current[page] || 0);
+  }, [page]);
   const upload = useRef<HTMLInputElement>(null);
   const editorRef = useRef<EditorHandle>(null);
   useEffect(() => {
-    const handler = (e: Event) => setNotice((e as CustomEvent).detail);
+    let timer: number | undefined;
+    const handler = (e: Event) => {
+      window.clearTimeout(timer);
+      setNotice((e as CustomEvent).detail);
+      timer = window.setTimeout(() => setNotice(""), 5000);
+    };
     window.addEventListener("notice", handler);
     void retry().catch((e) => notify(String(e)));
-    return () => window.removeEventListener("notice", handler);
+    return () => {
+      window.removeEventListener("notice", handler);
+      window.clearTimeout(timer);
+    };
   }, []);
   useEffect(() => {
     document.documentElement.dataset.theme = theme;
@@ -3011,8 +3205,10 @@ function Workspace() {
   function navigate(key: string) {
     setDrawer(false);
     const exit = () => {
+      setNotice("");
       closeEditor();
       setProduct(null);
+      positions.current[page] = window.scrollY;
       setPage(key);
     };
     if (editor) editorRef.current?.leave(exit);
@@ -3106,7 +3302,7 @@ function Workspace() {
           </nav>
         </>
       )}
-      <main className={`workspace ${editor ? "editing" : ""}`}>
+      <main className="workspace">
         {notice && (
           <div className="notice toast" role="status">
             <span>{message(notice)}</span>
@@ -3117,7 +3313,60 @@ function Workspace() {
             />
           </div>
         )}
-        {editor ? (
+        {Object.keys(names())
+          .filter((key) => visited.current.has(key))
+          .map((key) => (
+            <section
+              key={key}
+              hidden={page !== key}
+              className="workspace-tab"
+              data-page={key}
+            >
+              <PageActivity.Provider
+                value={page === key && !editor && !product}
+              >
+                {key === "receipts" ? (
+                  <Receipts open={setEditor} product={null} />
+                ) : key === "catalog" ? (
+                  <Catalog
+                    onProduct={(id, label) => setProduct({ id, label })}
+                  />
+                ) : key === "stores" ? (
+                  <Stores />
+                ) : key === "reports" ? (
+                  <Reports open={setEditor} />
+                ) : key === "users" ? (
+                  <Users />
+                ) : (
+                  <Settings
+                    theme={theme}
+                    setTheme={setThemeValue}
+                    onChangePassword={() => setChange(true)}
+                  />
+                )}
+              </PageActivity.Provider>
+            </section>
+          ))}
+      </main>
+      {product && (
+        <PageOverlay
+          label={tr("商品 · {0}", [product.label])}
+          onClose={() => setProduct(null)}
+        >
+          <button onClick={() => setProduct(null)}>{tr("返回")}</button>
+          <Receipts
+            open={setEditor}
+            product={product}
+            title={tr("商品 · {0}", [product.label])}
+          />
+        </PageOverlay>
+      )}
+      {editor && (
+        <PageOverlay
+          label={tr("编辑收据")}
+          editing
+          onClose={() => editorRef.current?.leave(closeEditor)}
+        >
           <Editor
             ref={editorRef}
             key={editor}
@@ -3125,40 +3374,8 @@ function Workspace() {
             isNew={newManual === editor}
             onBack={closeEditor}
           />
-        ) : page === "receipts" ? (
-          <>
-            {product && (
-              <button onClick={() => setProduct(null)}>
-                {tr("← 所有收据")}
-              </button>
-            )}
-            <Receipts
-              open={setEditor}
-              productId={product?.id}
-              title={product ? tr("商品 · {0}", [product.label]) : tr("收据")}
-            />
-          </>
-        ) : page === "catalog" ? (
-          <Catalog
-            onProduct={(id, label) => {
-              setProduct({ id, label });
-              setPage("receipts");
-            }}
-          />
-        ) : page === "stores" ? (
-          <Stores />
-        ) : page === "reports" ? (
-          <Reports open={setEditor} />
-        ) : page === "users" ? (
-          <Users />
-        ) : (
-          <Settings
-            theme={theme}
-            setTheme={setThemeValue}
-            onChangePassword={() => setChange(true)}
-          />
-        )}
-      </main>
+        </PageOverlay>
+      )}
       {camera && <Camera onClose={() => setCamera(false)} />}{" "}
       {change && (
         <Modal title={tr("修改密码")} onClose={() => setChange(false)}>

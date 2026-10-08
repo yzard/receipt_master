@@ -7,6 +7,7 @@ import {
   fireEvent,
   cleanup,
   waitFor,
+  act,
 } from "@testing-library/react";
 import {
   SignIn,
@@ -24,9 +25,56 @@ vi.mock("../../src/web/src/uploads", () => ({
 }));
 afterEach(() => {
   cleanup();
+  vi.useRealTimers();
   vi.restoreAllMocks();
 });
 describe("interactive web workflows", () => {
+  it("expires queue notices, restarts their duration, and clears them on navigation", async () => {
+    const previous = api.user;
+    vi.spyOn(api, "refresh").mockImplementation(async () => {
+      api.user = {
+        user_id: "notice-user",
+        username: "notice-user",
+        is_admin: false,
+        must_change_password: false,
+      };
+      api.onUser(api.user);
+    });
+    vi.spyOn(api, "op").mockImplementation(async (component) =>
+      component === "receipts" ? { items: [], next_cursor: null } : [],
+    );
+    try {
+      const app = render(<App />);
+      await screen.findByRole("heading", { name: "收据" });
+      vi.useFakeTimers();
+      const text = "已加入识别队列，可继续处理其他收据。";
+      const notify = () =>
+        act(() => {
+          window.dispatchEvent(new CustomEvent("notice", { detail: text }));
+        });
+      notify();
+      expect(screen.getByRole("status").textContent).toContain(text);
+      act(() => vi.advanceTimersByTime(4000));
+      notify();
+      act(() => vi.advanceTimersByTime(1000));
+      expect(screen.getByRole("status").textContent).toContain(text);
+      act(() => vi.advanceTimersByTime(4000));
+      expect(screen.queryByText(text)).toBeNull();
+      notify();
+      fireEvent.click(screen.getByRole("button", { name: "关闭提示" }));
+      expect(screen.queryByText(text)).toBeNull();
+      notify();
+      fireEvent.click(screen.getByRole("button", { name: "打开导航菜单" }));
+      fireEvent.click(screen.getByRole("button", { name: "商品" }));
+      expect(screen.queryByText(text)).toBeNull();
+      notify();
+      app.unmount();
+      act(() => vi.advanceTimersByTime(5000));
+    } finally {
+      cleanup();
+      api.user = previous;
+    }
+  });
   it("opens the product navigation and dismisses the drawer without losing the page", async () => {
     const previous = api.user;
     vi.spyOn(api, "refresh").mockImplementation(async () => {
@@ -203,7 +251,7 @@ describe("interactive web workflows", () => {
         next_cursor: input?.cursor ? null : "next-page",
       }));
     const open = vi.fn();
-    render(<Receipts open={open} />);
+    render(<Receipts open={open} product={null} />);
     await screen.findByText("Draft store");
     expect(screen.getByText("共 2 张收据")).toBeTruthy();
     expect(op.mock.calls[0][2]).toMatchObject({

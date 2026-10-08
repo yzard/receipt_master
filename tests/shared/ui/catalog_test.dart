@@ -11,83 +11,90 @@ import 'package:timezone/data/latest.dart' as tz;
 import 'package:receipt_master/data/backend_connection.dart';
 import 'package:receipt_master/data/store.dart';
 import 'package:receipt_master/ui/catalog.dart';
+import 'package:receipt_master/domain/models.dart';
 
 void main() {
-  testWidgets('product name tag opens receipts and refreshes after editing', (
-    tester,
-  ) async {
-    tz.initializeTimeZones();
-    var edited = false;
-    final store = AppStore(
-      '/unused',
-      configuration: () async =>
-          const BackendConnection('https://example.test', 'key'),
-      client: MockClient((req) async {
-        final input = jsonDecode(req.body)['input'];
-        dynamic data;
-        switch (req.url.path) {
-          case '/api/v1/config/get':
-            data = {'weight_unit': 'kg'};
-          case '/api/v1/categories/list':
-          case '/api/v1/printed_names/list':
-            data = [];
-          case '/api/v1/product_names/list':
-            data = [
-              {'product_name_id': 'rice', 'name': '大米'},
-            ];
-          case '/api/v1/receipts/list':
-            expect(input['product_name_id'], 'rice');
-            data = {
-              'items': edited
-                  ? []
-                  : [
-                      {
-                        'receipt_id': 'receipt',
-                        'version': 1,
-                        'raw_store': 'Shop',
-                        'status': 'posted',
-                        'created_at_utc_ms': 1780000000000,
-                        'occurred_at_utc_ms': 1780000000000,
-                        'total_minor': 100,
-                        'currency_code': 'USD',
-                      },
-                    ],
-              'next_cursor': null,
-            };
-          default:
-            throw StateError(req.url.path);
-        }
-        return http.Response(
-          jsonEncode({'data': data}),
-          200,
-          headers: {'content-type': 'application/json; charset=utf-8'},
-        );
-      }),
-    );
-    await tester.pumpWidget(
-      MaterialApp(
-        home: Scaffold(
-          body: CatalogPage(
-            store: store,
-            zone: 'America/New_York',
-            onReceipt: (id) async {
-              expect(id, 'receipt');
-              edited = true;
-            },
+  testWidgets(
+    'product name overlay updates from saved data without reloading',
+    (tester) async {
+      tz.initializeTimeZones();
+      var listCalls = 0;
+      final store = AppStore(
+        '/unused',
+        configuration: () async =>
+            const BackendConnection('https://example.test', 'key'),
+        client: MockClient((req) async {
+          final input = jsonDecode(req.body)['input'];
+          dynamic data;
+          switch (req.url.path) {
+            case '/api/v1/config/get':
+              data = {'weight_unit': 'kg'};
+            case '/api/v1/categories/list':
+            case '/api/v1/printed_names/list':
+              data = [];
+            case '/api/v1/product_names/list':
+              data = [
+                {'product_name_id': 'rice', 'name': '大米'},
+              ];
+            case '/api/v1/receipts/list':
+              listCalls++;
+              expect(input['product_name_id'], 'rice');
+              data = {
+                'items': [
+                  {
+                    'receipt_id': 'receipt',
+                    'version': 1,
+                    'raw_store': 'Shop',
+                    'status': 'posted',
+                    'created_at_utc_ms': 1780000000000,
+                    'occurred_at_utc_ms': 1780000000000,
+                    'total_minor': 100,
+                    'currency_code': 'USD',
+                  },
+                ],
+                'next_cursor': null,
+              };
+            default:
+              throw StateError(req.url.path);
+          }
+          return http.Response(
+            jsonEncode({'data': data}),
+            200,
+            headers: {'content-type': 'application/json; charset=utf-8'},
+          );
+        }),
+      );
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: CatalogPage(
+              store: store,
+              zone: 'America/New_York',
+              onReceipt: (id) async {
+                expect(id, 'receipt');
+                store.receiptUpdates.value = const ReceiptUpdate(
+                  id: 'receipt',
+                  receipt: {'lines': []},
+                  deleted: false,
+                  recognitionStatus: null,
+                );
+              },
+            ),
           ),
         ),
-      ),
-    );
-    await tester.pumpAndSettle();
-    await tester.tap(find.text('商品名称').first);
-    await tester.pumpAndSettle();
-    await tester.tap(find.text('大米'));
-    await tester.pumpAndSettle();
-    expect(find.text('Shop'), findsOneWidget);
-    await tester.tap(find.text('Shop'));
-    await tester.pumpAndSettle();
-    expect(find.text('没有包含此商品名称的收据'), findsOneWidget);
-  });
+      );
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('商品名称').first);
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('大米'));
+      await tester.pumpAndSettle();
+      expect(find.text('Shop'), findsOneWidget);
+      await tester.tap(find.text('Shop'));
+      await tester.pumpAndSettle();
+      expect(find.text('没有包含此商品名称的收据'), findsOneWidget);
+      expect(listCalls, 1);
+    },
+  );
 
   testWidgets('four catalog tabs map names, classify names and delete tags', (
     tester,

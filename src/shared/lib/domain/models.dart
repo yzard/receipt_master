@@ -71,6 +71,9 @@ class LineDraft {
   bool isWeighed;
   Map<String, dynamic> display;
   List<String> warnings;
+  String get productName => productNameEdit ?? display['productName'] ?? '';
+  bool get missingProductName =>
+      kind == 'product' && productName.trim().isEmpty;
   List<Map<String, dynamic>> evidence;
   LineDraft({
     required this.id,
@@ -275,9 +278,16 @@ class ReceiptDraft {
     }
     final ids = lines.map((l) => l.id).toSet();
     if (ids.length != lines.length) throw const InputError('明细标识重复');
+    if (publish) {
+      final missing = lines
+          .where((l) => l.amountMinor == null)
+          .map((l) => l.rawName);
+      if (missing.isNotEmpty) {
+        throw InputError('以下明细缺少金额：${missing.join('、')}。请补全金额后录入，也可以保存草稿。');
+      }
+    }
     for (final l in lines) {
       if (!kindLabels.containsKey(l.kind)) throw const InputError('未知明细类型');
-      if (publish && l.amountMinor == null) throw const InputError('请补齐所有明细金额');
       if (l.weightMg != null && l.weightMg! <= 0) {
         throw const InputError('克数必须大于零或留空');
       }
@@ -298,4 +308,52 @@ class ReceiptDraft {
       }
     }
   }
+}
+
+class ReceiptUpdate {
+  final String id;
+  final Map<String, dynamic>? receipt;
+  final bool deleted;
+  final String? recognitionStatus;
+  const ReceiptUpdate({
+    required this.id,
+    required this.receipt,
+    required this.deleted,
+    required this.recognitionStatus,
+  });
+}
+
+List<Map<String, dynamic>> applyReceiptUpdate(
+  List<Map<String, dynamic>> rows,
+  ReceiptUpdate update,
+) {
+  final result = rows.map((row) => Map<String, dynamic>.from(row)).toList();
+  final index = result.indexWhere((row) => row['receipt_id'] == update.id);
+  if (update.deleted) {
+    if (index >= 0) result.removeAt(index);
+    return result;
+  }
+  final r = update.receipt;
+  if (index < 0 && r == null) return result;
+  final row = index < 0 ? <String, dynamic>{} : result[index];
+  if (r != null) {
+    row.addAll({
+      'receipt_id': r['id'],
+      'raw_store': r['store'],
+      'raw_branch': r['branch'],
+      'currency_code': r['currency'],
+      'created_at_utc_ms': r['createdAt'],
+      'occurred_at_utc_ms': r['occurredAt'],
+      'total_minor': r['totalMinor'],
+      'status': r['posted'] == true ? 'posted' : 'draft',
+      'version': r['revision'],
+      'difference_minor': r['summary']?['difference'],
+    });
+  }
+  if (update.recognitionStatus != null) {
+    row['recognition_status'] = update.recognitionStatus;
+    row['status'] = 'draft';
+  }
+  if (index < 0) result.insert(0, row);
+  return result;
 }

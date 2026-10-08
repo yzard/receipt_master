@@ -37,6 +37,8 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   int page = 0;
+  final Set<int> visitedPages = {0};
+  final scrollControllers = List.generate(5, (_) => ScrollController());
   late String zone;
   List<Map<String, dynamic>>? receipts;
   Object? error;
@@ -55,6 +57,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     restoreReceiptCache();
     refresh();
     widget.store.addListener(submissionChanged);
+    widget.store.receiptUpdates.addListener(receiptUpdated);
     recoverPicker();
     widget.store.retryUploads().catchError((Object e) {
       if (mounted) showError(context, e);
@@ -81,8 +84,12 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
 
   @override
   void dispose() {
+    for (final controller in scrollControllers) {
+      controller.dispose();
+    }
     polling?.cancel();
     widget.store.removeListener(submissionChanged);
+    widget.store.receiptUpdates.removeListener(receiptUpdated);
     WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }
@@ -161,6 +168,15 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     }
   }
 
+  void receiptUpdated() {
+    final update = widget.store.receiptUpdates.value;
+    if (!mounted || update == null) return;
+    setState(() {
+      receipts = applyReceiptUpdate(receipts ?? [], update);
+      updatePolling();
+    });
+  }
+
   Future<void> refresh() async {
     if (refreshing) {
       refreshAgain = true;
@@ -210,14 +226,10 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   }
 
   Future<void> open(String? id) async {
-    await Navigator.push(
+    await openPageOverlay<void>(
       context,
-      MaterialPageRoute<void>(
-        builder: (_) =>
-            EditorPage(store: widget.store, zone: zone, receiptId: id),
-      ),
+      EditorPage(store: widget.store, zone: zone, receiptId: id),
     );
-    refresh();
   }
 
   Future<void> capture(bool camera) async {
@@ -287,7 +299,6 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     }
     try {
       await widget.store.purge(id);
-      await refresh();
     } catch (e) {
       if (mounted) showError(context, e);
       await refresh();
@@ -298,8 +309,10 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
 
   void choosePage(int destination) {
     scaffoldKey.currentState?.closeDrawer();
-    setState(() => page = destination);
-    if (destination == 0) refresh();
+    setState(() {
+      visitedPages.add(destination);
+      page = destination;
+    });
   }
 
   @override
@@ -307,7 +320,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     final scheme = Theme.of(context).colorScheme;
     final topInset = MediaQuery.paddingOf(context).top;
     final bottomInset = MediaQuery.paddingOf(context).bottom;
-    final content = switch (page) {
+    Widget content(int index) => switch (index) {
       0 => receiptList(),
       1 => ReportsPage(
         key: ValueKey('reports-$zone'),
@@ -419,7 +432,26 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                         onTap: () => widget.store.retrySubmissions(),
                       ),
                     ),
-                  Expanded(child: content),
+                  Expanded(
+                    child: IndexedStack(
+                      index: page,
+                      children: [
+                        for (var index = 0; index < 5; index++)
+                          visitedPages.contains(index)
+                              ? KeyedSubtree(
+                                  key: ValueKey('workspace-page-$index'),
+                                  child: TickerMode(
+                                    enabled: page == index,
+                                    child: PrimaryScrollController(
+                                      controller: scrollControllers[index],
+                                      child: content(index),
+                                    ),
+                                  ),
+                                )
+                              : const SizedBox.shrink(),
+                      ],
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -512,6 +544,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     return RefreshIndicator(
       onRefresh: refresh,
       child: ListView.separated(
+        key: const PageStorageKey("receipt-overview"),
         physics: const AlwaysScrollableScrollPhysics(),
         padding: const EdgeInsets.fromLTRB(16, 8, 16, 112),
         itemCount: receipts == null || rows.isEmpty ? 2 : rows.length + 2,

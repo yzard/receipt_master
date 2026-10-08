@@ -10,6 +10,7 @@ use std::{
     str::FromStr,
     sync::{Arc, atomic::Ordering},
 };
+use tracing::Instrument;
 impl Store {
     /// Persist a matched image alias before item inference, using the job snapshot
     /// to reject stale photos and protect edits made while recognition was running.
@@ -304,8 +305,13 @@ async fn next_job(state: Arc<State>) -> Result<bool> {
     let job=database(&state,|s|s.transaction(||{let jobs=s.rows("SELECT * FROM recognition_job WHERE status='queued' ORDER BY created_at_utc_ms LIMIT 1",&[])?;if let Some(job)=jobs.first(){s.exec("UPDATE recognition_job SET status='running' WHERE job_id=?",&[job["job_id"].clone()])?;}Ok(jobs.into_iter().next())})).await?;
     let Some(job) = job else { return Ok(false) };
     let job_id = text(&job, "job_id")?.to_owned();
-    let result = process(state.clone(), job.clone()).await;
+    let span = tracing::info_span!("recognition_job",job_id=%job_id,receipt_id=%job["receipt_id"]);
+    let result = process(state.clone(), job.clone()).instrument(span).await;
     let job_id2 = job_id.clone();
+    if let Err(error) = &result {
+        tracing::error!(job_id=%job_id,receipt_id=%job["receipt_id"],code=error.code,
+            reason=error.message,"receipt recognition job failed");
+    }
     let completed = database(&state, move |s| {
         s.transaction(|| s.finish_recognition(&job_id2, result))
     })
@@ -414,9 +420,15 @@ async fn process(state: Arc<State>, job: Value) -> Result<Value> {
     database(&state,move|s|{s.exec("INSERT INTO recognition_run(run_id,receipt_id,input_revision,provider,model,status,started_at_utc_ms) VALUES (?,?,?,'local',?,'running',?)",&[json!(run_copy),receipt,version,json!(model),json!(now())])?;Ok(())}).await?;
     let schema: Value =
         serde_json::from_str(include_str!("receipt_schema.json")).map_err(db::io_error)?;
-    let response=pipeline::recognize(state.clone(),json!({"model":crate::PUBLIC_MODEL_ID,"receipt_context":{"known_store":known_store},"messages":[{"role":"user","content":content}],"response_format":{"type":"json_schema","json_schema":{"name":"receipt","strict":true,"schema":schema}}})).await;
+    let mut trace = crate::recognition_trace::RecognitionTrace::new(
+        run.clone(),
+        Some(text(&job, "receipt_id")?.to_owned()),
+        Some(job_id),
+    );
+    let response=pipeline::recognize(state.clone(),json!({"model":crate::PUBLIC_MODEL_ID,"receipt_context":{"known_store":known_store},"messages":[{"role":"user","content":content}],"response_format":{"type":"json_schema","json_schema":{"name":"receipt","strict":true,"schema":schema}}}), &mut trace).await;
     let result = match response {
         Ok(mut response) => {
+            response["recognition_diagnostics"] = trace.document();
             if let Some(logo) = logo_run {
                 response["usage"] =
                     pipeline::aggregate_usage(&[response["usage"].clone(), logo["usage"].clone()]);
@@ -430,11 +442,19 @@ async fn process(state: Arc<State>, job: Value) -> Result<Value> {
             .map_err(db::io_error)?;
             let path = format!("recognition/{run}.json");
             let bytes = response.to_string().into_bytes();
-            database(&state,move|s|{if s.rows("SELECT run_id FROM recognition_run WHERE run_id=?", &[json!(run)])?.is_empty() {return Err(missing());} db::media::atomic_file(&s.root.join(&path),&bytes)?;s.exec("UPDATE recognition_run SET status='succeeded',result_relative_path=?,finished_at_utc_ms=? WHERE run_id=?",&[json!(path),json!(now()),json!(run)])?;Ok(())}).await?;
+            database(&state,move|s|{if s.rows("SELECT run_id FROM recognition_run WHERE run_id=?", &[json!(run)])?.is_empty() {return Err(missing());} db::media::atomic_private_file(&s.root.join(&path),&bytes)?;s.exec("UPDATE recognition_run SET status='succeeded',result_relative_path=?,finished_at_utc_ms=? WHERE run_id=?",&[json!(path),json!(now()),json!(run)])?;Ok(())}).await?;
             result
         }
         Err(e) => {
-            database(&state,move|s|{s.exec("UPDATE recognition_run SET status='failed',error_code='inference_failed',finished_at_utc_ms=? WHERE run_id=?",&[json!(now()),json!(run)])?;Ok(())}).await?;
+            let path = format!("recognition/{run}.json");
+            let bytes = trace.document().to_string().into_bytes();
+            let code = e.code;
+            database(&state,move|s|s.transaction(||{
+                if s.rows("SELECT run_id FROM recognition_run WHERE run_id=?", &[json!(run)])?.is_empty() {return Err(missing());}
+                db::media::atomic_private_file(&s.root.join(&path),&bytes)?;
+                s.exec("UPDATE recognition_run SET status='failed',error_code=?,result_relative_path=?,finished_at_utc_ms=? WHERE run_id=?",&[json!(code),json!(path),json!(now()),json!(run)])?;
+                Ok(())
+            })).await?;
             return Err(e);
         }
     };

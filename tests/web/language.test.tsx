@@ -50,7 +50,7 @@ afterEach(() => {
 describe("backend-owned interface languages", () => {
   it("shows the receipt count from the shared language resource", async () => {
     vi.spyOn(api, "op").mockResolvedValue({ items: [], next_cursor: null });
-    render(<Receipts open={() => {}} />);
+    render(<Receipts open={() => {}} product={null} />);
     await screen.findByText("共 0 张收据");
     act(() => setLanguage("en"));
     expect(screen.getByText("Total receipts: 0")).toBeTruthy();

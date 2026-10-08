@@ -82,6 +82,14 @@ void showError(BuildContext context, Object error) {
   );
 }
 
+Future<T?> openPageOverlay<T>(BuildContext context, Widget page) =>
+    showDialog<T>(
+      context: context,
+      useSafeArea: false,
+      barrierDismissible: false,
+      builder: (_) => Dialog.fullscreen(child: page),
+    );
+
 Future<bool> confirm(BuildContext context, String title, String body) async =>
     await showDialog<bool>(
       context: context,

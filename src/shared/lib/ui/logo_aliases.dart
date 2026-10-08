@@ -28,10 +28,20 @@ class _LogoAliasesPageState extends State<LogoAliasesPage> {
   String? error;
   bool busy = false;
   int tab = 0;
+  final visitedTabs = <int>{0};
+  final scrollControllers = List.generate(2, (_) => ScrollController());
   @override
   void initState() {
     super.initState();
     load();
+  }
+
+  @override
+  void dispose() {
+    for (final controller in scrollControllers) {
+      controller.dispose();
+    }
+    super.dispose();
   }
 
   Future<void> load() async {
@@ -117,7 +127,23 @@ class _LogoAliasesPageState extends State<LogoAliasesPage> {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) => IndexedStack(
+    index: tab,
+    children: [
+      for (var index = 0; index < 2; index++)
+        visitedTabs.contains(index)
+            ? KeyedSubtree(
+                key: ValueKey('tab-$index'),
+                child: PrimaryScrollController(
+                  controller: scrollControllers[index],
+                  child: buildTab(context, index),
+                ),
+              )
+            : const SizedBox.shrink(),
+    ],
+  );
+
+  Widget buildTab(BuildContext context, int tab) {
     final body = AbsorbPointer(
       absorbing: busy,
       child: ListView(
@@ -144,7 +170,10 @@ class _LogoAliasesPageState extends State<LogoAliasesPage> {
                   ChoiceChip(
                     label: Text(label),
                     selected: tab == index,
-                    onSelected: (_) => setState(() => tab = index),
+                    onSelected: (_) => setState(() {
+                      visitedTabs.add(index);
+                      this.tab = index;
+                    }),
                   ),
               ],
             ),

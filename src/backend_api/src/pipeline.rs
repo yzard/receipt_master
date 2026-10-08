@@ -2,6 +2,7 @@ use crate::{State, error::AppError};
 use base64::Engine;
 use serde_json::{Value, json};
 use std::sync::Arc;
+use tracing::Instrument;
 
 pub struct Input {
     pub images: Vec<String>,
@@ -160,9 +161,9 @@ pub(crate) async fn raw_call(state: &State, body: Value) -> Result<Value, AppErr
         .json(&body)
         .send()
         .await
-        .map_err(AppError::inference)?
+        .map_err(inference_failure)?
         .error_for_status()
-        .map_err(AppError::inference)?
+        .map_err(inference_failure)?
         .json()
         .await
         .map_err(|error| {
@@ -170,6 +171,13 @@ pub(crate) async fn raw_call(state: &State, body: Value) -> Result<Value, AppErr
             AppError::new(502, "invalid_model_response", "Invalid model response.")
         })?;
     Ok(result)
+}
+fn inference_failure(error: reqwest::Error) -> AppError {
+    let error = error.without_url();
+    tracing::warn!(status=?error.status().map(|s|s.as_u16()),timeout=error.is_timeout(),
+        connection=error.is_connect(),reason=%error.to_string().chars().take(512).collect::<String>(),
+        "OCR transport failed");
+    AppError::inference(error)
 }
 pub(crate) async fn image_capacity(state: &State) -> Result<usize, AppError> {
     let result: Value = state
@@ -258,7 +266,23 @@ pub fn normalize_output(raw: &Value) -> Result<(Value, Vec<String>), AppError> {
     project(&mut data, &schema, "", &mut removed);
     Ok((data, removed))
 }
-pub async fn recognize(state: Arc<State>, body: Value) -> Result<Value, AppError> {
+pub async fn recognize(
+    state: Arc<State>,
+    body: Value,
+    trace: &mut crate::recognition_trace::RecognitionTrace,
+) -> Result<Value, AppError> {
+    let span = trace.span();
+    let result = recognize_inner(state, body, trace).instrument(span).await;
+    if let Err(error) = &result {
+        trace.fail(error);
+    }
+    result
+}
+async fn recognize_inner(
+    state: Arc<State>,
+    body: Value,
+    trace: &mut crate::recognition_trace::RecognitionTrace,
+) -> Result<Value, AppError> {
     let input = tokio::task::spawn_blocking(move || extract(body, crate::PUBLIC_MODEL_ID))
         .await
         .map_err(|_| AppError::new(500, "internal_error", "Request validation failed."))??;
@@ -268,6 +292,7 @@ pub async fn recognize(state: Arc<State>, body: Value) -> Result<Value, AppError
         ));
     }
     let (mut prompt, profile) = state.prompts.select(input.known_store.as_deref());
+    trace.configure(&profile, input.images.len());
     prompt.push('\n');
     prompt.push_str(&state.prompts.receipt.schema_instruction);
     prompt.push('\n');
@@ -290,13 +315,21 @@ pub async fn recognize(state: Arc<State>, body: Value) -> Result<Value, AppError
     ];
     let mut runs = Vec::new();
     for attempt in 0..=state.config.general.repair_attempts {
+        let started = std::time::Instant::now();
         let raw = raw_call(
             &state,
             json!({
                 "profile":"receipt","messages":messages
             }),
         )
-        .await?;
+        .await;
+        let raw = match raw {
+            Ok(raw) => raw,
+            Err(error) => {
+                trace.record(None, Some(&error), started.elapsed().as_millis());
+                return Err(error);
+            }
+        };
         let result = normalize_output(&raw).and_then(|(data, removed)| {
             validate_receipt(&data, input.images.len())?;
             if data["lines"].as_array().is_none_or(|v| v.is_empty()) {
@@ -307,6 +340,11 @@ pub async fn recognize(state: Arc<State>, body: Value) -> Result<Value, AppError
             }
             Ok((data, removed))
         });
+        trace.record(
+            Some(&raw),
+            result.as_ref().err(),
+            started.elapsed().as_millis(),
+        );
         runs.push(raw);
         match result {
             Ok((mut data, removed)) => {

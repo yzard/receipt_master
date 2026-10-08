@@ -76,6 +76,68 @@ async function changeStore() {
   });
 }
 describe("explicit receipt editing", () => {
+  it("marks missing product names red and updates the highlight while editing", async () => {
+    const { op } = setup({
+      receipt: {
+        lines: [
+          {
+            ...emptyLine(),
+            rawName: "MISSING RAW",
+            amountMinor: 100,
+            warnings: ["核对金额"],
+          },
+          {
+            ...emptyLine(),
+            rawName: "CLEARED RAW",
+            amountMinor: 100,
+            productNameEdit: "   ",
+            display: { productName: "Stale mapping" },
+          },
+          {
+            ...emptyLine(),
+            rawName: "KNOWN RAW",
+            amountMinor: 100,
+            display: { productName: "Known product" },
+            warnings: ["核对金额"],
+          },
+          { ...emptyLine(), rawName: "TAX RAW", kind: "tax", amountMinor: 0 },
+        ],
+      },
+    });
+    const original = op.getMockImplementation()!;
+    op.mockImplementation(async (...args) => {
+      if (args[1] === "suggest") return [];
+      if (args[1] === "prepare_line") return args[2]?.line;
+      return original(...args);
+    });
+    await screen.findByText("MISSING RAW");
+    const row = (text: string) => screen.getByText(text).closest(".line")!;
+    expect(row("MISSING RAW").classList.contains("missing-product-name")).toBe(
+      true,
+    );
+    expect(row("MISSING RAW").classList.contains("warning")).toBe(false);
+    expect(row("CLEARED RAW").classList.contains("missing-product-name")).toBe(
+      true,
+    );
+    expect(screen.queryByText("Stale mapping")).toBeNull();
+    expect(row("Known product").classList.contains("warning")).toBe(true);
+    expect(row("TAX RAW").classList.contains("missing-product-name")).toBe(
+      false,
+    );
+    fireEvent.click(screen.getByText("MISSING RAW"));
+    const input = screen.getByRole("combobox", { name: "商品名称" });
+    expect(input.closest(".missing-product-name")).toBeTruthy();
+    fireEvent.change(input, { target: { value: "Rice" } });
+    expect(input.closest(".missing-product-name")).toBeNull();
+    fireEvent.change(input, { target: { value: "   " } });
+    expect(input.closest(".missing-product-name")).toBeTruthy();
+    fireEvent.change(input, { target: { value: "Rice" } });
+    fireEvent.submit(input.closest("form")!);
+    await waitFor(() => expect(screen.queryByRole("dialog")).toBeNull());
+    expect(row("Rice").classList.contains("missing-product-name")).toBe(false);
+    expect(row("Rice").classList.contains("warning")).toBe(true);
+    expect(writes(op)).toEqual([]);
+  });
   it("keeps edits local across the former autosave interval and discards without writing", async () => {
     const { op, back, confirm } = setup();
     await changeStore();
@@ -140,7 +202,14 @@ describe("explicit receipt editing", () => {
       difference: 20,
       receipt: {
         timeSource: "estimated_clock",
-        lines: [{ ...emptyLine(), rawName: "Milk", warnings: ["待核对"] }],
+        lines: [
+          {
+            ...emptyLine(),
+            rawName: "Milk",
+            amountMinor: 100,
+            warnings: ["待核对"],
+          },
+        ],
       },
     });
     confirm.mockReturnValue(false);
@@ -163,6 +232,32 @@ describe("explicit receipt editing", () => {
     );
     expect(writes(op)).toEqual([]);
     expect(back).not.toHaveBeenCalled();
+  });
+  it("names missing amounts before confirmation and still allows explicit draft saving", async () => {
+    const { op, back, confirm } = setup({
+      receipt: {
+        lines: [
+          {
+            ...emptyLine(),
+            rawName: "FRAGRANT PEAR (1POUNDS)",
+            amountMinor: null,
+          },
+        ],
+      },
+    });
+    await changeStore();
+    fireEvent.click(screen.getByRole("button", { name: "录入并退出" }));
+    expect(await screen.findByRole("alert")).toHaveProperty(
+      "textContent",
+      "以下明细缺少金额：FRAGRANT PEAR (1POUNDS)。请补全金额后录入，也可以保存草稿。",
+    );
+    expect(confirm).not.toHaveBeenCalled();
+    expect(writes(op)).toEqual([]);
+    expect(back).not.toHaveBeenCalled();
+    expect(screen.getByLabelText("店铺名称")).toHaveProperty("value", "Edited");
+    fireEvent.click(screen.getByRole("button", { name: "保存草稿" }));
+    await waitFor(() => expect(back).toHaveBeenCalledOnce());
+    expect(writes(op)[0][1]).toBe("save");
   });
   it("preserves local changes on save failure", async () => {
     const { op, back } = setup();
