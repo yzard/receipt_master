@@ -34,7 +34,12 @@ COPY tests/backend_ocr/ tests/backend_ocr/
 COPY docker/defaults/backend_ocr.toml docker/defaults/backend_ocr.toml
 RUN python -m unittest discover -s tests/backend_ocr && touch /checks-passed
 
-FROM nvidia/cuda:13.1.2-runtime-ubuntu24.04@sha256:bff001d3257971cc4752e15ac2d354befa70995ded8e141741ade50569fc192e
+# Keep this model stage identical across OCR projects so Docker shares the weight layer.
+FROM nvidia/cuda:13.1.2-runtime-ubuntu24.04@sha256:bff001d3257971cc4752e15ac2d354befa70995ded8e141741ade50569fc192e AS qwen-model
+ADD --chmod=644 --checksum=sha256:74d2c57145e6ff11d1d2faa79594477f9bc903a611af1fb20218189fbbb77d82 https://huggingface.co/neroued/Qwen3.8-27B-nvfp4-NInfer/resolve/f0b43ad436b9fa8142c6ed6647c470a6fe409484/qwen3_8_27b_nvfp4.ninfer /models/qwen3_8_27b_nvfp4.ninfer
+ADD --chmod=644 --checksum=sha256:c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4 https://huggingface.co/neroued/Qwen3.8-27B-nvfp4-NInfer/resolve/f0b43ad436b9fa8142c6ed6647c470a6fe409484/LICENSE /models/LICENSE
+
+FROM qwen-model
 
 ARG DEBIAN_FRONTEND=noninteractive
 RUN apt-get update \
@@ -59,7 +64,6 @@ RUN pip install --no-cache-dir fastapi==0.136.3 uvicorn==0.35.0 httpx==0.28.1 pi
 WORKDIR /app
 COPY --from=checks /checks-passed /app/checks-passed
 COPY src/backend_ocr/ /app/
-ADD --chmod=644 --checksum=sha256:74d2c57145e6ff11d1d2faa79594477f9bc903a611af1fb20218189fbbb77d82 https://huggingface.co/neroued/Qwen3.8-27B-nvfp4-NInfer/resolve/f0b43ad436b9fa8142c6ed6647c470a6fe409484/qwen3_8_27b_nvfp4.ninfer /models/qwen3_8_27b_nvfp4.ninfer
 RUN chmod 755 /models
 COPY docker/service-entrypoint.sh /app/service-entrypoint.sh
 RUN chmod +x /app/service-entrypoint.sh
