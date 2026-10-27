@@ -16,6 +16,21 @@ impl Store {
             .unwrap_or(UNCLASSIFIED_RECEIPT_TYPE)
             .to_owned())
     }
+    pub fn classify_recognized_store(&self, name: &str, receipt_type: &str) -> Result<()> {
+        self.validate_receipt_type(receipt_type)?;
+        let row = self.one(q::MERCHANT_BY_NAME, &[json!(normalized(name))])?;
+        if row["receipt_type_id"] != receipt_type {
+            self.exec(
+                q::SET_MERCHANT,
+                &[row["merchant_id"].clone(), json!(receipt_type)],
+            )?;
+            self.exec(
+                "UPDATE catalog_version SET version=version+1 WHERE id=1",
+                &[],
+            )?;
+        }
+        Ok(())
+    }
     pub fn resolve_receipt_type(
         &self,
         receipt: &str,

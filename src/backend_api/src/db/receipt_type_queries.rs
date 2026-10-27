@@ -6,7 +6,7 @@ pub const INSERT: &str = "INSERT INTO receipt_type VALUES (?1,?2,NULL)";
 pub const RENAME: &str = "UPDATE receipt_type SET name=?1 WHERE receipt_type_id=?2";
 pub const DELETE: &str = "DELETE FROM receipt_type WHERE receipt_type_id=?1";
 pub const MERCHANTS: &str = "SELECT m.*, COALESCE(t.receipt_type_id,'10000000-0000-4000-8000-000000000001') AS receipt_type_id FROM merchant m LEFT JOIN merchant_receipt_type t USING(merchant_id) WHERE EXISTS (SELECT 1 FROM logo_sample l JOIN media_blob b ON b.blob_id=l.blob_id WHERE l.merchant_id=m.merchant_id) ORDER BY m.name,m.merchant_id";
-pub const MERCHANT_BY_NAME: &str = "SELECT t.receipt_type_id FROM merchant m JOIN merchant_receipt_type t USING(merchant_id) WHERE m.name=?1 COLLATE NOCASE ORDER BY m.merchant_id LIMIT 1";
+pub const MERCHANT_BY_NAME: &str = "SELECT m.merchant_id,t.receipt_type_id FROM merchant m LEFT JOIN merchant_receipt_type t USING(merchant_id) WHERE m.name=?1 COLLATE NOCASE ORDER BY m.merchant_id LIMIT 1";
 pub const GET_MERCHANT: &str = "SELECT merchant_id FROM merchant WHERE merchant_id=?1";
 pub const SET_MERCHANT: &str = "INSERT INTO merchant_receipt_type VALUES (?1,?2) ON CONFLICT(merchant_id) DO UPDATE SET receipt_type_id=excluded.receipt_type_id";
 pub const GET_RECEIPT: &str =

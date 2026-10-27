@@ -1024,20 +1024,6 @@ class _EditorPageState extends State<EditorPage> {
     await act(() async {
       final r = draft!;
       if (images.isEmpty) return;
-      final jobs = await widget.store.request('recognition', 'list', {
-        'receipt_id': r.id,
-      });
-      final active = (jobs as List).any(
-        (job) => ['queued', 'running'].contains(job['status']),
-      );
-      if (active) {
-        if (mounted) {
-          ScaffoldMessenger.of(context)
-              .showSnackBar(SnackBar(content: Text(context.tr("正在后台识别，请稍候"))));
-        }
-        return;
-      }
-      if (!mounted) return;
       if (dirty &&
           !await confirm(
             context,

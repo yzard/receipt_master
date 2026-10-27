@@ -38,6 +38,9 @@ struct Mock {
     arithmetic_failures: usize,
     fail: bool,
     logo_id: Option<String>,
+    welcome_text: Option<String>,
+    restaurant_text: Option<String>,
+    header_box: Option<Value>,
     logo_delay_ms: u64,
     delay_ms: u64,
 }
@@ -67,7 +70,7 @@ async fn fixture(repair_attempts: usize) -> Fixture {
             let selected=v["messages"][1]["content"].as_array().and_then(|parts|parts.iter().enumerate().skip(2).find(|(_,p)|p["image_url"]["url"].as_str().is_some_and(|url|Some(url)==m.logo_id.as_deref())).map(|(i,_)|format!("r{:02}",(i-1)/2)));
             let total=if m.arithmetic_failures>0 {"6.50"}else{"5.50"};
             let line=|kind:&str,amount:&str,target:Value|json!({"name":"MILK","product_name":null,"kind":kind,"quantity":null,"quantity_unit":null,"unit_price":null,"amount":amount,"confidence":null,"discount_target_index":target,"review_notes":[],"sku":null,"tax_code":null,"is_weighed":false,"evidence":[],"package_weight":null,"package_weight_unit":null,"amount_basis":"gross"});
-            let mut prediction=if matching {json!({"reference_id":selected})}else if logo {json!({"box":[50,20,950,500]})}else{json!({"store":null,"branch":null,"address":null,"country":"US","currency":"USD","local_time":null,"total":total,"lines":[line("product","3.00",Value::Null),line("product","3.00",Value::Null),line("item_discount","-0.50",json!(1))]})};
+            let mut prediction=if matching {json!({"reference_id":selected})}else if logo {json!({"box":m.header_box.clone().unwrap_or(json!([50,20,950,500])),"welcome_text":m.welcome_text,"restaurant_text":m.restaurant_text})}else{json!({"store":null,"branch":null,"address":null,"country":"US","currency":"USD","local_time":null,"total":total,"lines":[line("product","3.00",Value::Null),line("product","3.00",Value::Null),line("item_discount","-0.50",json!(1))]})};
             if !logo && !matching && m.receipt_schema_error {prediction["lines"][0]["amount"]=json!(3);}
             let invalid=m.bad_json || m.invalid_responses>0;
             m.invalid_responses=m.invalid_responses.saturating_sub(1);
@@ -999,92 +1002,139 @@ async fn all_photos_reach_vision_together_and_invalid_output_fails() {
 }
 
 #[tokio::test]
-async fn logo_alias_is_resolved_before_the_single_multiphoto_extraction() {
-    let f = fixture(0).await;
-    let s = receipt_backend_api::db::Store::open(&f.dir.path().join("data")).unwrap();
-    let mut draft = domain_receipt();
-    draft["store"] = json!("Hualian");
-    draft["lines"] = json!([]);
-    let r = s.transaction(|| s.save(draft, false)).unwrap();
-    let mut png = std::io::Cursor::new(Vec::new());
-    image::DynamicImage::new_rgb8(100, 300)
-        .write_to(&mut png, image::ImageFormat::Png)
+async fn header_identity_precedes_logo_alias_before_single_multiphoto_extraction() {
+    for mode in ["logo", "welcome", "restaurant"] {
+        let f = fixture(0).await;
+        {
+            let mut m = f.mock.lock().unwrap();
+            if mode == "welcome" {
+                m.welcome_text = Some("Welcome to skyFOODS".into());
+                m.header_box = Some(Value::Null);
+            } else if mode == "restaurant" {
+                m.restaurant_text = Some("Hualian Restaurant #123".into());
+                m.header_box = Some(Value::Null);
+            }
+        }
+        let expected_store = match mode {
+            "welcome" => "skyFOODS",
+            "restaurant" => "Hualian",
+            _ => "Costco",
+        };
+        let s = receipt_backend_api::db::Store::open(&f.dir.path().join("data")).unwrap();
+        let mut draft = domain_receipt();
+        draft["store"] = json!("Hualian");
+        draft["lines"] = json!([]);
+        let r = s.transaction(|| s.save(draft, false)).unwrap();
+        let mut png = std::io::Cursor::new(Vec::new());
+        image::DynamicImage::new_rgb8(100, 300)
+            .write_to(&mut png, image::ImageFormat::Png)
+            .unwrap();
+        let upload = s
+            .transaction(|| {
+                s.upload(
+                    &json!({"receipt_id":r["id"],"expected_version":1}),
+                    png.get_ref(),
+                )
+            })
+            .unwrap();
+        let img=s.one("SELECT b.*,i.image_id FROM receipt_image i JOIN media_blob b ON b.blob_id=i.current_blob_id WHERE i.image_id=?",&[upload["image_id"].clone()]).unwrap();
+        s.transaction(|| s.save_logo(&img, png.get_ref(), &json!([0., 0., 1., 0.2]), "ocr_header"))
+            .unwrap();
+        let logo = s
+            .logo_action("list", &json!({"receipt_id":r["id"]}))
+            .unwrap()[0]["logo_id"]
+            .clone();
+        f.mock.lock().unwrap().logo_id = Some(format!(
+            "data:image/png;base64,{}",
+            base64::engine::general_purpose::STANDARD.encode(png.get_ref())
+        ));
+        let version = s
+            .one("SELECT version FROM catalog_version WHERE id=1", &[])
+            .unwrap()["version"]
+            .clone();
+        s.transaction(|| {
+            s.logo_action(
+                "save",
+                &json!({"id":logo,"name":"Costco","expected_version":version}),
+            )
+        })
         .unwrap();
-    let upload = s
-        .transaction(|| {
+        s.transaction(|| {
             s.upload(
-                &json!({"receipt_id":r["id"],"expected_version":1}),
+                &json!({"receipt_id":r["id"],"expected_version":2}),
                 png.get_ref(),
             )
         })
         .unwrap();
-    let img=s.one("SELECT b.*,i.image_id FROM receipt_image i JOIN media_blob b ON b.blob_id=i.current_blob_id WHERE i.image_id=?",&[upload["image_id"].clone()]).unwrap();
-    s.transaction(|| s.save_logo(&img, png.get_ref(), &json!([0., 0., 1., 0.2]), "ocr_header"))
-        .unwrap();
-    let logo = s
-        .logo_action("list", &json!({"receipt_id":r["id"]}))
-        .unwrap()[0]["logo_id"]
-        .clone();
-    f.mock.lock().unwrap().logo_id = Some(format!(
-        "data:image/png;base64,{}",
-        base64::engine::general_purpose::STANDARD.encode(png.get_ref())
-    ));
-    let version = s
-        .one("SELECT version FROM catalog_version WHERE id=1", &[])
-        .unwrap()["version"]
-        .clone();
-    s.transaction(|| {
-        s.logo_action(
-            "save",
-            &json!({"id":logo,"name":"Costco","expected_version":version}),
-        )
-    })
-    .unwrap();
-    s.transaction(|| {
-        s.upload(
-            &json!({"receipt_id":r["id"],"expected_version":2}),
-            png.get_ref(),
-        )
-    })
-    .unwrap();
-    drop(s);
-    let (status,started)=request(&f,"POST","/api/v1/recognition/start",Some(json!({"request_key":"logo-job","input":{"receipt_id":r["id"],"expected_version":3,"zone":"America/New_York"}})),true).await;
-    assert_eq!(status, 200, "{started}");
-    let mut done = false;
-    for _ in 0..2000 {
-        tokio::time::sleep(std::time::Duration::from_millis(10)).await;
-        let s = receipt_backend_api::db::Store::open(&f.dir.path().join("data")).unwrap();
-        let job = s
-            .recognition_action("get", &json!({"id":started["data"]["job_id"]}))
-            .unwrap();
-        assert_ne!(job["status"], "failed", "{job}");
-        if job["status"] == "applied" {
-            assert_eq!(
-                s.load(r["id"].as_str().unwrap()).unwrap()["store"],
-                "Costco"
-            );
-            done = true;
-            break;
+        drop(s);
+        let (status,started)=request(&f,"POST","/api/v1/recognition/start",Some(json!({"request_key":"logo-job","input":{"receipt_id":r["id"],"expected_version":3,"zone":"America/New_York"}})),true).await;
+        assert_eq!(status, 200, "{started}");
+        let mut done = false;
+        for _ in 0..2000 {
+            tokio::time::sleep(std::time::Duration::from_millis(10)).await;
+            let s = receipt_backend_api::db::Store::open(&f.dir.path().join("data")).unwrap();
+            let job = s
+                .recognition_action("get", &json!({"id":started["data"]["job_id"]}))
+                .unwrap();
+            assert_ne!(job["status"], "failed", "{job}");
+            if job["status"] == "applied" {
+                assert_eq!(
+                    s.load(r["id"].as_str().unwrap()).unwrap()["store"],
+                    expected_store
+                );
+                let receipt = s.load(r["id"].as_str().unwrap()).unwrap();
+                if mode == "restaurant" {
+                    assert_eq!(
+                        s.store_receipt_type(expected_store).unwrap(),
+                        receipt_backend_api::db::RESTAURANT_RECEIPT_TYPE
+                    );
+                    assert_eq!(
+                        receipt["receiptTypeId"],
+                        receipt_backend_api::db::RESTAURANT_RECEIPT_TYPE
+                    );
+                    assert!(
+                        receipt["lines"]
+                            .as_array()
+                            .unwrap()
+                            .iter()
+                            .all(|line| line["receiptTypeId"]
+                                == receipt_backend_api::db::RESTAURANT_RECEIPT_TYPE)
+                    );
+                }
+                done = true;
+                break;
+            }
         }
-    }
-    assert!(done);
-    let m = f.mock.lock().unwrap();
-    assert_eq!(m.events.first().unwrap(), "locate");
-    assert_eq!(m.events.last().unwrap(), "vision");
-    let prompt = m.calls.last().unwrap()["messages"][0]["content"]
-        .as_str()
-        .unwrap();
-    assert!(prompt.contains("MERCHANT PROFILE: COSTCO"));
-    assert!(!prompt.contains("MERCHANT PROFILE: HUALIAN"));
-    assert!(m.events.iter().filter(|event| *event == "logo").count() > 1);
-    for call in &m.calls {
-        let count = call["messages"][1]["content"]
-            .as_array()
-            .unwrap()
-            .iter()
-            .filter(|p| p["type"] == "image_url")
-            .count();
-        assert!(count <= 4);
+        assert!(done);
+        let m = f.mock.lock().unwrap();
+        assert_eq!(m.events.first().unwrap(), "locate");
+        assert_eq!(m.events.last().unwrap(), "vision");
+        let prompt = m.calls.last().unwrap()["messages"][0]["content"]
+            .as_str()
+            .unwrap();
+        if mode == "logo" {
+            assert!(prompt.contains("MERCHANT PROFILE: COSTCO"));
+            assert!(!prompt.contains("HUALIAN STORE-SPECIFIC"));
+            assert!(m.events.iter().filter(|event| *event == "logo").count() > 1);
+        } else {
+            assert!(!m.events.iter().any(|event| event == "logo"));
+            assert_eq!(m.events, vec!["locate", "vision"]);
+            assert!(!prompt.contains("MERCHANT PROFILE: COSTCO"));
+            assert!(prompt.contains(if mode == "welcome" {
+                "MERCHANT PROFILE: SKYFOODS"
+            } else {
+                "HUALIAN STORE-SPECIFIC"
+            }));
+        }
+        for call in &m.calls {
+            let count = call["messages"][1]["content"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .filter(|p| p["type"] == "image_url")
+                .count();
+            assert!(count <= 4);
+        }
     }
 }
 
@@ -1407,4 +1457,87 @@ fn inference_logs_metadata_without_receipt_text_or_credentials() {
     }
     assert!(!logged.contains("private receipt contents"));
     assert!(!logged.contains(OCR_KEY));
+}
+
+#[tokio::test]
+#[ignore = "requires the local OCR service and its private TOML configuration"]
+async fn live_header_identity_on_saved_restaurant_receipts() {
+    use receipt_backend_api::{logos, pipeline};
+    use sha2::{Digest, Sha256};
+    let root = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("../..");
+    let corpus = root.join("tests/backend_api/corpus/header_identity");
+    let cases: Value =
+        serde_json::from_slice(&std::fs::read(corpus.join("cases.json")).unwrap()).unwrap();
+    let secret_path =
+        std::env::var("RECEIPT_HEADER_OCR_CONFIG").expect("Set the private OCR config.toml path");
+    let service: toml::Value =
+        toml::from_str(&std::fs::read_to_string(secret_path).unwrap()).unwrap();
+    let mut config = Config::parse(&configured_template()).unwrap();
+    config.ocr.api_key = service["general"]["api_key"].as_str().unwrap().to_owned();
+    config.ocr.url = std::env::var("RECEIPT_HEADER_OCR_URL").expect("Set the OCR service URL");
+    config.general.job_workers = 1;
+    config.general.timeout_seconds = 600;
+    let dir = tempfile::tempdir().unwrap();
+    std::fs::copy(
+        root.join("docker/defaults/prompt.toml"),
+        dir.path().join("prompt.toml"),
+    )
+    .unwrap();
+    let state = State::new(config, dir.path().to_path_buf()).unwrap();
+    let key = |value: &str| {
+        value
+            .chars()
+            .filter(|c| c.is_alphanumeric())
+            .flat_map(char::to_lowercase)
+            .collect::<String>()
+    };
+    let mut reports = Vec::new();
+    for case in cases.as_array().unwrap() {
+        let bytes = std::fs::read(corpus.join(case["photo"].as_str().unwrap())).unwrap();
+        assert_eq!(format!("{:x}", Sha256::digest(&bytes)), case["sha256"]);
+        let started = std::time::Instant::now();
+        let response = pipeline::locate_logo(
+            state.clone(),
+            format!(
+                "data:image/jpeg;base64,{}",
+                base64::engine::general_purpose::STANDARD.encode(bytes)
+            ),
+        )
+        .await;
+        let elapsed_ms = started.elapsed().as_millis();
+        let (response, identity) = match response {
+            Ok(response) => {
+                let identity = logos::header_store(&response["evidence"])
+                    .map(|identity| serde_json::to_value(identity).unwrap())
+                    .unwrap_or(Value::Null);
+                (response, identity)
+            }
+            Err(error) => (
+                json!({"error_code":error.code,"message":error.message}),
+                Value::Null,
+            ),
+        };
+        let passed = key(identity["name"].as_str().unwrap_or(""))
+            == key(case["expected"]["name"].as_str().unwrap())
+            && identity["source"] == case["expected"]["source"]
+            && identity["is_restaurant"] == case["expected"]["is_restaurant"];
+        println!(
+            "{}: passed={passed}, elapsed_ms={elapsed_ms}, identity={identity}",
+            case["receipt_id"]
+        );
+        reports.push(json!({"receipt_id":case["receipt_id"],"photo_sha256":case["sha256"],"expected":case["expected"],"identity":identity,"passed":passed,"elapsed_ms":elapsed_ms,"response":response}));
+    }
+    let output = std::path::PathBuf::from(
+        std::env::var("RECEIPT_HEADER_REPORT").expect("Set a private report path"),
+    );
+    std::fs::create_dir_all(output.parent().unwrap()).unwrap();
+    receipt_backend_api::db::media::atomic_private_file(
+        &output,
+        &serde_json::to_vec_pretty(&reports).unwrap(),
+    )
+    .unwrap();
+    assert!(
+        reports.iter().all(|row| row["passed"] == true),
+        "Read the private report for individual results"
+    );
 }

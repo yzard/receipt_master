@@ -342,13 +342,6 @@ void main() {
             data = receipt;
           } else if (path.endsWith('/receipts/edit')) {
             data = receipt;
-          } else if (path.endsWith('/recognition/list')) {
-            events.add('list');
-            data = scenario == 'active'
-                ? [
-                    {'status': 'running'},
-                  ]
-                : [];
           } else if (path.endsWith('/recognition/start')) {
             events.add('start');
             final input = jsonDecode(request.body)['input'];
@@ -461,30 +454,30 @@ void main() {
         await tester.pump();
         await tester.pump(const Duration(milliseconds: 100));
         if (scenario == 'dirty retry') {
-          expect(events, ['list']);
+          expect(events, isEmpty);
           expect(find.text('放弃未保存修改并重新识别？'), findsOneWidget);
           await tester.tap(find.text('确认'));
           await tester.pump(const Duration(milliseconds: 100));
         }
         if ([
           'retry',
+          'active',
           'submit failure',
           'posted',
           'dirty retry',
         ].contains(scenario)) {
           expect(tester.widget<IconButton>(retry).onPressed, isNull);
-          expect(events, ['list', 'load', 'start']);
+          expect(events, ['load', 'start']);
           submitted.complete();
         }
         await tester.pumpAndSettle();
-        if (['retry', 'posted', 'dirty retry'].contains(scenario)) {
+        if (['retry', 'active', 'posted', 'dirty retry'].contains(scenario)) {
           expect(find.byType(EditorPage), findsNothing);
           expect(find.text('打开收据'), findsOneWidget);
         } else {
           expect(find.byType(EditorPage), findsOneWidget);
           expect(tester.widget<IconButton>(retry).onPressed, isNotNull);
-          if (scenario == 'active') expect(events, ['list']);
-          if (scenario == 'load failure') expect(events, ['list', 'load']);
+          if (scenario == 'load failure') expect(events, ['load']);
         }
       }
     });

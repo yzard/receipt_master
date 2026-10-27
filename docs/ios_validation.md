@@ -13,7 +13,7 @@
 ./build_ios.sh /absolute/path/to/flutter
 ```
 
-第一条生成 `build/flutter/build/ios/iphonesimulator/Runner.app`；第二条执行无签名真机编译，不是可分发的签名 IPA。两者都会运行静态检查和 iOS 控件模式的共享测试。
+第一条导出 `build/mobile/receipt-master-ios-simulator.zip`；第二条导出 `build/mobile/receipt-master-ios-unsigned.zip` 并执行无签名真机编译，不是可分发的签名 IPA。两者都会运行静态检查和 iOS 控件模式的共享测试。
 
 使用 `RECEIPT_BOOTSTRAP_FILE=/absolute/path/to/config.json` 注入与 Android 相同的配置，只允许 `endpoint` 字段，不打包凭据。默认读取 `build/mobile-config/backend_defaults.json`，缺失或无效时构建立即失败；启动后使用账户登录，HTTP 仅允许构建时预置的地址。注入只修改构建目录，并为 HTTP 主机生成限定的 ATS 例外。重复准备工程会重新复制资源，不污染源码。
 
@@ -42,3 +42,5 @@ cd build/flutter
 - 真实摄像头、相册权限、系统分享/文件选择以及连接实际服务器的 OCR、备份恢复仍需设备/服务验收。当前仓库未提供后端配置，不能据此宣称所有功能已完成端到端验证。
 
 2026-09-22：使用 Xcode 27.0（27A266a）完成 iOS Simulator Debug 构建和无签名 iPhoneOS Debug 构建；在 iPhone 17 Pro / iOS 26.4 模拟器安装并启动，原生冒烟输出全部五组 `IOS_SMOKE_PASS`。截图与执行日志保存在 `build/ios-launch.png`、`build/ios-build.log`、`build/ios-smoke.log` 和 `build/android-widget-tests.log`。启动截图中的数据加载失败源于空后端配置，不代表已连通服务器。
+
+成功导出后，脚本清理 Flutter 工作目录、项目生成文件和本次 pub/CocoaPods 缓存。真机使用 release、无签名构建；模拟器使用可安装的 debug 构建，仅保留最终压缩包。签名配置、共享源码和已有正式产物不会因失败而删除。

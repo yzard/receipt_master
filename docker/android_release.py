@@ -55,6 +55,8 @@ def inputs(root, bootstrap, signer):
             'docker/validate_mobile_defaults.py',
             'docker/android_release.py',
             'build_android.sh',
+            'docker/build_lifecycle.sh',
+            'docker/build_cleanup.py',
         ]
     ]
     hasher = hashlib.sha256()
@@ -107,8 +109,6 @@ def publish(root):
     manifest = json.loads((staging / 'android-update.json').read_text())
     hashes = {abi: info['sha256'] for abi, info in manifest['variants'].items()}
     current_apk_names = {info['file'] for info in manifest['variants'].values()}
-    if (staging / 'receipt-master-debug.apk').is_file():
-        current_apk_names.add('receipt-master-debug.apk')
     for info in manifest['variants'].values():
         if digest(staging / info['file']) != info['sha256']:
             raise ValueError('APK hash does not match generated metadata')

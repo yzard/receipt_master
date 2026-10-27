@@ -1,4 +1,4 @@
-//! Operator-owned prompt routing. Merchant identity comes only from the Logo catalog.
+//! Operator-owned prompt routing. Merchant identity comes from an explicit header identity or the Logo catalog.
 use serde::Deserialize;
 use std::collections::HashSet;
 

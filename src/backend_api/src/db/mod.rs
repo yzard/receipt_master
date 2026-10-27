@@ -24,6 +24,7 @@ pub mod reports;
 pub type Result<T> = std::result::Result<T, AppError>;
 pub const UNCLASSIFIED_RECEIPT_TYPE: &str = "10000000-0000-4000-8000-000000000001";
 pub const GROCERY_RECEIPT_TYPE: &str = "10000000-0000-4000-8000-000000000002";
+pub const RESTAURANT_RECEIPT_TYPE: &str = "10000000-0000-4000-8000-000000000003";
 pub const UNCATEGORIZED: &str = "00000000-0000-4000-8000-000000000001";
 pub fn now() -> i64 {
     chrono::Utc::now().timestamp_millis()

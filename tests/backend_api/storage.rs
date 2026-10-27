@@ -999,54 +999,247 @@ fn weighed_amount_check_rounds_to_cents_and_clears_stale_warnings() {
 }
 
 #[test]
-fn queued_jobs_are_deduplicated_and_completion_never_overwrites_edits_or_deletions() {
+fn explicit_restarts_replace_active_jobs_even_without_draft_edits() {
     let (_dir, s) = setup();
     let r = s.transaction(|| s.save(receipt(), false)).unwrap();
-    s.transaction(|| {
-        s.upload(
-            &json!({"receipt_id":r["id"],"expected_version":1}),
-            &photo(),
-        )
-    })
-    .unwrap();
-    let input = json!({"receipt_id":r["id"],"expected_version":2,"zone":"America/New_York"});
-    let job = s
+    let rid = r["id"].as_str().unwrap();
+    s.transaction(|| s.upload(&json!({"receipt_id":rid,"expected_version":1}), &photo()))
+        .unwrap();
+    let input = json!({"receipt_id":rid,"expected_version":2,"zone":"America/New_York"});
+    let first = s
         .transaction(|| s.recognition_action("start", &input))
         .unwrap();
-    let again = s
-        .transaction(|| s.recognition_action("start", &input))
-        .unwrap();
-    assert_eq!(job["job_id"], again["job_id"]);
-    let candidate = s.load(r["id"].as_str().unwrap()).unwrap();
     s.exec(
         "UPDATE recognition_job SET status='running' WHERE job_id=?",
-        &[job["job_id"].clone()],
+        &[first["job_id"].clone()],
     )
     .unwrap();
-    let mut edited = candidate.clone();
-    edited["store"] = json!("User edited while OCR was running");
-    save(&s, edited);
-    s.transaction(|| s.finish_recognition(job["job_id"].as_str().unwrap(), Ok(candidate.clone())))
-        .unwrap();
-    assert_eq!(
-        s.load(r["id"].as_str().unwrap()).unwrap()["store"],
-        "User edited while OCR was running"
+    s.exec("CREATE TRIGGER fail_enqueue BEFORE INSERT ON recognition_job BEGIN SELECT RAISE(ABORT, 'injected failure'); END", &[]).unwrap();
+    assert!(
+        s.transaction(|| s.recognition_action("start", &input))
+            .is_err()
     );
-    let result = s
-        .recognition_action("get", &json!({"id":job["job_id"]}))
+    assert_eq!(
+        s.recognition_action("get", &json!({"id":first["job_id"]}))
+            .unwrap()["status"],
+        "running"
+    );
+    s.exec("DROP TRIGGER fail_enqueue", &[]).unwrap();
+    let second = s
+        .transaction(|| s.recognition_action("start", &input))
         .unwrap();
-    assert_eq!(result["error_code"], "stale_input");
-    let r = s.load(r["id"].as_str().unwrap()).unwrap();
+    assert_ne!(first["job_id"], second["job_id"]);
+    let third = s
+        .transaction(|| s.recognition_action("start", &input))
+        .unwrap();
+    assert_ne!(second["job_id"], third["job_id"]);
+    for older in [&first, &second] {
+        assert_eq!(
+            s.recognition_action("get", &json!({"id":older["job_id"]}))
+                .unwrap()["status"],
+            "cancelled"
+        );
+    }
+    let before = s.load(rid).unwrap();
+    s.transaction(|| s.finish_recognition(first["job_id"].as_str().unwrap(), Ok(receipt())))
+        .unwrap();
+    assert_eq!(s.load(rid).unwrap(), before);
+}
+
+#[test]
+fn recognition_restart_uses_replacement_photo_and_ignores_late_old_results() {
+    let (_dir, s) = setup();
+    let r = s.transaction(|| s.save(receipt(), false)).unwrap();
+    let rid = r["id"].as_str().unwrap();
+    s.transaction(|| s.upload(&json!({"receipt_id":rid,"expected_version":1}), &photo()))
+        .unwrap();
+    let old_image = s.images(rid, false).unwrap()[0]["image_id"].clone();
+    let old = s
+        .transaction(|| {
+            s.recognition_action(
+                "start",
+                &json!({"receipt_id":rid,"expected_version":2,"zone":"UTC"}),
+            )
+        })
+        .unwrap();
+    s.exec(
+        "UPDATE recognition_job SET status='running' WHERE job_id=?",
+        &[old["job_id"].clone()],
+    )
+    .unwrap();
+    let mut old_candidate = s.load(rid).unwrap();
+    old_candidate["store"] = json!("Old photo result");
+    s.transaction(|| s.upload(&json!({"receipt_id":rid,"expected_version":2}), &photo()))
+        .unwrap();
     s.transaction(|| {
-        s.receipt_action(
-            "purge",
-            &json!({"id":r["id"],"expected_version":r["revision"]}),
+        s.image_action(
+            "remove",
+            &json!({"receipt_id":rid,"expected_version":3,"id":old_image}),
         )
     })
     .unwrap();
-    s.transaction(|| s.finish_recognition(job["job_id"].as_str().unwrap(), Ok(candidate)))
+    let latest = s.load(rid).unwrap();
+    let new = s
+        .transaction(|| {
+            s.recognition_action(
+                "start",
+                &json!({"receipt_id":rid,"expected_version":latest["revision"],"zone":"UTC"}),
+            )
+        })
         .unwrap();
-    assert!(s.rows("SELECT * FROM receipt", &[]).unwrap().is_empty());
+    let captured = s.rows("SELECT r.image_id FROM job_image j JOIN image_revision r ON r.revision_id=j.revision_id WHERE j.job_id=?", &[new["job_id"].clone()]).unwrap();
+    assert_eq!(captured.len(), 1);
+    assert_ne!(captured[0]["image_id"], old_image);
+    s.transaction(|| {
+        s.finish_recognition(old["job_id"].as_str().unwrap(), Ok(old_candidate.clone()))
+    })
+    .unwrap();
+    assert_eq!(s.load(rid).unwrap(), latest);
+    s.exec(
+        "UPDATE recognition_job SET status='running' WHERE job_id=?",
+        &[new["job_id"].clone()],
+    )
+    .unwrap();
+    let mut candidate = latest.clone();
+    candidate["store"] = json!("Replacement photo result");
+    s.transaction(|| s.finish_recognition(new["job_id"].as_str().unwrap(), Ok(candidate)))
+        .unwrap();
+    let saved = s.load(rid).unwrap();
+    assert_eq!(saved["store"], "Replacement photo result");
+    s.transaction(|| s.finish_recognition(old["job_id"].as_str().unwrap(), Ok(old_candidate)))
+        .unwrap();
+    assert_eq!(s.load(rid).unwrap(), saved);
+    assert_eq!(
+        s.recognition_action("get", &json!({"id":new["job_id"]}))
+            .unwrap()["status"],
+        "applied"
+    );
+}
+
+#[test]
+fn recognition_completion_never_overwrites_closed_or_deleted_receipts() {
+    for action in ["posted", "deleted", "purged", "cancelled"] {
+        let (_dir, s) = setup();
+        let r = s.transaction(|| s.save(receipt(), false)).unwrap();
+        let rid = r["id"].as_str().unwrap();
+        s.transaction(|| s.upload(&json!({"receipt_id":rid,"expected_version":1}), &photo()))
+            .unwrap();
+        let job = s
+            .transaction(|| {
+                s.recognition_action(
+                    "start",
+                    &json!({"receipt_id":rid,"expected_version":2,"zone":"UTC"}),
+                )
+            })
+            .unwrap();
+        let jid = job["job_id"].as_str().unwrap();
+        s.exec(
+            "UPDATE recognition_job SET status='running' WHERE job_id=?",
+            &[json!(jid)],
+        )
+        .unwrap();
+        let candidate = s.load(rid).unwrap();
+        match action {
+            "posted" => {
+                save(&s, candidate.clone());
+            }
+            "deleted" => {
+                s.exec(
+                    "UPDATE receipt SET deleted_at_utc_ms=1 WHERE receipt_id=?",
+                    &[json!(rid)],
+                )
+                .unwrap();
+            }
+            "purged" => {
+                s.transaction(|| {
+                    s.receipt_action("purge", &json!({"id":rid,"expected_version":2}))
+                })
+                .unwrap();
+            }
+            "cancelled" => {
+                s.transaction(|| s.recognition_action("cancel", &json!({"id":jid})))
+                    .unwrap();
+            }
+            _ => unreachable!(),
+        }
+        let before = s.rows("SELECT * FROM receipt", &[]).unwrap();
+        s.transaction(|| s.finish_recognition(jid, Ok(candidate)))
+            .unwrap();
+        assert_eq!(
+            s.rows("SELECT * FROM receipt", &[]).unwrap(),
+            before,
+            "{action}"
+        );
+        if action != "purged" {
+            assert_eq!(
+                s.recognition_action("get", &json!({"id":jid})).unwrap()["status"],
+                "cancelled"
+            );
+        }
+    }
+}
+
+#[test]
+fn applying_archived_results_uses_current_revision_but_never_supersedes_newer_work() {
+    for action in ["draft edit", "newer job", "posted", "deleted"] {
+        let (_dir, s) = setup();
+        let r = s.transaction(|| s.save(receipt(), false)).unwrap();
+        let rid = r["id"].as_str().unwrap();
+        s.transaction(|| s.upload(&json!({"receipt_id":rid,"expected_version":1}), &photo()))
+            .unwrap();
+        let job = s
+            .transaction(|| {
+                s.recognition_action(
+                    "start",
+                    &json!({"receipt_id":rid,"expected_version":2,"zone":"UTC"}),
+                )
+            })
+            .unwrap();
+        let jid = job["job_id"].as_str().unwrap();
+        let mut candidate = s.load(rid).unwrap();
+        candidate["store"] = json!("Archived recognized store");
+        s.exec("UPDATE recognition_job SET status='succeeded',result_json=?,error_code='stale_input' WHERE job_id=?", &[json!(json!({"receipt":candidate}).to_string()),json!(jid)]).unwrap();
+        let mut edited = s.load(rid).unwrap();
+        edited["store"] = json!("Edited store");
+        edited["receiptTypeId"] = json!("10000000-0000-4000-8000-000000000003");
+        s.transaction(|| s.save(edited, action == "posted"))
+            .unwrap();
+        if action == "newer job" {
+            s.transaction(|| {
+                s.recognition_action(
+                    "start",
+                    &json!({"receipt_id":rid,"expected_version":3,"zone":"UTC"}),
+                )
+            })
+            .unwrap();
+            // The insertion order resolves jobs submitted within the same millisecond.
+            s.exec(
+                "UPDATE recognition_job SET created_at_utc_ms=1 WHERE receipt_id=?",
+                &[json!(rid)],
+            )
+            .unwrap();
+        } else if action == "deleted" {
+            s.exec(
+                "UPDATE receipt SET deleted_at_utc_ms=1 WHERE receipt_id=?",
+                &[json!(rid)],
+            )
+            .unwrap();
+        }
+        let before = s.load(rid).unwrap();
+        let applied = s.transaction(|| s.recognition_action("apply", &json!({"id":jid})));
+        if action == "draft edit" {
+            let saved = applied.unwrap();
+            assert_eq!(saved["store"], "Archived recognized store");
+            assert_eq!(saved["createdAt"], before["createdAt"]);
+            assert_eq!(saved["revision"], before["revision"].as_i64().unwrap() + 1);
+            let result = s.recognition_action("get", &json!({"id":jid})).unwrap();
+            assert_eq!(result["status"], "applied");
+            assert!(result["error_code"].is_null());
+        } else {
+            assert!(applied.is_err(), "{action}");
+            assert_eq!(s.load(rid).unwrap(), before);
+        }
+    }
 }
 
 #[test]
@@ -1205,6 +1398,82 @@ fn logo_samples_match_only_confirmed_images_and_survive_receipt_deletion() {
 }
 
 #[test]
+fn explicit_header_identity_obeys_welcome_restaurant_and_logo_precedence() {
+    use receipt_backend_api::logos::header_store;
+    for (evidence, name, source, restaurant) in [
+        (
+            json!({"welcome_text":"WELCOME TO McDonald's"}),
+            "McDonald's",
+            "welcome_header",
+            false,
+        ),
+        (
+            json!({"welcome_text":"  Welcome\n to : Dunkin'  "}),
+            "Dunkin'",
+            "welcome_header",
+            false,
+        ),
+        (
+            json!({"restaurant_text":"McDonald's Restaurant #32967"}),
+            "McDonald's",
+            "restaurant_header",
+            true,
+        ),
+        (
+            json!({"restaurant_text":"  麦当劳 restaurant 7458  "}),
+            "麦当劳",
+            "restaurant_header",
+            true,
+        ),
+        (
+            json!({"welcome_text":"Welcome to McDonald's Restaurant #7458"}),
+            "McDonald's",
+            "welcome_header",
+            true,
+        ),
+        (
+            json!({"welcome_text":"Welcome to McDonald's","restaurant_text":"McDonald’s Restaurant #7458"}),
+            "McDonald's",
+            "welcome_header",
+            true,
+        ),
+        (
+            json!({"welcome_text":"Welcome to Dunkin'","restaurant_text":"Other Restaurant"}),
+            "Dunkin'",
+            "welcome_header",
+            false,
+        ),
+        (
+            json!({"welcome_text":"McDonald's","restaurant_text":"Hualian Restaurant"}),
+            "Hualian",
+            "restaurant_header",
+            true,
+        ),
+    ] {
+        let identity = header_store(&evidence).unwrap();
+        assert_eq!(identity.name, name);
+        assert_eq!(identity.source, source);
+        assert_eq!(identity.is_restaurant, restaurant);
+    }
+    for evidence in [
+        json!({}),
+        json!({"welcome_text":null,"restaurant_text":null}),
+        json!({"welcome_text":"McDonald's"}),
+        json!({"welcome_text":"Welcome to"}),
+        json!({"welcome_text":"Welcome to ---"}),
+        json!({"welcome_text":"Visit welcome to Costco"}),
+        json!({"welcome_text":"Welcome to Costco\n123 Main Street"}),
+        json!({"restaurant_text":"Restaurant Depot"}),
+        json!({"restaurant_text":"Restaurant"}),
+        json!({"restaurant_text":"McDonald's Restaurant sandwich"}),
+        json!({"welcome_text":true}),
+        json!({"restaurant_text":"A".repeat(161)+" Restaurant"}),
+    ] {
+        assert!(header_store(&evidence).is_none(), "{evidence}");
+    }
+}
+
+#[test]
 fn logo_reference_ids_are_strict_and_unknown_is_explicit() {
     use receipt_backend_api::logos::matched_reference;
     let refs = vec![json!({"logo_id":"trusted","name":"Target"})];
@@ -1331,8 +1600,8 @@ fn current_schema_initializes_once_and_rejects_old_versions_without_upgrade() {
 }
 
 #[test]
-fn running_ocr_merges_header_edits_but_protects_lines_currency_and_photos() {
-    for edit in ["header", "lines", "currency", "photo"] {
+fn latest_ocr_applies_without_comparing_submission_snapshot() {
+    for edit in ["header", "lines", "currency", "photo", "receipt type"] {
         let (_dir, s) = setup();
         let mut initial = receipt();
         initial["lines"] = json!([]);
@@ -1369,6 +1638,9 @@ fn running_ocr_merges_header_edits_but_protects_lines_currency_and_photos() {
             "currency" => {
                 current["currency"] = json!("CAD");
             }
+            "receipt type" => {
+                current["receiptTypeId"] = json!("10000000-0000-4000-8000-000000000003");
+            }
             "photo" => {}
             _ => unreachable!(),
         }
@@ -1385,18 +1657,19 @@ fn running_ocr_merges_header_edits_but_protects_lines_currency_and_photos() {
             .recognition_action("get", &json!({"id":job["job_id"]}))
             .unwrap();
         let saved = s.load(rid).unwrap();
-        if edit == "header" {
-            assert_eq!(result["status"], "applied");
-            assert_eq!(saved["store"], "My logo alias");
-            assert_eq!(saved["occurredAt"], edited["occurredAt"]);
-            assert_eq!(saved["branch"], "Detected branch");
-            assert_eq!(saved["lines"].as_array().unwrap().len(), 2);
-            // An editor still holding the pre-completion draft cannot erase the results.
-            assert!(s.transaction(|| s.save(edited, false)).is_err());
-        } else {
-            assert_eq!(result["error_code"], "stale_input");
-            assert_eq!(saved, edited);
-        }
+        assert_eq!(result["status"], "applied", "{edit}");
+        assert!(result["error_code"].is_null());
+        assert_eq!(saved["store"], "Model store");
+        assert_eq!(saved["branch"], "Detected branch");
+        assert_eq!(saved["lines"].as_array().unwrap().len(), 2);
+        assert_eq!(saved["currency"], "USD");
+        assert_eq!(saved["createdAt"], edited["createdAt"]);
+        assert_eq!(
+            saved["revision"].as_i64().unwrap(),
+            edited["revision"].as_i64().unwrap() + 1
+        );
+        // An editor still holding the pre-completion draft cannot erase the results.
+        assert!(s.transaction(|| s.save(edited, false)).is_err());
     }
 }
 
@@ -1466,7 +1739,7 @@ fn tax_codes_accept_up_to_three_characters_through_ocr_editing_and_storage() {
             "name":"MILK", "kind":"product", "amount":"9.50", "tax_code":code
         }]}));
         let decoded =
-            jobs::decode_receipt(&s, receipt(), data, vec![], "America/New_York").unwrap();
+            jobs::decode_receipt(&s, receipt(), data, vec![], "America/New_York", None).unwrap();
         assert_eq!(decoded["lines"][0]["taxCode"], code);
         let saved = s.transaction(|| s.save(decoded, false)).unwrap();
         assert_eq!(saved["lines"][0]["taxCode"], code);
@@ -1589,7 +1862,7 @@ fn expanded_logo_crop_keeps_confirmed_alias_but_disjoint_crop_does_not() {
 }
 
 #[test]
-fn early_logo_store_save_preserves_edits_and_rejects_stale_jobs() {
+fn early_logo_store_save_uses_latest_active_job_without_snapshot_comparison() {
     for edit in [
         "none",
         "existing",
@@ -1663,10 +1936,10 @@ fn early_logo_store_save_preserves_edits_and_rejects_stale_jobs() {
                 .unwrap_or_else(|e| panic!("{edit}: {e:?}"));
         }
         let before = s.load(rid).unwrap();
-        s.transaction(|| s.persist_recognition_store(jid, "Costco"))
+        s.transaction(|| s.persist_recognition_store(jid, "Costco", None))
             .unwrap();
         let after = s.load(rid).unwrap();
-        if ["none", "header", "existing"].contains(&edit) {
+        if ["none", "header", "existing", "store", "lines", "photo"].contains(&edit) {
             assert_eq!(after["store"], "Costco");
             for field in ["branch", "occurredAt", "lines", "totalMinor"] {
                 assert_eq!(after[field], before[field]);
@@ -1675,7 +1948,7 @@ fn early_logo_store_save_preserves_edits_and_rejects_stale_jobs() {
                 after["revision"].as_i64().unwrap(),
                 before["revision"].as_i64().unwrap() + 1
             );
-            s.transaction(|| s.persist_recognition_store(jid, "Costco"))
+            s.transaction(|| s.persist_recognition_store(jid, "Costco", None))
                 .unwrap();
             assert_eq!(s.load(rid).unwrap(), after);
             assert!(s.transaction(|| s.save(before, false)).is_err());
@@ -1737,7 +2010,7 @@ fn decode_fixture(
     zone: &str,
 ) -> db::Result<Value> {
     assert_eq!(parts.len(), 1);
-    jobs::decode_receipt(s, r, vision_fixture(parts[0].clone()), images, zone)
+    jobs::decode_receipt(s, r, vision_fixture(parts[0].clone()), images, zone, None)
 }
 fn vision_fixture(mut data: Value) -> Value {
     let schema: Value = serde_json::from_str(include_str!("receipt_schema.json")).unwrap();
@@ -1782,7 +2055,8 @@ fn counted_product_prefix_and_seven_digit_sku_keep_printed_names_and_amounts() {
             "quantity":quantity, "quantity_unit":if quantity.is_null() { Value::Null } else { json!("ea") },
             "sku":sku, "tax_code":"F"
         }]}));
-        let decoded = jobs::decode_receipt(&s, base, data, vec![], "America/New_York").unwrap();
+        let decoded =
+            jobs::decode_receipt(&s, base, data, vec![], "America/New_York", None).unwrap();
         let saved = s.transaction(|| s.save(decoded, false)).unwrap();
         let line = &saved["lines"][0];
         assert_eq!(line["rawName"], "CHIVE FLOWER");
@@ -1815,6 +2089,7 @@ fn vision_contract_keeps_explicit_fields_duplicates_and_cross_photo_evidence() {
         data.clone(),
         vec!["first".into(), "second".into()],
         "America/New_York",
+        None,
     )
     .unwrap();
     assert_eq!(r["lines"].as_array().unwrap().len(), 3);
@@ -2208,7 +2483,7 @@ fn recognized_printed_name_reuses_saved_product_name_before_ocr_suggestion() {
     let mut original = receipt();
     original["lines"][0]["productNameEdit"] = json!("大米");
     let saved = save(&s, original);
-    let recognized = jobs::decode_receipt(&s, saved, vision_fixture(json!({"lines":[{"name":"RICE","product_name":"OCR alternative","kind":"product","amount":"10.00"}]})),vec!["image".into()],"UTC").unwrap();
+    let recognized = jobs::decode_receipt(&s, saved, vision_fixture(json!({"lines":[{"name":"RICE","product_name":"OCR alternative","kind":"product","amount":"10.00"}]})),vec!["image".into()],"UTC", None).unwrap();
     assert_eq!(recognized["lines"][0]["rawName"], "RICE");
     assert_eq!(recognized["lines"][0]["productNameEdit"], "大米");
 }
@@ -3313,7 +3588,7 @@ fn recognition_uses_merchant_receipt_type_and_type_totals_include_receipt_reconc
     let (_dir, s) = setup();
     let mut r = receipt();
     r["store"] = json!("Costco");
-    let decoded=jobs::decode_receipt(&s,r,vision_fixture(json!({"local_time":"2026-05-28 12:00","total":"11.00","lines":[{"name":"WATER","kind":"product","amount":"10.00"}]})),vec!["image".into()],"UTC").unwrap();
+    let decoded=jobs::decode_receipt(&s,r,vision_fixture(json!({"local_time":"2026-05-28 12:00","total":"11.00","lines":[{"name":"WATER","kind":"product","amount":"10.00"}]})),vec!["image".into()],"UTC", None).unwrap();
     assert_eq!(decoded["receiptTypeId"], db::GROCERY_RECEIPT_TYPE);
     assert_eq!(
         decoded["lines"][0]["receiptTypeId"],

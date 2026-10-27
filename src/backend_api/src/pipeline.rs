@@ -454,7 +454,7 @@ pub fn aggregate_usage(runs: &[Value]) -> Value {
     Value::Object(usage)
 }
 
-/// Localize only the top store wordmark/logo; identity remains the image alias match.
+/// Read an explicit header greeting and localize the wordmark for fallback matching.
 pub async fn locate_logo(state: Arc<State>, image: String) -> Result<Value, AppError> {
     let (image, header_height) =
         tokio::task::spawn_blocking(move || crate::logos::localization_input(&image))
@@ -485,5 +485,7 @@ pub async fn locate_logo(state: Arc<State>, image: String) -> Result<Value, AppE
             b[3].as_f64().unwrap() / 1000.0 * header_height
         ]);
     }
-    Ok(json!({"evidence":data,"usage":raw["usage"],"model_response":raw}))
+    Ok(
+        json!({"store_identity":crate::logos::header_store(&data),"evidence":data,"usage":raw["usage"],"model_response":raw}),
+    )
 }

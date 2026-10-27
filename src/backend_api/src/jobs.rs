@@ -12,9 +12,13 @@ use std::{
 };
 use tracing::Instrument;
 impl Store {
-    /// Persist a matched image alias before item inference, using the job snapshot
-    /// to reject stale photos and protect edits made while recognition was running.
-    pub fn persist_recognition_store(&self, job_id: &str, name: &str) -> Result<()> {
+    /// Persist the matched store for the latest active recognition task.
+    pub fn persist_recognition_store(
+        &self,
+        job_id: &str,
+        name: &str,
+        receipt_type: Option<&str>,
+    ) -> Result<()> {
         if name.trim().is_empty() {
             return Ok(());
         }
@@ -25,28 +29,29 @@ impl Store {
         let Some(job) = jobs.first().filter(|j| j["status"] == "running") else {
             return Ok(());
         };
-        let receipts = self.rows(
-            "SELECT deleted_at_utc_ms FROM receipt WHERE receipt_id=?",
-            &[job["receipt_id"].clone()],
-        )?;
-        if receipts
-            .first()
-            .is_none_or(|r| !r["deleted_at_utc_ms"].is_null())
-        {
+        let Some(mut current) = self.recognition_target(job)? else {
             return Ok(());
-        }
-        let mut current = self.load(text(job, "receipt_id")?)?;
-        let settings: Value =
-            serde_json::from_str(text(job, "result_json")?).map_err(db::io_error)?;
-        if current["store"] != settings["source"]["store"]
-            || self
-                .merge_recognition_edits(job, &current, &current)?
-                .is_none()
+        };
+        if current["store"] == name
+            && receipt_type.is_none_or(|kind| current["receiptTypeId"] == kind)
         {
+            if let Some(kind) = receipt_type {
+                self.classify_recognized_store(name, kind)?;
+            }
             return Ok(());
         }
         current["store"] = json!(name);
+        if let Some(kind) = receipt_type {
+            self.validate_receipt_type(kind)?;
+            current["receiptTypeId"] = json!(kind);
+            for line in current["lines"].as_array_mut().ok_or_else(invalid)? {
+                line["receiptTypeId"] = json!(kind);
+            }
+        }
         self.save(current, false)?;
+        if let Some(kind) = receipt_type {
+            self.classify_recognized_store(name, kind)?;
+        }
         Ok(())
     }
 
@@ -60,26 +65,16 @@ impl Store {
         };
         match result {
             Ok(candidate) => {
-                let mut status = "succeeded";
-                let mut error: Option<&str> = None;
-                let current = self.load(text(job, "receipt_id")?)?;
-                let same_version = current["revision"] == job["receipt_version"];
-                let merged = if same_version {
-                    Some(candidate.clone())
-                } else {
-                    self.merge_recognition_edits(job, &current, &candidate)?
+                let Some(current) = self.recognition_target(job)? else {
+                    self.exec("UPDATE recognition_job SET status='cancelled',finished_at_utc_ms=? WHERE job_id=?", &[json!(now()),json!(job_id)])?;
+                    return Ok(());
                 };
-                if current["posted"] != true {
-                    if let Some(merged) = merged {
-                        self.save(merged, false)?;
-                        status = "applied";
-                    } else {
-                        error = Some("stale_input");
-                    }
-                } else if !same_version {
-                    error = Some("stale_input");
+                let mut applied = candidate.clone();
+                for key in ["id", "revision", "createdAt"] {
+                    applied[key] = current[key].clone();
                 }
-                self.exec("UPDATE recognition_job SET status=?,result_json=?,error_code=?,finished_at_utc_ms=? WHERE job_id=?",&[json!(status),json!(json!({"receipt":candidate}).to_string()),json!(error),json!(now()),json!(job_id)])?;
+                self.save(applied, false)?;
+                self.exec("UPDATE recognition_job SET status='applied',result_json=?,error_code=NULL,finished_at_utc_ms=? WHERE job_id=?", &[json!(json!({"receipt":candidate}).to_string()),json!(now()),json!(job_id)])?;
             }
             Err(error) => {
                 self.exec("UPDATE recognition_job SET status='failed',error_code=?,finished_at_utc_ms=? WHERE job_id=?",&[json!(error.code),json!(now()),json!(job_id)])?;
@@ -87,50 +82,16 @@ impl Store {
         }
         Ok(())
     }
-    // Three-way merge against the draft captured when the job was submitted.
-    // Header edits are independent of OCR; edits to lines, currency or photos are not.
-    fn merge_recognition_edits(
-        &self,
-        job: &Value,
-        current: &Value,
-        candidate: &Value,
-    ) -> Result<Option<Value>> {
-        let settings: Value =
-            serde_json::from_str(text(job, "result_json")?).map_err(db::io_error)?;
-        let base = &settings["source"];
-        if !base.is_object()
-            || current["posted"] == true
-            || ["lines", "country", "currency", "receiptTypeId"]
-                .iter()
-                .any(|key| current[key] != base[key])
-        {
-            return Ok(None);
-        }
-        let images = self.rows("SELECT (SELECT revision_id FROM image_revision r WHERE r.image_id=i.image_id ORDER BY created_at_utc_ms DESC,rowid DESC LIMIT 1) AS revision_id FROM receipt_image i WHERE receipt_id=? AND deleted_at_utc_ms IS NULL ORDER BY position", &[job["receipt_id"].clone()])?;
-        let captured = self.rows(
-            "SELECT revision_id FROM job_image WHERE job_id=? ORDER BY position",
-            &[job["job_id"].clone()],
+    // An explicit restart supersedes older work. Draft edits do not invalidate results.
+    fn recognition_target(&self, job: &Value) -> Result<Option<Value>> {
+        let eligible = self.rows(
+            "SELECT receipt_id FROM receipt WHERE receipt_id=? AND deleted_at_utc_ms IS NULL AND status='draft' AND ?=(SELECT job_id FROM recognition_job WHERE receipt_id=? ORDER BY created_at_utc_ms DESC,rowid DESC LIMIT 1)",
+            &[job["receipt_id"].clone(),job["job_id"].clone(),job["receipt_id"].clone()],
         )?;
-        if images != captured {
+        if eligible.is_empty() {
             return Ok(None);
         }
-        let mut merged = candidate.clone();
-        for group in [
-            &["store"][..],
-            &["branch"][..],
-            &["address"][..],
-            &["timeSource", "rawTime", "occurredAt"][..],
-            &["totalSource", "totalMinor"][..],
-        ] {
-            if group.iter().any(|key| current[key] != base[key]) {
-                for key in group {
-                    merged[key] = current[key].clone();
-                }
-            }
-        }
-        merged["revision"] = current["revision"].clone();
-        merged["createdAt"] = current["createdAt"].clone();
-        Ok(Some(merged))
+        self.load(text(job, "receipt_id")?).map(Some)
     }
     pub fn recognition_action(&self, op: &str, v: &Value) -> Result<Value> {
         match op {
@@ -147,10 +108,6 @@ impl Store {
                 if images.is_empty() {
                     return Err(invalid());
                 }
-                let existing = self.rows("SELECT job_id,status FROM recognition_job WHERE receipt_id=? AND receipt_version=? AND status IN ('queued','running') ORDER BY created_at_utc_ms LIMIT 1", &[json!(receipt),json!(version)])?;
-                if let Some(job) = existing.first() {
-                    return Ok(job.clone());
-                }
                 // Reopening and enqueueing share the API transaction; failed submissions
                 // never remove a confirmed receipt from reports.
                 let version = if row["status"] == "posted" {
@@ -164,6 +121,7 @@ impl Store {
                 } else {
                     version
                 };
+                self.exec("UPDATE recognition_job SET status='cancelled',finished_at_utc_ms=? WHERE receipt_id=? AND status IN ('queued','running')", &[json!(now()),json!(receipt)])?;
                 let job = id();
                 self.exec("INSERT INTO recognition_job(job_id,receipt_id,receipt_version,status,created_at_utc_ms,result_json) VALUES (?,?,?,'queued',?,?)",&[json!(job),json!(receipt),json!(version),json!(now()),json!(json!({"zone":zone,"source":self.load(receipt)?}).to_string())])?;
                 for (i, img) in images.iter().enumerate() {
@@ -207,22 +165,18 @@ impl Store {
                 if job["status"] != "succeeded" {
                     return Err(conflict());
                 }
-                let receipt = text(&job, "receipt_id")?;
-                self.check_version(receipt, number(&job, "receipt_version")?)?;
-                let candidate: Value =
+                let current = self.recognition_target(&job)?.ok_or_else(conflict)?;
+                let result: Value =
                     serde_json::from_str(text(&job, "result_json")?).map_err(db::io_error)?;
-                let current = self.load(receipt)?;
-                let saved = if current["posted"] == true {
-                    candidate["receipt"].clone()
-                } else {
-                    self.save(candidate["receipt"].clone(), false)?
-                };
-                if current["posted"] != true {
-                    self.exec(
-                        "UPDATE recognition_job SET status='applied' WHERE job_id=?",
-                        &[v["id"].clone()],
-                    )?;
+                let mut candidate = result["receipt"].clone();
+                for key in ["id", "revision", "createdAt"] {
+                    candidate[key] = current[key].clone();
                 }
+                let saved = self.save(candidate, false)?;
+                self.exec(
+                    "UPDATE recognition_job SET status='applied',error_code=NULL WHERE job_id=?",
+                    &[v["id"].clone()],
+                )?;
                 Ok(saved)
             }
             _ => Err(missing()),
@@ -330,8 +284,9 @@ async fn process(state: Arc<State>, job: Value) -> Result<Value> {
     let mut source = settings.get("source").cloned().unwrap_or(current);
     let mut image_ids = Vec::new();
     let mut logo_run = None;
-    // Parsing uses only this run's matched identity, never a previous display name.
+    // Parsing uses only this run's header or matched identity, never a previous display name.
     let mut known_store: Option<String> = None;
+    let mut header_identity = None;
     let mut content = Vec::new();
     for (index, img) in images.iter().enumerate() {
         let path = db::media::safe_path(&state.data_dir, text(img, "relative_path")?)?;
@@ -344,6 +299,10 @@ async fn process(state: Arc<State>, job: Value) -> Result<Value> {
         if index == 0 {
             let result = async {
                 let layout = pipeline::locate_logo(state.clone(), image.clone()).await?;
+                header_identity = crate::logos::header_store(&layout["evidence"]);
+                known_store = header_identity
+                    .as_ref()
+                    .map(|identity| identity.name.clone());
                 let evidence = layout["evidence"].to_string();
                 logo_run = Some(layout);
                 crate::logos::capture(state.clone(), img.clone(), bytes, evidence).await
@@ -355,9 +314,9 @@ async fn process(state: Arc<State>, job: Value) -> Result<Value> {
                     "logo extraction unavailable; retaining confirmed store"
                 );
             }
-            {
-                // Re-recognition also revisits an existing draft name. Only edits made
-                // after submission are protected by the job snapshot merge.
+            let mut reference_match = None;
+            if known_store.is_none() {
+                // Re-recognition also revisits an existing draft name.
                 let matched = crate::logos::match_receipt(
                     state.clone(),
                     text(&job, "receipt_id")?.to_owned(),
@@ -371,13 +330,29 @@ async fn process(state: Arc<State>, job: Value) -> Result<Value> {
                     logo["matching"] = matched.clone();
                 }
                 known_store = matched["selected"].as_str().map(str::to_owned);
-                let name = known_store.as_deref().unwrap_or("").to_owned();
-                if !name.is_empty() {
-                    source["store"] = json!(name);
-                }
-                let jid = job_id.clone();
-                database(&state, move |s| {
-                    s.transaction(|| {
+                reference_match = Some(matched);
+            }
+            let identity_source = header_identity
+                .as_ref()
+                .map(|identity| identity.source)
+                .unwrap_or("logo_alias");
+            let receipt_type = header_identity
+                .as_ref()
+                .filter(|identity| identity.is_restaurant)
+                .map(|_| db::RESTAURANT_RECEIPT_TYPE);
+            if let Some(logo) = logo_run.as_mut() {
+                logo["identity"] = json!({"source":identity_source,"store":known_store,"receipt_type":receipt_type});
+            }
+            tracing::info!(job_id=%job_id, receipt_id=%job["receipt_id"], source=identity_source,
+                identified=known_store.is_some(), "receipt store identification completed");
+            let name = known_store.clone().unwrap_or_default();
+            if !name.is_empty() {
+                source["store"] = json!(name);
+            }
+            let jid = job_id.clone();
+            database(&state, move |s| {
+                s.transaction(|| {
+                    if let Some(matched) = reference_match {
                         let receipt = text(&matched, "receipt_id")?;
                         let current = s.logo_match_inputs(receipt)?;
                         if crate::logos::matching_fingerprint(&current)
@@ -385,11 +360,11 @@ async fn process(state: Arc<State>, job: Value) -> Result<Value> {
                         {
                             return Err(db::conflict());
                         }
-                        s.persist_recognition_store(&jid, &name)
-                    })
+                    }
+                    s.persist_recognition_store(&jid, &name, receipt_type)
                 })
-                .await?;
-            }
+            })
+            .await?;
         }
         content.push(json!({"type":"image_url","image_url":{"url":image}}));
         image_ids.push(text(img, "image_id")?.to_owned());
@@ -407,8 +382,16 @@ async fn process(state: Arc<State>, job: Value) -> Result<Value> {
         return Err(conflict());
     }
     let merchant = known_store.clone().unwrap_or_default();
+    let header_receipt_type = header_identity
+        .as_ref()
+        .filter(|identity| identity.is_restaurant)
+        .map(|_| db::RESTAURANT_RECEIPT_TYPE);
     let receipt_type = database(&state, move |s| {
-        s.receipt_type_label(&s.store_receipt_type(&merchant)?)
+        let kind = match header_receipt_type {
+            Some(kind) => kind.to_owned(),
+            None => s.store_receipt_type(&merchant)?,
+        };
+        s.receipt_type_label(&kind)
     })
     .await?;
     content.insert(0,json!({"type":"text","text":format!("{} {}",state.prompts.receipt.trusted_context_prefix,json!({"known_store":known_store,"receipt_type":receipt_type,"country":source["country"],"currency":source["currency"]}))}));
@@ -460,7 +443,7 @@ async fn process(state: Arc<State>, job: Value) -> Result<Value> {
     };
     let zone = text(&settings, "zone")?.to_owned();
     database(&state, move |s| {
-        decode_receipt(s, source, result, image_ids, &zone)
+        decode_receipt(s, source, result, image_ids, &zone, header_receipt_type)
     })
     .await
 }
@@ -542,10 +525,16 @@ pub fn decode_receipt(
     data: Value,
     image_ids: Vec<String>,
     zone: &str,
+    receipt_type: Option<&str>,
 ) -> Result<Value> {
     let tz = chrono_tz::Tz::from_str(zone).map_err(|_| invalid())?;
     r["recognizedStore"] = json!("");
-    r["receiptTypeId"] = json!(store.store_receipt_type(r["store"].as_str().unwrap_or(""))?);
+    r["receiptTypeId"] = json!(if let Some(kind) = receipt_type {
+        store.validate_receipt_type(kind)?;
+        kind.to_owned()
+    } else {
+        store.store_receipt_type(r["store"].as_str().unwrap_or(""))?
+    });
     let mut all;
     pipeline::validate_receipt(&data, image_ids.len())?;
     {

@@ -5,6 +5,12 @@ if (( $# > 1 )) || [[ ${1:-} != "" && ${1:-} != --prepare-only ]]; then
   echo 'Usage: ./build_android.sh [--prepare-only]' >&2
   exit 2
 fi
+source "$project_dir/docker/build_lifecycle.sh"
+if [[ ${1:-} == --prepare-only ]]; then
+  receipt_build_start prepare
+else
+  receipt_build_start android
+fi
 prepare_command=(python3)
 if [[ ${1:-} != --prepare-only ]]; then
   command -v docker >/dev/null || { echo 'Docker is required.' >&2; exit 1; }
@@ -56,10 +62,7 @@ PY
 if [[ ${1:-} == --prepare-only ]]; then
   exit 0
 fi
-# Serialize version allocation and publication across concurrent builds.
-mkdir -p "$project_dir/build"
-exec 9>"$project_dir/build/android-release.lock"
-flock 9
+# The shared lifecycle serializes preparation, version allocation and publication.
 signing_dir="$project_dir/build/android-signing"
 mkdir -p "$signing_dir" "$project_dir/build/mobile"
 chmod 700 "$signing_dir"
@@ -86,19 +89,26 @@ if [[ ! -f "$bootstrap_file" ]]; then
   exit 1
 fi
 bootstrap_file="$(realpath "$bootstrap_file")"
+receipt_target_inputs android build_android.sh build_ios.sh build_docker.sh src/shared src/android tests/shared tests/docker docker/android.Dockerfile docker/android.Dockerfile.dockerignore docker/android_release.py docker/apply_mobile_defaults.py docker/prepare_ios_defaults.py docker/validate_mobile_defaults.py docker/service-entrypoint.sh docker/shared_qwen.py src/backend_api/resources/localizations.json
 docker run --rm --user "$(id -u):$(id -g)" \
   --mount "type=bind,source=$project_dir,target=/workspace,readonly" \
   --mount "type=bind,source=$bootstrap_file,target=/defaults.json,readonly" \
   python:3.12-slim python /workspace/docker/validate_mobile_defaults.py /defaults.json
 bootstrap_hash="$(docker run --rm --mount "type=bind,source=$bootstrap_file,target=/defaults.json,readonly" \
   python:3.12-slim sha256sum /defaults.json)"
+receipt_key="$("${receipt_state[@]}" fingerprint "${receipt_inputs[@]}" --value "${bootstrap_hash%% *}" --value "${signing_hash%% *}")"
+receipt_target_probe build/mobile/receipt_master.apk build/mobile/receipt-master-arm64.apk build/mobile/receipt-master-x86_64.apk build/mobile/android-update.json build/mobile/updates playground/android-release-state.json
+if [[ "$receipt_reuse" == reusable ]]; then
+  echo 'Android inputs and final outputs are unchanged; reusing the release APKs.'
+  exit 0
+fi
 release_tool=(docker run --rm --user "$(id -u):$(id -g)" \
   --mount "type=bind,source=$project_dir,target=$project_dir" \
   --mount "type=bind,source=$bootstrap_file,target=/bootstrap.json,readonly" \
   python:3.12-slim python "$project_dir/docker/android_release.py")
 build_number="$("${release_tool[@]}" choose --root "$project_dir" --bootstrap /bootstrap.json --signer "$signing_dir/debug.keystore")"
 for attempt in 1 2; do
-  docker buildx build --platform linux/amd64 --target artifacts \
+  receipt_docker_build --platform linux/amd64 --target artifacts \
     --secret "id=android_debug_key,src=$signing_dir/debug.keystore" \
     --secret "id=mobile_defaults,src=$bootstrap_file" \
     --build-arg "MOBILE_CONFIG_FINGERPRINT=${bootstrap_hash%% *}" \
@@ -108,6 +118,7 @@ for attempt in 1 2; do
     --file "$project_dir/docker/android.Dockerfile" "$project_dir"
   result="$("${release_tool[@]}" publish --root "$project_dir")"
   if [[ "$result" == published ]]; then
+    receipt_target_record
     echo "Android build $build_number published: $project_dir/build/mobile"
     exit 0
   fi

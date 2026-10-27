@@ -18,6 +18,10 @@ class BuildDockerTest(unittest.TestCase):
         self.bin = self.root / 'bin'
         self.bin.mkdir()
         shutil.copyfile(Path(__file__).parents[2] / 'build_docker.sh', self.root / 'build_docker.sh')
+        (self.root / 'docker').mkdir()
+        shutil.copyfile(
+            Path(__file__).parents[2] / 'docker/build_lifecycle.sh', self.root / 'docker/build_lifecycle.sh'
+        )
         stub = '#!' + shutil.which('python3') + '''
 import json, os, sys
 from pathlib import Path
@@ -30,8 +34,9 @@ failure = os.environ.get('BUILD_TEST_FAILURE', '')
 if (failure == 'android' and name == 'build_android.sh'
     or failure == 'checks' and name == 'docker' and '--target' in args and 'checks' in args
     or failure == 'api_build' and name == 'docker' and '--load' in args and any(a.startswith('receipt-master-backend-api:') for a in args)
-    or failure == 'smoke' and name == 'fake-python' and any(a.endswith('http_smoke.py') for a in args)
+    or failure == 'smoke' and name == 'fake-python' and args[0].endswith('http_smoke.py')
     or failure == 'push' and name == 'docker' and args[:2] == ['image', 'push']
+    or failure == 'cleanup' and name == 'docker' and args[:2] == ['buildx', 'rm']
     or failure == 'latest_push' and name == 'docker' and args[:2] == ['image', 'push'] and args[-1].endswith(':latest')):
     sys.exit(37)
 if name == 'docker' and args[:2] == ['image', 'inspect']:
@@ -57,6 +62,8 @@ elif name == 'date':
 
     def run_build(self, *args, failure=''):
         env = dict(os.environ, PATH=str(self.bin) + os.pathsep + os.environ['PATH'])
+        for name in ['RECEIPT_BUILD_WORK', 'RECEIPT_BUILD_BUILDER']:
+            env.pop(name, None)
         env.update(
             BUILD_TEST_LOG=str(self.log),
             BUILD_TEST_FAILURE=failure,
@@ -72,7 +79,7 @@ elif name == 'date':
         result, commands = self.run_build()
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertTrue(any(c[0] == 'build_android.sh' for c in commands))
-        smoke = next(c for c in commands if any(a.endswith('http_smoke.py') for a in c))
+        smoke = next(c for c in commands if c[0] == 'fake-python' and c[1].endswith('http_smoke.py'))
         self.assertEqual(smoke[smoke.index('--image') + 1], 'sha256:' + 'a' * 64)
         self.assertFalse(any(c[:3] == ['docker', 'image', 'push'] for c in commands))
         builds = [c for c in commands if c[:3] == ['docker', 'buildx', 'build'] and '--load' in c]
@@ -112,7 +119,9 @@ elif name == 'date':
                         for c, ref in zip(['ocr', 'api', 'ocr', 'api'], expected)
                     ],
                 )
-                smoke_index = next(i for i, c in enumerate(commands) if any(a.endswith('http_smoke.py') for a in c))
+                smoke_index = next(
+                    i for i, c in enumerate(commands) if c[0] == 'fake-python' and c[1].endswith('http_smoke.py')
+                )
                 self.assertTrue(all(commands.index(c) > smoke_index for c in pushes + tags))
                 self.assertFalse(any(c[:2] == ['docker', 'login'] for c in commands))
                 self.assertEqual(sum(c[0] == 'date' for c in commands), 1)
@@ -165,6 +174,21 @@ elif name == 'date':
             ],
         )
         self.assertNotIn('Published both backend images', result.stdout)
+
+    def test_cleanup_is_scoped_to_the_invocation_builder(self):
+        result, commands = self.run_build()
+        self.assertEqual(result.returncode, 0, result.stderr)
+        created = next(c for c in commands if c[:3] == ['docker', 'buildx', 'create'])
+        builder = created[created.index('--name') + 1]
+        builds = [c for c in commands if c[:3] == ['docker', 'buildx', 'build']]
+        self.assertTrue(all(c[c.index('--builder') + 1] == builder for c in builds))
+        self.assertEqual(commands[-2][:3], ['docker', 'buildx', 'rm'])
+        self.assertEqual(commands[-2][-1], builder)
+        self.assertTrue(any(a.endswith('build_cleanup.py') for a in commands[-1]))
+        self.assertFalse(any('prune' in c for c in commands))
+        result, _ = self.run_build(failure='cleanup')
+        self.assertEqual(result.returncode, 37)
+        self.assertIn('diagnostics retained', result.stderr)
 
     def test_help_performs_no_build(self):
         result, commands = self.run_build('--help')

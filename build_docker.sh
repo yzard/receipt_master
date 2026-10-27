@@ -48,6 +48,9 @@ elif [[ -n "$publish_namespace" ]]; then
   fail_usage '--username requires --publish.'
 fi
 project_dir="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
+source "$project_dir/docker/build_lifecycle.sh"
+receipt_build_start docker
+receipt_builder_start
 # Read once so long builds crossing midnight still have one shared release date.
 build_tag="$(date +%Y%m%d)"
 [[ "$build_tag" =~ ^[0-9]{8}$ ]] || fail_usage 'Unable to determine YYYYMMDD build date.'
@@ -66,10 +69,6 @@ fi
 python3 "$project_dir/docker/prepare_playground_config.py" --root "$project_dir"
 # Each backend image includes its own mandatory checks; neither build needs a GPU.
 "$project_dir/build_web.sh"
-for component in backend_ocr backend_api; do
-  docker buildx build --platform linux/amd64 --target checks \
-    --file "$project_dir/docker/$component.Dockerfile" "$project_dir"
-done
 # Provision the phone-accessible service origin before Android compilation.
 receipt_host=""
 if command -v ip >/dev/null 2>&1; then
@@ -87,15 +86,49 @@ docker compose --file "$project_dir/docker/docker-compose.yaml" config --format 
 RECEIPT_BOOTSTRAP_FILE="$project_dir/build/mobile-config/backend_defaults.json" "$project_dir/build_android.sh"
 # The API runtime image copies the published APK, manifest and immutable update
 # packages from build/mobile; Android must finish before the runtime image build.
-docker buildx build --platform linux/amd64 --load --tag "receipt-master-backend-ocr:$build_tag" \
-  --file "$project_dir/docker/backend_ocr.Dockerfile" "$project_dir"
-ocr_image_id="$(docker image inspect --format '{{.Id}}' "receipt-master-backend-ocr:$build_tag")"
-docker buildx build --platform linux/amd64 --load --tag "receipt-master-backend-api:$build_tag" \
-  --file "$project_dir/docker/backend_api.Dockerfile" "$project_dir"
-api_image_id="$(docker image inspect --format '{{.Id}}' "receipt-master-backend-api:$build_tag")"
+receipt_target_inputs ocr build_docker.sh docker/backend_ocr.Dockerfile docker/backend_ocr.Dockerfile.dockerignore docker/shared_qwen.py docker/service-entrypoint.sh docker/defaults/backend_ocr.toml src/backend_ocr tests/backend_ocr
+ocr_key="$receipt_key"
+receipt_target_probe
+ocr_image_id="$receipt_reuse"
+if [[ "$ocr_image_id" != sha256:* ]]; then
+  receipt_docker_build --platform linux/amd64 --target checks --file "$project_dir/docker/backend_ocr.Dockerfile" "$project_dir"
+  runtime_key="$(python3 "$project_dir/docker/build_state.py" runtime-key --root "$project_dir")"
+  runtime_context=""
+  if [[ ${RECEIPT_REFRESH_BUILD:-0} != 1 ]] && docker image inspect receipt-master-backend-ocr:latest >/dev/null 2>&1; then
+    runtime_context="$(python3 "$project_dir/docker/build_state.py" runtime --root "$project_dir" --work "$RECEIPT_BUILD_WORK" --image receipt-master-backend-ocr:latest --key "$runtime_key")"
+  fi
+  model_context="$(python3 "$project_dir/docker/shared_qwen.py" prepare --root "$project_dir" --builder "$RECEIPT_BUILD_BUILDER")"
+  runtime_args=()
+  if [[ -n "$runtime_context" ]]; then
+    runtime_args=(--build-context "$runtime_context")
+    echo 'Reusing OCR runtime dependencies from the final image.'
+  fi
+  receipt_docker_build --build-context "$model_context" "${runtime_args[@]}" --label "org.receipt.runtime=$runtime_key" --platform linux/amd64 --load --tag "receipt-master-backend-ocr:$build_tag" \
+    --file "$project_dir/docker/backend_ocr.Dockerfile" "$project_dir"
+  python3 "$project_dir/docker/shared_qwen.py" verify --root "$project_dir" --image "receipt-master-backend-ocr:$build_tag"
+  ocr_image_id="$(docker image inspect --format '{{.Id}}' "receipt-master-backend-ocr:$build_tag")"
+else
+  echo 'OCR inputs and image are unchanged; reusing the final image.'
+  docker image tag "$ocr_image_id" "receipt-master-backend-ocr:$build_tag"
+fi
+receipt_target_inputs api build_docker.sh docker/backend_api.Dockerfile docker/backend_api.Dockerfile.dockerignore docker/service-entrypoint.sh docker/defaults src/backend_api tests/backend_api tests/web/http_smoke.py build/web build/mobile/receipt_master.apk build/mobile/android-update.json build/mobile/updates
+api_key="$receipt_key"
+receipt_target_probe
+api_image_id="$receipt_reuse"
+if [[ "$api_image_id" != sha256:* ]]; then
+  receipt_docker_build --platform linux/amd64 --target checks --file "$project_dir/docker/backend_api.Dockerfile" "$project_dir"
+  receipt_docker_build --platform linux/amd64 --load --tag "receipt-master-backend-api:$build_tag" \
+    --file "$project_dir/docker/backend_api.Dockerfile" "$project_dir"
+  api_image_id="$(docker image inspect --format '{{.Id}}' "receipt-master-backend-api:$build_tag")"
+else
+  echo 'API inputs and image are unchanged; reusing the final image.'
+  docker image tag "$api_image_id" "receipt-master-backend-api:$build_tag"
+fi
 
 # Exercise the actual API/Web image with disposable accounts, never the playground volume.
 python3 "$project_dir/tests/web/http_smoke.py" --image "$api_image_id" --artifacts "$project_dir/build/mobile"
+python3 "$project_dir/docker/build_state.py" record --root "$project_dir" --target ocr --key "$ocr_key" --image "$ocr_image_id"
+python3 "$project_dir/docker/build_state.py" record --root "$project_dir" --target api --key "$api_key" --image "$api_image_id"
 
 # Only successful, verified builds advance latest. These are aliases, not new builds.
 docker image tag "$ocr_image_id" receipt-master-backend-ocr:latest

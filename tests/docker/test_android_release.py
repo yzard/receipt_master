@@ -24,6 +24,8 @@ class ReleaseTest(unittest.TestCase):
                 'docker/validate_mobile_defaults.py',
                 'docker/android_release.py',
                 'build_android.sh',
+                'docker/build_lifecycle.sh',
+                'docker/build_cleanup.py',
                 'bootstrap.json',
                 'key',
             ]:
@@ -126,7 +128,7 @@ class ReleaseTest(unittest.TestCase):
             self.assertFalse((staging / 'previous-build.apk').exists())
             self.assertFalse((root / 'build/mobile/previous-build.apk').exists())
             self.assertEqual((root / 'build/mobile/receipt_master.apk').read_bytes(), b'arm64-v8a release 10001')
-            self.assertEqual((root / 'build/mobile/receipt-master-debug.apk').read_bytes(), b'debug release 10001')
+            self.assertFalse((root / 'build/mobile/receipt-master-debug.apk').exists())
             # Removing an ABI also removes its last named and hash-addressed APKs.
             current_names = publish(10002, ['arm64-v8a'])
             self.assertEqual({p.name for p in updates.glob('*.apk')}, current_names)

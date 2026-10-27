@@ -7,6 +7,71 @@ use base64::Engine;
 use image::{GenericImageView, ImageDecoder};
 use serde_json::{Value, json};
 use std::{io::Cursor, sync::Arc};
+#[derive(Clone, Debug, PartialEq, serde::Serialize)]
+pub struct HeaderStore {
+    pub name: String,
+    pub source: &'static str,
+    pub is_restaurant: bool,
+}
+
+fn header_text(evidence: &Value, field: &str) -> Option<String> {
+    let text = evidence[field].as_str()?.trim();
+    (text.chars().count() <= 512).then(|| text.to_owned())
+}
+fn valid_store_name(name: &str) -> Option<String> {
+    let name = name.trim();
+    if name.chars().count() > 160
+        || !name.chars().any(char::is_alphanumeric)
+        || name.chars().any(char::is_control)
+    {
+        return None;
+    }
+    Some(name.to_owned())
+}
+fn restaurant_name(text: &str) -> Option<String> {
+    static RESTAURANT: std::sync::OnceLock<regex::Regex> = std::sync::OnceLock::new();
+    let pattern = RESTAURANT
+        .get_or_init(|| regex::Regex::new(r"(?i)\A(.+?)\s+restaurant(?:\s+#?\s*\d+)?\z").unwrap());
+    valid_store_name(&pattern.captures(text.trim())?[1])
+}
+/// Accept only explicit header text. A standalone model guess still needs an image alias.
+pub fn header_store(evidence: &Value) -> Option<HeaderStore> {
+    static GREETING: std::sync::OnceLock<regex::Regex> = std::sync::OnceLock::new();
+    let restaurant =
+        header_text(evidence, "restaurant_text").and_then(|text| restaurant_name(&text));
+    if let Some(text) = header_text(evidence, "welcome_text") {
+        let pattern = GREETING.get_or_init(|| {
+            regex::Regex::new(r"(?i)\Awelcome\s+to(?:\s*:\s*|\s+)([^\r\n]+)\z").unwrap()
+        });
+        if let Some(matched) = pattern.captures(&text) {
+            let qualified = restaurant_name(matched[1].trim());
+            if let Some(name) = qualified.clone().or_else(|| valid_store_name(&matched[1])) {
+                let key = |value: &str| {
+                    value
+                        .chars()
+                        .filter(|c| c.is_alphanumeric())
+                        .flat_map(char::to_lowercase)
+                        .collect::<String>()
+                };
+                let is_restaurant = qualified.is_some()
+                    || restaurant
+                        .as_ref()
+                        .is_some_and(|other| key(other) == key(&name));
+                return Some(HeaderStore {
+                    name,
+                    source: "welcome_header",
+                    is_restaurant,
+                });
+            }
+        }
+    }
+    restaurant.map(|name| HeaderStore {
+        name,
+        source: "restaurant_header",
+        is_restaurant: true,
+    })
+}
+
 /// Give the locator a focused, upright header; return its height in full-image coordinates.
 pub fn localization_input(data_url: &str) -> Result<(String, f64)> {
     let (_, encoded) = data_url.split_once(',').ok_or_else(invalid)?;

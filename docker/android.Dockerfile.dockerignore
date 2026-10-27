@@ -1,5 +1,8 @@
 **
 !build_docker.sh
+!build_ios.sh
+!build_android.sh
+!docker/prepare_ios_defaults.py
 !src/
 src/*
 !src/shared/
@@ -48,3 +51,9 @@ tests/backend_api/*
 !docker/service-entrypoint.sh
 !tests/docker/
 !tests/docker/**
+
+!docker/build_lifecycle.sh
+!docker/build_cleanup.py
+!docker/build_state.py
+!docker/backend_ocr.Dockerfile
+!docker/shared_qwen.py

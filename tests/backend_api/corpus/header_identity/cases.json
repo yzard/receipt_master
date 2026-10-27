@@ -1,0 +1,44 @@
+[
+  {
+    "receipt_id": "b123c3f3-5b55-4499-8e76-eb6626657f28",
+    "photo": "b123c3f3.jpg",
+    "sha256": "d86de8e0f164cb80fcbcadab41c702be30461ee6bfceb0d3b89462c71c3062ff",
+    "header": {
+      "welcome_text": null,
+      "restaurant_text": "McDonald's Restaurant #7458"
+    },
+    "expected": {
+      "name": "McDonald's",
+      "source": "restaurant_header",
+      "is_restaurant": true
+    }
+  },
+  {
+    "receipt_id": "7a1bc1d8-998f-4428-82be-018d9b0a4298",
+    "photo": "7a1bc1d8.jpg",
+    "sha256": "d86bc223b3f2c403099bba2d3d69605afaddf89e99982f60de0764e821c50d66",
+    "header": {
+      "welcome_text": null,
+      "restaurant_text": "McDonald's Restaurant #32967"
+    },
+    "expected": {
+      "name": "McDonald's",
+      "source": "restaurant_header",
+      "is_restaurant": true
+    }
+  },
+  {
+    "receipt_id": "90c796c4-c192-4ce3-95fd-254abbee49da",
+    "photo": "90c796c4.jpg",
+    "sha256": "caa27f40228bbe4c777c5ae70616d3568f3643bd99825b4e9e4290c698b01313",
+    "header": {
+      "welcome_text": "Welcome to Dunkin'",
+      "restaurant_text": null
+    },
+    "expected": {
+      "name": "Dunkin'",
+      "source": "welcome_header",
+      "is_restaurant": false
+    }
+  }
+]

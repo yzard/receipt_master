@@ -66,6 +66,7 @@ fn merge(input: Value) -> Value {
         input,
         vec!["corpus-photo".into()],
         "America/New_York",
+        None,
     )
     .unwrap()
 }
@@ -253,6 +254,7 @@ fn decode_confirmed(input: Value, case: &Value) -> db::Result<Value> {
             .map(|i| i["image_id"].as_str().unwrap().to_owned())
             .collect(),
         case["zone"].as_str().unwrap(),
+        None,
     )
 }
 #[test]
@@ -736,4 +738,26 @@ fn candidate_comparison_benchmark() {
         serde_json::to_vec_pretty(&json!({"engine":mode,"cases":results})).unwrap(),
     )
     .unwrap();
+}
+
+#[test]
+fn header_identity_corpus_preserves_real_receipts_and_expected_rule() {
+    let cases = read("header_identity/cases.json");
+    for case in cases.as_array().unwrap() {
+        let bytes = fs::read(
+            root()
+                .join("header_identity")
+                .join(case["photo"].as_str().unwrap()),
+        )
+        .unwrap();
+        assert_eq!(format!("{:x}", Sha256::digest(&bytes)), case["sha256"]);
+        let identity = receipt_backend_api::logos::header_store(&case["header"]).unwrap();
+        assert_eq!(serde_json::to_value(identity).unwrap(), case["expected"]);
+        let (_, height) = receipt_backend_api::logos::localization_input(&format!(
+            "data:image/jpeg;base64,{}",
+            base64::engine::general_purpose::STANDARD.encode(bytes)
+        ))
+        .unwrap();
+        assert!((0.30..0.31).contains(&height));
+    }
 }
