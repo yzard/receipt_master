@@ -1,3 +1,5 @@
+> 以下为先前部署/实现记录；独立 OCR、模型缓存和 BACKEND_OCR 环境变量已退役。现行配置与构建以 [shared_inference.md](shared_inference.md) 为准。
+
 > 当前采用 Qwen3.8 + NInfer + thinking，由 backend_api 组合通用和店铺提示并校验结构化结果；下文保留历史计划。现行设计见 [backend_ocr.md](backend_ocr.md)。
 
 # 第二版统一数据 API

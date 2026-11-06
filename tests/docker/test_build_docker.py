@@ -85,13 +85,12 @@ elif name == 'date':
         builds = [c for c in commands if c[:3] == ['docker', 'buildx', 'build'] and '--load' in c]
         self.assertEqual(
             [c[c.index('--tag') + 1] for c in builds],
-            ['receipt-master-backend-ocr:20260929', 'receipt-master-backend-api:20260929'],
+            ['receipt-master-backend-api:20260929'],
         )
         aliases = [c for c in commands if c[:3] == ['docker', 'image', 'tag']]
         self.assertEqual(
             [c[-2:] for c in aliases],
             [
-                ['sha256:' + 'b' * 64, 'receipt-master-backend-ocr:latest'],
                 ['sha256:' + 'a' * 64, 'receipt-master-backend-api:latest'],
             ],
         )
@@ -107,7 +106,7 @@ elif name == 'date':
                 expected = [
                     f'{host}/example-user/receipt-master-backend-{c}:{tag}'
                     for tag in ['20260929', 'latest']
-                    for c in ['ocr', 'api']
+                    for c in ['api']
                 ]
                 pushes = [c for c in commands if c[:3] == ['docker', 'image', 'push']]
                 self.assertEqual([c[-1] for c in pushes], expected)
@@ -116,7 +115,7 @@ elif name == 'date':
                     [c[-2:] for c in tags],
                     [
                         ['sha256:' + ('b' if c == 'ocr' else 'a') * 64, ref]
-                        for c, ref in zip(['ocr', 'api', 'ocr', 'api'], expected)
+                        for c, ref in zip(['api', 'api'], expected)
                     ],
                 )
                 smoke_index = next(
@@ -159,7 +158,7 @@ elif name == 'date':
         result, commands = self.run_build('--publish', 'dockerhub', '--username', 'tester', failure='push')
         self.assertEqual(result.returncode, 37, result.stderr)
         self.assertEqual(len([c for c in commands if c[:3] == ['docker', 'image', 'push']]), 1)
-        self.assertNotIn('Published both backend images', result.stdout)
+        self.assertNotIn('Published the backend API image', result.stdout)
 
     def test_latest_push_failure_does_not_claim_complete_publication(self):
         result, commands = self.run_build('--publish', 'github', '--username', 'tester', failure='latest_push')
@@ -168,12 +167,11 @@ elif name == 'date':
         self.assertEqual(
             pushes,
             [
-                'ghcr.io/tester/receipt-master-backend-ocr:20260929',
                 'ghcr.io/tester/receipt-master-backend-api:20260929',
-                'ghcr.io/tester/receipt-master-backend-ocr:latest',
+                'ghcr.io/tester/receipt-master-backend-api:latest',
             ],
         )
-        self.assertNotIn('Published both backend images', result.stdout)
+        self.assertNotIn('Published the backend API image', result.stdout)
 
     def test_cleanup_is_scoped_to_the_invocation_builder(self):
         result, commands = self.run_build()

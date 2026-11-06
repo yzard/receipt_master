@@ -47,10 +47,9 @@ COPY src/shared/lib/ ./lib/
 COPY src/shared/resources/ ./resources/
 COPY src/android/ ./android/
 COPY docker/apply_mobile_defaults.py /apply_mobile_defaults.py
-COPY docker/android_release.py docker/build_lifecycle.sh docker/build_cleanup.py docker/build_state.py docker/shared_qwen.py /workspace/docker/
+COPY docker/android_release.py docker/build_lifecycle.sh docker/build_cleanup.py docker/build_state.py /workspace/docker/
 COPY docker/validate_mobile_defaults.py /workspace/docker/validate_mobile_defaults.py
 COPY docker/prepare_ios_defaults.py /workspace/docker/prepare_ios_defaults.py
-COPY docker/backend_ocr.Dockerfile /workspace/docker/backend_ocr.Dockerfile
 COPY docker/service-entrypoint.sh /workspace/docker/service-entrypoint.sh
 COPY build_docker.sh build_ios.sh build_android.sh /workspace/
 COPY tests/docker/ /workspace/tests/docker/

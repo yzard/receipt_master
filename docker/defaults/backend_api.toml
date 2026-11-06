@@ -4,10 +4,21 @@ port = 8000
 jwt_secret = ""
 web_path = "/app/web"
 apk_path = "/artifacts/receipt_master.apk"
-timeout_seconds = 600
+# Includes shared-model cold loading, image upload, and generation.
+timeout_seconds = 1800
 job_workers = 1
 repair_attempts = 1
 
-[ocr]
-url = "http://backend_ocr:8000"
+# OpenAI-compatible base URL including /v1. Configure before starting the API.
+[inference]
+base_url = "http://host.docker.internal:8080/v1"
 api_key = ""
+model = "qwen3.8-flash-next-iq3_s"
+max_images = 16
+image_pixel_budget = 12582912
+receipt_output_tokens = 32768
+logo_output_tokens = 4096
+temperature = 0.0
+seed = 42
+# Optional extension; omit for servers without chat_template_kwargs support.
+thinking = true

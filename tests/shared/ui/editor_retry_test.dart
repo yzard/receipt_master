@@ -152,12 +152,22 @@ void main() {
       );
     });
   }
-  for (final width in [430.0, 600.0, 700.0, 1200.0]) {
-    testWidgets('receipt editor layout at $width logical pixels', (
+  for (final size in [
+    const Size(430, 900),
+    const Size(599, 900),
+    const Size(600, 900),
+    const Size(700, 900),
+    const Size(1200, 900),
+    const Size(1024, 1366),
+    const Size(1366, 1024),
+    const Size(744, 1133),
+  ]) {
+    final width = size.width;
+    testWidgets('receipt editor layout at $size logical pixels', (
       tester,
     ) async {
       tzdata.initializeTimeZones();
-      tester.view.physicalSize = Size(width, 900);
+      tester.view.physicalSize = size;
       tester.view.devicePixelRatio = 1;
       addTearDown(() {
         tester.view.resetPhysicalSize();
@@ -211,11 +221,36 @@ void main() {
       final photoPanel = find.byKey(const ValueKey('receipt-photo-panel'));
       final form = find.byKey(const ValueKey('receipt-edit-form'));
       final saveActions = find.byKey(const ValueKey('receipt-save-actions'));
+      if (width == 700) {
+        // Folding, iPad rotation and split-screen resizing preserve local edits.
+        await tester.enterText(
+          find.widgetWithText(TextField, '店名 / 连锁店'),
+          'Unsaved store',
+        );
+        tester.testTextInput.hide();
+        for (final viewport in [
+          const Size(430, 900),
+          const Size(1024, 1366),
+          const Size(1366, 1024),
+          size,
+        ]) {
+          tester.view.physicalSize = viewport;
+          await tester.pumpAndSettle();
+          expect(
+            photoPanel,
+            viewport.width < 600 ? findsNothing : findsOneWidget,
+          );
+          expect(find.text('Unsaved store'), findsOneWidget);
+          expect(saveActions, findsOneWidget);
+          expect(tester.takeException(), isNull);
+        }
+      }
+
       expect(saveActions, findsOneWidget);
       expect(find.text('放弃改动'), findsOneWidget);
       expect(find.text('保存草稿'), findsOneWidget);
       expect(find.text('录入并退出'), findsOneWidget);
-      expect(tester.getBottomRight(saveActions).dy, lessThan(900));
+      expect(tester.getBottomRight(saveActions).dy, lessThan(size.height));
       expect(tester.getSize(saveActions).width, lessThan(340));
       if (width < 600) {
         expect(photoPanel, findsNothing);

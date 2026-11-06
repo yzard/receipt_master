@@ -78,65 +78,23 @@ def prepare(root: Path) -> Path:
     api_data = root / 'playground/backend_api'
     ocr_data = root / 'playground/backend_ocr'
     api_data.mkdir(parents=True, exist_ok=True)
-    ocr_data.mkdir(parents=True, exist_ok=True)
-    move_legacy_layout(root, api_data, ocr_data)
-    move_nested_data(api_data)
-    move_nested_data(ocr_data)
+    # Legacy directories remain untouched: merging service configuration requires
+    # an operator-selected shared endpoint, never the obsolete internal OCR key.
+    if (root / 'playground/data').exists() or (api_data / 'data').exists():
+        raise ValueError('Stop the services and run --migrate-only before preparing configuration')
     defaults = root / 'docker/defaults'
-    for name, destination in (
-        ('backend_api.toml', api_data / 'config.toml'),
-        ('backend_ocr.toml', ocr_data / 'config.toml'),
-        ('prompt.toml', api_data / 'prompt.toml'),
-    ):
-        if not destination.exists():
-            shutil.copyfile(defaults / name, destination)
-
     api_path = api_data / 'config.toml'
-    ocr_path = ocr_data / 'config.toml'
+    if not api_path.exists():
+        api = tomllib.loads((defaults / 'backend_api.toml').read_text())
+        api['general']['jwt_secret'] = secrets.token_urlsafe(32)
+        write_sections(api_path, api)
     api = tomllib.loads(api_path.read_text())
-    ocr = tomllib.loads(ocr_path.read_text())
-    old_ocr = api['ocr']
-    old_keys = [api_data / 'api-key', root / 'playground/secrets/ocr-api-key']
-    ocr_key_file = api_data / 'ocr-api-key'
-    client_key = unique_key('JWT signing secret', [api['general'].get('jwt_secret', '')])
-    service_key = unique_key('OCR service API key',
-                             [old_ocr.get('api_key', ''), ocr['general'].get('api_key', '')] +
-                             ([ocr_key_file.read_text()] if ocr_key_file.exists() else []))
-    if client_key == service_key:
-        raise ValueError('Client and OCR service API keys must differ')
-
-    original_api, original_ocr = api_path.read_text(), ocr_path.read_text()
-    general = api['general']
-    general.pop('api_key_file', None)
-    general.pop('served_model', None)
-    general.pop('data_dir', None)
-    general.pop('api_key', None)
-    general['jwt_secret'] = client_key
-    general.setdefault('web_path', '/app/web')
-    general['repair_attempts'] = old_ocr.get('repair_attempts', general.get('repair_attempts', 1))
-    api['ocr'] = {'url': old_ocr['url'], 'api_key': service_key}
-    api.pop('logos', None)
-    api.pop('pricing', None)
-    api.pop('budget', None)
-
-    ocr['general'].pop('api_key_file', None)
-    ocr['general']['api_key'] = service_key
-    engine = ocr['engine']
-    engine['max_images'] = old_ocr.get('max_images', engine['max_images'])
-    engine['receipt_output_tokens'] = old_ocr.get('output_tokens', engine.get('receipt_output_tokens', 16384))
-    engine.setdefault('logo_output_tokens', 16384)
-    engine['thinking'] = old_ocr.get('thinking', engine.get('thinking', True))
-    engine.setdefault('temperature', 0)
-    engine.setdefault('seed', 42)
-
-    if tomllib.loads(original_api) != api:
-        write_sections(api_path, {name: api[name] for name in ('general', 'ocr')})
-    if tomllib.loads(original_ocr) != ocr:
-        write_sections(ocr_path, {name: ocr[name] for name in ('general', 'engine')})
+    if 'ocr' in api or 'inference' not in api:
+        raise ValueError('Migrate config.toml from [ocr] to [inference]; see docs/shared_inference.md. Existing data and credentials were not changed.')
+    prompt = api_data / 'prompt.toml'
+    if not prompt.exists():
+        shutil.copyfile(defaults / 'prompt.toml', prompt)
     api_path.chmod(0o600)
-    ocr_path.chmod(0o600)
-    for path in (*old_keys, ocr_key_file):
-        path.unlink(missing_ok=True)
     return api_path
 
 

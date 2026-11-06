@@ -21,6 +21,8 @@ void main() {
     (const Size(390, 844), const Locale('en'), Brightness.dark, 1.0, true),
     (const Size(320, 720), const Locale('en'), Brightness.light, 1.6, false),
     (const Size(840, 700), const Locale('zh'), Brightness.dark, 1.4, true),
+    (const Size(1024, 1366), const Locale('zh'), Brightness.light, 1.0, true),
+    (const Size(1366, 1024), const Locale('en'), Brightness.dark, 1.4, false),
   ]) {
     testWidgets(
       'settings account and preferences fit $size ${locale.languageCode} scale $scale admin $admin',

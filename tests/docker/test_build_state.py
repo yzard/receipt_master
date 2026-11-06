@@ -47,31 +47,3 @@ class BuildStateTest(unittest.TestCase):
                 with self.assertRaises(ValueError):
                     state.record(root, 'ocr', 'new', [], 'sha256:absent')
             self.assertEqual(json.loads((root / 'build/state/ocr.json').read_text())['fingerprint'], 'key')
-
-    def test_runtime_boundary_excludes_application_and_rejects_ambiguity(self):
-        history = [
-            {'created_by': 'CUDA'},
-            {'created_by': 'NInfer'},
-            {'created_by': 'ENV PATH=/opt/app/bin', 'empty_layer': True},
-            {'created_by': 'COPY /checks-passed /app/checks-passed # buildkit'},
-            {'created_by': 'COPY source'},
-        ]
-        selected, start, count = state.runtime_history({'history': history})
-        self.assertEqual((selected, start, count), (history[:3], 0, 2))
-        with self.assertRaises(ValueError):
-            state.runtime_history({'history': history + [history[3]]})
-
-    def test_runtime_dependency_or_model_edits_invalidate_reuse_but_checks_do_not(self):
-        with tempfile.TemporaryDirectory() as tmp:
-            root = Path(tmp)
-            (root / 'docker').mkdir()
-            target = root / 'docker/backend_ocr.Dockerfile'
-            source = (Path(__file__).parents[2] / 'docker/backend_ocr.Dockerfile').read_text()
-            target.write_text(source)
-            key = state.runtime_key(root)
-            target.write_text(source.replace('touch /checks-passed', 'touch /checks-passed /another-check'))
-            self.assertEqual(state.runtime_key(root), key)
-            target.write_text(source.replace('uvicorn==0.35.0', 'uvicorn==0.36.0'))
-            self.assertNotEqual(state.runtime_key(root), key)
-            target.write_text(source.replace('f0b43ad436b9fa8142c6ed6647c470a6fe409484', 'new-model'))
-            self.assertNotEqual(state.runtime_key(root), key)

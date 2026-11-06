@@ -134,38 +134,60 @@ fn differences(actual: &Value, expected: &Value) -> Vec<String> {
     }
     let mut used = vec![false; lines.len()];
     let mut matches = vec![None; wanted.len()];
+    let score = |a: &Value, e: &Value| {
+        let metadata_matches = [
+            ("weightMg", "weight_mg"),
+            ("quantityMicros", "quantity_micros"),
+            ("unitPriceScaled", "unit_price_scaled"),
+            ("sku", "sku"),
+            ("taxCode", "tax_code"),
+            ("quantityUnit", "quantity_unit"),
+        ]
+        .iter()
+        .all(|(src, dst)| e[*dst].is_null() || a[*src] == e[*dst]);
+        32 * i32::from(
+            metadata_matches
+                && name_ok(a["rawName"].as_str().unwrap_or(""), e)
+                && a["kind"] == e["kind"]
+                && a["amountMinor"] == e["amount_minor"],
+        ) + 8 * i32::from(name_ok(a["rawName"].as_str().unwrap_or(""), e))
+            + 4 * i32::from(a["kind"] == e["kind"])
+            + 2 * i32::from(a["amountMinor"] == e["amount_minor"])
+            + i32::from(a["printedAmountMinor"] == e["printed_amount_minor"])
+    };
+    // Match exact names first across the whole receipt. An expanded/misread name
+    // must not consume a same-priced row that exactly matches another item.
     for (i, e) in wanted.iter().enumerate() {
-        let best = lines
+        if let Some((j, _)) = lines
             .iter()
             .enumerate()
-            .filter(|(j, _)| !used[*j])
-            .max_by_key(|(_, a)| {
-                let metadata_matches = [
-                    ("weightMg", "weight_mg"),
-                    ("quantityMicros", "quantity_micros"),
-                    ("unitPriceScaled", "unit_price_scaled"),
-                    ("sku", "sku"),
-                    ("taxCode", "tax_code"),
-                    ("quantityUnit", "quantity_unit"),
-                ]
+            .filter(|(j, a)| {
+                !used[*j]
+                    && name_ok(a["rawName"].as_str().unwrap_or(""), e)
+                    && a["kind"] == e["kind"]
+            })
+            .max_by_key(|(_, a)| score(a, e))
+        {
+            used[j] = true;
+            matches[i] = Some(j);
+        }
+    }
+    for (i, e) in wanted.iter().enumerate() {
+        if matches[i].is_none()
+            && let Some((j, _)) = lines
                 .iter()
-                .all(|(src, dst)| e[*dst].is_null() || a[*src] == e[*dst]);
-                32 * i32::from(
-                    metadata_matches
-                        && name_ok(a["rawName"].as_str().unwrap_or(""), e)
-                        && a["kind"] == e["kind"]
-                        && a["amountMinor"] == e["amount_minor"],
-                ) + 8 * i32::from(name_ok(a["rawName"].as_str().unwrap_or(""), e))
-                    + 4 * i32::from(a["kind"] == e["kind"])
-                    + 2 * i32::from(a["amountMinor"] == e["amount_minor"])
-                    + i32::from(a["printedAmountMinor"] == e["printed_amount_minor"])
-            });
-        let Some((j, a)) = best else {
+                .enumerate()
+                .filter(|(j, _)| !used[*j])
+                .max_by_key(|(_, a)| score(a, e))
+        {
+            used[j] = true;
+            matches[i] = Some(j);
+        }
+        let Some(j) = matches[i] else {
             errors.push(format!("line[{i}]: missing {}", e["name"]));
             continue;
         };
-        used[j] = true;
-        matches[i] = Some(j);
+        let a = &lines[j];
         if !name_ok(a["rawName"].as_str().unwrap_or(""), e) {
             errors.push(format!("line[{i}].name: {} != {}", a["rawName"], e["name"]));
         }
@@ -759,5 +781,66 @@ fn header_identity_corpus_preserves_real_receipts_and_expected_rule() {
         ))
         .unwrap();
         assert!((0.30..0.31).contains(&height));
+    }
+}
+
+/// Score isolated, full-pipeline drafts against a frozen NAS snapshot. Never calls
+/// inference or writes to the source database; exact differences are retained.
+#[test]
+#[ignore = "requires the isolated NAS audit snapshot and draft report"]
+fn saved_drafts_benchmark() {
+    let snapshot: Value = serde_json::from_slice(
+        &fs::read(std::env::var("RECEIPT_BENCH_SNAPSHOT").unwrap()).unwrap(),
+    )
+    .unwrap();
+    let path = PathBuf::from(std::env::var("RECEIPT_BENCH_OUTPUT").unwrap());
+    let mut report: Value = serde_json::from_slice(&fs::read(&path).unwrap()).unwrap();
+    let selected = snapshot["cases"].as_array().unwrap();
+    let rows = report["cases"].as_array_mut().unwrap();
+    assert_eq!(rows.len(), selected.len(), "Incomplete draft audit");
+    let mut failed = 0;
+    for case in selected {
+        let row = rows.iter_mut().find(|r| r["id"] == case["id"]).unwrap();
+        assert_eq!(row["images"], case["images"], "Source images changed");
+        let errors = if row["status"] == "applied" && row["actual"].is_object() {
+            differences(
+                &row["actual"],
+                &confirmed_gold(&case["expected"])["expected"],
+            )
+        } else {
+            vec![format!(
+                "recognition did not apply: {} {}",
+                row["status"], row["error"]
+            )]
+        };
+        failed += usize::from(!errors.is_empty());
+        row["field_errors"] = json!(errors);
+    }
+    report["strict_field_comparison"] = json!({
+        "cases": selected.len(), "matched": selected.len() - failed, "different": failed,
+        "scope": "Saved raw names, amounts, quantities, weights, prices, dates, currency, SKU/tax and discount associations; user aliases/categories excluded. Store evaluated separately."
+    });
+    fs::write(&path, serde_json::to_vec_pretty(&report).unwrap()).unwrap();
+    assert_eq!(
+        failed,
+        0,
+        "Receipt differences recorded in {}",
+        path.display()
+    );
+}
+
+#[test]
+fn scorer_keeps_same_price_exact_names_before_matching_expanded_names() {
+    let expected = json!({"total_minor":200,"skip_time":true,"skip_unknown_optional":true,
+        "lines":[{"name":"YOGURT","kind":"product","amount_minor":100},
+                 {"name":"VINEGAR","kind":"product","amount_minor":100}]});
+    let mut actual = json!({"totalMinor":200,"lines":[
+        {"rawName":"YOGURT 2% MILK FAT","kind":"product","amountMinor":100},
+        {"rawName":"VINEGAR","kind":"product","amountMinor":100}]});
+    for _ in 0..2 {
+        let errors = differences(&actual, &expected);
+        assert_eq!(errors.len(), 1, "{errors:?}");
+        assert!(errors[0].starts_with("line[0].name:"));
+        actual["lines"].as_array_mut().unwrap().reverse();
     }
 }

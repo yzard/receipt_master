@@ -5,6 +5,7 @@ import 'dart:io';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:path/path.dart' as p;
 
@@ -100,23 +101,40 @@ class AppPalette {
 
 ThemeData receiptTheme(Brightness brightness) {
   final dark = brightness == Brightness.dark;
+  final ios = defaultTargetPlatform == TargetPlatform.iOS;
   final scheme = ColorScheme.fromSeed(
-    seedColor: dark ? AppPalette.accentDark : AppPalette.accent,
+    seedColor: ios
+        ? const Color(0xFF007AFF)
+        : dark
+        ? AppPalette.accentDark
+        : AppPalette.accent,
     brightness: brightness,
-    surface: dark ? AppPalette.darkCanvas : AppPalette.lightCanvas,
+    surface: ios
+        ? (dark ? const Color(0xFF101114) : const Color(0xFFF2F2F7))
+        : dark
+        ? AppPalette.darkCanvas
+        : AppPalette.lightCanvas,
   );
-  final panel = dark ? const Color(0xFF17243A) : Colors.white;
+  final panel = dark
+      ? (ios ? const Color(0xFF1C1C1E) : const Color(0xFF17243A))
+      : Colors.white;
   final border = scheme.outlineVariant.withValues(alpha: dark ? .25 : .32);
   return ThemeData(
     useMaterial3: true,
     brightness: brightness,
-    colorScheme: scheme,
+    colorScheme: ios
+        ? scheme.copyWith(
+            primary: dark ? const Color(0xFF64ABFF) : const Color(0xFF007AFF),
+            onPrimary: dark ? Colors.black : Colors.white,
+            onSurface: dark ? const Color(0xFFF5F5F7) : const Color(0xFF1C1C1E),
+          )
+        : scheme,
     scaffoldBackgroundColor: scheme.surface,
     textTheme: TextTheme(
       headlineLarge: TextStyle(
         fontSize: 34,
-        fontWeight: FontWeight.w800,
-        letterSpacing: -1.2,
+        fontWeight: ios ? FontWeight.w700 : FontWeight.w800,
+        letterSpacing: ios ? -.8 : -1.2,
         color: scheme.onSurface,
       ),
       headlineSmall: TextStyle(
@@ -176,13 +194,17 @@ ThemeData receiptTheme(Brightness brightness) {
     filledButtonTheme: FilledButtonThemeData(
       style: FilledButton.styleFrom(
         minimumSize: const Size(48, 48),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(17)),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(ios ? 26 : 17),
+        ),
       ),
     ),
     outlinedButtonTheme: OutlinedButtonThemeData(
       style: OutlinedButton.styleFrom(
         minimumSize: const Size(48, 48),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(17)),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(ios ? 26 : 17),
+        ),
       ),
     ),
     navigationBarTheme: NavigationBarThemeData(
@@ -227,26 +249,83 @@ class FrostedBar extends StatelessWidget {
   Widget build(BuildContext context) {
     final dark = Theme.of(context).brightness == Brightness.dark;
     final scheme = Theme.of(context).colorScheme;
-    final surface = BackdropFilter(
-      filter: ImageFilter.blur(sigmaX: 18, sigmaY: 18),
-      child: DecoratedBox(
-        decoration: BoxDecoration(
-          color: scheme.surface.withValues(alpha: dark ? .78 : .72),
-          borderRadius: radius,
-          border: radius == null
-              ? Border(
-                  top: BorderSide(
-                    color: scheme.outlineVariant.withValues(alpha: .45),
+    final ios = Theme.of(context).platform == TargetPlatform.iOS;
+    if (!ios) {
+      final surface = BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 18, sigmaY: 18),
+        child: DecoratedBox(
+          decoration: BoxDecoration(
+            color: scheme.surface.withValues(alpha: dark ? .78 : .72),
+            borderRadius: radius,
+            border: radius == null
+                ? Border(
+                    top: BorderSide(
+                      color: scheme.outlineVariant.withValues(alpha: .45),
+                    ),
+                  )
+                : Border.all(
+                    color: scheme.outlineVariant.withValues(alpha: .55),
                   ),
-                )
-              : Border.all(color: scheme.outlineVariant.withValues(alpha: .55)),
+          ),
+          child: child,
         ),
-        child: child,
+      );
+      return radius == null
+          ? ClipRect(child: surface)
+          : ClipRRect(borderRadius: radius!, child: surface);
+    }
+    final contrast = MediaQuery.highContrastOf(context);
+    final shape = radius ?? BorderRadius.zero;
+    final tint = ios
+        ? (dark ? const Color(0xFF292B30) : const Color(0xFFFDFDFF))
+        : scheme.surface;
+    final body = DecoratedBox(
+      decoration: BoxDecoration(
+        borderRadius: shape,
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            tint.withValues(alpha: contrast ? 1 : (ios ? .72 : .78)),
+            tint.withValues(alpha: contrast ? 1 : (ios ? .42 : .72)),
+            tint.withValues(alpha: contrast ? 1 : (ios ? .60 : .76)),
+          ],
+        ),
+        border: Border.all(
+          color: contrast
+              ? scheme.onSurface.withValues(alpha: .6)
+              : Colors.white.withValues(alpha: dark ? .20 : .76),
+          width: .8,
+        ),
       ),
+      child: Material(type: MaterialType.transparency, child: child),
     );
-    return radius == null
-        ? ClipRect(child: surface)
-        : ClipRRect(borderRadius: radius!, child: surface);
+    final surface = ClipRRect(
+      borderRadius: shape,
+      child: contrast
+          ? body
+          : BackdropFilter(
+              filter: ImageFilter.blur(
+                sigmaX: ios ? 26 : 18,
+                sigmaY: ios ? 26 : 18,
+              ),
+              child: body,
+            ),
+    );
+    if (radius == null) return surface;
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        borderRadius: shape,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: dark ? .24 : .10),
+            blurRadius: 24,
+            offset: const Offset(0, 8),
+          ),
+        ],
+      ),
+      child: surface,
+    );
   }
 }
 

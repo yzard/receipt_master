@@ -60,7 +60,7 @@ async fn fixture(repair_attempts: usize) -> Fixture {
     let mock = Arc::new(Mutex::new(Mock::default()));
     let m = mock.clone();
     let h = mock.clone();
-    let engine=Router::new().route("/health",get(move||{let h=h.clone();async move{if h.lock().unwrap().fail{axum::http::StatusCode::SERVICE_UNAVAILABLE}else{axum::http::StatusCode::OK}}})).route("/capabilities",get(|headers:axum::http::HeaderMap| async move {if headers.get("authorization").is_some_and(|v|v==format!("Bearer {OCR_KEY}").as_str()){(axum::http::StatusCode::OK,Json(json!({"max_images":4})))}else{(axum::http::StatusCode::UNAUTHORIZED,Json(json!({"error":"auth"})))}})).route("/v1/chat/completions",post(move|headers:axum::http::HeaderMap,Json(v):Json<Value>|{let m=m.clone();async move{
+    let engine=Router::new().route("/v1/models",get(move||{let h=h.clone();async move{if h.lock().unwrap().fail{axum::http::StatusCode::SERVICE_UNAVAILABLE}else{axum::http::StatusCode::OK}}})).route("/v1/chat/completions",post(move|headers:axum::http::HeaderMap,Json(v):Json<Value>|{let m=m.clone();async move{
         if !headers.get("authorization").is_some_and(|v|v==format!("Bearer {OCR_KEY}").as_str()) {return (axum::http::StatusCode::UNAUTHORIZED,Json(json!({"error":"auth"})));}
         let (response,delay)={
             let mut m=m.lock().unwrap();m.calls.push(v.clone());
@@ -69,6 +69,7 @@ async fn fixture(repair_attempts: usize) -> Fixture {
             m.events.push(if logo {"locate"}else if matching {"logo"}else{"vision"}.into());
             let selected=v["messages"][1]["content"].as_array().and_then(|parts|parts.iter().enumerate().skip(2).find(|(_,p)|p["image_url"]["url"].as_str().is_some_and(|url|Some(url)==m.logo_id.as_deref())).map(|(i,_)|format!("r{:02}",(i-1)/2)));
             let total=if m.arithmetic_failures>0 {"6.50"}else{"5.50"};
+            if !logo && !matching { m.arithmetic_failures=m.arithmetic_failures.saturating_sub(1); }
             let line=|kind:&str,amount:&str,target:Value|json!({"name":"MILK","product_name":null,"kind":kind,"quantity":null,"quantity_unit":null,"unit_price":null,"amount":amount,"confidence":null,"discount_target_index":target,"review_notes":[],"sku":null,"tax_code":null,"is_weighed":false,"evidence":[],"package_weight":null,"package_weight_unit":null,"amount_basis":"gross"});
             let mut prediction=if matching {json!({"reference_id":selected})}else if logo {json!({"box":m.header_box.clone().unwrap_or(json!([50,20,950,500])),"welcome_text":m.welcome_text,"restaurant_text":m.restaurant_text})}else{json!({"store":null,"branch":null,"address":null,"country":"US","currency":"USD","local_time":null,"total":total,"lines":[line("product","3.00",Value::Null),line("product","3.00",Value::Null),line("item_discount","-0.50",json!(1))]})};
             if !logo && !matching && m.receipt_schema_error {prediction["lines"][0]["amount"]=json!(3);}
@@ -88,7 +89,8 @@ async fn fixture(repair_attempts: usize) -> Fixture {
     let dir = tempfile::tempdir().unwrap();
     let mut c = Config::parse(&configured_template()).unwrap();
     c.general.repair_attempts = repair_attempts;
-    c.ocr.url = format!("http://127.0.0.1:{port}");
+    c.inference.base_url = format!("http://127.0.0.1:{port}/v1");
+    c.inference.max_images = 4;
     c.general.apk_path = dir.path().join("receipt_master.apk");
     let data_dir = dir.path().join("data");
     receipt_backend_api::db::Store::initialize(&data_dir).unwrap();
@@ -160,9 +162,10 @@ async fn mobile_round_trip() {
     assert_eq!(v["usage"]["total_tokens"], 30);
     let calls = &f.mock.lock().unwrap().calls;
     assert_eq!(calls.len(), 1);
-    assert_eq!(calls[0]["profile"], "receipt");
-    assert!(calls[0].get("max_tokens").is_none());
-    assert!(calls[0].get("model").is_none());
+    assert_eq!(calls[0]["model"], "qwen3.8-flash-next-iq3_s");
+    assert!(calls[0].get("profile").is_none());
+    assert_eq!(calls[0]["max_tokens"], 32768);
+    assert_eq!(calls[0]["chat_template_kwargs"]["enable_thinking"], true);
     assert!(
         calls[0]["messages"]
             .to_string()
@@ -170,7 +173,7 @@ async fn mobile_round_trip() {
     );
 }
 #[tokio::test]
-async fn model_inference_is_not_limited_by_capabilities_timeout() {
+async fn model_inference_uses_configured_timeout() {
     let f = fixture(0).await;
     f.mock.lock().unwrap().delay_ms = 5_200;
     let (status, result) = request(&f, "POST", "/v1/chat/completions", Some(body()), true).await;
@@ -204,7 +207,7 @@ async fn store_alias_routes_only_its_prompt() {
         assert_eq!(result["receipt_parsing"]["profile"], profile);
         let calls = f.mock.lock().unwrap();
         let call = calls.calls.last().unwrap();
-        assert_eq!(call["profile"], "receipt");
+        assert_eq!(call["max_tokens"], 32768);
         let text = call["messages"].to_string();
         assert!(text.contains("Receipt-wide leading-number rule"));
         assert!(text.contains("exactly 7-digit"));
@@ -401,22 +404,19 @@ fn config_validation() {
 }
 
 #[test]
-fn ocr_environment_overrides_are_validated_after_toml_loading() {
+fn inference_configuration_is_validated() {
     let text = configured_template();
-    let url = "http://192.168.1.20:8000";
-    let key = "replacement-ocr-service-key-for-tests";
-    let config = Config::parse_with_ocr_overrides(&text, Some(url), Some(key)).unwrap();
-    assert_eq!(config.ocr.url, url);
-    assert_eq!(config.ocr.api_key, key);
-    assert!(Config::parse_with_ocr_overrides(&text, Some("ftp://ocr"), None).is_err());
-    assert!(Config::parse_with_ocr_overrides(&text, None, Some("")).is_err());
-    assert!(Config::parse_with_ocr_overrides(&text, None, Some(KEY)).is_err());
-    let template = include_str!("../../docker/defaults/backend_api.toml").replacen(
-        "jwt_secret = \"\"",
-        &format!("jwt_secret = \"{KEY}\""),
-        1,
-    );
-    assert!(Config::parse_with_ocr_overrides(&template, None, Some(key)).is_ok());
+    assert!(Config::parse(&text).is_ok());
+    for (old, new) in [
+        ("http://host.docker.internal:8080/v1", "ftp://server/v1"),
+        ("max_images = 16", "max_images = 1"),
+        ("image_pixel_budget = 12582912", "image_pixel_budget = 0"),
+        ("receipt_output_tokens = 32768", "receipt_output_tokens = 0"),
+    ] {
+        assert!(Config::parse(&text.replace(old, new)).is_err());
+    }
+    assert!(Config::parse(&text.replace(OCR_KEY, KEY)).is_err());
+    assert!(Config::parse(&text.replace(OCR_KEY, "")).is_err());
 }
 
 #[test]
@@ -1139,21 +1139,43 @@ async fn header_identity_precedes_logo_alias_before_single_multiphoto_extraction
 }
 
 #[tokio::test]
-async fn arithmetic_mismatch_is_flagged_without_invented_items_or_model_retries() {
-    let f = fixture(0).await;
-    f.mock.lock().unwrap().arithmetic_failures = 1;
-    let (status, result) = request(&f, "POST", "/v1/chat/completions", Some(body()), true).await;
-    assert_eq!(status, 200, "{result}");
-    let data: Value =
-        serde_json::from_str(result["choices"][0]["message"]["content"].as_str().unwrap()).unwrap();
-    assert_eq!(data["lines"].as_array().unwrap().len(), 3);
-    assert_eq!(result["receipt_parsing"]["arithmetic_mismatch"], true);
-    assert!(
-        data["lines"][0]["review_notes"]
-            .to_string()
-            .contains("相差")
-    );
-    assert_eq!(f.mock.lock().unwrap().calls.len(), 1);
+async fn arithmetic_review_is_once_preserves_images_and_retains_unresolved_warning() {
+    for failures in [0, 1, 3] {
+        let f = fixture(0).await;
+        f.mock.lock().unwrap().arithmetic_failures = failures;
+        let (status, result) =
+            request(&f, "POST", "/v1/chat/completions", Some(body()), true).await;
+        assert_eq!(status, 200, "{result}");
+        let data: Value =
+            serde_json::from_str(result["choices"][0]["message"]["content"].as_str().unwrap())
+                .unwrap();
+        assert_eq!(data["lines"].as_array().unwrap().len(), 3);
+        assert_eq!(
+            result["receipt_parsing"]["arithmetic_mismatch"],
+            failures > 1
+        );
+        assert_eq!(
+            data["lines"][0]["review_notes"]
+                .to_string()
+                .contains("相差"),
+            failures > 1
+        );
+        let m = f.mock.lock().unwrap();
+        let calls = if failures == 0 { 1 } else { 2 };
+        assert_eq!(m.calls.len(), calls);
+        assert_eq!(result["model_runs"].as_array().unwrap().len(), calls);
+        assert_eq!(result["usage"]["total_tokens"], calls * 30);
+        if failures > 0 {
+            assert_eq!(m.calls[0]["messages"][1], m.calls[1]["messages"][1]);
+            assert!(
+                m.calls[1]["messages"].as_array().unwrap().last().unwrap()["content"]
+                    .as_str()
+                    .unwrap()
+                    .contains("Arithmetic review")
+            );
+            assert_eq!(data["total"], if failures > 1 { "6.50" } else { "5.50" });
+        }
+    }
 }
 
 #[tokio::test]
@@ -1469,14 +1491,9 @@ async fn live_header_identity_on_saved_restaurant_receipts() {
     let cases: Value =
         serde_json::from_slice(&std::fs::read(corpus.join("cases.json")).unwrap()).unwrap();
     let secret_path =
-        std::env::var("RECEIPT_HEADER_OCR_CONFIG").expect("Set the private OCR config.toml path");
-    let service: toml::Value =
-        toml::from_str(&std::fs::read_to_string(secret_path).unwrap()).unwrap();
-    let mut config = Config::parse(&configured_template()).unwrap();
-    config.ocr.api_key = service["general"]["api_key"].as_str().unwrap().to_owned();
-    config.ocr.url = std::env::var("RECEIPT_HEADER_OCR_URL").expect("Set the OCR service URL");
+        std::env::var("RECEIPT_HEADER_API_CONFIG").expect("Set the backend API config.toml path");
+    let mut config = Config::parse(&std::fs::read_to_string(secret_path).unwrap()).unwrap();
     config.general.job_workers = 1;
-    config.general.timeout_seconds = 600;
     let dir = tempfile::tempdir().unwrap();
     std::fs::copy(
         root.join("docker/defaults/prompt.toml"),
@@ -1540,4 +1557,49 @@ async fn live_header_identity_on_saved_restaurant_receipts() {
         reports.iter().all(|row| row["passed"] == true),
         "Read the private report for individual results"
     );
+}
+
+#[tokio::test]
+async fn cold_proxy_can_delay_reading_a_large_upload_beyond_thirty_seconds() {
+    use tokio::io::{AsyncReadExt, AsyncWriteExt};
+    let fixture = fixture(0).await;
+    let mut config = Config::parse(&configured_template()).unwrap();
+    config.general.timeout_seconds = 60;
+    let state = State::new(config, fixture.dir.path().join("data")).unwrap();
+    let listener = tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();
+    let address = listener.local_addr().unwrap();
+    let server = tokio::spawn(async move {
+        let (mut socket, _) = listener.accept().await.unwrap();
+        // A zero TCP receive window while the shared model is loading must not
+        // silently override the explicitly configured inference request timeout.
+        tokio::time::sleep(std::time::Duration::from_secs(35)).await;
+        let mut header = Vec::new();
+        while !header.ends_with(b"\r\n\r\n") {
+            header.push(socket.read_u8().await.unwrap());
+        }
+        let header = String::from_utf8(header).unwrap();
+        let length: usize = header
+            .lines()
+            .find_map(|line| {
+                let (name, value) = line.split_once(':')?;
+                name.eq_ignore_ascii_case("content-length")
+                    .then(|| value.trim().parse().unwrap())
+            })
+            .unwrap();
+        let mut body = vec![0; length];
+        socket.read_exact(&mut body).await.unwrap();
+        socket
+            .write_all(b"HTTP/1.1 200 OK\r\nContent-Length: 2\r\nConnection: close\r\n\r\n{}")
+            .await
+            .unwrap();
+    });
+    let response = state
+        .client
+        .post(format!("http://{address}/v1/chat/completions"))
+        .body(vec![b'x'; 16 * 1024 * 1024])
+        .send()
+        .await
+        .unwrap();
+    assert_eq!(response.status(), 200);
+    server.await.unwrap();
 }

@@ -1,29 +1,5 @@
 name: receipt-master-ocr
-x-gpu: &gpu
-  init: true
-  gpus: all
-  devices:
-    - /dev/nvidia-uvm:/dev/nvidia-uvm
-    - /dev/nvidia-uvm-tools:/dev/nvidia-uvm-tools
-  shm_size: 2gb
-  stop_grace_period: 40s
-  healthcheck:
-    test: [CMD, python3, -c, "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health', timeout=5)"]
-    interval: 10s
-    timeout: 6s
-    retries: 60
-    start_period: 60s
 services:
-  backend_ocr:
-    <<: *gpu
-    restart: unless-stopped
-    image: receipt-master-backend-ocr:latest
-    environment:
-      PUID: ${PUID:?Set PUID to the host user ID}
-      PGID: ${PGID:?Set PGID to the host group ID}
-    volumes:
-      - ../playground/backend_ocr:/data:ro
-    networks: [inference]
   backend_api:
     init: true
     stop_grace_period: 40s
@@ -37,13 +13,11 @@ services:
       - PUID=${PUID:?Set PUID to the host user ID}
       - PGID=${PGID:?Set PGID to the host group ID}
       - RESET_ADMIN_PASSWORD=${RESET_ADMIN_PASSWORD:-false}
-      - BACKEND_OCR_URL=${BACKEND_OCR_URL:-http://backend_ocr:8000}
-      - BACKEND_OCR_API_KEY
     ports: ["0.0.0.0:5000:8000"]
     volumes:
       - ../playground/backend_api:/data
-    networks: [inference, ingress]
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    networks: [ingress]
 networks:
-  inference:
-    internal: true
   ingress: {}

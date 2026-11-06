@@ -5,13 +5,13 @@ usage() {
 Usage: ./build_docker.sh [--publish dockerhub|github --username NAME]
 
 No arguments: build and test locally without publishing.
---publish dockerhub  Push both backend images to docker.io/NAME/...
---publish github     Push both backend images to ghcr.io/NAME/...
+--publish dockerhub  Push the backend API image to docker.io/NAME/...
+--publish github     Push the backend API image to ghcr.io/NAME/...
 --username NAME      Registry user or organization namespace (required for publishing).
 --help               Show this help.
 
 Image tags: YYYYMMDD (build start date in the host timezone) and latest.
-Both tags point to the same image; publication pushes both tags for each backend.
+Both tags point to the same API image.
 Log in first with docker login docker.io or docker login ghcr.io.
 Publishing starts only after Android, Web, backends and container HTTP checks pass.
 USAGE
@@ -86,31 +86,6 @@ docker compose --file "$project_dir/docker/docker-compose.yaml" config --format 
 RECEIPT_BOOTSTRAP_FILE="$project_dir/build/mobile-config/backend_defaults.json" "$project_dir/build_android.sh"
 # The API runtime image copies the published APK, manifest and immutable update
 # packages from build/mobile; Android must finish before the runtime image build.
-receipt_target_inputs ocr build_docker.sh docker/backend_ocr.Dockerfile docker/backend_ocr.Dockerfile.dockerignore docker/shared_qwen.py docker/service-entrypoint.sh docker/defaults/backend_ocr.toml src/backend_ocr tests/backend_ocr
-ocr_key="$receipt_key"
-receipt_target_probe
-ocr_image_id="$receipt_reuse"
-if [[ "$ocr_image_id" != sha256:* ]]; then
-  receipt_docker_build --platform linux/amd64 --target checks --file "$project_dir/docker/backend_ocr.Dockerfile" "$project_dir"
-  runtime_key="$(python3 "$project_dir/docker/build_state.py" runtime-key --root "$project_dir")"
-  runtime_context=""
-  if [[ ${RECEIPT_REFRESH_BUILD:-0} != 1 ]] && docker image inspect receipt-master-backend-ocr:latest >/dev/null 2>&1; then
-    runtime_context="$(python3 "$project_dir/docker/build_state.py" runtime --root "$project_dir" --work "$RECEIPT_BUILD_WORK" --image receipt-master-backend-ocr:latest --key "$runtime_key")"
-  fi
-  model_context="$(python3 "$project_dir/docker/shared_qwen.py" prepare --root "$project_dir" --builder "$RECEIPT_BUILD_BUILDER")"
-  runtime_args=()
-  if [[ -n "$runtime_context" ]]; then
-    runtime_args=(--build-context "$runtime_context")
-    echo 'Reusing OCR runtime dependencies from the final image.'
-  fi
-  receipt_docker_build --build-context "$model_context" "${runtime_args[@]}" --label "org.receipt.runtime=$runtime_key" --platform linux/amd64 --load --tag "receipt-master-backend-ocr:$build_tag" \
-    --file "$project_dir/docker/backend_ocr.Dockerfile" "$project_dir"
-  python3 "$project_dir/docker/shared_qwen.py" verify --root "$project_dir" --image "receipt-master-backend-ocr:$build_tag"
-  ocr_image_id="$(docker image inspect --format '{{.Id}}' "receipt-master-backend-ocr:$build_tag")"
-else
-  echo 'OCR inputs and image are unchanged; reusing the final image.'
-  docker image tag "$ocr_image_id" "receipt-master-backend-ocr:$build_tag"
-fi
 receipt_target_inputs api build_docker.sh docker/backend_api.Dockerfile docker/backend_api.Dockerfile.dockerignore docker/service-entrypoint.sh docker/defaults src/backend_api tests/backend_api tests/web/http_smoke.py build/web build/mobile/receipt_master.apk build/mobile/android-update.json build/mobile/updates
 api_key="$receipt_key"
 receipt_target_probe
@@ -127,28 +102,24 @@ fi
 
 # Exercise the actual API/Web image with disposable accounts, never the playground volume.
 python3 "$project_dir/tests/web/http_smoke.py" --image "$api_image_id" --artifacts "$project_dir/build/mobile"
-python3 "$project_dir/docker/build_state.py" record --root "$project_dir" --target ocr --key "$ocr_key" --image "$ocr_image_id"
 python3 "$project_dir/docker/build_state.py" record --root "$project_dir" --target api --key "$api_key" --image "$api_image_id"
 
 # Only successful, verified builds advance latest. These are aliases, not new builds.
-docker image tag "$ocr_image_id" receipt-master-backend-ocr:latest
 docker image tag "$api_image_id" receipt-master-backend-api:latest
-echo "Built both backend images as $build_tag with latest aliases."
+echo "Built the backend API image as $build_tag with latest aliases."
 
 if [[ -n "$publish_registry" ]]; then
-  ocr_repo="$publish_host/$publish_namespace/receipt-master-backend-ocr"
   api_repo="$publish_host/$publish_namespace/receipt-master-backend-api"
   # Pin publication to the built/tested images, rather than mutable local tags.
   for image_tag in "$build_tag" latest; do
-    docker image tag "$ocr_image_id" "$ocr_repo:$image_tag"
     docker image tag "$api_image_id" "$api_repo:$image_tag"
   done
-  # Upload both dated images before advancing either registry latest alias.
+  # Upload the dated image before advancing the registry latest alias.
   for image_tag in "$build_tag" latest; do
-    for image_repo in "$ocr_repo" "$api_repo"; do
+    for image_repo in "$api_repo"; do
       echo "Publishing $image_repo:$image_tag"
       docker image push "$image_repo:$image_tag"
     done
   done
-  echo "Published both backend images with tags $build_tag and latest."
+  echo "Published the backend API image with tags $build_tag and latest."
 fi

@@ -94,7 +94,7 @@ def main():
             .read_text()
             .replace('jwt_secret = ""', f'jwt_secret = "{secrets.token_urlsafe(32)}"')
             .replace('api_key = ""', f'api_key = "{secrets.token_urlsafe(32)}"')
-            .replace('http://backend_ocr:8000', 'http://127.0.0.1:9')
+            .replace('http://host.docker.internal:8080/v1', 'http://127.0.0.1:9/v1')
         )
         (data / 'config.toml').write_text(config)
         (data / 'config.toml').chmod(0o600)

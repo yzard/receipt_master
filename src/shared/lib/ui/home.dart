@@ -1,3 +1,5 @@
+import 'package:flutter/cupertino.dart';
+
 import '../l10n/strings.dart';
 
 import 'dart:async';
@@ -318,6 +320,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
+    final ios = Theme.of(context).platform == TargetPlatform.iOS;
     final topInset = MediaQuery.paddingOf(context).top;
     final bottomInset = MediaQuery.paddingOf(context).bottom;
     Widget content(int index) => switch (index) {
@@ -346,47 +349,65 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
         appearance: widget.appearance,
       ),
     };
+    final navigation = NavigationDrawer(
+      backgroundColor: ios ? Colors.transparent : null,
+      elevation: ios ? 0 : null,
+      indicatorColor: ios ? scheme.primary.withValues(alpha: .16) : null,
+      selectedIndex: page,
+      onDestinationSelected: choosePage,
+      children: [
+        Padding(
+          padding: EdgeInsets.fromLTRB(28, 48, 20, 24),
+          child: Text(
+            'Receipt Master',
+            style: TextStyle(fontSize: 26, fontWeight: FontWeight.w800),
+          ),
+        ),
+        NavigationDrawerDestination(
+          icon: Icon(Icons.receipt_long_outlined),
+          selectedIcon: Icon(Icons.receipt_long),
+          label: Text(context.tr("收据")),
+        ),
+        NavigationDrawerDestination(
+          icon: Icon(Icons.insights_outlined),
+          selectedIcon: Icon(Icons.insights),
+          label: Text(context.tr("报表")),
+        ),
+        NavigationDrawerDestination(
+          icon: Icon(Icons.category_outlined),
+          selectedIcon: Icon(Icons.category),
+          label: Text(context.tr("商品")),
+        ),
+        NavigationDrawerDestination(
+          icon: Icon(Icons.storefront_outlined),
+          selectedIcon: Icon(Icons.storefront),
+          label: Text(context.tr("店铺")),
+        ),
+        NavigationDrawerDestination(
+          icon: Icon(Icons.tune_outlined),
+          selectedIcon: Icon(Icons.tune),
+          label: Text(context.tr("设置")),
+        ),
+      ],
+    );
     return Scaffold(
       key: scaffoldKey,
       backgroundColor: Colors.transparent,
-      drawer: NavigationDrawer(
-        selectedIndex: page,
-        onDestinationSelected: choosePage,
-        children: [
-          Padding(
-            padding: EdgeInsets.fromLTRB(28, 48, 20, 24),
-            child: Text(
-              'Receipt Master',
-              style: TextStyle(fontSize: 26, fontWeight: FontWeight.w800),
-            ),
-          ),
-          NavigationDrawerDestination(
-            icon: Icon(Icons.receipt_long_outlined),
-            selectedIcon: Icon(Icons.receipt_long),
-            label: Text(context.tr("收据")),
-          ),
-          NavigationDrawerDestination(
-            icon: Icon(Icons.insights_outlined),
-            selectedIcon: Icon(Icons.insights),
-            label: Text(context.tr("报表")),
-          ),
-          NavigationDrawerDestination(
-            icon: Icon(Icons.category_outlined),
-            selectedIcon: Icon(Icons.category),
-            label: Text(context.tr("商品")),
-          ),
-          NavigationDrawerDestination(
-            icon: Icon(Icons.storefront_outlined),
-            selectedIcon: Icon(Icons.storefront),
-            label: Text(context.tr("店铺")),
-          ),
-          NavigationDrawerDestination(
-            icon: Icon(Icons.tune_outlined),
-            selectedIcon: Icon(Icons.tune),
-            label: Text(context.tr("设置")),
-          ),
-        ],
-      ),
+      drawerScrimColor: ios ? Colors.black.withValues(alpha: .18) : null,
+      drawer: ios
+          ? SafeArea(
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(10, 8, 10, 8),
+                child: SizedBox(
+                  width: (MediaQuery.sizeOf(context).width * .86).clamp(0, 340),
+                  child: FrostedBar(
+                    radius: BorderRadius.circular(32),
+                    child: navigation,
+                  ),
+                ),
+              ),
+            )
+          : navigation,
       body: Stack(
         children: [
           Positioned.fill(
@@ -397,7 +418,9 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                   end: Alignment.bottomRight,
                   colors: [
                     scheme.surface,
-                    scheme.primaryContainer.withValues(alpha: .24),
+                    ios
+                        ? scheme.surfaceContainerLow
+                        : scheme.primaryContainer.withValues(alpha: .24),
                     scheme.surface,
                   ],
                   stops: const [0, .48, 1],
@@ -460,69 +483,132 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
             left: 14,
             right: 14,
             bottom: bottomInset + 14,
-            child: Row(
-              children: [
-                FrostedBar(
-                  radius: BorderRadius.circular(25),
-                  child: Padding(
-                    padding: const EdgeInsets.all(5),
-                    child: GestureDetector(
-                      onLongPress: openMenu,
-                      child: SizedBox(
-                        width: 58,
-                        height: 58,
-                        child: IconButton(
-                          tooltip: context.tr("打开导航菜单"),
-                          onPressed: openMenu,
-                          icon: const Icon(Icons.menu_rounded, size: 28),
+            child: ios
+                ? iosToolbar(context)
+                : Row(
+                    children: [
+                      FrostedBar(
+                        radius: BorderRadius.circular(25),
+                        child: Padding(
+                          padding: const EdgeInsets.all(5),
+                          child: GestureDetector(
+                            onLongPress: openMenu,
+                            child: SizedBox(
+                              width: 58,
+                              height: 58,
+                              child: IconButton(
+                                tooltip: context.tr("打开导航菜单"),
+                                onPressed: openMenu,
+                                icon: const Icon(Icons.menu_rounded, size: 28),
+                              ),
+                            ),
+                          ),
                         ),
                       ),
-                    ),
+                      const Spacer(),
+                      if (page == 0)
+                        FrostedBar(
+                          radius: BorderRadius.circular(25),
+                          child: Padding(
+                            padding: const EdgeInsets.all(5),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                SizedBox(
+                                  width: 58,
+                                  child: _QuickAction(
+                                    label: context.tr("拍照"),
+                                    icon: Icons.camera_alt_outlined,
+                                    primary: true,
+                                    onTap: importing
+                                        ? null
+                                        : () => capture(true),
+                                  ),
+                                ),
+                                SizedBox(
+                                  width: 58,
+                                  child: _QuickAction(
+                                    label: context.tr("上传照片"),
+                                    icon: Icons.photo_library_outlined,
+                                    onTap: importing
+                                        ? null
+                                        : () => capture(false),
+                                  ),
+                                ),
+                                SizedBox(
+                                  width: 58,
+                                  child: _QuickAction(
+                                    label: context.tr("手动"),
+                                    icon: Icons.edit_note_outlined,
+                                    onTap: importing ? null : () => open(null),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                    ],
                   ),
-                ),
-                const Spacer(),
-                if (page == 0)
-                  FrostedBar(
-                    radius: BorderRadius.circular(25),
-                    child: Padding(
-                      padding: const EdgeInsets.all(5),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          SizedBox(
-                            width: 58,
-                            child: _QuickAction(
-                              label: context.tr("拍照"),
-                              icon: Icons.camera_alt_outlined,
-                              primary: true,
-                              onTap: importing ? null : () => capture(true),
-                            ),
-                          ),
-                          SizedBox(
-                            width: 58,
-                            child: _QuickAction(
-                              label: context.tr("上传照片"),
-                              icon: Icons.photo_library_outlined,
-                              onTap: importing ? null : () => capture(false),
-                            ),
-                          ),
-                          SizedBox(
-                            width: 58,
-                            child: _QuickAction(
-                              label: context.tr("手动"),
-                              icon: Icons.edit_note_outlined,
-                              onTap: importing ? null : () => open(null),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-              ],
-            ),
           ),
         ],
       ),
+    );
+  }
+
+  Widget iosToolbar(BuildContext context) {
+    return Row(
+      mainAxisSize: page == 0 ? MainAxisSize.max : MainAxisSize.min,
+      children: [
+        FrostedBar(
+          radius: BorderRadius.circular(32),
+          child: SizedBox(
+            width: 62,
+            height: 62,
+            child: IconButton(
+              tooltip: context.tr("打开导航菜单"),
+              onPressed: openMenu,
+              icon: const Icon(CupertinoIcons.line_horizontal_3, size: 25),
+            ),
+          ),
+        ),
+        if (page == 0) ...[
+          const SizedBox(width: 12),
+          Expanded(
+            child: FrostedBar(
+              radius: BorderRadius.circular(34),
+              child: Padding(
+                padding: const EdgeInsets.all(4),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: _QuickAction(
+                        label: context.tr("拍照"),
+                        icon: CupertinoIcons.camera,
+                        primary: true,
+                        onTap: importing ? null : () => capture(true),
+                      ),
+                    ),
+                    Expanded(
+                      child: _QuickAction(
+                        label: context.tr("上传照片"),
+                        icon: CupertinoIcons.photo_on_rectangle,
+                        onTap: importing ? null : () => capture(false),
+                      ),
+                    ),
+                    Expanded(
+                      child: _QuickAction(
+                        label: context.tr("手动"),
+                        icon: CupertinoIcons.square_pencil,
+                        onTap: importing ? null : () => open(null),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ],
+      ],
     );
   }
 
@@ -635,9 +721,12 @@ class _QuickAction extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
+    final ios = Theme.of(context).platform == TargetPlatform.iOS;
     return Material(
-      color: primary ? scheme.primary : Colors.transparent,
-      borderRadius: BorderRadius.circular(19),
+      color: primary
+          ? (ios ? scheme.primary.withValues(alpha: .16) : scheme.primary)
+          : Colors.transparent,
+      borderRadius: BorderRadius.circular(ios ? 30 : 19),
       child: SizedBox(
         height: 58,
         child: IconButton(
@@ -646,7 +735,9 @@ class _QuickAction extends StatelessWidget {
           icon: Icon(
             icon,
             size: 25,
-            color: primary ? scheme.onPrimary : scheme.onSurface,
+            color: primary
+                ? (ios ? scheme.primary : scheme.onPrimary)
+                : scheme.onSurface,
           ),
         ),
       ),

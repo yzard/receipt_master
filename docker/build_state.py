@@ -4,7 +4,6 @@ import argparse
 import hashlib
 import json
 import subprocess
-import tempfile
 from pathlib import Path
 
 EXCLUDED = {
@@ -95,44 +94,9 @@ def record(root, target, key, outputs, image=None):
     candidate.replace(path)
 
 
-def runtime_key(root):
-    text = (root / 'docker/backend_ocr.Dockerfile').read_text()
-    text = text.split('FROM ocr-runtime AS runtime')[0]
-    start = text.index('FROM python:3.12-slim AS checks')
-    end = text.index('# Keep this model stage identical')
-    return hashlib.sha256((text[:start] + text[end:]).encode()).hexdigest()
-
-
-def runtime_history(config):
-    history = config['history']
-    matches = [
-        i
-        for i, item in enumerate(history)
-        if item.get('created_by') == 'COPY /checks-passed /app/checks-passed # buildkit'
-    ]
-    if len(matches) != 1:
-        raise ValueError('Cannot locate the runtime boundary in the OCR image')
-    stop = matches[0]
-    return history[:stop], 0, sum(not item.get('empty_layer', False) for item in history[:stop])
-
-
-def prepare_runtime(root, work, image, key):
-    # Only the final image persists. Its dependency prefix is temporary build input.
-    inspected = json.loads(subprocess.check_output(['docker', 'image', 'inspect', image], text=True))[0]
-    if ((inspected.get('Config') or {}).get('Labels') or {}).get('org.receipt.runtime') != key:
-        return
-    from shared_qwen import export_local
-
-    layout = Path(tempfile.mkdtemp(prefix='ocr-runtime.', dir=work))
-    (layout / 'blobs/sha256').mkdir(parents=True)
-    export_local(image, layout, [], selector=runtime_history)
-    index = json.loads((layout / 'index.json').read_text())
-    print(f'ocr-runtime=oci-layout://{layout}@{index["manifests"][0]["digest"]}')
-
-
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('action', choices=['fingerprint', 'probe', 'record', 'runtime-key', 'runtime'])
+    parser.add_argument('action', choices=['fingerprint', 'probe', 'record'])
     parser.add_argument('--root', type=Path, required=True)
     parser.add_argument('--target')
     parser.add_argument('--key')
@@ -148,10 +112,6 @@ def main():
         print(reusable(args.root, args.target, args.key, args.output) or '')
     elif args.action == 'record':
         record(args.root, args.target, args.key, args.output, args.image)
-    elif args.action == 'runtime-key':
-        print(runtime_key(args.root))
-    else:
-        prepare_runtime(args.root, args.work, args.image, args.key)
 
 
 if __name__ == '__main__':

@@ -278,7 +278,7 @@ pub async fn match_receipt(state: Arc<State>, receipt: String) -> Result<Value> 
     let references = snapshot["references"].as_array().ok_or_else(invalid)?;
     let mut matches = Vec::new();
     let mut runs = Vec::new();
-    let batch_size = (crate::pipeline::image_capacity(&state).await? - 1).min(15);
+    let batch_size = (state.config.inference.max_images - 1).min(15);
     for query in snapshot["candidates"].as_array().ok_or_else(invalid)? {
         for chunk in references.chunks(batch_size) {
             let root = state.data_dir.clone();

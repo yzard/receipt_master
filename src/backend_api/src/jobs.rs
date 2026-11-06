@@ -244,18 +244,6 @@ async fn next_job(state: Arc<State>) -> Result<bool> {
     if !queued {
         return Ok(false);
     }
-    for url in [&state.config.ocr.url] {
-        if !state
-            .client
-            .get(format!("{url}/health"))
-            .timeout(std::time::Duration::from_secs(2))
-            .send()
-            .await
-            .is_ok_and(|r| r.status().is_success())
-        {
-            return Ok(false);
-        }
-    }
     let job=database(&state,|s|s.transaction(||{let jobs=s.rows("SELECT * FROM recognition_job WHERE status='queued' ORDER BY created_at_utc_ms LIMIT 1",&[])?;if let Some(job)=jobs.first(){s.exec("UPDATE recognition_job SET status='running' WHERE job_id=?",&[job["job_id"].clone()])?;}Ok(jobs.into_iter().next())})).await?;
     let Some(job) = job else { return Ok(false) };
     let job_id = text(&job, "job_id")?.to_owned();

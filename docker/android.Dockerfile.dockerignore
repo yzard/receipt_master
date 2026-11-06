@@ -55,5 +55,3 @@ tests/backend_api/*
 !docker/build_lifecycle.sh
 !docker/build_cleanup.py
 !docker/build_state.py
-!docker/backend_ocr.Dockerfile
-!docker/shared_qwen.py

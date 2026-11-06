@@ -151,13 +151,20 @@ pub fn extract(body: Value, model: &str) -> Result<Input, AppError> {
 }
 pub(crate) async fn raw_call(state: &State, body: Value) -> Result<Value, AppError> {
     let _guard = state.lock.acquire().await.expect("inference semaphore");
+    let config = state.config.inference.clone();
+    let body = tokio::task::spawn_blocking(move || crate::inference::prepare(body, &config))
+        .await
+        .map_err(crate::db::io_error)??;
     let result: Value = state
         .client
         .post(format!(
-            "{}/v1/chat/completions",
-            state.config.ocr.url.trim_end_matches('/')
+            "{}/chat/completions",
+            state.config.inference.base_url.trim_end_matches('/')
         ))
-        .header(reqwest::header::AUTHORIZATION, &state.ocr_authorization)
+        .header(
+            reqwest::header::AUTHORIZATION,
+            &state.inference_authorization,
+        )
         .json(&body)
         .send()
         .await
@@ -178,35 +185,6 @@ fn inference_failure(error: reqwest::Error) -> AppError {
         connection=error.is_connect(),reason=%error.to_string().chars().take(512).collect::<String>(),
         "OCR transport failed");
     AppError::inference(error)
-}
-pub(crate) async fn image_capacity(state: &State) -> Result<usize, AppError> {
-    let result: Value = state
-        .client
-        .get(format!(
-            "{}/capabilities",
-            state.config.ocr.url.trim_end_matches('/')
-        ))
-        .header(reqwest::header::AUTHORIZATION, &state.ocr_authorization)
-        .timeout(std::time::Duration::from_secs(5))
-        .send()
-        .await
-        .map_err(AppError::inference)?
-        .error_for_status()
-        .map_err(AppError::inference)?
-        .json()
-        .await
-        .map_err(AppError::inference)?;
-    result["max_images"]
-        .as_u64()
-        .filter(|n| *n >= 2 && *n <= 256)
-        .map(|n| n as usize)
-        .ok_or_else(|| {
-            AppError::new(
-                502,
-                "invalid_ocr_capabilities",
-                "Invalid OCR image capacity.",
-            )
-        })
 }
 /// Decode one complete JSON object; only a whole-response Markdown fence is tolerated.
 pub fn decode_content(raw: &Value) -> Result<Value, AppError> {
@@ -286,7 +264,7 @@ async fn recognize_inner(
     let input = tokio::task::spawn_blocking(move || extract(body, crate::PUBLIC_MODEL_ID))
         .await
         .map_err(|_| AppError::new(500, "internal_error", "Request validation failed."))??;
-    if input.images.len() > image_capacity(&state).await? {
+    if input.images.len() > state.config.inference.max_images {
         return Err(AppError::invalid(
             "Too many photos; no photos were dropped.",
         ));
@@ -314,7 +292,9 @@ async fn recognize_inner(
         json!({"role":"user","content":content}),
     ];
     let mut runs = Vec::new();
-    for attempt in 0..=state.config.general.repair_attempts {
+    let mut schema_repairs = 0;
+    let mut arithmetic_reviewed = false;
+    loop {
         let started = std::time::Instant::now();
         let raw = raw_call(
             &state,
@@ -349,6 +329,15 @@ async fn recognize_inner(
         match result {
             Ok((mut data, removed)) => {
                 if let Some((sum, total)) = arithmetic_difference(&data) {
+                    if !arithmetic_reviewed {
+                        arithmetic_reviewed = true;
+                        messages.push(json!({"role":"assistant","content":data.to_string()}));
+                        messages.push(json!({"role":"user","content":format!(
+                            "Arithmetic review: the extracted line sum is {sum} thousandths but the printed total is {total} thousandths of {}. Reread ALL original photos once, especially separate bottle/container deposits (RV, CRV), right-column amounts, omitted or duplicated rows, discounts and tax. Return a COMPLETE corrected JSON object using the same schema. Preserve printed amounts; never invent a balancing charge or change the total merely to force agreement. If the discrepancy cannot be resolved from the photos, keep the supported values and explain in review_notes.",
+                            data["currency"].as_str().unwrap_or("")
+                        )}));
+                        continue;
+                    }
                     let difference = (sum - total).abs();
                     let note = format!(
                         "明细合计与票面总额相差 {}.{:03} {}，请核对。",
@@ -368,14 +357,14 @@ async fn recognize_inner(
                     "usage":aggregate_usage(&usages),"receipt_parsing":{"version":"structured-v2","profile":profile,"image_count":input.images.len(),"arithmetic_mismatch":arithmetic_difference(&data).is_some(),"removed_fields":removed},"model_runs":runs}),
                 );
             }
-            Err(error) if attempt < state.config.general.repair_attempts => {
+            Err(error) if schema_repairs < state.config.general.repair_attempts => {
+                schema_repairs += 1;
                 // Retry the original photos with schema feedback, never fabricate replacement values.
                 messages.push(json!({"role":"user","content":format!("{}{}{}",state.prompts.receipt.repair_prefix,error.message,state.prompts.receipt.repair_suffix)}));
             }
             Err(error) => return Err(error),
         }
     }
-    unreachable!("bounded inference loop always returns")
 }
 fn structured(message: &'static str) -> AppError {
     AppError::new(502, "invalid_structured_output", message)

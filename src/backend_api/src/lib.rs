@@ -6,6 +6,7 @@ pub mod db;
 pub mod editing;
 pub mod error;
 pub mod exchange;
+pub mod inference;
 pub mod jobs;
 pub mod localizations;
 pub mod logos;
@@ -55,7 +56,7 @@ pub struct State {
     pub deleted: std::sync::atomic::AtomicBool,
     pub active_requests: std::sync::atomic::AtomicUsize,
     pub active_job_workers: std::sync::atomic::AtomicUsize,
-    pub(crate) ocr_authorization: String,
+    pub(crate) inference_authorization: String,
 }
 impl State {
     pub fn new(
@@ -64,10 +65,14 @@ impl State {
     ) -> Result<Arc<Self>, Box<dyn std::error::Error + Send + Sync>> {
         let client = reqwest::Client::builder()
             .no_proxy()
-            .timeout(Duration::from_secs(config.general.timeout_seconds))
-            .build()?;
-        let job_workers = config.general.job_workers;
-        let ocr_authorization = format!("Bearer {}", config.ocr.api_key.trim());
+            .redirect(reqwest::redirect::Policy::none())
+            .timeout(Duration::from_secs(config.general.timeout_seconds));
+        // On-demand proxies may defer reading a large image body until the model
+        // loads. Do not let Linux's default 30s TCP timeout cut that upload short.
+        #[cfg(any(target_os = "android", target_os = "fuchsia", target_os = "linux"))]
+        let client = client.tcp_user_timeout(Duration::from_secs(config.general.timeout_seconds));
+        let client = client.build()?;
+        let inference_authorization = format!("Bearer {}", config.inference.api_key.trim());
         let prompts =
             prompts::Prompts::parse(&std::fs::read_to_string(data_dir.join("prompt.toml"))?)?;
         Ok(Arc::new(Self {
@@ -76,14 +81,14 @@ impl State {
             data_dir,
             prompts,
             client,
-            lock: Arc::new(tokio::sync::Semaphore::new(job_workers)),
+            lock: Arc::new(tokio::sync::Semaphore::new(1)),
             auth_lock: Arc::new(tokio::sync::Semaphore::new(4)),
             storage_lock: Arc::new(tokio::sync::Mutex::new(())),
             users: tokio::sync::Mutex::new(HashMap::new()),
             deleted: std::sync::atomic::AtomicBool::new(false),
             active_requests: std::sync::atomic::AtomicUsize::new(0),
             active_job_workers: std::sync::atomic::AtomicUsize::new(0),
-            ocr_authorization,
+            inference_authorization,
         }))
     }
 }
@@ -109,7 +114,7 @@ impl State {
                     active_job_workers: std::sync::atomic::AtomicUsize::new(0),
                     deleted: std::sync::atomic::AtomicBool::new(false),
                     users: tokio::sync::Mutex::new(HashMap::new()),
-                    ocr_authorization: self.ocr_authorization.clone(),
+                    inference_authorization: self.inference_authorization.clone(),
                 })
             })
             .clone()
@@ -241,21 +246,26 @@ async fn log_request(req: Request, next: Next) -> Response {
     response
 }
 async fn model_health(AxumState(state): AxumState<Arc<State>>) -> Response {
-    for url in [&state.config.ocr.url] {
-        if !state
-            .client
-            .get(format!("{}/health", url.trim_end_matches('/')))
-            .timeout(Duration::from_secs(2))
-            .send()
-            .await
-            .is_ok_and(|r| r.status().is_success())
-        {
-            return (
-                StatusCode::SERVICE_UNAVAILABLE,
-                Json(json!({"status":"loading"})),
-            )
-                .into_response();
-        }
+    if !state
+        .client
+        .get(format!(
+            "{}/models",
+            state.config.inference.base_url.trim_end_matches('/')
+        ))
+        .header(
+            reqwest::header::AUTHORIZATION,
+            &state.inference_authorization,
+        )
+        .timeout(Duration::from_secs(2))
+        .send()
+        .await
+        .is_ok_and(|r| r.status().is_success())
+    {
+        return (
+            StatusCode::SERVICE_UNAVAILABLE,
+            Json(json!({"status":"loading"})),
+        )
+            .into_response();
     }
     Json(json!({"status":"ready"})).into_response()
 }
