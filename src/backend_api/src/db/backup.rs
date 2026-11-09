@@ -23,7 +23,9 @@ impl Store {
                 let stage = self.root.join("staging").join(&backup_id);
                 std::fs::create_dir(&stage).map_err(io_error)?;
                 let snapshot = stage.join("receipts.sqlite");
-                self.db.backup("main", &snapshot, None).map_err(sql_error)?;
+                self.db
+                    .backup("main", &snapshot, None::<fn(rusqlite::backup::Progress)>)
+                    .map_err(sql_error)?;
                 let snap = Connection::open(&snapshot).map_err(sql_error)?;
                 let mut files = vec![(
                     "database/receipts.sqlite".to_string(),
@@ -135,7 +137,7 @@ impl Store {
                 let mut names = std::collections::HashSet::new();
                 for i in 0..archive.len() {
                     let mut file = archive.by_index(i).map_err(|_| invalid())?;
-                    let name = file.name().to_owned();
+                    let name = file.name().map_err(|_| invalid())?.into_owned();
                     if file.is_dir() || file.is_symlink() || !names.insert(name.clone()) {
                         return Err(invalid());
                     }

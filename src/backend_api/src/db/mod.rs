@@ -226,11 +226,7 @@ impl Store {
     }
     pub fn rows(&self, q: &str, args: &[Value]) -> Result<Vec<Value>> {
         let mut stmt = self.db.prepare(q).map_err(sql_error)?;
-        let names = stmt
-            .column_names()
-            .iter()
-            .map(|s| s.to_string())
-            .collect::<Vec<_>>();
+        let names = stmt.column_names().map(str::to_owned).collect::<Vec<_>>();
         let rows = stmt
             .query_map(params_from_iter(args.iter().map(sql)), |row| {
                 let mut obj = serde_json::Map::new();
