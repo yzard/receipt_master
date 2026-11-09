@@ -21,7 +21,7 @@ RUN --mount=type=cache,target=/usr/local/cargo/registry --mount=type=cache,targe
     && cp /target/release/receipt-backend-api /receipt-backend-api
 
 FROM alpine:3.24@sha256:f59abe656b692d901e184be3445e084786602108599d2a51d229c0f5a48c71bf AS runtime
-RUN apk add --no-cache ca-certificates curl libgcc su-exec tzdata
+RUN apk add --no-cache ca-certificates curl libgcc su-exec tzdata 'zlib>=1.4-r0'
 WORKDIR /app
 COPY --from=compile /receipt-backend-api /app/receipt-backend-api
 COPY build/web/ /app/web/

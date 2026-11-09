@@ -626,7 +626,8 @@ async fn persistent_job_auto_applies_without_client_polling_or_apply() {
     drop(s);
     let (status,started)=request(&f,"POST","/api/v1/recognition/start",Some(json!({"request_key":"job-1","input":{"receipt_id":r["id"],"expected_version":3,"zone":"America/New_York"}})),true).await;
     assert_eq!(status, 200, "{started}");
-    wait_for_applied(&f, &started["data"]["job_id"]).await;
+    let job_id = &started["data"]["job_id"];
+    wait_for_applied(&f, job_id).await;
     {
         let mock = f.mock.lock().unwrap();
         assert_eq!(
