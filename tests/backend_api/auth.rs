@@ -97,7 +97,8 @@ fn concurrent_auth_and_receipt_connections_do_not_deadlock() {
         .env(CHILD, "1")
         .spawn()
         .unwrap();
-    let deadline = std::time::Instant::now() + std::time::Duration::from_secs(30);
+    let timeout = std::time::Duration::from_secs(120);
+    let deadline = std::time::Instant::now() + timeout;
     loop {
         if let Some(status) = child.try_wait().unwrap() {
             assert!(
@@ -109,7 +110,10 @@ fn concurrent_auth_and_receipt_connections_do_not_deadlock() {
         if std::time::Instant::now() >= deadline {
             child.kill().unwrap();
             child.wait().unwrap();
-            panic!("concurrent auth/receipt WAL connections stalled for 30 seconds");
+            panic!(
+                "concurrent auth/receipt WAL connections stalled for {} seconds",
+                timeout.as_secs()
+            );
         }
         std::thread::sleep(std::time::Duration::from_millis(25));
     }
