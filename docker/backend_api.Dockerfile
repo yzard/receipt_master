@@ -1,6 +1,7 @@
 # syntax=docker/dockerfile:1
-FROM rust:1.98.0-bookworm AS source
-RUN rustup component add rustfmt clippy
+FROM rust:1.98.0-alpine3.24@sha256:a10e64dd139b7387337c7fbe8aca31b959b57b2fd4c8ae20a02cf1d6ea424dce AS source
+RUN apk add --no-cache build-base cmake perl \
+    && rustup component add rustfmt clippy
 WORKDIR /workspace
 COPY src/backend_api/ src/backend_api/
 COPY tests/backend_api/ tests/backend_api/
@@ -19,8 +20,8 @@ RUN --mount=type=cache,target=/usr/local/cargo/registry --mount=type=cache,targe
     && cargo build -j 2 --release --locked --manifest-path src/backend_api/Cargo.toml \
     && cp /target/release/receipt-backend-api /receipt-backend-api
 
-FROM debian:bookworm-slim AS runtime
-RUN apt-get update && apt-get install -y --no-install-recommends ca-certificates curl gosu && rm -rf /var/lib/apt/lists/*
+FROM alpine:3.24@sha256:f59abe656b692d901e184be3445e084786602108599d2a51d229c0f5a48c71bf AS runtime
+RUN apk add --no-cache ca-certificates curl libgcc su-exec tzdata
 WORKDIR /app
 COPY --from=compile /receipt-backend-api /app/receipt-backend-api
 COPY build/web/ /app/web/

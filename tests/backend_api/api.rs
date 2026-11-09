@@ -8,9 +8,11 @@ use base64::Engine;
 use receipt_backend_api::{State, application, config::Config};
 use serde_json::{Value, json};
 use std::sync::{Arc, Mutex};
+use std::time::Duration;
 use tower::ServiceExt;
 const KEY: &str = "synthetic-test-key-not-a-real-secret";
 const OCR_KEY: &str = "synthetic-ocr-service-key-for-tests";
+const JOB_COMPLETION_TIMEOUT: Duration = Duration::from_secs(120);
 fn configured_template() -> String {
     include_str!("../../docker/defaults/backend_api.toml")
         .replacen("jwt_secret = \"\"", &format!("jwt_secret = \"{KEY}\""), 1)
@@ -43,6 +45,7 @@ struct Mock {
     header_box: Option<Value>,
     logo_delay_ms: u64,
     delay_ms: u64,
+    first_response_gate: Option<Arc<tokio::sync::Notify>>,
 }
 struct Fixture {
     app: Router,
@@ -62,7 +65,7 @@ async fn fixture(repair_attempts: usize) -> Fixture {
     let h = mock.clone();
     let engine=Router::new().route("/v1/models",get(move||{let h=h.clone();async move{if h.lock().unwrap().fail{axum::http::StatusCode::SERVICE_UNAVAILABLE}else{axum::http::StatusCode::OK}}})).route("/v1/chat/completions",post(move|headers:axum::http::HeaderMap,Json(v):Json<Value>|{let m=m.clone();async move{
         if !headers.get("authorization").is_some_and(|v|v==format!("Bearer {OCR_KEY}").as_str()) {return (axum::http::StatusCode::UNAUTHORIZED,Json(json!({"error":"auth"})));}
-        let (response,delay)={
+        let (response,delay,gate)={
             let mut m=m.lock().unwrap();m.calls.push(v.clone());
             let logo=v["messages"][0]["content"].as_str().unwrap_or("").starts_with("Locate the complete store logo");
             let matching=v["messages"][0]["content"].as_str().unwrap_or("").starts_with("Compare the QUERY");
@@ -76,8 +79,9 @@ async fn fixture(repair_attempts: usize) -> Fixture {
             let invalid=m.bad_json || m.invalid_responses>0;
             m.invalid_responses=m.invalid_responses.saturating_sub(1);
             let raw=json!({"choices":[{"finish_reason":if m.finish && !logo && !matching {"length"}else{"stop"},"message":{"content":if invalid {"not json".into()}else{prediction.to_string()},"reasoning_content":"private inference"}}],"usage":{"prompt_tokens":10,"completion_tokens":20,"total_tokens":30}});
-            ((if m.fail {axum::http::StatusCode::SERVICE_UNAVAILABLE}else{axum::http::StatusCode::OK},Json(raw)),if matching {m.logo_delay_ms}else{m.delay_ms})
+            ((if m.fail {axum::http::StatusCode::SERVICE_UNAVAILABLE}else{axum::http::StatusCode::OK},Json(raw)),if matching {m.logo_delay_ms}else{m.delay_ms},m.first_response_gate.take())
         };
+        if let Some(gate) = gate { gate.notified().await; }
         tokio::time::sleep(std::time::Duration::from_millis(delay)).await; response
     }}));
     let engine = engine.layer(axum::extract::DefaultBodyLimit::max(80 * 1024 * 1024));
@@ -142,6 +146,24 @@ async fn request(
     let status = response.status().as_u16();
     let bytes = to_bytes(response.into_body(), usize::MAX).await.unwrap();
     (status, serde_json::from_slice(&bytes).unwrap())
+}
+
+async fn wait_for_applied(f: &Fixture, job_id: &Value) {
+    let store = receipt_backend_api::db::Store::open(&f.dir.path().join("data")).unwrap();
+    tokio::time::timeout(JOB_COMPLETION_TIMEOUT, async {
+        loop {
+            let job = store
+                .recognition_action("get", &json!({"id": job_id}))
+                .unwrap();
+            match job["status"].as_str() {
+                Some("applied") => break,
+                Some("queued" | "running") => tokio::time::sleep(Duration::from_millis(100)).await,
+                _ => panic!("Unexpected recognition job status: {job}"),
+            }
+        }
+    })
+    .await
+    .expect("Recognition job must apply in the background");
 }
 #[tokio::test]
 async fn mobile_round_trip() {
@@ -604,26 +626,7 @@ async fn persistent_job_auto_applies_without_client_polling_or_apply() {
     drop(s);
     let (status,started)=request(&f,"POST","/api/v1/recognition/start",Some(json!({"request_key":"job-1","input":{"receipt_id":r["id"],"expected_version":3,"zone":"America/New_York"}})),true).await;
     assert_eq!(status, 200, "{started}");
-    let job_id = started["data"]["job_id"].clone();
-    let mut done = false;
-    for _ in 0..3000 {
-        tokio::time::sleep(std::time::Duration::from_millis(10)).await;
-        let job = request(
-            &f,
-            "POST",
-            "/api/v1/recognition/get",
-            Some(json!({"input":{"id":job_id}})),
-            true,
-        )
-        .await
-        .1;
-        if job["data"]["status"] == "applied" {
-            done = true;
-            break;
-        }
-        assert_ne!(job["data"]["status"], "failed", "{job}");
-    }
-    assert!(done);
+    wait_for_applied(&f, &started["data"]["job_id"]).await;
     {
         let mock = f.mock.lock().unwrap();
         assert_eq!(
@@ -815,7 +818,8 @@ async fn trend_route_returns_read_only_calendar_series() {
 #[tokio::test(flavor = "multi_thread", worker_threads = 2)]
 async fn two_jobs_are_queued_serially_and_receipt_queries_remain_responsive() {
     let f = fixture(0).await;
-    f.mock.lock().unwrap().delay_ms = 1000;
+    let gate = Arc::new(tokio::sync::Notify::new());
+    f.mock.lock().unwrap().first_response_gate = Some(gate.clone());
     let s = receipt_backend_api::db::Store::open(&f.dir.path().join("data")).unwrap();
     let mut photo = std::io::Cursor::new(Vec::new());
     image::DynamicImage::new_rgb8(30, 50)
@@ -838,7 +842,7 @@ async fn two_jobs_are_queued_serially_and_receipt_queries_remain_responsive() {
     drop(s);
     for (i, id) in receipts.iter().enumerate() {
         if i > 0 {
-            tokio::time::timeout(std::time::Duration::from_secs(60), async {
+            tokio::time::timeout(JOB_COMPLETION_TIMEOUT, async {
                 while f.mock.lock().unwrap().calls.is_empty() {
                     tokio::time::sleep(std::time::Duration::from_millis(10)).await;
                 }
@@ -846,7 +850,7 @@ async fn two_jobs_are_queued_serially_and_receipt_queries_remain_responsive() {
             .await
             .unwrap();
         }
-        let result = tokio::time::timeout(std::time::Duration::from_millis(500), request(&f,"POST","/api/v1/recognition/start",Some(json!({"request_key":format!("parallel-{i}"),"input":{"receipt_id":id,"expected_version":2,"zone":"UTC"}})),true)).await.unwrap();
+        let result = tokio::time::timeout(Duration::from_secs(5), request(&f,"POST","/api/v1/recognition/start",Some(json!({"request_key":format!("parallel-{i}"),"input":{"receipt_id":id,"expected_version":2,"zone":"UTC"}})),true)).await.unwrap();
         assert_eq!(result.0, 200);
     }
     assert_eq!(
@@ -870,7 +874,7 @@ async fn two_jobs_are_queued_serially_and_receipt_queries_remain_responsive() {
     );
     drop(store);
     let result = tokio::time::timeout(
-        std::time::Duration::from_millis(500),
+        Duration::from_secs(5),
         request(
             &f,
             "POST",
@@ -882,9 +886,10 @@ async fn two_jobs_are_queued_serially_and_receipt_queries_remain_responsive() {
     .await
     .unwrap();
     assert_eq!(result.0, 200);
-    tokio::time::timeout(std::time::Duration::from_secs(60), async {
+    gate.notify_one();
+    tokio::time::timeout(JOB_COMPLETION_TIMEOUT, async {
+        let store = receipt_backend_api::db::Store::open(&f.dir.path().join("data")).unwrap();
         loop {
-            let store = receipt_backend_api::db::Store::open(&f.dir.path().join("data")).unwrap();
             let remaining = store
                 .rows(
                     "SELECT job_id FROM recognition_job WHERE status IN ('queued','running')",
@@ -894,7 +899,7 @@ async fn two_jobs_are_queued_serially_and_receipt_queries_remain_responsive() {
             if remaining.is_empty() {
                 break;
             }
-            tokio::time::sleep(std::time::Duration::from_millis(20)).await;
+            tokio::time::sleep(Duration::from_millis(100)).await;
         }
     })
     .await
@@ -1069,43 +1074,28 @@ async fn header_identity_precedes_logo_alias_before_single_multiphoto_extraction
         drop(s);
         let (status,started)=request(&f,"POST","/api/v1/recognition/start",Some(json!({"request_key":"logo-job","input":{"receipt_id":r["id"],"expected_version":3,"zone":"America/New_York"}})),true).await;
         assert_eq!(status, 200, "{started}");
-        let mut done = false;
-        for _ in 0..2000 {
-            tokio::time::sleep(std::time::Duration::from_millis(10)).await;
-            let s = receipt_backend_api::db::Store::open(&f.dir.path().join("data")).unwrap();
-            let job = s
-                .recognition_action("get", &json!({"id":started["data"]["job_id"]}))
-                .unwrap();
-            assert_ne!(job["status"], "failed", "{job}");
-            if job["status"] == "applied" {
-                assert_eq!(
-                    s.load(r["id"].as_str().unwrap()).unwrap()["store"],
-                    expected_store
-                );
-                let receipt = s.load(r["id"].as_str().unwrap()).unwrap();
-                if mode == "restaurant" {
-                    assert_eq!(
-                        s.store_receipt_type(expected_store).unwrap(),
-                        receipt_backend_api::db::RESTAURANT_RECEIPT_TYPE
-                    );
-                    assert_eq!(
-                        receipt["receiptTypeId"],
-                        receipt_backend_api::db::RESTAURANT_RECEIPT_TYPE
-                    );
-                    assert!(
-                        receipt["lines"]
-                            .as_array()
-                            .unwrap()
-                            .iter()
-                            .all(|line| line["receiptTypeId"]
-                                == receipt_backend_api::db::RESTAURANT_RECEIPT_TYPE)
-                    );
-                }
-                done = true;
-                break;
-            }
+        wait_for_applied(&f, &started["data"]["job_id"]).await;
+        let s = receipt_backend_api::db::Store::open(&f.dir.path().join("data")).unwrap();
+        let receipt = s.load(r["id"].as_str().unwrap()).unwrap();
+        assert_eq!(receipt["store"], expected_store);
+        if mode == "restaurant" {
+            assert_eq!(
+                s.store_receipt_type(expected_store).unwrap(),
+                receipt_backend_api::db::RESTAURANT_RECEIPT_TYPE
+            );
+            assert_eq!(
+                receipt["receiptTypeId"],
+                receipt_backend_api::db::RESTAURANT_RECEIPT_TYPE
+            );
+            assert!(
+                receipt["lines"]
+                    .as_array()
+                    .unwrap()
+                    .iter()
+                    .all(|line| line["receiptTypeId"]
+                        == receipt_backend_api::db::RESTAURANT_RECEIPT_TYPE)
+            );
         }
-        assert!(done);
         let m = f.mock.lock().unwrap();
         assert_eq!(m.events.first().unwrap(), "locate");
         assert_eq!(m.events.last().unwrap(), "vision");

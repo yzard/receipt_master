@@ -572,7 +572,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
           ),
         ),
         if (page == 0) ...[
-          const SizedBox(width: 12),
+          const SizedBox(width: 16),
           Expanded(
             child: FrostedBar(
               radius: BorderRadius.circular(34),

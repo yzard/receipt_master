@@ -37,10 +37,10 @@ fi
 "$project_dir/build_android.sh" --prepare-only
 cd "$project_dir/src/shared"
 "$flutter_bin" pub get --enforce-lockfile
-"$(dirname -- "$flutter_bin")/dart" format --output=none --set-exit-if-changed lib "$project_dir/tests/shared"
 "$flutter_bin" analyze
 cd "$project_dir/tests/shared"
 "$flutter_bin" pub get --enforce-lockfile
+"$(dirname -- "$flutter_bin")/dart" format --output=none --set-exit-if-changed "$project_dir/src/shared/lib" .
 "$flutter_bin" analyze
 "$flutter_bin" test --dart-define=TEST_PLATFORM=ios domain database ui
 cd "$project_dir/build/flutter"

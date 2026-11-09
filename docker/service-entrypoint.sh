@@ -18,4 +18,4 @@ export HOME=/tmp/receipt-home
 mkdir -p "$HOME"
 chown "$PUID:$PGID" "$HOME"
 
-exec gosu "$PUID:$PGID" "$@"
+exec su-exec "$PUID:$PGID" "$@"
