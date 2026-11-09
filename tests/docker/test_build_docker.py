@@ -43,6 +43,8 @@ if name == 'docker' and args[:2] == ['image', 'inspect']:
     print('sha256:' + ('a' if args[-1].startswith('receipt-master-backend-api:') else 'b') * 64)
 elif name == 'docker' and args[:1] == ['compose']:
     print('{}')
+elif name == 'docker' and args[:1] == ['run'] and '-i' in args:
+    sys.stdin.read()
 elif name == 'date':
     # A second clock read crosses midnight, exposing inconsistent image dates.
     print('20260929' if sum(c[0] == 'date' for c in commands) == 1 else '20260930')
