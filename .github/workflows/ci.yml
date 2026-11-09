@@ -1,0 +1,42 @@
+name: Mobile checks
+on:
+  push:
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  test-and-android:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/setup-buildx-action@v3
+      - run: |
+          export RECEIPT_BOOTSTRAP_FILE="$RUNNER_TEMP/receipt-backend-defaults.json"
+          printf '%s\n' '{"endpoint":"https://receipts.example.com/"}' > "$RECEIPT_BOOTSTRAP_FILE"
+          ./build_android.sh
+      - uses: actions/upload-artifact@v4
+        with:
+          name: android-apks
+          path: |
+            build/mobile/*.apk
+            build/mobile/SHA256SUMS
+            build/mobile/APK-VERIFICATION.txt
+  ios-compile:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.47.4'
+          channel: stable
+      - run: |
+          export RECEIPT_BOOTSTRAP_FILE="$RUNNER_TEMP/receipt-backend-defaults.json"
+          printf '%s\n' '{"endpoint":"https://receipts.example.com/"}' > "$RECEIPT_BOOTSTRAP_FILE"
+          ./build_ios.sh "$(command -v flutter)"
+
+  backend-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/setup-buildx-action@v3
+      - run: docker buildx build --target checks --file docker/backend_api.Dockerfile .
