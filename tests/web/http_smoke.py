@@ -261,11 +261,12 @@ def main():
             assert status == 200
             assert manifest == json.loads((args.artifacts / 'android-update.json').read_text())
             current_names = {Path(variant['path']).name for variant in manifest['variants'].values()}
-            installed_names = set(
-                docker(
-                    'exec', name, 'find', '/artifacts/updates', '-type', 'f', '-name', '*.apk', '-printf', '%f\n'
+            installed_names = {
+                Path(path).name
+                for path in docker(
+                    'exec', name, 'find', '/artifacts/updates', '-type', 'f', '-name', '*.apk', '-print'
                 ).splitlines()
-            )
+            }
             assert installed_names == current_names, 'API image must contain only the current update APKs'
             assert {p.name for p in (args.artifacts / 'updates').glob('*.apk')} == current_names
             assert user.request('/updates/' + 'a' * 64 + '.apk')[0] == 404
