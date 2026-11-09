@@ -2,9 +2,10 @@
 set -euo pipefail
 usage() {
   cat <<'USAGE'
-Usage: ./build_docker.sh [--publish dockerhub|github --username NAME]
+Usage: ./build_docker.sh [--security-scan] [--publish dockerhub|github --username NAME]
 
 No arguments: build and test locally without publishing.
+--security-scan      Scan dependencies and the final image. Publishing always scans.
 --publish dockerhub  Push the backend API image to docker.io/NAME/...
 --publish github     Push the backend API image to ghcr.io/NAME/...
 --username NAME      Registry user or organization namespace (required for publishing).
@@ -13,7 +14,7 @@ No arguments: build and test locally without publishing.
 Image tags: YYYYMMDD (build start date in the host timezone) and latest.
 Both tags point to the same API image.
 Log in first with docker login docker.io or docker login ghcr.io.
-Publishing starts only after Android, Web, backends and container HTTP checks pass.
+Publishing starts only after the build, HTTP checks and security scans pass.
 USAGE
 }
 fail_usage() {
@@ -23,9 +24,11 @@ fail_usage() {
 }
 publish_registry=""
 publish_namespace=""
+security_scan=false
 while (( $# )); do
   case "$1" in
     --help|-h) usage; exit 0 ;;
+    --security-scan) security_scan=true; shift ;;
     --publish|--username)
       (( $# >= 2 )) && [[ -n "$2" && "$2" != --* ]] || fail_usage "Missing value for $1."
       case "$1" in
@@ -102,6 +105,13 @@ fi
 
 # Exercise the actual API/Web image with disposable accounts, never the playground volume.
 python3 "$project_dir/tests/web/http_smoke.py" --image "$api_image_id" --artifacts "$project_dir/build/mobile"
+if [[ "$security_scan" == true || -n "$publish_registry" ]]; then
+  bash "$project_dir/docker/scan_release.sh" "$project_dir" "$RECEIPT_BUILD_WORK" "$api_image_id"
+  if [[ "$("${receipt_state[@]}" fingerprint "${receipt_inputs[@]}")" != "$api_key" ]]; then
+    echo 'API build inputs changed during the build or scan. Run the build again.' >&2
+    exit 1
+  fi
+fi
 python3 "$project_dir/docker/build_state.py" record --root "$project_dir" --target api --key "$api_key" --image "$api_image_id"
 
 # Only successful, verified builds advance latest. These are aliases, not new builds.

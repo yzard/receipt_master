@@ -11,6 +11,9 @@ Before deploying a tested image, replace `[ocr]` in the mounted `config.toml` wi
 Shared model loading, unloading and GPU allocation belong to `local_llm`. The NAS configuration uses `http://192.168.1.20:8080/v1` and model `qwen3.8-flash-next-iq3_s`. The inference timeout is 1800 seconds. The [validation results](unified_backend_validation.md) record the initial migration.
 
 Publish the API image from the Receipt Master checkout after you push its source to GitHub.
+GitHub Actions runs `./build_docker.sh --security-scan`. The same scans run on every publication attempt.
+OSV-Scanner checks the Rust, Web, and Flutter lockfiles. Trivy checks the final image for vulnerabilities and secrets.
+If a scan reports a finding or fails to complete, the script stops before it updates `latest` or pushes a tag.
 
 ```sh
 RECEIPT_BACKEND_ENDPOINT=https://receipts.example.com/ \

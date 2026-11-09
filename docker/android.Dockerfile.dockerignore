@@ -55,3 +55,4 @@ tests/backend_api/*
 !docker/build_lifecycle.sh
 !docker/build_cleanup.py
 !docker/build_state.py
+!docker/scan_release.sh

@@ -89,7 +89,7 @@ if [[ ! -f "$bootstrap_file" ]]; then
   exit 1
 fi
 bootstrap_file="$(realpath "$bootstrap_file")"
-receipt_target_inputs android build_android.sh build_ios.sh build_docker.sh src/shared src/android tests/shared tests/docker docker/android.Dockerfile docker/android.Dockerfile.dockerignore docker/android_release.py docker/apply_mobile_defaults.py docker/prepare_ios_defaults.py docker/validate_mobile_defaults.py docker/service-entrypoint.sh docker/shared_qwen.py src/backend_api/resources/localizations.json
+receipt_target_inputs android build_android.sh build_ios.sh build_docker.sh src/shared src/android tests/shared tests/docker docker/android.Dockerfile docker/android.Dockerfile.dockerignore docker/android_release.py docker/apply_mobile_defaults.py docker/prepare_ios_defaults.py docker/validate_mobile_defaults.py docker/service-entrypoint.sh docker/scan_release.sh src/backend_api/resources/localizations.json
 docker run --rm --user "$(id -u):$(id -g)" \
   --mount "type=bind,source=$project_dir,target=/workspace,readonly" \
   --mount "type=bind,source=$bootstrap_file,target=/defaults.json,readonly" \

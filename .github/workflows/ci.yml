@@ -10,10 +10,10 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: docker/setup-buildx-action@v3
-      - run: |
-          export RECEIPT_BOOTSTRAP_FILE="$RUNNER_TEMP/receipt-backend-defaults.json"
-          printf '%s\n' '{"endpoint":"https://receipts.example.com/"}' > "$RECEIPT_BOOTSTRAP_FILE"
-          ./build_android.sh
+      - name: Build and scan the API release
+        env:
+          RECEIPT_BACKEND_ENDPOINT: https://receipts.example.com/
+        run: ./build_docker.sh --security-scan
       - uses: actions/upload-artifact@v4
         with:
           name: android-apks
@@ -33,10 +33,3 @@ jobs:
           export RECEIPT_BOOTSTRAP_FILE="$RUNNER_TEMP/receipt-backend-defaults.json"
           printf '%s\n' '{"endpoint":"https://receipts.example.com/"}' > "$RECEIPT_BOOTSTRAP_FILE"
           ./build_ios.sh "$(command -v flutter)"
-
-  backend-tests:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: docker/setup-buildx-action@v3
-      - run: docker buildx build --target checks --file docker/backend_api.Dockerfile .

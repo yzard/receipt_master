@@ -22,6 +22,7 @@ class BuildDockerTest(unittest.TestCase):
         shutil.copyfile(
             Path(__file__).parents[2] / 'docker/build_lifecycle.sh', self.root / 'docker/build_lifecycle.sh'
         )
+        shutil.copyfile(Path(__file__).parents[2] / 'docker/scan_release.sh', self.root / 'docker/scan_release.sh')
         stub = '#!' + shutil.which('python3') + '''
 import json, os, sys
 from pathlib import Path
@@ -35,6 +36,8 @@ if (failure == 'android' and name == 'build_android.sh'
     or failure == 'checks' and name == 'docker' and '--target' in args and 'checks' in args
     or failure == 'api_build' and name == 'docker' and '--load' in args and any(a.startswith('receipt-master-backend-api:') for a in args)
     or failure == 'smoke' and name == 'fake-python' and args[0].endswith('http_smoke.py')
+    or failure == 'dependencies' and name == 'docker' and '--all-vulns' in args
+    or failure == 'image_scan' and name == 'docker' and 'vuln,secret' in args
     or failure == 'push' and name == 'docker' and args[:2] == ['image', 'push']
     or failure == 'cleanup' and name == 'docker' and args[:2] == ['buildx', 'rm']
     or failure == 'latest_push' and name == 'docker' and args[:2] == ['image', 'push'] and args[-1].endswith(':latest')):
@@ -45,6 +48,8 @@ elif name == 'docker' and args[:1] == ['compose']:
     print('{}')
 elif name == 'docker' and args[:1] == ['run'] and '-i' in args:
     sys.stdin.read()
+elif name == 'fake-python' and args[0].endswith('build_state.py') and args[1] == 'probe' and os.environ['BUILD_TEST_REUSE'] == '1':
+    print('sha256:' + 'c' * 64)
 elif name == 'date':
     # A second clock read crosses midnight, exposing inconsistent image dates.
     print('20260929' if sum(c[0] == 'date' for c in commands) == 1 else '20260930')
@@ -62,13 +67,14 @@ elif name == 'date':
             script.write_text(stub)
             script.chmod(0o755)
 
-    def run_build(self, *args, failure=''):
+    def run_build(self, *args, failure='', reuse=False):
         env = dict(os.environ, PATH=str(self.bin) + os.pathsep + os.environ['PATH'])
         for name in ['RECEIPT_BUILD_WORK', 'RECEIPT_BUILD_BUILDER']:
             env.pop(name, None)
         env.update(
             BUILD_TEST_LOG=str(self.log),
             BUILD_TEST_FAILURE=failure,
+            BUILD_TEST_REUSE=str(int(reuse)),
             RECEIPT_BACKEND_ENDPOINT='https://receipts.example.test/',
         )
         result = subprocess.run(
@@ -99,7 +105,7 @@ elif name == 'date':
         self.assertTrue(all(commands.index(c) > commands.index(smoke) for c in aliases))
         self.assertEqual([c for c in commands if c[0] == 'date'], [['date', '+%Y%m%d']])
 
-    def test_each_registry_pushes_both_tested_images_after_smoke(self):
+    def test_each_registry_pushes_the_scanned_image_after_smoke(self):
         for registry, host in [('dockerhub', 'docker.io'), ('github', 'ghcr.io')]:
             with self.subTest(registry=registry):
                 self.log.unlink(missing_ok=True)
@@ -123,9 +129,35 @@ elif name == 'date':
                 smoke_index = next(
                     i for i, c in enumerate(commands) if c[0] == 'fake-python' and c[1].endswith('http_smoke.py')
                 )
-                self.assertTrue(all(commands.index(c) > smoke_index for c in pushes + tags))
+                dependencies = next(c for c in commands if '--all-vulns' in c)
+                self.assertIn('/inputs/Cargo.lock', dependencies)
+                archive = next(c for c in commands if c[:3] == ['docker', 'image', 'save'])
+                self.assertEqual(archive[3:], ['sha256:' + 'a' * 64])
+                scan = next(c for c in commands if 'vuln,secret' in c)
+                self.assertEqual(scan[scan.index('--exit-code') + 1], '1')
+                self.assertLess(smoke_index, commands.index(dependencies))
+                self.assertLess(commands.index(dependencies), commands.index(archive))
+                self.assertLess(commands.index(archive), commands.index(scan))
+                self.assertTrue(all(commands.index(c) > commands.index(scan) for c in pushes + tags))
                 self.assertFalse(any(c[:2] == ['docker', 'login'] for c in commands))
                 self.assertEqual(sum(c[0] == 'date' for c in commands), 1)
+
+    def test_ci_can_scan_without_publishing(self):
+        result, commands = self.run_build('--security-scan')
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertTrue(any('--all-vulns' in c for c in commands))
+        self.assertTrue(any('vuln,secret' in c for c in commands))
+        self.assertFalse(any(c[:3] == ['docker', 'image', 'push'] for c in commands))
+
+    def test_reused_image_is_scanned_again_before_publishing(self):
+        result, commands = self.run_build('--publish', 'dockerhub', '--username', 'tester', reuse=True)
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertFalse(any(c[:3] == ['docker', 'buildx', 'build'] for c in commands))
+        archive = next(c for c in commands if c[:3] == ['docker', 'image', 'save'])
+        self.assertEqual(archive[3:], ['sha256:' + 'c' * 64])
+        scan = next(c for c in commands if 'vuln,secret' in c)
+        push = next(c for c in commands if c[:3] == ['docker', 'image', 'push'])
+        self.assertLess(commands.index(scan), commands.index(push))
 
     def test_invalid_options_fail_before_any_work(self):
         for args in [
@@ -146,12 +178,12 @@ elif name == 'date':
                 self.assertEqual(result.returncode, 2, result.stderr)
                 self.assertEqual(commands, [])
 
-    def test_build_or_smoke_failure_never_publishes(self):
-        for failure in ['checks', 'android', 'api_build', 'smoke']:
+    def test_failed_build_checks_never_publish(self):
+        for failure in ['checks', 'android', 'api_build', 'smoke', 'dependencies', 'image_scan']:
             with self.subTest(failure=failure):
                 self.log.unlink(missing_ok=True)
                 result, commands = self.run_build('--publish', 'github', '--username', 'tester', failure=failure)
-                self.assertEqual(result.returncode, 37, result.stderr)
+                self.assertEqual(result.returncode, 1 if failure == 'image_scan' else 37, result.stderr)
                 self.assertFalse(
                     any(c[:3] in [['docker', 'image', 'push'], ['docker', 'image', 'tag']] for c in commands)
                 )
