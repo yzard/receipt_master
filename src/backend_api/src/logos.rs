@@ -34,6 +34,23 @@ fn restaurant_name(text: &str) -> Option<String> {
         .get_or_init(|| regex::Regex::new(r"(?i)\A(.+?)\s+restaurant(?:\s+#?\s*\d+)?\z").unwrap());
     valid_store_name(&pattern.captures(text.trim())?[1])
 }
+
+fn store_key(value: &str) -> String {
+    value
+        .chars()
+        .filter(|c| c.is_alphanumeric())
+        .flat_map(char::to_lowercase)
+        .collect()
+}
+
+pub(crate) fn restaurant_brand(name: &str) -> Option<&'static str> {
+    match store_key(name).as_str() {
+        "mcdonalds" => Some("McDonald's"),
+        "dunkin" | "dunkins" | "dunkindonuts" => Some("Dunkin Donuts"),
+        _ => None,
+    }
+}
+
 /// Accept only explicit header text. A standalone model guess still needs an image alias.
 pub fn header_store(evidence: &Value) -> Option<HeaderStore> {
     static GREETING: std::sync::OnceLock<regex::Regex> = std::sync::OnceLock::new();
@@ -46,19 +63,14 @@ pub fn header_store(evidence: &Value) -> Option<HeaderStore> {
         if let Some(matched) = pattern.captures(&text) {
             let qualified = restaurant_name(matched[1].trim());
             if let Some(name) = qualified.clone().or_else(|| valid_store_name(&matched[1])) {
-                let key = |value: &str| {
-                    value
-                        .chars()
-                        .filter(|c| c.is_alphanumeric())
-                        .flat_map(char::to_lowercase)
-                        .collect::<String>()
-                };
+                let brand = restaurant_brand(&name);
                 let is_restaurant = qualified.is_some()
+                    || brand.is_some()
                     || restaurant
                         .as_ref()
-                        .is_some_and(|other| key(other) == key(&name));
+                        .is_some_and(|other| store_key(other) == store_key(&name));
                 return Some(HeaderStore {
-                    name,
+                    name: brand.map_or(name, str::to_owned),
                     source: "welcome_header",
                     is_restaurant,
                 });
@@ -66,7 +78,7 @@ pub fn header_store(evidence: &Value) -> Option<HeaderStore> {
         }
     }
     restaurant.map(|name| HeaderStore {
-        name,
+        name: restaurant_brand(&name).map_or(name, str::to_owned),
         source: "restaurant_header",
         is_restaurant: true,
     })

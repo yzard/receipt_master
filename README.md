@@ -1,4 +1,4 @@
-> 当前部署：[单 API 镜像与共享 Strata 推理](docs/shared_inference.md)。NAS 已完成配置迁移与部署；验证结果见 [部署验证记录](docs/unified_backend_validation.md)。
+> 当前部署：[单 API 镜像与共享 Basalt 推理](docs/shared_inference.md)。NAS 已完成配置迁移与部署；验证结果见 [部署验证记录](docs/unified_backend_validation.md)。
 
 # Receipt Master
 
@@ -61,7 +61,7 @@ ghcr.io/your_username/receipt-master-backend-api:latest
 ### 数据和地址
 
 - 宿主 `playground/backend_api/` → API 容器 `/data`，存放 `config.toml`、`prompt.toml`、SQLite、收据照片、识别结果和备份。
-- 模型由外部共享 Strata 服务管理，Receipt Master 仅运行一个 backend API 镜像。
+- 模型由外部共享 Basalt 服务管理，Receipt Master 仅运行一个 backend API 镜像。
 - `0.0.0.0:5000` → API 容器 `8000`；启动脚本打印实际宿主网络地址。手机使用同一网络可达的 host 和 port。
 - 登录 Web 后，从侧边栏“下载 Android APK”下载 `/receipt_master.apk`；APK、更新清单和更新包都需要登录认证。安装包只预置后端地址，安装后仍需输入用户名密码；“检查客户端更新”使用手机的登录会话从同一服务检查版本和哈希。
 - `build_docker.sh` 先调用 `build_android.sh`，再将安装包、更新清单及当前版本的各架构更新包打进 `backend_api` 镜像的 `/artifacts/`。开发目录和镜像都只保留最新版本 APK：成功发布新版本后删除所有旧 APK，不归档、不保留历史下载；构建失败保留最后一个有效版本。签名文件和版本状态继续保留。运行时只挂载 API 的 `/data`，不挂载宿主 APK 目录；发布新 APK 需要重建并更新 API 镜像。
@@ -108,6 +108,6 @@ API 连接与认证配置在 [API config.toml](playground/backend_api/config.tom
 
 [真实票据测试与运行方式](tests/backend_api/corpus/README.md) · [修正确认数据后的 OCR 对比](docs/corrected_ocr_comparison.md) · [旧标准模型比较](docs/confirmed_ocr_comparison.md)
 
-当前：[共享 Strata 与可配置提示架构](docs/backend_ocr.md)。历史对照：[Unlimited-OCR / PP-OCRv6](docs/ocr_model_comparison.md)。
+当前：[共享 Basalt 与可配置提示架构](docs/backend_ocr.md)。历史对照：[Unlimited-OCR / PP-OCRv6](docs/ocr_model_comparison.md)。
 
 Logo 定位/比对及通用与店铺提示配置：[playground/backend_api/prompt.toml](playground/backend_api/prompt.toml)，采用 `[[general]]` / `[[store]]`，修改后重启 API。模型开启 thinking，旧双 OCR 与 parser 已移除。

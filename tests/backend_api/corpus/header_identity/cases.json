@@ -36,9 +36,9 @@
       "restaurant_text": null
     },
     "expected": {
-      "name": "Dunkin'",
+      "name": "Dunkin Donuts",
       "source": "welcome_header",
-      "is_restaurant": false
+      "is_restaurant": true
     }
   }
 ]

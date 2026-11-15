@@ -274,7 +274,7 @@ async fn process(state: Arc<State>, job: Value) -> Result<Value> {
     let mut logo_run = None;
     // Parsing uses only this run's header or matched identity, never a previous display name.
     let mut known_store: Option<String> = None;
-    let mut header_identity = None;
+    let mut recognized_receipt_type = None;
     let mut content = Vec::new();
     for (index, img) in images.iter().enumerate() {
         let path = db::media::safe_path(&state.data_dir, text(img, "relative_path")?)?;
@@ -285,6 +285,7 @@ async fn process(state: Arc<State>, job: Value) -> Result<Value> {
             base64::engine::general_purpose::STANDARD.encode(&bytes)
         );
         if index == 0 {
+            let mut header_identity = None;
             let result = async {
                 let layout = pipeline::locate_logo(state.clone(), image.clone()).await?;
                 header_identity = crate::logos::header_store(&layout["evidence"]);
@@ -324,10 +325,18 @@ async fn process(state: Arc<State>, job: Value) -> Result<Value> {
                 .as_ref()
                 .map(|identity| identity.source)
                 .unwrap_or("logo_alias");
-            let receipt_type = header_identity
-                .as_ref()
-                .filter(|identity| identity.is_restaurant)
-                .map(|_| db::RESTAURANT_RECEIPT_TYPE);
+            let brand = known_store
+                .as_deref()
+                .and_then(crate::logos::restaurant_brand);
+            if let Some(name) = brand {
+                known_store = Some(name.to_owned());
+            }
+            recognized_receipt_type = (brand.is_some()
+                || header_identity
+                    .as_ref()
+                    .is_some_and(|identity| identity.is_restaurant))
+            .then_some(db::RESTAURANT_RECEIPT_TYPE);
+            let receipt_type = recognized_receipt_type;
             if let Some(logo) = logo_run.as_mut() {
                 logo["identity"] = json!({"source":identity_source,"store":known_store,"receipt_type":receipt_type});
             }
@@ -370,12 +379,8 @@ async fn process(state: Arc<State>, job: Value) -> Result<Value> {
         return Err(conflict());
     }
     let merchant = known_store.clone().unwrap_or_default();
-    let header_receipt_type = header_identity
-        .as_ref()
-        .filter(|identity| identity.is_restaurant)
-        .map(|_| db::RESTAURANT_RECEIPT_TYPE);
     let receipt_type = database(&state, move |s| {
-        let kind = match header_receipt_type {
+        let kind = match recognized_receipt_type {
             Some(kind) => kind.to_owned(),
             None => s.store_receipt_type(&merchant)?,
         };
@@ -431,7 +436,7 @@ async fn process(state: Arc<State>, job: Value) -> Result<Value> {
     };
     let zone = text(&settings, "zone")?.to_owned();
     database(&state, move |s| {
-        decode_receipt(s, source, result, image_ids, &zone, header_receipt_type)
+        decode_receipt(s, source, result, image_ids, &zone, recognized_receipt_type)
     })
     .await
 }

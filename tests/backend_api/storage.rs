@@ -1405,19 +1405,37 @@ fn explicit_header_identity_obeys_welcome_restaurant_and_logo_precedence() {
             json!({"welcome_text":"WELCOME TO McDonald's"}),
             "McDonald's",
             "welcome_header",
-            false,
+            true,
         ),
         (
             json!({"welcome_text":"  Welcome\n to : Dunkin'  "}),
-            "Dunkin'",
+            "Dunkin Donuts",
             "welcome_header",
-            false,
+            true,
         ),
         (
             json!({"restaurant_text":"McDonald's Restaurant #32967"}),
             "McDonald's",
             "restaurant_header",
             true,
+        ),
+        (
+            json!({"restaurant_text":"MCDONALD’S RESTAURANT"}),
+            "McDonald's",
+            "restaurant_header",
+            true,
+        ),
+        (
+            json!({"welcome_text":"Welcome to Dunkin's"}),
+            "Dunkin Donuts",
+            "welcome_header",
+            true,
+        ),
+        (
+            json!({"welcome_text":"Welcome to skyFOODS"}),
+            "skyFOODS",
+            "welcome_header",
+            false,
         ),
         (
             json!({"restaurant_text":"  麦当劳 restaurant 7458  "}),
@@ -1439,9 +1457,9 @@ fn explicit_header_identity_obeys_welcome_restaurant_and_logo_precedence() {
         ),
         (
             json!({"welcome_text":"Welcome to Dunkin'","restaurant_text":"Other Restaurant"}),
-            "Dunkin'",
+            "Dunkin Donuts",
             "welcome_header",
-            false,
+            true,
         ),
         (
             json!({"welcome_text":"McDonald's","restaurant_text":"Hualian Restaurant"}),

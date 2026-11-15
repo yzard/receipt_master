@@ -1,8 +1,8 @@
-# 单 API 镜像与共享 Strata 推理
+# 单 API 镜像与共享 Basalt 推理
 
 Receipt Master 只构建和运行 `backend_api`。API 保留认证、数据库、任务队列、提示词、Logo 定位/匹配、收据解析和校验，并负责图片 EXIF 方向、RGB PNG 转换、多图像素预算和串行推理。不再打包模型、CUDA、NInfer 或独立 OCR HTTP 服务。
 
-共享服务由 `desk:/home/zyin/dev/local_llm` 管理，与其他项目共用。该代理负责 Strata 模型加载、空闲卸载和跨项目资源管理。Receipt Master 不启动、停止或下载模型。
+共享服务由 `desk:/home/zyin/dev/local_llm` 管理，与其他项目共用。该代理负责 Basalt 模型加载、空闲卸载和跨项目资源管理。Receipt Master 不启动、停止或下载模型。
 
 ## 配置和迁移
 
@@ -10,7 +10,7 @@ Receipt Master 只构建和运行 `backend_api`。API 保留认证、数据库�
 
 - `base_url`：OpenAI-compatible API base，包含 `/v1`，例如 `http://host.docker.internal:8080/v1`。Compose 为同机 Docker 配置 host-gateway；NAS 或其他主机必须填写可达的 desk IP/DNS。SSH 的 `desk` 别名不等于容器可用 DNS。
 - `api_key`：共享服务的真实 API key，仅写入权限为 `0600` 的配置；不能使用旧 OCR 服务密钥，不写入镜像、客户端或环境变量。
-- `model`：共享服务模型 ID，当前 local_llm 配置为 `qwen3.8-flash-next-iq3_s`。
+- `model`：共享服务模型 ID，当前 local_llm 配置为 `qwen3.8-flash-next-nvfp4`。
 - `max_images`、`image_pixel_budget`：模型允许的图片数量与单请求总像素预算，所有照片一起发送，超限报错，不丢弃页面。
 - `receipt_output_tokens`、`logo_output_tokens`、`temperature`、`seed`：推理参数。默认收据/Logo 输出为 32768/4096 token，包含思考与最终答案。共享服务上下文必须容纳文字输入、视觉 token 和输出；当前 Desk 图片请求上下文为 98304、视觉上限为 65536，实际图片 token 与文字输入仍须留出输出空间。
 - 可选 `thinking`：发出 `chat_template_kwargs.enable_thinking` 扩展；不支持此扩展的兼容服务应删除该字段。

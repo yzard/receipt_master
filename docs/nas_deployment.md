@@ -1,6 +1,6 @@
 # NAS deployment
 
-Receipt Master now deploys one backend API image. Shared Strata inference runs independently on desk; see [configuration and migration](shared_inference.md).
+Receipt Master now deploys one backend API image. Shared Basalt inference runs independently on desk; see [configuration and migration](shared_inference.md).
 
 The existing NAS service is `receipts` in `/data/docker/2_home_service.yaml`, with `/data/docker/data/receipts:/data`. Preserve this mount, existing account/database/photo data, JWT signing secret, and `prompt.toml`. APKs and update files remain in the API image.
 
@@ -8,7 +8,7 @@ Keep the existing `download_network` and Caddy routing from `receipts.zhuoyin.in
 
 Before deploying a tested image, replace `[ocr]` in the mounted `config.toml` with the complete `[inference]` template. Set `base_url` to the reachable desk address including `/v1`, the shared service API key, and its model ID. Keep the file private (0600). Remove `BACKEND_OCR_URL` and `BACKEND_OCR_API_KEY` from deployment environment settings; configuration now comes only from TOML. Do not reuse the retired OCR service key.
 
-Shared model loading, unloading and GPU allocation belong to `local_llm`. The NAS configuration uses `http://192.168.1.20:8080/v1` and model `qwen3.8-flash-next-iq3_s`. The inference timeout is 1800 seconds. The [validation results](unified_backend_validation.md) record the initial migration.
+Shared model loading, unloading and GPU allocation belong to `local_llm`. The NAS configuration uses `http://192.168.1.20:8080/v1` and model `qwen3.8-flash-next-nvfp4`. The inference timeout is 1800 seconds. The [validation results](unified_backend_validation.md) record the initial migration.
 
 Publish the API image from the Receipt Master checkout after you push its source to GitHub.
 GitHub Actions runs `./build_docker.sh --security-scan`. The same scans run on every publication attempt.

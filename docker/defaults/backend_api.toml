@@ -13,7 +13,7 @@ repair_attempts = 1
 [inference]
 base_url = "http://host.docker.internal:8080/v1"
 api_key = ""
-model = "qwen3.8-flash-next-iq3_s"
+model = "qwen3.8-flash-next-nvfp4"
 max_images = 16
 image_pixel_budget = 12582912
 receipt_output_tokens = 32768

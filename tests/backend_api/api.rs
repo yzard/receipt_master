@@ -184,7 +184,7 @@ async fn mobile_round_trip() {
     assert_eq!(v["usage"]["total_tokens"], 30);
     let calls = &f.mock.lock().unwrap().calls;
     assert_eq!(calls.len(), 1);
-    assert_eq!(calls[0]["model"], "qwen3.8-flash-next-iq3_s");
+    assert_eq!(calls[0]["model"], "qwen3.8-flash-next-nvfp4");
     assert!(calls[0].get("profile").is_none());
     assert_eq!(calls[0]["max_tokens"], 32768);
     assert_eq!(calls[0]["chat_template_kwargs"]["enable_thinking"], true);
@@ -1009,7 +1009,14 @@ async fn all_photos_reach_vision_together_and_invalid_output_fails() {
 
 #[tokio::test]
 async fn header_identity_precedes_logo_alias_before_single_multiphoto_extraction() {
-    for mode in ["logo", "welcome", "restaurant"] {
+    for mode in [
+        "logo",
+        "welcome",
+        "restaurant",
+        "mcdonalds",
+        "dunkin",
+        "dunkin_logo",
+    ] {
         let f = fixture(0).await;
         {
             let mut m = f.mock.lock().unwrap();
@@ -1019,11 +1026,19 @@ async fn header_identity_precedes_logo_alias_before_single_multiphoto_extraction
             } else if mode == "restaurant" {
                 m.restaurant_text = Some("Hualian Restaurant #123".into());
                 m.header_box = Some(Value::Null);
+            } else if mode == "mcdonalds" {
+                m.restaurant_text = Some("McDonald’s Restaurant".into());
+                m.header_box = Some(Value::Null);
+            } else if mode == "dunkin" {
+                m.welcome_text = Some("Welcome to Dunkin's".into());
+                m.header_box = Some(Value::Null);
             }
         }
         let expected_store = match mode {
             "welcome" => "skyFOODS",
             "restaurant" => "Hualian",
+            "mcdonalds" => "McDonald's",
+            "dunkin" | "dunkin_logo" => "Dunkin Donuts",
             _ => "Costco",
         };
         let s = receipt_backend_api::db::Store::open(&f.dir.path().join("data")).unwrap();
@@ -1061,8 +1076,12 @@ async fn header_identity_precedes_logo_alias_before_single_multiphoto_extraction
         s.transaction(|| {
             s.logo_action(
                 "save",
-                &json!({"id":logo,"name":"Costco","expected_version":version}),
-            )
+                &json!({"id":logo,"name":if mode == "dunkin_logo" {"Dunkin’"} else {"Costco"},"expected_version":version}),
+            )?;
+            if mode == "logo" {
+                s.classify_recognized_store("Costco", receipt_backend_api::db::GROCERY_RECEIPT_TYPE)?;
+            }
+            Ok(())
         })
         .unwrap();
         s.transaction(|| {
@@ -1079,7 +1098,13 @@ async fn header_identity_precedes_logo_alias_before_single_multiphoto_extraction
         let s = receipt_backend_api::db::Store::open(&f.dir.path().join("data")).unwrap();
         let receipt = s.load(r["id"].as_str().unwrap()).unwrap();
         assert_eq!(receipt["store"], expected_store);
-        if mode == "restaurant" {
+        if mode == "logo" {
+            assert_eq!(
+                receipt["receiptTypeId"],
+                receipt_backend_api::db::GROCERY_RECEIPT_TYPE
+            );
+        }
+        if matches!(mode, "restaurant" | "mcdonalds" | "dunkin" | "dunkin_logo") {
             assert_eq!(
                 s.store_receipt_type(expected_store).unwrap(),
                 receipt_backend_api::db::RESTAURANT_RECEIPT_TYPE
@@ -1107,15 +1132,18 @@ async fn header_identity_precedes_logo_alias_before_single_multiphoto_extraction
             assert!(prompt.contains("MERCHANT PROFILE: COSTCO"));
             assert!(!prompt.contains("HUALIAN STORE-SPECIFIC"));
             assert!(m.events.iter().filter(|event| *event == "logo").count() > 1);
+        } else if mode == "dunkin_logo" {
+            assert!(m.events.iter().any(|event| event == "logo"));
+            assert!(!prompt.contains("MERCHANT PROFILE: COSTCO"));
         } else {
             assert!(!m.events.iter().any(|event| event == "logo"));
             assert_eq!(m.events, vec!["locate", "vision"]);
             assert!(!prompt.contains("MERCHANT PROFILE: COSTCO"));
-            assert!(prompt.contains(if mode == "welcome" {
-                "MERCHANT PROFILE: SKYFOODS"
-            } else {
-                "HUALIAN STORE-SPECIFIC"
-            }));
+            match mode {
+                "welcome" => assert!(prompt.contains("MERCHANT PROFILE: SKYFOODS")),
+                "restaurant" => assert!(prompt.contains("HUALIAN STORE-SPECIFIC")),
+                _ => assert!(!prompt.contains("HUALIAN STORE-SPECIFIC")),
+            }
         }
         for call in &m.calls {
             let count = call["messages"][1]["content"]
@@ -1244,6 +1272,19 @@ fn configurable_prompts_validate_and_route_exact_merchant_names() {
     ] {
         assert!(Prompts::parse(&format!("{auxiliary}{text}")).is_err());
     }
+}
+
+#[test]
+fn default_prompts_route_hmart_to_promotion_profile() {
+    let prompts = receipt_backend_api::prompts::Prompts::parse(include_str!(
+        "../../docker/defaults/prompt.toml"
+    ))
+    .unwrap();
+    let (text, profile) = prompts.select(Some("HMART"));
+
+    assert_eq!(profile, "H MART");
+    assert!(text.contains("Regular Price ..., You saved ..."));
+    assert!(!prompts.select(None).0.contains("MERCHANT PROFILE: H MART"));
 }
 
 #[test]

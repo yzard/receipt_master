@@ -13,7 +13,7 @@
 
 `docker/build_state.py` 将内容指纹保存在 `build/state/`。输入包括源码、测试、构建脚本、锁文件、Dockerfile、工具链及上游产物。复用前重新计算最终文件的 SHA256，并检查记录的最终镜像是否存在。缺失、改变或损坏的产物触发重建。目标通过检查并导出后才发布成功记录，失败目标不覆盖原记录。
 
-未变化的 Web、Android、iOS 和后端镜像直接复用最终产物。Docker 组合入口仍执行容器 HTTP smoke。模型运行依赖由共享 Strata 服务维护，不属于本项目构建输入。
+未变化的 Web、Android、iOS 和后端镜像直接复用最终产物。Docker 组合入口仍执行容器 HTTP smoke。模型运行依赖由共享 Basalt 服务维护，不属于本项目构建输入。
 
 需要更新可变的上游基础镜像或系统软件包时，使用 `RECEIPT_REFRESH_BUILD=1 ./build_docker.sh` 明确刷新。该设置绕过最终产物复用。普通源码构建不自动刷新这些依赖。
 
@@ -25,7 +25,7 @@ Android 不再生成 debug APK。真机 iOS 构建使用 release 和 `--no-codes
 
 ## 外部模型
 
-本项目不再下载、提取或打包模型层。已有跨项目模型缓存不由此项目删除；Strata 及模型由共享 local_llm 项目维护。
+本项目不再下载、提取或打包模型层。已有跨项目模型缓存不由此项目删除；Basalt 及模型由共享 local_llm 项目维护。
 
 ## 验证范围
 
