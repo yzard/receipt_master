@@ -1574,7 +1574,11 @@ fn logo_crop_respects_camera_exif_orientation() {
         "data:image/jpeg;base64,{}",
         base64::engine::general_purpose::STANDARD.encode(&bytes)
     );
-    let (header, height) = receipt_backend_api::logos::localization_input(&url).unwrap();
+    let (header, height) = receipt_backend_api::logos::localization_input(
+        &url,
+        receipt_backend_api::logos::HeaderCrop::Standard,
+    )
+    .unwrap();
     assert_eq!(height, 0.30);
     let header = base64::engine::general_purpose::STANDARD
         .decode(header.split_once(',').unwrap().1)

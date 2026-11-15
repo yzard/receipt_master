@@ -1,6 +1,7 @@
 use crate::{
     State,
     db::{self, Result, Store, conflict, id, invalid, missing, now, number, text},
+    logos::HeaderCrop,
     pipeline,
 };
 use base64::Engine;
@@ -287,7 +288,9 @@ async fn process(state: Arc<State>, job: Value) -> Result<Value> {
         if index == 0 {
             let mut header_identity = None;
             let result = async {
-                let layout = pipeline::locate_logo(state.clone(), image.clone()).await?;
+                let layout =
+                    pipeline::locate_logo(state.clone(), image.clone(), HeaderCrop::Standard)
+                        .await?;
                 header_identity = crate::logos::header_store(&layout["evidence"]);
                 known_store = header_identity
                     .as_ref()
@@ -321,6 +324,30 @@ async fn process(state: Arc<State>, job: Value) -> Result<Value> {
                 known_store = matched["selected"].as_str().map(str::to_owned);
                 reference_match = Some(matched);
             }
+            let mut expanded_header = false;
+            if known_store.is_none() {
+                // Order numbers and promotions can push the printed store identity below the first crop.
+                match pipeline::locate_logo(state.clone(), image.clone(), HeaderCrop::Expanded)
+                    .await
+                {
+                    Ok(layout) => {
+                        header_identity = crate::logos::header_store(&layout["evidence"]);
+                        known_store = header_identity
+                            .as_ref()
+                            .map(|identity| identity.name.clone());
+                        expanded_header = known_store.is_some();
+                        let logo = logo_run.get_or_insert_with(|| json!({}));
+                        logo["usage"] = pipeline::aggregate_usage(&[
+                            logo["usage"].clone(),
+                            layout["usage"].clone(),
+                        ]);
+                        logo["expanded_header"] = layout;
+                    }
+                    Err(error) => {
+                        tracing::warn!(code = error.code, "expanded header extraction unavailable");
+                    }
+                }
+            }
             let identity_source = header_identity
                 .as_ref()
                 .map(|identity| identity.source)
@@ -341,7 +368,7 @@ async fn process(state: Arc<State>, job: Value) -> Result<Value> {
                 logo["identity"] = json!({"source":identity_source,"store":known_store,"receipt_type":receipt_type});
             }
             tracing::info!(job_id=%job_id, receipt_id=%job["receipt_id"], source=identity_source,
-                identified=known_store.is_some(), "receipt store identification completed");
+                identified=known_store.is_some(), expanded_header, "receipt store identification completed");
             let name = known_store.clone().unwrap_or_default();
             if !name.is_empty() {
                 source["store"] = json!(name);

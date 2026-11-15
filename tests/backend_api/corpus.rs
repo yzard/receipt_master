@@ -775,10 +775,13 @@ fn header_identity_corpus_preserves_real_receipts_and_expected_rule() {
         assert_eq!(format!("{:x}", Sha256::digest(&bytes)), case["sha256"]);
         let identity = receipt_backend_api::logos::header_store(&case["header"]).unwrap();
         assert_eq!(serde_json::to_value(identity).unwrap(), case["expected"]);
-        let (_, height) = receipt_backend_api::logos::localization_input(&format!(
-            "data:image/jpeg;base64,{}",
-            base64::engine::general_purpose::STANDARD.encode(bytes)
-        ))
+        let (_, height) = receipt_backend_api::logos::localization_input(
+            &format!(
+                "data:image/jpeg;base64,{}",
+                base64::engine::general_purpose::STANDARD.encode(bytes)
+            ),
+            receipt_backend_api::logos::HeaderCrop::Standard,
+        )
         .unwrap();
         assert!((0.30..0.31).contains(&height));
     }

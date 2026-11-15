@@ -444,9 +444,13 @@ pub fn aggregate_usage(runs: &[Value]) -> Value {
 }
 
 /// Read an explicit header greeting and localize the wordmark for fallback matching.
-pub async fn locate_logo(state: Arc<State>, image: String) -> Result<Value, AppError> {
+pub async fn locate_logo(
+    state: Arc<State>,
+    image: String,
+    crop: crate::logos::HeaderCrop,
+) -> Result<Value, AppError> {
     let (image, header_height) =
-        tokio::task::spawn_blocking(move || crate::logos::localization_input(&image))
+        tokio::task::spawn_blocking(move || crate::logos::localization_input(&image, crop))
             .await
             .map_err(crate::db::io_error)??;
     let raw = raw_call(&state,json!({

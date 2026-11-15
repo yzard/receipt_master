@@ -42,6 +42,7 @@ struct Mock {
     logo_id: Option<String>,
     welcome_text: Option<String>,
     restaurant_text: Option<String>,
+    expanded_restaurant_text: Option<String>,
     header_box: Option<Value>,
     logo_delay_ms: u64,
     delay_ms: u64,
@@ -74,7 +75,12 @@ async fn fixture(repair_attempts: usize) -> Fixture {
             let total=if m.arithmetic_failures>0 {"6.50"}else{"5.50"};
             if !logo && !matching { m.arithmetic_failures=m.arithmetic_failures.saturating_sub(1); }
             let line=|kind:&str,amount:&str,target:Value|json!({"name":"MILK","product_name":null,"kind":kind,"quantity":null,"quantity_unit":null,"unit_price":null,"amount":amount,"confidence":null,"discount_target_index":target,"review_notes":[],"sku":null,"tax_code":null,"is_weighed":false,"evidence":[],"package_weight":null,"package_weight_unit":null,"amount_basis":"gross"});
-            let mut prediction=if matching {json!({"reference_id":selected})}else if logo {json!({"box":m.header_box.clone().unwrap_or(json!([50,20,950,500])),"welcome_text":m.welcome_text,"restaurant_text":m.restaurant_text})}else{json!({"store":null,"branch":null,"address":null,"country":"US","currency":"USD","local_time":null,"total":total,"lines":[line("product","3.00",Value::Null),line("product","3.00",Value::Null),line("item_discount","-0.50",json!(1))]})};
+            let restaurant_text = if logo && m.events.iter().filter(|event| *event=="locate").count()==2 {
+                m.expanded_restaurant_text.as_ref().or(m.restaurant_text.as_ref())
+            } else {
+                m.restaurant_text.as_ref()
+            };
+            let mut prediction=if matching {json!({"reference_id":selected})}else if logo {json!({"box":m.header_box.clone().unwrap_or(json!([50,20,950,500])),"welcome_text":m.welcome_text,"restaurant_text":restaurant_text})}else{json!({"store":null,"branch":null,"address":null,"country":"US","currency":"USD","local_time":null,"total":total,"lines":[line("product","3.00",Value::Null),line("product","3.00",Value::Null),line("item_discount","-0.50",json!(1))]})};
             if !logo && !matching && m.receipt_schema_error {prediction["lines"][0]["amount"]=json!(3);}
             let invalid=m.bad_json || m.invalid_responses>0;
             m.invalid_responses=m.invalid_responses.saturating_sub(1);
@@ -642,7 +648,7 @@ async fn persistent_job_auto_applies_without_client_polling_or_apply() {
                 .iter()
                 .filter(|event| *event == "locate")
                 .count(),
-            1
+            2
         );
         assert!(mock.events.iter().any(|event| event == "logo"));
         let extraction = mock.calls.last().unwrap();
@@ -918,7 +924,7 @@ async fn two_jobs_are_queued_serially_and_receipt_queries_remain_responsive() {
             .iter()
             .filter(|event| *event == "locate")
             .count(),
-        2
+        4
     );
     assert!(mock.events.iter().any(|event| event == "logo"));
 }
@@ -1016,6 +1022,7 @@ async fn header_identity_precedes_logo_alias_before_single_multiphoto_extraction
         "mcdonalds",
         "dunkin",
         "dunkin_logo",
+        "expanded_header",
     ] {
         let f = fixture(0).await;
         {
@@ -1029,6 +1036,9 @@ async fn header_identity_precedes_logo_alias_before_single_multiphoto_extraction
             } else if mode == "mcdonalds" {
                 m.restaurant_text = Some("McDonald’s Restaurant".into());
                 m.header_box = Some(Value::Null);
+            } else if mode == "expanded_header" {
+                m.expanded_restaurant_text = Some("McDonald's Restaurant #2300".into());
+                m.header_box = Some(Value::Null);
             } else if mode == "dunkin" {
                 m.welcome_text = Some("Welcome to Dunkin's".into());
                 m.header_box = Some(Value::Null);
@@ -1037,7 +1047,7 @@ async fn header_identity_precedes_logo_alias_before_single_multiphoto_extraction
         let expected_store = match mode {
             "welcome" => "skyFOODS",
             "restaurant" => "Hualian",
-            "mcdonalds" => "McDonald's",
+            "mcdonalds" | "expanded_header" => "McDonald's",
             "dunkin" | "dunkin_logo" => "Dunkin Donuts",
             _ => "Costco",
         };
@@ -1065,10 +1075,12 @@ async fn header_identity_precedes_logo_alias_before_single_multiphoto_extraction
             .logo_action("list", &json!({"receipt_id":r["id"]}))
             .unwrap()[0]["logo_id"]
             .clone();
-        f.mock.lock().unwrap().logo_id = Some(format!(
-            "data:image/png;base64,{}",
-            base64::engine::general_purpose::STANDARD.encode(png.get_ref())
-        ));
+        if mode != "expanded_header" {
+            f.mock.lock().unwrap().logo_id = Some(format!(
+                "data:image/png;base64,{}",
+                base64::engine::general_purpose::STANDARD.encode(png.get_ref())
+            ));
+        }
         let version = s
             .one("SELECT version FROM catalog_version WHERE id=1", &[])
             .unwrap()["version"]
@@ -1104,7 +1116,10 @@ async fn header_identity_precedes_logo_alias_before_single_multiphoto_extraction
                 receipt_backend_api::db::GROCERY_RECEIPT_TYPE
             );
         }
-        if matches!(mode, "restaurant" | "mcdonalds" | "dunkin" | "dunkin_logo") {
+        if matches!(
+            mode,
+            "restaurant" | "mcdonalds" | "dunkin" | "dunkin_logo" | "expanded_header"
+        ) {
             assert_eq!(
                 s.store_receipt_type(expected_store).unwrap(),
                 receipt_backend_api::db::RESTAURANT_RECEIPT_TYPE
@@ -1132,6 +1147,25 @@ async fn header_identity_precedes_logo_alias_before_single_multiphoto_extraction
             assert!(prompt.contains("MERCHANT PROFILE: COSTCO"));
             assert!(!prompt.contains("HUALIAN STORE-SPECIFIC"));
             assert!(m.events.iter().filter(|event| *event == "logo").count() > 1);
+        } else if mode == "expanded_header" {
+            let heights = m
+                .events
+                .iter()
+                .zip(&m.calls)
+                .filter(|(event, _)| *event == "locate")
+                .map(|(_, call)| {
+                    let url = call["messages"][1]["content"][0]["image_url"]["url"]
+                        .as_str()
+                        .unwrap();
+                    let bytes = base64::engine::general_purpose::STANDARD
+                        .decode(url.split_once(',').unwrap().1)
+                        .unwrap();
+                    image::load_from_memory(&bytes).unwrap().height()
+                })
+                .collect::<Vec<_>>();
+            assert_eq!(heights, vec![90, 135]);
+            assert!(m.events.iter().any(|event| event == "logo"));
+            assert!(!prompt.contains("MERCHANT PROFILE: COSTCO"));
         } else if mode == "dunkin_logo" {
             assert!(m.events.iter().any(|event| event == "logo"));
             assert!(!prompt.contains("MERCHANT PROFILE: COSTCO"));
@@ -1551,6 +1585,7 @@ async fn live_header_identity_on_saved_restaurant_receipts() {
                 "data:image/jpeg;base64,{}",
                 base64::engine::general_purpose::STANDARD.encode(bytes)
             ),
+            logos::HeaderCrop::Standard,
         )
         .await;
         let elapsed_ms = started.elapsed().as_millis();

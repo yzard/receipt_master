@@ -84,8 +84,14 @@ pub fn header_store(evidence: &Value) -> Option<HeaderStore> {
     })
 }
 
+#[derive(Clone, Copy)]
+pub enum HeaderCrop {
+    Standard,
+    Expanded,
+}
+
 /// Give the locator a focused, upright header; return its height in full-image coordinates.
-pub fn localization_input(data_url: &str) -> Result<(String, f64)> {
+pub fn localization_input(data_url: &str, crop: HeaderCrop) -> Result<(String, f64)> {
     let (_, encoded) = data_url.split_once(',').ok_or_else(invalid)?;
     let bytes = base64::engine::general_purpose::STANDARD
         .decode(encoded)
@@ -98,7 +104,11 @@ pub fn localization_input(data_url: &str) -> Result<(String, f64)> {
     let orientation = decoder.orientation().map_err(db::io_error)?;
     let mut img = image::DynamicImage::from_decoder(decoder).map_err(|_| invalid())?;
     img.apply_orientation(orientation);
-    let height = ((img.height() as f64 * 0.30).ceil() as u32).max(1);
+    let fraction = match crop {
+        HeaderCrop::Standard => 0.30,
+        HeaderCrop::Expanded => 0.45,
+    };
+    let height = ((img.height() as f64 * fraction).ceil() as u32).max(1);
     let mut header = img.crop_imm(0, 0, img.width(), height);
     if header.width() > 1600 || header.height() > 1600 {
         header = header.resize(1600, 1600, image::imageops::FilterType::Lanczos3);
@@ -204,7 +214,8 @@ pub async fn extract_existing(state: Arc<State>, receipt: String) -> Result<Valu
         db::text(&image, "mime")?,
         base64::engine::general_purpose::STANDARD.encode(&bytes)
     );
-    let evidence = crate::pipeline::locate_logo(state.clone(), image_url).await?;
+    let evidence =
+        crate::pipeline::locate_logo(state.clone(), image_url, HeaderCrop::Standard).await?;
     capture(
         state.clone(),
         image,
