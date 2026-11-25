@@ -16,7 +16,7 @@ pub async fn ensure_rates(state: &Arc<State>, input: &Value) -> Result<(), AppEr
     let zone = db::exchange::report_zone(input)?;
     let root = state.data_dir.clone();
     let missing = tokio::task::spawn_blocking(move || {
-        Store::open(&root)?.missing_exchange_rates(start, end, zone)
+        Store::open(&root)?.missing_exchange_rates(start, end, &zone)
     })
     .await
     .map_err(db::io_error)??;

@@ -31,7 +31,7 @@ impl Store {
         let totals = self.rows(receipt_type_queries::TOTALS, &args)?;
         let mut line_totals = std::collections::BTreeMap::<String, i64>::new();
         for row in self.rows(receipt_type_queries::LINE_TOTALS, &args)? {
-            let date = super::exchange::rate_date(number(&row, "occurred_at_utc_ms")?, zone)?;
+            let date = super::exchange::rate_date(number(&row, "occurred_at_utc_ms")?, &zone)?;
             let amount = self.converted_amount(
                 number(&row, "amount_minor")?,
                 text(&row, "currency_code")?,
@@ -49,7 +49,7 @@ impl Store {
         for row in &totals {
             let source = text(row, "currency_code")?;
             let at = number(row, "occurred_at_utc_ms")?;
-            let date = super::exchange::rate_date(at, zone)?;
+            let date = super::exchange::rate_date(at, &zone)?;
             let converted =
                 self.converted_amount(number(row, "total_minor")?, source, &currency, &date)?;
             all_net = all_net.checked_add(converted).ok_or_else(invalid)?;
@@ -86,7 +86,7 @@ impl Store {
             let at = number(row, "occurred_at_utc_ms")?;
             let original = number(row, "amount_minor")?;
             row["original_amount_minor"] = json!(original);
-            let date = super::exchange::rate_date(at, zone)?;
+            let date = super::exchange::rate_date(at, &zone)?;
             row["amount_minor"] =
                 json!(self.converted_amount(original, &source, &currency, &date)?);
         }

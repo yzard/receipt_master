@@ -1,6 +1,6 @@
 //! Offline domain regression and opt-in image inference evaluation are deliberately separate.
 use base64::Engine;
-use chrono::{NaiveDateTime, TimeZone};
+use jiff::{Timestamp, civil::DateTime};
 use receipt_backend_api::{
     db::{self, Store},
     jobs,
@@ -16,6 +16,32 @@ use unicode_normalization::UnicodeNormalization;
 
 fn root() -> PathBuf {
     PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../../tests/backend_api/corpus")
+}
+
+fn evaluation_timestamp(timestamp: Timestamp) -> String {
+    let nanos = timestamp.subsec_nanosecond();
+    let format = if nanos == 0 {
+        "%Y-%m-%dT%H:%M:%S%:z"
+    } else if nanos % 1_000_000 == 0 {
+        "%Y-%m-%dT%H:%M:%S%.3f%:z"
+    } else if nanos % 1000 == 0 {
+        "%Y-%m-%dT%H:%M:%S%.6f%:z"
+    } else {
+        "%Y-%m-%dT%H:%M:%S%.9f%:z"
+    };
+    timestamp.strftime(format).to_string()
+}
+
+#[test]
+fn evaluation_timestamp_keeps_utc_offset_and_fraction_width() {
+    for expected in [
+        "2026-11-25T12:34:56+00:00",
+        "2026-11-25T12:34:56.010+00:00",
+        "2026-11-25T12:34:56.010100+00:00",
+        "2026-11-25T12:34:56.010100100+00:00",
+    ] {
+        assert_eq!(evaluation_timestamp(expected.parse().unwrap()), expected);
+    }
 }
 fn read(path: &str) -> Value {
     let mut data = serde_json::from_slice(&fs::read(root().join(path)).unwrap()).unwrap();
@@ -103,16 +129,16 @@ fn differences(actual: &Value, expected: &Value) -> Vec<String> {
         let utc = if let Some(ms) = expected["occurred_at_utc_ms"].as_i64() {
             ms
         } else {
-            let local = NaiveDateTime::parse_from_str(
-                expected["local_time"].as_str().unwrap(),
+            let local = DateTime::strptime(
                 "%Y-%m-%d %H:%M:%S",
+                expected["local_time"].as_str().unwrap(),
             )
             .unwrap();
-            chrono_tz::America::New_York
-                .from_local_datetime(&local)
-                .single()
+            let zone = db::exchange::report_zone(&json!({"zone":"America/New_York"})).unwrap();
+            zone.to_ambiguous_timestamp(local)
+                .unambiguous()
                 .unwrap()
-                .timestamp_millis()
+                .as_millisecond()
         };
         if actual["occurredAt"] != utc || actual["timeSource"] != "recognized" {
             errors.push(format!(
@@ -624,7 +650,7 @@ async fn live_image_benchmark() {
         );
         reports.push(report);
         fs::create_dir_all(output.parent().unwrap()).unwrap();
-        fs::write(&output,serde_json::to_vec_pretty(&json!({"model":model,"evaluated_at":chrono::Utc::now().to_rfc3339(),"scope":if is_confirmed {"All posted receipt snapshot; saved raw names, amounts, relationships and known numeric metadata; user aliases/categories excluded"}else{"Qwen3-VL image to JSON + validation; no text reconstruction"},"snapshot":snapshot_path,"cases":reports})).unwrap()).unwrap();
+        fs::write(&output,serde_json::to_vec_pretty(&json!({"model":model,"evaluated_at":evaluation_timestamp(Timestamp::now()),"scope":if is_confirmed {"All posted receipt snapshot; saved raw names, amounts, relationships and known numeric metadata; user aliases/categories excluded"}else{"Qwen3-VL image to JSON + validation; no text reconstruction"},"snapshot":snapshot_path,"cases":reports})).unwrap()).unwrap();
     }
     let failed = reports
         .iter()
@@ -686,7 +712,7 @@ fn saved_predictions_benchmark() {
             failed += 1;
         }
     }
-    report["scored_at"] = json!(chrono::Utc::now().to_rfc3339());
+    report["scored_at"] = json!(evaluation_timestamp(Timestamp::now()));
     fs::write(&path, serde_json::to_vec_pretty(&report).unwrap()).unwrap();
     assert_eq!(
         failed,

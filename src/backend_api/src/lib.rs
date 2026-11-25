@@ -2,6 +2,7 @@ pub mod auth;
 pub mod calendar;
 pub mod config;
 pub mod data_api;
+mod date_time;
 pub mod db;
 pub mod editing;
 pub mod error;

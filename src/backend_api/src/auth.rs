@@ -198,7 +198,7 @@ impl Identities {
         let claims = Claims {
             sub: user.user_id.clone(),
             sid,
-            exp: chrono::Utc::now().timestamp() + ACCESS_SECONDS,
+            exp: db::now().div_euclid(1000) + ACCESS_SECONDS,
             iss: "receipt-master".into(),
             aud: "receipt-master-clients".into(),
         };

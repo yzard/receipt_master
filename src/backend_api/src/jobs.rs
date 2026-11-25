@@ -1,16 +1,14 @@
 use crate::{
     State,
+    date_time::{LocalDateTime, LocalInstants, time_zone},
     db::{self, Result, Store, conflict, id, invalid, missing, now, number, text},
     logos::HeaderCrop,
     pipeline,
 };
 use base64::Engine;
-use chrono::{LocalResult, TimeZone};
+use jiff::civil::DateTime;
 use serde_json::{Value, json};
-use std::{
-    str::FromStr,
-    sync::{Arc, atomic::Ordering},
-};
+use std::sync::{Arc, atomic::Ordering};
 use tracing::Instrument;
 impl Store {
     /// Persist the matched store for the latest active recognition task.
@@ -104,7 +102,7 @@ impl Store {
                     return Err(conflict());
                 }
                 let zone = text(v, "zone")?;
-                chrono_tz::Tz::from_str(zone).map_err(|_| invalid())?;
+                time_zone(zone)?;
                 let images=self.rows("SELECT i.image_id,(SELECT revision_id FROM image_revision r WHERE r.image_id=i.image_id ORDER BY created_at_utc_ms DESC,rowid DESC LIMIT 1) AS revision_id FROM receipt_image i WHERE receipt_id=? AND deleted_at_utc_ms IS NULL ORDER BY position",&[json!(receipt)])?;
                 if images.is_empty() {
                     return Err(invalid());
@@ -502,12 +500,33 @@ pub fn fixed(value: &Value, digits: u32) -> Result<Value> {
     ))
 }
 /// Parse printed local time without guessing a timezone or dropping printed seconds.
-pub fn parse_receipt_time(raw: &str) -> Option<chrono::NaiveDateTime> {
-    let normalized = raw
+pub fn parse_receipt_time(raw: &str) -> Option<LocalDateTime> {
+    let mut normalized = raw
         .split_whitespace()
         .collect::<Vec<_>>()
         .join(" ")
         .to_uppercase();
+    let mut year_shift = 0;
+    if normalized.starts_with(['+', '-']) {
+        let (digits, rest) = normalized[1..].split_once('-')?;
+        if !digits.bytes().all(|b| b.is_ascii_digit()) {
+            return None;
+        }
+        let year = normalized[..1 + digits.len()].parse().ok()?;
+        let (civil_year, shift) = LocalDateTime::project_year(year)?;
+        year_shift = shift;
+        normalized = format!("{civil_year:04}-{rest}");
+    }
+    if let Some((prefix, fraction)) = normalized.rsplit_once('.')
+        && fraction.len() > 9
+        && fraction.bytes().all(|b| b.is_ascii_digit())
+    {
+        // Printed fractions can exceed nanosecond precision. Discard the extra digits.
+        normalized.truncate(prefix.len() + 10);
+    }
+    let leap_second = normalized
+        .rsplit_once(':')
+        .is_some_and(|(_, seconds)| seconds.trim_start().starts_with("60"));
     for format in [
         "%Y-%m-%d %H:%M:%S%.f",
         "%Y-%m-%d %H:%M",
@@ -524,6 +543,7 @@ pub fn parse_receipt_time(raw: &str) -> Option<chrono::NaiveDateTime> {
         "%m/%d/%y %I:%M:%S %p",
         "%m/%d/%y %I:%M %p",
     ] {
+        let mut use_2069 = false;
         if format.starts_with("%m/") {
             let year = normalized.split_whitespace().next()?.split('/').nth(2)?;
             if (format.contains("%Y") && year.len() != 4)
@@ -531,9 +551,18 @@ pub fn parse_receipt_time(raw: &str) -> Option<chrono::NaiveDateTime> {
             {
                 continue;
             }
+            use_2069 = format.contains("%y") && year == "69";
         }
-        if let Ok(time) = chrono::NaiveDateTime::parse_from_str(&normalized, format) {
-            return Some(time);
+        if let Ok(mut civil) = DateTime::strptime(format, &normalized) {
+            // Keep the existing two-digit year window, 1970 through 2069.
+            if use_2069 {
+                civil = civil.with().year(2069).build().ok()?;
+            }
+            return Some(LocalDateTime {
+                civil,
+                year_shift,
+                leap_second,
+            });
         }
     }
     None
@@ -547,7 +576,7 @@ pub fn decode_receipt(
     zone: &str,
     receipt_type: Option<&str>,
 ) -> Result<Value> {
-    let tz = chrono_tz::Tz::from_str(zone).map_err(|_| invalid())?;
+    let tz = time_zone(zone)?;
     r["recognizedStore"] = json!("");
     r["receiptTypeId"] = json!(if let Some(kind) = receipt_type {
         store.validate_receipt_type(kind)?;
@@ -583,17 +612,14 @@ pub fn decode_receipt(
         if let Some(raw) = data["local_time"].as_str() {
             r["rawTime"] = json!(raw);
             let clock = if raw.len() == 10 {
-                format!(
-                    "{} {}",
-                    raw,
-                    chrono::Utc::now().with_timezone(&tz).format("%H:%M")
-                )
+                let current = LocalDateTime::from_utc_millis(now(), &tz)?;
+                format!("{raw} {}", current.civil.strftime("%H:%M"))
             } else {
                 raw.into()
             };
-            match parse_receipt_time(&clock).map(|n| tz.from_local_datetime(&n)) {
-                Some(LocalResult::Single(t)) => {
-                    r["occurredAt"] = json!(t.timestamp_millis());
+            match parse_receipt_time(&clock).map(|n| n.instants(&tz)) {
+                Some(LocalInstants::Single(t)) => {
+                    r["occurredAt"] = json!(t);
                     r["timeSource"] = json!(if raw.len() == 10 {
                         "estimated_clock"
                     } else {

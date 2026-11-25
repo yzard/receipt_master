@@ -1,6 +1,8 @@
 use super::media::{atomic_file, hash, safe_path};
 use super::*;
+use crate::date_time::{LocalDateTime, time_zone};
 use base64::Engine;
+use jiff::tz::TimeZone;
 use std::io::{Read, Write};
 impl Store {
     pub fn export_action(&self, op: &str, v: &Value) -> Result<Value> {
@@ -64,15 +66,16 @@ impl Store {
                 )
             }
             "csv" => {
-                let zone: text_type::Zone = text(v, "zone")?.parse().map_err(|_| invalid())?;
+                let zone_name = text(v, "zone")?;
+                let zone = time_zone(zone_name)?;
                 let rows=self.rows("SELECT r.receipt_id,l.line_id,r.occurred_at_utc_ms,r.currency_code,l.raw_name,a.name AS product_name,CAST(ROUND(COALESCE(p.weight_g,w.weight_g)*1000) AS INTEGER) AS weight_mg,l.quantity_micros,l.quantity_unit,c.name AS category,l.kind,l.amount_minor FROM receipt_line l JOIN receipt r ON r.receipt_id=l.receipt_id LEFT JOIN product p ON p.product_id=l.product_id LEFT JOIN printed_name_product_name m ON m.printed_name_id=p.printed_name_id LEFT JOIN product_name a ON a.product_name_id=m.product_name_id LEFT JOIN line_unmatched_weight w ON w.line_id=l.line_id JOIN line_effective_category ec ON ec.line_id=l.line_id JOIN category c ON c.category_id=ec.category_id WHERE r.status='posted' AND r.deleted_at_utc_ms IS NULL ORDER BY r.occurred_at_utc_ms,l.position",&[])?;
                 let mut out = String::from(
                     "\u{feff}receipt_id,line_id,time_utc,time_display,display_timezone,currency,raw_name,product_name,weight_g,quantity,unit,category,kind,amount\r\n",
                 );
                 for r in rows {
-                    let utc =
-                        chrono::DateTime::from_timestamp_millis(number(&r, "occurred_at_utc_ms")?)
-                            .ok_or_else(invalid)?;
+                    let occurred_at = number(&r, "occurred_at_utc_ms")?;
+                    let utc = LocalDateTime::from_utc_millis(occurred_at, &TimeZone::UTC)?;
+                    let display = LocalDateTime::from_utc_millis(occurred_at, &zone)?;
                     let digits = number(
                         &self.one(
                             "SELECT minor_digits FROM currency WHERE code=?",
@@ -83,13 +86,13 @@ impl Store {
                     let values = [
                         r["receipt_id"].clone(),
                         r["line_id"].clone(),
-                        json!(utc.to_rfc3339()),
-                        json!(
-                            utc.with_timezone(&zone)
-                                .format("%Y-%m-%d %H:%M")
-                                .to_string()
-                        ),
-                        json!(zone.to_string()),
+                        json!(utc.utc_rfc3339()),
+                        json!(format!(
+                            "{} {}",
+                            display.date_text(),
+                            display.civil.strftime("%H:%M")
+                        )),
+                        json!(zone_name),
                         r["currency_code"].clone(),
                         r["raw_name"].clone(),
                         r["product_name"].clone(),
@@ -228,9 +231,6 @@ impl Store {
             _ => Err(missing()),
         }
     }
-}
-mod text_type {
-    pub type Zone = chrono_tz::Tz;
 }
 fn fixed(v: &Value, digits: u32) -> String {
     let Some(n) = v.as_i64() else {

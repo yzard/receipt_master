@@ -1,3 +1,4 @@
+use jiff::{Timestamp, civil::date};
 use receipt_backend_api::{
     db::{self, Store},
     jobs,
@@ -138,8 +139,9 @@ fn exchange_rate_uses_the_displayed_transaction_day() {
         &[],
     )
     .unwrap();
+    let zone = db::exchange::report_zone(&json!({"zone":"America/New_York"})).unwrap();
     let missing = s
-        .missing_exchange_rates(0, 1900000000000i64, "America/New_York".parse().unwrap())
+        .missing_exchange_rates(0, 1900000000000i64, &zone)
         .unwrap();
     assert_eq!(missing[0]["requested_date"], "2024-01-01");
     s.exec("INSERT INTO exchange_rate VALUES ('USD','JPY','2024-01-01','2024-01-01',150000000000,'test',1)", &[]).unwrap();
@@ -167,7 +169,7 @@ fn report_separates_currency_rounding_from_receipt_reconciliation() {
         &[],
     )
     .unwrap();
-    let date = db::exchange::rate_date(1780000000000i64, "UTC".parse().unwrap()).unwrap();
+    let date = db::exchange::rate_date(1780000000000i64, &jiff::tz::TimeZone::UTC).unwrap();
     s.exec(
         "INSERT INTO exchange_rate VALUES ('USD','JPY',?, ?,1000000000,'test',1)",
         &[json!(date), json!(date)],
@@ -504,8 +506,8 @@ fn interrupted_restore_preserves_identity_database_and_live_sidecars() {
 
 #[test]
 fn printed_seconds_and_us_am_pm_survive_utc_conversion() {
-    use chrono::TimeZone;
     let (_dir, s) = setup();
+    let zone = db::exchange::report_zone(&json!({"zone":"America/New_York"})).unwrap();
     for (raw, hour, second) in [
         ("2026-09-15 19:27:36", 19, 36),
         ("2026-09-15T19:27:36", 19, 36),
@@ -521,10 +523,11 @@ fn printed_seconds_and_us_am_pm_survive_utc_conversion() {
             "America/New_York",
         )
         .unwrap();
-        let expected = chrono_tz::America::New_York
-            .with_ymd_and_hms(2026, 9, 15, hour, 27, second)
+        let expected = zone
+            .to_ambiguous_timestamp(date(2026, 9, 15).at(hour, 27, second, 0))
+            .unambiguous()
             .unwrap()
-            .timestamp_millis();
+            .as_millisecond();
         assert_eq!(r["occurredAt"], expected, "{raw}");
         assert_eq!(r["timeSource"], "recognized");
         assert_eq!(r["rawTime"], raw);
@@ -703,14 +706,17 @@ fn backend_owns_weight_display_and_edit_roundtrip() {
     );
 }
 
+fn utc_millis(input: &str) -> i64 {
+    input.parse::<Timestamp>().unwrap().as_millisecond()
+}
+
 #[test]
 fn server_calendar_handles_dst_and_device_timezone() {
-    use chrono::TimeZone;
     for (month, day, hours) in [(3, 8, 23), (11, 1, 25)] {
-        let anchor = chrono::Utc
-            .with_ymd_and_hms(2026, month, day, 17, 0, 0)
+        let anchor = jiff::tz::Offset::UTC
+            .to_timestamp(date(2026, month, day).at(17, 0, 0, 0))
             .unwrap()
-            .timestamp_millis();
+            .as_millisecond();
         let r = receipt_backend_api::calendar::range(
             &json!({"anchor":anchor,"zone":"America/New_York","period":"day","period_offset":0}),
         )
@@ -730,10 +736,14 @@ fn server_calendar_handles_dst_and_device_timezone() {
     )
     .unwrap();
     assert_eq!(folds.as_array().unwrap().len(), 2);
-    let anchor = chrono::Utc
-        .with_ymd_and_hms(2026, 9, 1, 1, 0, 0)
-        .unwrap()
-        .timestamp_millis();
+    assert_eq!(
+        folds,
+        json!([
+            utc_millis("2026-11-01T05:30:00Z"),
+            utc_millis("2026-11-01T06:30:00Z")
+        ])
+    );
+    let anchor = utc_millis("2026-09-01T01:00:00Z");
     for (zone, expected) in [
         ("America/New_York", "2026-08-01"),
         ("Asia/Tokyo", "2026-09-01"),
@@ -745,6 +755,152 @@ fn server_calendar_handles_dst_and_device_timezone() {
         assert!(r["label"].as_str().unwrap().starts_with(expected));
     }
 }
+
+#[test]
+fn calendar_uses_first_midnight_in_fold_and_rejects_missing_midnight() {
+    use receipt_backend_api::calendar::range;
+
+    let mut request = json!({
+        "anchor": utc_millis("2026-11-01T18:00:00Z"),
+        "zone": "America/Havana", "period": "day", "period_offset": 0,
+    });
+    let bounds = range(&request).unwrap();
+    assert_eq!(bounds["start"], utc_millis("2026-11-01T04:00:00Z"));
+    assert_eq!(bounds["end"], utc_millis("2026-11-02T05:00:00Z"));
+    assert_eq!(bounds["label"], "2026-11-01 — 2026-11-01");
+
+    request["period"] = json!("week");
+    let week = range(&request).unwrap();
+    assert_eq!(week["label"], "2026-10-26 — 2026-11-01");
+    assert_eq!(week["start"], utc_millis("2026-10-26T04:00:00Z"));
+
+    request["period"] = json!("day");
+    request["anchor"] = json!(utc_millis("2026-03-08T18:00:00Z"));
+    assert_eq!(range(&request).unwrap_err().code, "invalid_request");
+}
+
+#[test]
+fn recognition_keeps_estimate_for_dst_gaps_and_folds() {
+    let (_dir, s) = setup();
+    for raw in ["2026-03-08 02:30", "2026-11-01 01:30"] {
+        let original = receipt();
+        let r = decode_fixture(
+            &s,
+            original.clone(),
+            vec![json!({"local_time":raw,"lines":[]})],
+            vec![db::id()],
+            "America/New_York",
+        )
+        .unwrap();
+        assert_eq!(r["occurredAt"], original["occurredAt"]);
+        assert_eq!(r["timeSource"], "estimated_instant");
+        assert_eq!(r["rawTime"], raw);
+    }
+}
+
+#[test]
+fn time_candidates_preserve_printed_formats_and_timezone_validation() {
+    use receipt_backend_api::calendar::candidates;
+
+    for (raw, expected) in [
+        ("01/01/69 12:00 AM", utc_millis("2069-01-01T00:00:00Z")),
+        ("01/01/70 00:00", 0),
+        ("1969-12-31T23:59:59.9999999999", -1),
+        (
+            "2016-12-31 23:59:60.125",
+            utc_millis("2017-01-01T00:00:00.125Z"),
+        ),
+        ("+10000-01-01 00:00", 253_402_300_800_000),
+    ] {
+        assert_eq!(
+            candidates(&json!({"text":raw,"zone":"UTC"})).unwrap(),
+            json!([expected]),
+            "{raw}"
+        );
+    }
+    for zone in [
+        "america/new_york",
+        "UTC+00:00",
+        "Factory",
+        " America/New_York",
+        "Unknown/Zone",
+    ] {
+        let error = candidates(&json!({"text":"2026-11-01 01:30","zone":zone})).unwrap_err();
+        assert_eq!(error.code, "invalid_request", "{zone}");
+    }
+
+    let text = "2100-07-01 00:00";
+    let expected = json!([utc_millis("2100-07-01T05:00:00Z")]);
+    for zone in ["America/New_York", "US/Eastern"] {
+        assert_eq!(
+            candidates(&json!({"text":text,"zone":zone})).unwrap(),
+            expected
+        );
+    }
+    assert_eq!(
+        candidates(&json!({"text":"2026-12-01 00:00","zone":"America/Vancouver"})).unwrap(),
+        json!([utc_millis("2026-12-01T08:00:00Z")])
+    );
+}
+
+#[test]
+fn calendar_preserves_large_period_offsets_and_trend_labels() {
+    use receipt_backend_api::calendar::{range, trend_ranges};
+
+    let anchor = utc_millis("2026-11-05T00:00:00Z");
+    let mut input = json!({
+        "anchor":anchor, "zone":"UTC", "period":"year", "period_offset":10000, "window":0,
+    });
+    assert_eq!(
+        range(&input).unwrap()["label"],
+        "+12026-01-01 — +12026-12-31"
+    );
+
+    for (period, tick) in [
+        ("day", "11/05"),
+        ("week", "11/02"),
+        ("month", "26/11"),
+        ("quarter", "2026 Q4"),
+        ("year", "2026"),
+    ] {
+        input["period"] = json!(period);
+        assert_eq!(trend_ranges(&input).unwrap().last().unwrap()["tick"], tick);
+    }
+}
+
+#[test]
+fn csv_preserves_utc_fraction_display_time_and_requested_alias() {
+    let (_dir, s) = setup();
+    for (instant, display) in [
+        ("2026-11-01T05:30:00+00:00", "2026-11-01 01:30"),
+        ("2026-11-01T06:30:00.010+00:00", "2026-11-01 01:30"),
+        ("1969-12-31T23:59:59.999+00:00", "1969-12-31 18:59"),
+    ] {
+        let mut item = receipt();
+        item["occurredAt"] = json!(utc_millis(instant));
+        item["posted"] = json!(true);
+        save(&s, item);
+        let csv = s
+            .export_action("csv", &json!({"zone":"US/Eastern"}))
+            .unwrap();
+        let expected = format!("\"{instant}\",\"{display}\",\"US/Eastern\"");
+        assert!(csv["data"].as_str().unwrap().contains(&expected), "{csv}");
+    }
+
+    let mut item = receipt();
+    item["occurredAt"] = json!(8_210_266_876_799_999i64);
+    item["posted"] = json!(true);
+    save(&s, item);
+    let csv = s
+        .export_action("csv", &json!({"zone":"Asia/Tokyo"}))
+        .unwrap();
+    assert!(
+        csv["data"].as_str().unwrap().contains(
+            "\"'+262142-12-31T23:59:59.999+00:00\",\"'+262143-01-01 08:59\",\"Asia/Tokyo\""
+        )
+    );
+}
+
 #[test]
 fn server_edits_preserve_sums_and_reject_lossy_currency_changes() {
     let (_dir, s) = setup();

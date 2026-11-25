@@ -25,13 +25,14 @@ uuid = { version = "1", features = ["v4"] }
 rusqlite = { version = "0.41.1", features = ["bundled", "backup"] }
 sha2 = "0.10"
 unicode-normalization = "0.1"
-chrono = "0.4"
-chrono-tz = "0.10"
 zip = { version = "9.5", default-features = false, features = ["deflate-flate2-zlib-rs"] }
 
 tempfile = "3"
 argon2 = "0.5.3"
 jsonwebtoken = { version = "10.3", default-features = false, features = ["aws_lc_rs"] }
+jiff = { version = "1.0.3", default-features = false, features = ["std"] }
+# Use the bundled IANA 2025b data for the existing timezone contract.
+jiff-tzdb = "=0.1.4"
 
 [dev-dependencies]
 

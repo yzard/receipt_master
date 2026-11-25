@@ -1,11 +1,13 @@
 use super::*;
+use crate::date_time::{LocalDateTime, time_zone};
+use jiff::tz::TimeZone;
 
 impl Store {
     pub fn missing_exchange_rates(
         &self,
         start: i64,
         end: i64,
-        zone: chrono_tz::Tz,
+        zone: &TimeZone,
     ) -> Result<Vec<Value>> {
         let target = self.report_currency()?;
         let receipts = self.rows("SELECT DISTINCT currency_code,occurred_at_utc_ms FROM receipt WHERE status='posted' AND deleted_at_utc_ms IS NULL AND currency_code<>? AND occurred_at_utc_ms>=? AND occurred_at_utc_ms<?", &[json!(target),json!(start),json!(end)])?;
@@ -62,18 +64,12 @@ impl Store {
     }
 }
 
-pub fn report_zone(v: &Value) -> Result<chrono_tz::Tz> {
-    v["zone"]
-        .as_str()
-        .unwrap_or("UTC")
-        .parse()
-        .map_err(|_| invalid())
+pub fn report_zone(v: &Value) -> Result<TimeZone> {
+    time_zone(v["zone"].as_str().unwrap_or("UTC"))
 }
 
-pub fn rate_date(at: i64, zone: chrono_tz::Tz) -> Result<String> {
-    Ok(chrono::DateTime::from_timestamp_millis(at)
-        .ok_or_else(invalid)?
-        .with_timezone(&zone)
-        .date_naive()
-        .to_string())
+pub fn rate_date(at: i64, zone: &TimeZone) -> Result<String> {
+    let local = LocalDateTime::from_utc_millis(at, zone)?;
+    local.checked_date()?;
+    Ok(local.date_text())
 }
