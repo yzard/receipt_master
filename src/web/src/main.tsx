@@ -50,6 +50,8 @@ function kinds(): Record<string, string> {
   };
 }
 const paths: Record<string, string> = {
+  alert: "M12 3 2 20h20zM12 10v4M12 17v.5",
+  chevron: "m9 6 6 6-6 6",
   menu: "M4 6h16M4 12h16M4 18h16",
   camera: "M4 7h4l2-3h4l2 3h4v13H4z M16 13a4 4 0 1 1-8 0 4 4 0 0 1 8 0",
   upload: "M12 16V3m-5 5 5-5 5 5M4 15v6h16v-6",
@@ -74,12 +76,12 @@ const paths: Record<string, string> = {
 function Icon({ name }: { name: string }) {
   return (
     <svg
-      width="22"
-      height="22"
+      width="20"
+      height="20"
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"
-      strokeWidth="1.6"
+      strokeWidth="1.75"
       strokeLinecap="round"
       strokeLinejoin="round"
       aria-hidden="true"
@@ -93,21 +95,28 @@ function IconButton({
   label,
   onClick,
   disabled = false,
+  className = "",
+  showLabel = false,
 }: {
   icon: string;
   label: string;
   onClick: () => void;
   disabled?: boolean;
+  className?: string;
+  showLabel?: boolean;
 }) {
   return (
     <button
-      className="icon-button"
+      className={["icon-button", showLabel && "labeled", className]
+        .filter(Boolean)
+        .join(" ")}
       title={label}
       aria-label={label}
       onClick={onClick}
       disabled={disabled}
     >
       <Icon name={icon} />
+      {showLabel && <span className="button-label">{label}</span>}
     </button>
   );
 }
@@ -181,14 +190,16 @@ function Select({
   value,
   onChange,
   options,
+  inline = false,
 }: {
   label: string;
   value: string;
   onChange: (v: string) => void;
   options: [string, string][];
+  inline?: boolean;
 }) {
   return (
-    <label className="field">
+    <label className={inline ? "field inline" : "field"}>
       <span>{label}</span>
       <select value={value} onChange={(e) => onChange(e.target.value)}>
         {options.map(([key, text]) => (
@@ -200,29 +211,40 @@ function Select({
     </label>
   );
 }
+function openDialog(dialog: HTMLDialogElement) {
+  const trigger = dialog.ownerDocument.activeElement;
+  dialog.showModal();
+  return () => {
+    dialog.close();
+    if (trigger instanceof HTMLElement && trigger.isConnected)
+      trigger.focus({ preventScroll: true });
+  };
+}
 function Modal({
   title,
   onClose,
   children,
   wide = false,
+  className = "",
 }: {
   title: string;
   onClose: () => void;
   children: React.ReactNode;
   wide?: boolean;
+  className?: string;
 }) {
   const titleId = useId();
   const ref = useRef<HTMLDialogElement>(null);
-  useEffect(() => {
-    ref.current?.showModal();
-    return () => ref.current?.close();
+  React.useLayoutEffect(() => {
+    if (ref.current) return openDialog(ref.current);
   }, []);
   return (
     <dialog
       ref={ref}
       aria-labelledby={titleId}
-      className={wide ? "modal wide" : "modal"}
+      className={["modal", wide && "wide", className].filter(Boolean).join(" ")}
       onCancel={(e) => {
+        if (e.target !== e.currentTarget) return;
         e.preventDefault();
         onClose();
       }}
@@ -250,7 +272,6 @@ function Heading({
   return (
     <header className="page-heading">
       <div>
-        <p className="eyebrow">RECEIPT MASTER</p>
         <h1>{title}</h1>
         {subtitle && <p className="muted">{subtitle}</p>}
       </div>
@@ -271,7 +292,11 @@ function StateView({
 }) {
   return error ? (
     <div className="notice error" role="alert">
-      {message(error)} <button onClick={onRetry}>{tr("重试")}</button>
+      <Icon name="alert" />
+      <span>{message(error)}</span>
+      <button className="sm" onClick={onRetry}>
+        {tr("重试")}
+      </button>
     </div>
   ) : busy ? (
     <div className="loading" role="status">
@@ -279,7 +304,9 @@ function StateView({
     </div>
   ) : empty ? (
     <div className="empty">
-      <Icon name="receipt" />
+      <span className="empty-icon">
+        <Icon name="receipt" />
+      </span>
       <h3>{empty}</h3>
       <p>{tr("记录一张收据，让每次消费都有迹可循。")}</p>
     </div>
@@ -401,7 +428,6 @@ export function SignIn({
         <div className="brand-mark">
           <Icon name="receipt" />
         </div>
-        <p className="eyebrow">RECEIPT MASTER</p>
         <h1>{change ? tr("设置你的新密码") : tr("生活账目，一目了然。")}</h1>
         <p className="muted">
           {change
@@ -565,7 +591,12 @@ function Camera({ onClose }: { onClose: () => void }) {
     }
   }
   return (
-    <Modal title={tr("拍摄收据")} onClose={onClose} wide>
+    <Modal
+      title={tr("拍摄收据")}
+      onClose={onClose}
+      className="camera-modal"
+      wide
+    >
       <video ref={video} autoPlay playsInline muted className="viewfinder" />
       {error && <p className="notice error">{message(error)}</p>}
       <div className="photo-strip">
@@ -590,19 +621,37 @@ function Camera({ onClose }: { onClose: () => void }) {
           {tr("重拍")}
         </button>
         <button
-          className="primary"
+          className="primary capture-button"
           onClick={() => shoot()}
           disabled={busy || !!error}
         >
           {tr("拍摄")}
         </button>
-        <button onClick={() => void done()} disabled={!photos.length || busy}>
+        <button
+          className="tonal"
+          onClick={() => void done()}
+          disabled={!photos.length || busy}
+        >
           {tr("完成 · {0} 张", [photos.length])}
         </button>
       </footer>
     </Modal>
   );
 }
+function ReceiptStatusBadge({
+  status,
+  recognition,
+}: {
+  status: string;
+  recognition?: string;
+}) {
+  if (recognition === "failed")
+    return <span className="badge danger">{tr("识别失败")}</span>;
+  if (status === "draft" && !["queued", "running"].includes(recognition ?? ""))
+    return <span className="badge warning">{tr("草稿待确认")}</span>;
+  return null;
+}
+
 export function Receipts({
   open,
   product,
@@ -688,14 +737,21 @@ export function Receipts({
         }
       />
       {submissions.length > 0 && (
-        <div className="notice">
-          {tr("{0} 张收据正在上传或等待重试。", [submissions.length])}
-          <button onClick={() => void action(retry)}>{tr("重试上传")}</button>
-          {submissions
-            .filter((s) => s.error)
-            .map((s) => (
-              <p key={s.id}>{message(s.error ?? "")}</p>
-            ))}
+        <div className="notice info">
+          <Icon name="upload" />
+          <div>
+            {tr("{0} 张收据正在上传或等待重试。", [submissions.length])}
+            {submissions
+              .filter((s) => s.error)
+              .map((s) => (
+                <p className="upload-error" key={s.id}>
+                  {message(s.error ?? "")}
+                </p>
+              ))}
+          </div>
+          <button className="sm" onClick={() => void action(retry)}>
+            {tr("重试上传")}
+          </button>
         </div>
       )}
       <StateView
@@ -743,9 +799,11 @@ export function Receipts({
                   className={
                     r.recognition_status === "failed"
                       ? "failed"
-                      : r.status === "draft"
-                        ? "draft"
-                        : ""
+                      : ["queued", "running"].includes(r.recognition_status)
+                        ? "processing"
+                        : r.status === "draft"
+                          ? "draft"
+                          : ""
                   }
                 >
                   <td>
@@ -755,18 +813,23 @@ export function Receipts({
                     >
                       {r.raw_store || tr("未知店铺")}
                       {["queued", "running"].includes(r.recognition_status) && (
-                        <small>{tr("识别中…")}</small>
+                        <small className="badge info">{tr("识别中…")}</small>
                       )}
                     </button>
+                    <ReceiptStatusBadge
+                      status={r.status}
+                      recognition={r.recognition_status}
+                    />
                   </td>
-                  <td>{date(r.created_at_utc_ms)}</td>
-                  <td>{date(r.occurred_at_utc_ms)}</td>
+                  <td className="numeric">{date(r.created_at_utc_ms)}</td>
+                  <td className="numeric">{date(r.occurred_at_utc_ms)}</td>
                   <td className="numeric">
                     {money(r.total_minor, r.currency_code)}
                   </td>
                   <td>
                     <IconButton
                       icon="trash"
+                      className="delete-button"
                       label={tr("删除收据")}
                       onClick={() => void action(() => remove(r))}
                     />
@@ -1206,19 +1269,23 @@ export function Editor({
     <>
       <div className="editor-heading">
         <IconButton icon="back" label={tr("返回收据")} onClick={back} />
-        <div>
+        <div className="editor-title">
           <h1>{r.store || tr("收据草稿")}</h1>
           <small>{id}</small>
         </div>
+        <ReceiptStatusBadge status={r.posted ? "posted" : "draft"} />
         <span className="spacer" />
         <IconButton
           icon="refresh"
           label={tr("重新识别")}
+          className="ghost"
+          showLabel
           disabled={busy || !images.length}
           onClick={() => void doAction(recognize)}
         />
         <IconButton
           icon="trash"
+          className="delete-button"
           label={tr("删除收据")}
           disabled={busy}
           onClick={() =>
@@ -1286,6 +1353,7 @@ export function Editor({
                   )}
                   <IconButton
                     icon="trash"
+                    className="delete-button"
                     label={tr("删除照片")}
                     disabled={busy}
                     onClick={() =>
@@ -1302,215 +1370,246 @@ export function Editor({
         </aside>
         <section className="receipt-fields" aria-label={tr("收据内容")}>
           <div className="receipt-fields-scroll">
-            <Select
-              label={tr("店铺类别")}
-              value={r.receiptTypeId || ""}
-              options={[
-                ["", tr("请选择")],
-                ...(loaded.data[3] || []).map((t: Row): [string, string] => [
-                  t.receipt_type_id,
-                  t.name,
-                ]),
-              ]}
-              onChange={(v) => {
-                setR({
-                  ...r,
-                  receiptTypeId: v,
-                  lines: r.lines.map((l: Row) => ({ ...l, receiptTypeId: v })),
-                });
-                setDirty(true);
-              }}
-            />
-            <div className="form-grid">
-              {[
-                ["store", tr("店铺名称")],
-                ["branch", tr("分店")],
-                ["address", tr("地址")],
-                ["country", tr("国家代码")],
-              ].map(([key, label]) => (
-                <Field
-                  key={key}
-                  label={label}
-                  value={r[key] || ""}
-                  onChange={(v) =>
-                    update(key, key === "country" ? v.toUpperCase() : v)
-                  }
-                />
-              ))}
-              <Select
-                label={tr("币种")}
-                value={r.currency}
-                options={currencies.map((c) => [c, c])}
-                onChange={(v) =>
-                  void doAction(() => edit("currency", { currency: v }))
-                }
-              />
-              <Field
-                label={tr("票面总金额")}
-                value={total}
-                onChange={(v) => {
-                  setTotal(v);
-                  setDirty(true);
-                }}
-                inputMode="decimal"
-              />
-              <Field
-                label={tr("收据时间 · {0}", [zone])}
-                type="datetime-local"
-                value={localInput(r.occurredAt)}
-                onChange={(v) =>
-                  void doAction(async () => {
-                    const times = await api.op("receipts", "time_candidates", {
-                      text: v.replace("T", " "),
-                      zone,
-                    });
-                    if (!times.length)
-                      throw new Error("此时间在当前时区不存在");
-                    if (times.length > 1) {
-                      setTimeChoices({ text: v, times });
-                      return;
-                    }
-                    update("occurredAt", times[0]);
-                    update("timeSource", "user_entered");
-                    update("rawTime", v.replace("T", " "));
-                  })
-                }
-              />
-              <Select
-                label={tr("时间来源")}
-                value={r.timeSource}
-                onChange={(v) => update("timeSource", v)}
-                options={Object.entries({
-                  recognized: tr("票面识别"),
-                  user_entered: tr("手动确认"),
-                  estimated_clock: tr("估计 · 录入时间"),
-                  estimated_instant: tr("用户指定估计时间"),
-                })}
-              />
-            </div>
-            <button onClick={() => setStoreEdit(true)}>
-              {tr("编辑店铺 Logo 名称")}
-            </button>
-            <div className="section-heading">
-              <h2>
-                {tr("商品明细")}
-                <small>{r.lines.length}</small>
-              </h2>
-              <button
-                onClick={() =>
-                  void doAction(async () => {
-                    const l = await api.op("receipts", "display_line", {
-                      line: emptyLine(),
-                      currency: r.currency,
-                    });
-                    setLine(l);
-                  })
-                }
-              >
-                <Icon name="add" />
-                {tr("添加")}
-              </button>
-            </div>
-            {r.lines.length === 0 && (
-              <p className="muted">
-                {tr("还没有商品明细。识别完成后会显示在这里。")}
-              </p>
-            )}
-            {r.lines.map((l: Row) => (
-              <div
-                key={l.id}
-                className={`line ${missingProductName(l) ? "missing-product-name" : l.warnings.length ? "warning" : ""}`}
-              >
-                <input
-                  type="checkbox"
-                  checked={selected.includes(l.id)}
-                  aria-label={tr("选择 {0}", [l.rawName])}
-                  onChange={(e) =>
-                    setSelected((s) =>
-                      e.target.checked
-                        ? [...s, l.id]
-                        : s.filter((id) => id !== l.id),
-                    )
-                  }
-                />
-                <button className="line-main" onClick={() => setLine(l)}>
-                  <strong>
-                    {productName(l) || l.rawName || tr("未命名商品")}
-                  </strong>
-                  {productName(l) && <small>{l.rawName}</small>}
-                  <div className="line-meta">
-                    {kinds()[l.kind]}{" "}
-                    {l.display?.receiptTypeName &&
-                      `· ${l.display.receiptTypeName}`}{" "}
-                    {l.taxCode && tr("· 税码 {0}", [l.taxCode])}{" "}
-                    {l.sku && `· SKU ${l.sku}`}{" "}
-                  </div>
-                  {l.warnings.map((w: string) => (
-                    <p className="warning-text" key={w}>
-                      {message(w)}
-                    </p>
-                  ))}
+            <div className="editor-card">
+              <div className="card-header">
+                <h2>{tr("收据内容")}</h2>
+                <button className="ghost sm" onClick={() => setStoreEdit(true)}>
+                  {tr("编辑店铺 Logo 名称")}
                 </button>
-                <span className="numeric">
-                  {money(l.amountMinor, r.currency)}
-                </span>
-                <IconButton
-                  icon="trash"
-                  label={tr("删除商品")}
-                  onClick={() => {
-                    if (confirm(tr("删除这一项？")))
-                      update(
-                        "lines",
-                        r.lines.filter(
-                          (a: Row) =>
-                            a.id !== l.id && a.discountTarget !== l.id,
-                        ),
-                      );
+              </div>
+              <div className="card-body">
+                <Select
+                  label={tr("店铺类别")}
+                  value={r.receiptTypeId || ""}
+                  options={[
+                    ["", tr("请选择")],
+                    ...(loaded.data[3] || []).map(
+                      (t: Row): [string, string] => [t.receipt_type_id, t.name],
+                    ),
+                  ]}
+                  onChange={(v) => {
+                    setR({
+                      ...r,
+                      receiptTypeId: v,
+                      lines: r.lines.map((l: Row) => ({
+                        ...l,
+                        receiptTypeId: v,
+                      })),
+                    });
+                    setDirty(true);
                   }}
                 />
+                <div className="form-grid">
+                  {[
+                    ["store", tr("店铺名称")],
+                    ["branch", tr("分店")],
+                    ["address", tr("地址")],
+                    ["country", tr("国家代码")],
+                  ].map(([key, label]) => (
+                    <Field
+                      key={key}
+                      label={label}
+                      value={r[key] || ""}
+                      onChange={(v) =>
+                        update(key, key === "country" ? v.toUpperCase() : v)
+                      }
+                    />
+                  ))}
+                  <Select
+                    label={tr("币种")}
+                    value={r.currency}
+                    options={currencies.map((c) => [c, c])}
+                    onChange={(v) =>
+                      void doAction(() => edit("currency", { currency: v }))
+                    }
+                  />
+                  <Field
+                    label={tr("票面总金额")}
+                    value={total}
+                    onChange={(v) => {
+                      setTotal(v);
+                      setDirty(true);
+                    }}
+                    inputMode="decimal"
+                  />
+                  <Field
+                    label={tr("收据时间 · {0}", [zone])}
+                    type="datetime-local"
+                    value={localInput(r.occurredAt)}
+                    onChange={(v) =>
+                      void doAction(async () => {
+                        const times = await api.op(
+                          "receipts",
+                          "time_candidates",
+                          {
+                            text: v.replace("T", " "),
+                            zone,
+                          },
+                        );
+                        if (!times.length)
+                          throw new Error("此时间在当前时区不存在");
+                        if (times.length > 1) {
+                          setTimeChoices({ text: v, times });
+                          return;
+                        }
+                        update("occurredAt", times[0]);
+                        update("timeSource", "user_entered");
+                        update("rawTime", v.replace("T", " "));
+                      })
+                    }
+                  />
+                  <Select
+                    label={tr("时间来源")}
+                    value={r.timeSource}
+                    onChange={(v) => update("timeSource", v)}
+                    options={Object.entries({
+                      recognized: tr("票面识别"),
+                      user_entered: tr("手动确认"),
+                      estimated_clock: tr("估计 · 录入时间"),
+                      estimated_instant: tr("用户指定估计时间"),
+                    })}
+                  />
+                </div>
               </div>
-            ))}
-            <div className="inline-actions">
-              <button
-                disabled={selected.length !== 1}
-                onClick={() => {
-                  const amount = prompt(tr("拆分出的金额"));
-                  if (amount !== null)
-                    void doAction(() =>
-                      edit("split", { selected, amount_text: amount }),
-                    );
-                }}
-              >
-                {tr("拆分")}
-              </button>
-              <button
-                disabled={selected.length < 2}
-                onClick={() => void doAction(() => edit("merge", { selected }))}
-              >
-                {tr("合并")}
-              </button>
-              <button
-                onClick={() => void doAction(() => edit("total_from_lines"))}
-              >
-                {tr("按明细计算总额")}
-              </button>
+            </div>
+            <div className="editor-card">
+              <div className="section-heading card-header">
+                <h2>
+                  {tr("商品明细")}
+                  <small className="badge neutral">{r.lines.length}</small>
+                </h2>
+                <button
+                  className="sm"
+                  onClick={() =>
+                    void doAction(async () => {
+                      const l = await api.op("receipts", "display_line", {
+                        line: emptyLine(),
+                        currency: r.currency,
+                      });
+                      setLine(l);
+                    })
+                  }
+                >
+                  <Icon name="add" />
+                  {tr("添加")}
+                </button>
+              </div>
+              {r.lines.length === 0 && (
+                <p className="muted card-body">
+                  {tr("还没有商品明细。识别完成后会显示在这里。")}
+                </p>
+              )}
+              {r.lines.map((l: Row) => (
+                <div
+                  key={l.id}
+                  className={`line ${missingProductName(l) ? "missing-product-name" : l.warnings.length ? "warning" : ""}`}
+                >
+                  <input
+                    type="checkbox"
+                    checked={selected.includes(l.id)}
+                    aria-label={tr("选择 {0}", [l.rawName])}
+                    onChange={(e) =>
+                      setSelected((s) =>
+                        e.target.checked
+                          ? [...s, l.id]
+                          : s.filter((id) => id !== l.id),
+                      )
+                    }
+                  />
+                  <button className="line-main" onClick={() => setLine(l)}>
+                    <strong>
+                      {productName(l) || l.rawName || tr("未命名商品")}
+                    </strong>
+                    {productName(l) && <small>{l.rawName}</small>}
+                    <div className="line-meta">
+                      {kinds()[l.kind]}{" "}
+                      {l.display?.receiptTypeName &&
+                        `· ${l.display.receiptTypeName}`}{" "}
+                      {l.taxCode && tr("· 税码 {0}", [l.taxCode])}{" "}
+                      {l.sku && `· SKU ${l.sku}`}{" "}
+                    </div>
+                    {l.warnings.map((w: string) => (
+                      <p className="warning-text" key={w}>
+                        <Icon name="alert" />
+                        {message(w)}
+                      </p>
+                    ))}
+                  </button>
+                  <span className="numeric">
+                    {money(l.amountMinor, r.currency)}
+                  </span>
+                  <IconButton
+                    icon="trash"
+                    className="delete-button"
+                    label={tr("删除商品")}
+                    onClick={() => {
+                      if (confirm(tr("删除这一项？")))
+                        update(
+                          "lines",
+                          r.lines.filter(
+                            (a: Row) =>
+                              a.id !== l.id && a.discountTarget !== l.id,
+                          ),
+                        );
+                    }}
+                  />
+                </div>
+              ))}
+              <div className="inline-actions">
+                <button
+                  disabled={selected.length !== 1}
+                  onClick={() => {
+                    const amount = prompt(tr("拆分出的金额"));
+                    if (amount !== null)
+                      void doAction(() =>
+                        edit("split", { selected, amount_text: amount }),
+                      );
+                  }}
+                >
+                  {tr("拆分")}
+                </button>
+                <button
+                  disabled={selected.length < 2}
+                  onClick={() =>
+                    void doAction(() => edit("merge", { selected }))
+                  }
+                >
+                  {tr("合并")}
+                </button>
+                <button
+                  className="ghost"
+                  onClick={() => void doAction(() => edit("total_from_lines"))}
+                >
+                  {tr("按明细计算总额")}
+                </button>
+              </div>
             </div>
             {r.summary && !dirty && (
-              <div className="reconciliation">
-                <span>
-                  {tr("明细合计")}
-                  {money(r.summary.knownTotal, r.currency)}
-                </span>
-                <strong className={r.summary.difference ? "warning-text" : ""}>
-                  {tr("差额")}
-                  {money(r.summary.difference, r.currency)}
-                </strong>
+              <div className="reconciliation card">
+                <div>
+                  <span>{tr("票面总金额")}</span>
+                  <strong className="numeric">
+                    {money(r.totalMinor, r.currency)}
+                  </strong>
+                </div>
+                <div>
+                  <span>{tr("明细合计")}</span>
+                  <strong className="numeric">
+                    {money(r.summary.knownTotal, r.currency)}
+                  </strong>
+                </div>
+                <div className={r.summary.difference ? "warning-text" : ""}>
+                  <span>{tr("差额")}</span>
+                  <strong className="numeric">
+                    {money(r.summary.difference, r.currency)}
+                  </strong>
+                </div>
               </div>
             )}
           </div>
           <footer className="save-bar">
             <button
-              className="discard"
+              className="discard danger"
               disabled={busy}
               onClick={() => void doAction(() => discard(onBack))}
             >
@@ -1547,10 +1646,15 @@ export function Editor({
         <Modal title={tr("离开收据编辑？")} onClose={() => setLeaving(false)}>
           <p>{tr("本页改动尚未保存。")}</p>
           <footer>
-            <button disabled={busy} onClick={() => setLeaving(false)}>
+            <button
+              className="ghost"
+              disabled={busy}
+              onClick={() => setLeaving(false)}
+            >
               {tr("继续编辑")}
             </button>
             <button
+              className="danger"
               disabled={busy}
               onClick={() => void doAction(() => discard(exitTarget.current))}
             >
@@ -1578,19 +1682,21 @@ export function Editor({
           onClose={() => setTimeChoices(null)}
         >
           <p>{tr("夏令时切换使这个时间出现两次，请选择实际交易时间。")}</p>
-          {timeChoices.times.map((t) => (
-            <button
-              key={t}
-              onClick={() => {
-                update("occurredAt", t);
-                update("timeSource", "user_entered");
-                update("rawTime", timeChoices.text.replace("T", " "));
-                setTimeChoices(null);
-              }}
-            >
-              {date(t)} · UTC {new Date(t).toISOString()}
-            </button>
-          ))}
+          <div className="time-choices">
+            {timeChoices.times.map((t) => (
+              <button
+                key={t}
+                onClick={() => {
+                  update("occurredAt", t);
+                  update("timeSource", "user_entered");
+                  update("rawTime", timeChoices.text.replace("T", " "));
+                  setTimeChoices(null);
+                }}
+              >
+                {date(t)} · UTC {new Date(t).toISOString()}
+              </button>
+            ))}
+          </div>
         </Modal>
       )}
       {line && (
@@ -2137,6 +2243,7 @@ export function Stores({
       <div hidden={!receiptId && tab === 1}>
         {receiptId && (
           <button
+            className="logo-extract"
             disabled={busy}
             onClick={() =>
               void action(() =>
@@ -2146,6 +2253,7 @@ export function Stores({
               )
             }
           >
+            <Icon name="refresh" />
             {tr("重新提取 Logo")}
           </button>
         )}
@@ -2178,6 +2286,7 @@ export function Stores({
               {s.name && (
                 <IconButton
                   icon="trash"
+                  className="delete-button"
                   label={tr("删除店铺名称样本")}
                   disabled={busy}
                   onClick={() =>
@@ -2210,12 +2319,13 @@ export function Stores({
   );
 }
 const colors = [
-  "#3159d9",
-  "#d35b3b",
-  "#29877d",
-  "#8b5ac8",
-  "#b18729",
-  "#bd4c86",
+  "#14937F",
+  "#E0682F",
+  "#5B6FE8",
+  "#D04E79",
+  "#B3841A",
+  "#8E5BD6",
+  "#3E8ED0",
 ];
 function trendColor(key: string) {
   let hash = 0;
@@ -2380,7 +2490,7 @@ export function TrendChart({
                   x2="935"
                   y1={y(n)}
                   y2={y(n)}
-                  className="grid-line"
+                  className={v === 0 ? "grid-line" : "grid-line dashed"}
                 />
                 <text x="60" y={y(n) + 4} textAnchor="end">
                   {money(n, data.currency)}
@@ -2400,7 +2510,9 @@ export function TrendChart({
               <polyline
                 fill="none"
                 stroke={trendColor(s.key)}
-                strokeWidth={s.key === "total" ? 3 : 2}
+                strokeWidth={s.key === "total" ? 2.5 : 2}
+                strokeLinecap="round"
+                strokeLinejoin="round"
                 points={s.values
                   .map((n: number, i: number) => `${x(i)},${y(n)}`)
                   .join(" ")}
@@ -2410,7 +2522,7 @@ export function TrendChart({
                   key={i}
                   cx={x(i)}
                   cy={y(n)}
-                  r={i === index ? 5 : 3}
+                  r={i === index ? 4.5 : 2.5}
                   fill={trendColor(s.key)}
                 />
               ))}
@@ -2566,97 +2678,111 @@ export function Reports({ open }: { open: (id: string) => void }) {
         error={trend.error}
         onRetry={trend.reload}
       />
-      {trend.data && (
-        <Select
-          label={tr("店铺类别统计范围")}
-          value={receiptType || ""}
-          onChange={(v) => {
-            setReceiptType(v || null);
-            setCategory(null);
-            setDetail(null);
-          }}
-          options={[
-            ["", tr("全部店铺类别")],
-            ...trend.data.series
-              .filter((t: Row) => t.group === "receipt_type")
-              .map((t: Row): [string, string] => [t.key.slice(13), t.label]),
-          ]}
-        />
-      )}
-      {trend.data && (
-        <TrendChart
-          data={trend.data}
-          visible={visible}
-          index={Math.max(0, index < 0 ? trend.data.points.length - 1 : index)}
-          onSelect={(i) => {
-            setIndex(i);
-            trend.reload();
-          }}
-        />
-      )}
-      <div className="report-controls">
-        <div className="segmented">
-          {Object.entries({
-            day: tr("日"),
-            week: tr("周"),
-            month: tr("月"),
-            quarter: tr("季"),
-            year: tr("年"),
-          }).map(([key, name]) => (
-            <button
-              key={key}
-              className={period === key ? "active" : ""}
-              onClick={() => {
-                setPeriod(key);
-                setIndex(-1);
-                setWindow(0);
+      <div className="card report-card">
+        <div className="report-controls">
+          <div className="segmented">
+            {Object.entries({
+              day: tr("日"),
+              week: tr("周"),
+              month: tr("月"),
+              quarter: tr("季"),
+              year: tr("年"),
+            }).map(([key, name]) => (
+              <button
+                key={key}
+                className={period === key ? "active" : ""}
+                onClick={() => {
+                  setPeriod(key);
+                  setIndex(-1);
+                  setWindow(0);
+                }}
+              >
+                {name}
+              </button>
+            ))}
+          </div>
+          {trend.data && (
+            <Select
+              inline
+              label={tr("店铺类别统计范围")}
+              value={receiptType || ""}
+              onChange={(v) => {
+                setReceiptType(v || null);
+                setCategory(null);
+                setDetail(null);
               }}
-            >
-              {name}
-            </button>
-          ))}
+              options={[
+                ["", tr("全部店铺类别")],
+                ...trend.data.series
+                  .filter((t: Row) => t.group === "receipt_type")
+                  .map((t: Row): [string, string] => [
+                    t.key.slice(13),
+                    t.label,
+                  ]),
+              ]}
+            />
+          )}
+          <span className="spacer" />
+          <button
+            className="sm"
+            onClick={() => {
+              setWindow((w) => Math.max(-100, w - 1));
+              setIndex(-1);
+            }}
+          >
+            {tr("← 更早")}
+          </button>
+          <button
+            className="sm"
+            disabled={windowIndex === 0}
+            onClick={() => {
+              setWindow((w) => Math.min(0, w + 1));
+              setIndex(-1);
+            }}
+          >
+            {tr("较近 →")}
+          </button>
+          <button
+            className={seriesMenu ? "sm tonal" : "sm"}
+            aria-pressed={seriesMenu}
+            onClick={() => {
+              if (!seriesMenu) trend.reload();
+              setSeriesMenu(!seriesMenu);
+            }}
+          >
+            {tr("曲线选择")}
+          </button>
         </div>
-        <span className="spacer" />
-        <button
-          onClick={() => {
-            setWindow((w) => Math.max(-100, w - 1));
-            setIndex(-1);
-          }}
-        >
-          {tr("← 更早")}
-        </button>
-        <button
-          disabled={windowIndex === 0}
-          onClick={() => {
-            setWindow((w) => Math.min(0, w + 1));
-            setIndex(-1);
-          }}
-        >
-          {tr("较近 →")}
-        </button>
-        <button
-          onClick={() => {
-            if (!seriesMenu) trend.reload();
-            setSeriesMenu(!seriesMenu);
-          }}
-        >
-          {tr("曲线选择")}
-        </button>
+        {seriesMenu && trend.busy && (
+          <p role="status">{tr("正在重新查询曲线…")}</p>
+        )}
+        {seriesMenu && !trend.busy && !trend.error && (
+          <TrendSeriesMenu
+            series={trend.data?.series || []}
+            visible={visible}
+            onToggle={toggle}
+          />
+        )}
+        {trend.data && (
+          <TrendChart
+            data={trend.data}
+            visible={visible}
+            index={Math.max(
+              0,
+              index < 0 ? trend.data.points.length - 1 : index,
+            )}
+            onSelect={(i) => {
+              setIndex(i);
+              trend.reload();
+            }}
+          />
+        )}
       </div>
-      {seriesMenu && trend.busy && (
-        <p role="status">{tr("正在重新查询曲线…")}</p>
-      )}
-      {seriesMenu && !trend.busy && !trend.error && (
-        <TrendSeriesMenu
-          series={trend.data?.series || []}
-          visible={visible}
-          onToggle={toggle}
-        />
-      )}
       <div className="section-heading">
         <h2>{selected?.label || tr("当前期间")}</h2>
         {category && (
-          <button onClick={() => setCategory(null)}>
+          <button className="ghost sm" onClick={() => setCategory(null)}>
+            <Icon name="back" />
             {tr("返回所有分类")}
           </button>
         )}
@@ -2689,18 +2815,24 @@ export function Reports({ open }: { open: (id: string) => void }) {
             </p>
           )}
           <div className="report-groups">
-            {["receipt_type", "category", "product"].map((group) => (
-              <section key={group}>
-                <h2>
-                  {group === "category"
-                    ? tr("商品分类")
-                    : group === "receipt_type"
-                      ? tr("店铺类别")
-                      : tr("商品")}
-                </h2>
-                {summary.data.groups
-                  .filter((g: Row) => g.group === group)
-                  .map((g: Row) => (
+            {["receipt_type", "category", "product"].map((group) => {
+              const items = summary.data.groups.filter(
+                (g: Row) => g.group === group,
+              );
+              const maxAmount = items.reduce(
+                (max: number, g: Row) => Math.max(max, g.amount),
+                0,
+              );
+              return (
+                <section key={group}>
+                  <h2>
+                    {group === "category"
+                      ? tr("商品分类")
+                      : group === "receipt_type"
+                        ? tr("店铺类别")
+                        : tr("商品")}
+                  </h2>
+                  {items.map((g: Row) => (
                     <button
                       className="group-row"
                       key={g.key}
@@ -2721,18 +2853,35 @@ export function Reports({ open }: { open: (id: string) => void }) {
                         } else setDetail(g);
                       }}
                     >
-                      <span>
-                        {g.label}
-                        <small>{g.quantity_labels.join(" · ")}</small>
+                      <span className="group-details">
+                        <span className="group-label">
+                          <span>
+                            {g.label}
+                            <small>{g.quantity_labels.join(" · ")}</small>
+                          </span>
+                          <strong className="numeric">
+                            {money(g.amount, summary.data.currency)}
+                          </strong>
+                        </span>
+                        <span className="group-bar" aria-hidden="true">
+                          <i
+                            style={{
+                              width: `${maxAmount > 0 ? Math.max(0, Math.min(100, (g.amount / maxAmount) * 100)) : 0}%`,
+                            }}
+                          />
+                        </span>
                       </span>
-                      <strong>{money(g.amount, summary.data.currency)}</strong>
+                      <Icon name="chevron" />
                     </button>
                   ))}
-                {!summary.data.entries.length && (
-                  <p className="muted">{tr("此期间没有已确认的消费明细。")}</p>
-                )}
-              </section>
-            ))}
+                  {!summary.data.entries.length && (
+                    <p className="muted">
+                      {tr("此期间没有已确认的消费明细。")}
+                    </p>
+                  )}
+                </section>
+              );
+            })}
           </div>
         </>
       )}
@@ -2762,8 +2911,10 @@ export function Reports({ open }: { open: (id: string) => void }) {
                         </button>
                       </td>
                       <td>{e.raw_store || tr("未知店铺")}</td>
-                      <td>{date(e.occurred_at_utc_ms)}</td>
-                      <td>{money(e.amount_minor, summary.data.currency)}</td>
+                      <td className="numeric">{date(e.occurred_at_utc_ms)}</td>
+                      <td className="numeric">
+                        {money(e.amount_minor, summary.data.currency)}
+                      </td>
                     </tr>
                   ))}
               </tbody>
@@ -2851,7 +3002,7 @@ function Settings({
           ]}
         />
         {preferences.data && (
-          <>
+          <div className="form-grid preference-grid">
             <Select
               label={tr("全局重量显示单位")}
               value={preferences.data.weight_unit}
@@ -2884,7 +3035,7 @@ function Settings({
                 )
               }
             />
-          </>
+          </div>
         )}
         <p className="muted">
           {tr("时间按当前时区 {0} 显示；数据库统一存 UTC。", [zone])}
@@ -2892,13 +3043,19 @@ function Settings({
       </section>
       <section className="settings-section">
         <h2>{tr("账户")}</h2>
-        <p>
-          {api.user?.username}{" "}
-          {api.user?.is_admin && <span className="badge">{tr("元用户")}</span>}
-        </p>
+        <div className="account-summary">
+          <AccountAvatar username={api.user?.username} />
+          <strong>{api.user?.username}</strong>
+          {api.user?.is_admin && (
+            <span className="badge neutral">{tr("元用户")}</span>
+          )}
+        </div>
         <div className="inline-actions">
           <button onClick={onChangePassword}>{tr("修改密码")}</button>
-          <button onClick={() => void action(() => api.logout())}>
+          <button
+            className="danger"
+            onClick={() => void action(() => api.logout())}
+          >
             <Icon name="logout" />
             {tr("退出登录")}
           </button>
@@ -2991,53 +3148,66 @@ export function Users() {
         error={list.error}
         onRetry={list.reload}
       />
-      <table>
-        <thead>
-          <tr>
-            <th>{tr("用户名")}</th>
-            <th>{tr("权限")}</th>
-            <th>{tr("密码状态")}</th>
-            <th>{tr("操作")}</th>
-          </tr>
-        </thead>
-        <tbody>
-          {list.data?.map((u: User) => (
-            <tr key={u.user_id}>
-              <td>{u.username}</td>
-              <td>{u.is_admin ? tr("元用户") : tr("普通用户")}</td>
-              <td>
-                {u.must_change_password ? tr("首次登录需改密") : tr("已设置")}
-              </td>
-              <td>
-                {u.is_admin ? (
-                  <span className="muted">{tr("不可删除")}</span>
-                ) : (
-                  <IconButton
-                    icon="trash"
-                    label={tr("删除用户 {0}", [u.username])}
-                    onClick={() =>
-                      void action(async () => {
-                        if (
-                          confirm(
-                            tr("删除 {0} 及其全部收据和照片？", [u.username]),
-                          )
-                        ) {
-                          await api.auth(
-                            `users/${u.user_id}`,
-                            undefined,
-                            "DELETE",
-                          );
-                          list.reload();
-                        }
-                      })
-                    }
-                  />
-                )}
-              </td>
+      <div className="table-scroll users-table">
+        <table>
+          <thead>
+            <tr>
+              <th>{tr("用户名")}</th>
+              <th>{tr("权限")}</th>
+              <th>{tr("密码状态")}</th>
+              <th>{tr("操作")}</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {list.data?.map((u: User) => (
+              <tr key={u.user_id}>
+                <td>{u.username}</td>
+                <td>
+                  <span className={u.is_admin ? "badge info" : "badge neutral"}>
+                    {u.is_admin ? tr("元用户") : tr("普通用户")}
+                  </span>
+                </td>
+                <td>
+                  {u.must_change_password ? (
+                    <span className="badge warning">
+                      {tr("首次登录需改密")}
+                    </span>
+                  ) : (
+                    <span className="muted">{tr("已设置")}</span>
+                  )}
+                </td>
+                <td>
+                  {u.is_admin ? (
+                    <span className="muted">{tr("不可删除")}</span>
+                  ) : (
+                    <IconButton
+                      icon="trash"
+                      className="delete-button"
+                      label={tr("删除用户 {0}", [u.username])}
+                      onClick={() =>
+                        void action(async () => {
+                          if (
+                            confirm(
+                              tr("删除 {0} 及其全部收据和照片？", [u.username]),
+                            )
+                          ) {
+                            await api.auth(
+                              `users/${u.user_id}`,
+                              undefined,
+                              "DELETE",
+                            );
+                            list.reload();
+                          }
+                        })
+                      }
+                    />
+                  )}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
       {show && (
         <Modal title={tr("创建用户")} onClose={() => setShow(false)}>
           <form
@@ -3121,14 +3291,15 @@ function PageOverlay({
   editing?: boolean;
 }) {
   const dialog = useRef<HTMLDialogElement>(null);
-  useEffect(() => {
+  React.useLayoutEffect(() => {
+    const layer = dialog.current;
     if (openOverlays++ === 0) {
       backgroundOverflow = document.body.style.overflow;
       document.body.style.overflow = "hidden";
     }
-    dialog.current?.showModal();
+    const closeLayer = layer && openDialog(layer);
     return () => {
-      dialog.current?.close();
+      closeLayer?.();
       if (--openOverlays === 0)
         document.body.style.overflow = backgroundOverflow;
     };
@@ -3139,6 +3310,7 @@ function PageOverlay({
       className="page-overlay"
       aria-label={label}
       onCancel={(event) => {
+        if (event.target !== event.currentTarget) return;
         event.preventDefault();
         onClose();
       }}
@@ -3149,7 +3321,32 @@ function PageOverlay({
     </dialog>
   );
 }
+function useWide() {
+  const query = "(min-width: 1024px)";
+  const [wide, setWide] = useState(
+    () => window.matchMedia?.(query).matches ?? false,
+  );
+  useEffect(() => {
+    const media = window.matchMedia?.(query);
+    if (!media) return;
+    const update = () => setWide(media.matches);
+    media.addEventListener("change", update);
+    return () => media.removeEventListener("change", update);
+  }, []);
+  return wide;
+}
+
+function AccountAvatar({ username }: { username?: string }) {
+  return (
+    <span className="account-avatar" aria-hidden="true">
+      {Array.from(username ?? "")[0]?.toUpperCase()}
+    </span>
+  );
+}
+
 function Workspace() {
+  const wide = useWide();
+  const sidebar = wide ? " has-sidebar" : "";
   useLanguage();
 
   const [page, setPage] = useState("receipts"),
@@ -3214,11 +3411,22 @@ function Workspace() {
     if (editor) editorRef.current?.leave(exit);
     else exit();
   }
+  const toast = notice && (
+    <div className="notice toast" role="status">
+      <span>{message(notice)}</span>
+      <IconButton
+        icon="close"
+        label={tr("关闭提示")}
+        onClick={() => setNotice("")}
+      />
+    </div>
+  );
   return (
     <>
-      <div className="toolbar">
+      <div className={`toolbar${sidebar}`}>
         <IconButton
           icon="menu"
+          className="menu-toggle"
           label={tr("打开导航菜单")}
           onClick={() => setDrawer(!drawer)}
         />
@@ -3237,22 +3445,29 @@ function Workspace() {
           <>
             <IconButton
               icon="camera"
+              showLabel
+              className="primary"
               label={tr("拍照")}
               onClick={() => setCamera(true)}
             />
             <IconButton
               icon="upload"
+              showLabel
               label={tr("上传照片")}
               onClick={() => upload.current?.click()}
             />
             <IconButton
               icon="add"
+              showLabel
               label={tr("手动录入")}
               onClick={() => void action(manual)}
             />
           </>
         )}
-        <span className="account-label">{api.user?.username}</span>
+        <span className="account-label">
+          <AccountAvatar username={api.user?.username} />
+          {api.user?.username}
+        </span>
       </div>
       <input
         hidden
@@ -3270,49 +3485,49 @@ function Workspace() {
             });
         }}
       />
-      {drawer && (
-        <>
-          <button
-            className="drawer-shade"
-            aria-label={tr("关闭导航菜单")}
-            onClick={() => setDrawer(false)}
-          />
-          <nav className="drawer" aria-label={tr("主导航")}>
-            <div className="drawer-brand">
-              <Icon name="receipt" />
-              <strong>Receipt Master</strong>
-            </div>
-            {Object.entries(names())
-              .filter(([key]) => key !== "users" || api.user?.is_admin)
-              .map(([key, label]) => (
-                <button
-                  key={key}
-                  className={page === key ? "active" : ""}
-                  onClick={() => navigate(key)}
-                >
-                  <Icon name={key} />
-                  {label}
-                </button>
-              ))}
-            <AndroidDownloadLink className="android-download" />
-            <small>
-              {api.user?.username}
-              {tr("· 私人数据空间")}
-            </small>
-          </nav>
-        </>
+      {drawer && !wide && (
+        <button
+          className="drawer-shade"
+          aria-label={tr("关闭导航菜单")}
+          onClick={() => setDrawer(false)}
+        />
       )}
-      <main className="workspace">
-        {notice && (
-          <div className="notice toast" role="status">
-            <span>{message(notice)}</span>
-            <IconButton
-              icon="close"
-              label={tr("关闭提示")}
-              onClick={() => setNotice("")}
-            />
+      {(drawer || wide) && (
+        <nav
+          className={wide ? "drawer docked" : "drawer"}
+          aria-label={tr("主导航")}
+        >
+          <div className="drawer-brand">
+            <span className="brand-mark">
+              <Icon name="receipt" />
+            </span>
+            <strong>Receipt Master</strong>
           </div>
-        )}
+          {Object.entries(names())
+            .filter(([key]) => key !== "users" || api.user?.is_admin)
+            .map(([key, label]) => (
+              <button
+                key={key}
+                className={page === key ? "active" : ""}
+                onClick={() => navigate(key)}
+              >
+                <Icon name={key} />
+                {label}
+              </button>
+            ))}
+          <hr />
+          <AndroidDownloadLink className="android-download" />
+          <small>
+            <AccountAvatar username={api.user?.username} />
+            <span>
+              <strong>{api.user?.username}</strong>
+              <span>{tr("· 私人数据空间")}</span>
+            </span>
+          </small>
+        </nav>
+      )}
+      <main className={`workspace${sidebar}`}>
+        {!editor && !product && toast}
         {Object.keys(names())
           .filter((key) => visited.current.has(key))
           .map((key) => (
@@ -3353,7 +3568,11 @@ function Workspace() {
           label={tr("商品 · {0}", [product.label])}
           onClose={() => setProduct(null)}
         >
-          <button onClick={() => setProduct(null)}>{tr("返回")}</button>
+          <button className="ghost" onClick={() => setProduct(null)}>
+            <Icon name="back" />
+            {tr("返回")}
+          </button>
+          {!editor && toast}
           <Receipts
             open={setEditor}
             product={product}
@@ -3367,6 +3586,7 @@ function Workspace() {
           editing
           onClose={() => editorRef.current?.leave(closeEditor)}
         >
+          {toast}
           <Editor
             ref={editorRef}
             key={editor}

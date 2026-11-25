@@ -356,7 +356,7 @@ class _EditorPageState extends State<EditorPage> {
       builder: (ctx) => StatefulBuilder(
         builder: (ctx, set) {
           Widget field(String key, String label) => Padding(
-            padding: const EdgeInsets.only(bottom: 12),
+            padding: const EdgeInsets.only(bottom: Space.lg),
             child: key == 'productName'
                 ? ValueListenableBuilder<TextEditingValue>(
                     valueListenable: c[key]!,
@@ -443,7 +443,7 @@ class _EditorPageState extends State<EditorPage> {
                             systemCategories[value] ?? line.categoryId;
                       }),
                     ),
-                    const SizedBox(height: 12),
+                    const SizedBox(height: Space.lg),
                     if (line.kind == 'product')
                       field('productName', context.tr("商品名称")),
                     field('raw', context.tr("票面名称")),
@@ -780,17 +780,20 @@ class _EditorPageState extends State<EditorPage> {
 
   Widget photoPanel(ReceiptDraft r) => LayoutBuilder(
     builder: (context, constraints) {
-      final top = MediaQuery.paddingOf(context).top + 70;
+      final top = MediaQuery.paddingOf(context).top + Space.lg;
       final photoHeight = (constraints.maxHeight - top - 16)
           .clamp(240.0, double.infinity)
           .toDouble();
-      return ListView.builder(
-        key: const ValueKey('receipt-photo-panel'),
-        padding: EdgeInsets.fromLTRB(12, top, 12, 16),
-        itemCount: images.length,
-        itemBuilder: (ctx, i) => Padding(
-          padding: EdgeInsets.only(bottom: i == images.length - 1 ? 0 : 16),
-          child: photoTile(r, i, wide: true, wideHeight: photoHeight),
+      return ColoredBox(
+        color: context.tokens.photoBg,
+        child: ListView.builder(
+          key: const ValueKey('receipt-photo-panel'),
+          padding: EdgeInsets.fromLTRB(12, top, 12, 16),
+          itemCount: images.length,
+          itemBuilder: (ctx, i) => Padding(
+            padding: EdgeInsets.only(bottom: i == images.length - 1 ? 0 : 16),
+            child: photoTile(r, i, wide: true, wideHeight: photoHeight),
+          ),
         ),
       );
     },
@@ -845,9 +848,9 @@ class _EditorPageState extends State<EditorPage> {
                 return SizedBox(
                   height: wideHeight,
                   child: ClipRRect(
-                    borderRadius: BorderRadius.circular(16),
+                    borderRadius: BorderRadius.circular(12),
                     child: ColoredBox(
-                      color: Theme.of(context).colorScheme.surfaceContainerLow,
+                      color: context.tokens.photoBg,
                       child: Stack(
                         fit: StackFit.expand,
                         children: [
@@ -857,8 +860,8 @@ class _EditorPageState extends State<EditorPage> {
                             left: 12,
                             child: DecoratedBox(
                               decoration: BoxDecoration(
-                                color: Colors.black.withValues(alpha: .68),
-                                borderRadius: BorderRadius.circular(12),
+                                color: Colors.black.withValues(alpha: .72),
+                                borderRadius: BorderRadius.circular(999),
                               ),
                               child: Padding(
                                 padding: const EdgeInsets.symmetric(
@@ -880,7 +883,7 @@ class _EditorPageState extends State<EditorPage> {
                             top: 12,
                             child: Material(
                               color: Colors.black.withValues(alpha: .72),
-                              borderRadius: BorderRadius.circular(18),
+                              borderRadius: BorderRadius.circular(999),
                               child: IconTheme(
                                 data: const IconThemeData(color: Colors.white),
                                 child: photoActions(
@@ -898,7 +901,15 @@ class _EditorPageState extends State<EditorPage> {
                   ),
                 );
               }
-              return Expanded(child: image);
+              return Expanded(
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(12),
+                  child: ColoredBox(
+                    color: context.tokens.photoBg,
+                    child: image,
+                  ),
+                ),
+              );
             },
           ),
           if (!wide) photoActions(r, i, photo),
@@ -912,69 +923,83 @@ class _EditorPageState extends State<EditorPage> {
     int i,
     Map<String, dynamic> photo, {
     bool floating = false,
-  }) => Row(
-    mainAxisSize: MainAxisSize.min,
-    mainAxisAlignment: MainAxisAlignment.center,
-    children: [
-      IconButton(
-        tooltip: context.tr("向前移动"),
-        icon: const Icon(Icons.chevron_left),
-        color: floating ? Colors.white : null,
-        disabledColor: floating ? Colors.white38 : null,
-        onPressed: i == 0
-            ? null
-            : () => act(() async {
-                final ids = images.map((p) => p['image_id'] as String).toList();
-                final old = ids.removeAt(i);
-                ids.insert(i - 1, old);
-                final id = r.id;
-                await widget.store.reorderImages(id, ids);
-                await refreshImages();
-              }),
-      ),
-      IconButton(
-        tooltip: context.tr("旋转 90°"),
-        icon: const Icon(Icons.rotate_right),
-        color: floating ? Colors.white : null,
-        onPressed: () => act(() async {
-          final image = photo['image_id'] as String;
-          await widget.store.rotateImage(r.id, image);
-          for (final l in r.lines) {
-            for (final e in l.evidence.where((e) => e['imageId'] == image)) {
-              final x0 = e['x0'], y0 = e['y0'], x1 = e['x1'], y1 = e['y1'];
-              e['x0'] = 1 - y1;
-              e['y0'] = x0;
-              e['x1'] = 1 - y0;
-              e['y1'] = x1;
-            }
-          }
-          await refreshImages();
-        }),
-      ),
-      IconButton(
-        tooltip: context.tr("删除此段"),
-        icon: const Icon(Icons.close),
-        color: floating ? Colors.white : null,
-        onPressed: () async {
-          if (!await confirm(
-            context,
-            context.tr("删除这张收据照片？"),
-            context.tr("照片会从服务器删除，无法恢复。"),
-          )) {
-            return;
-          }
-          await act(() async {
-            final id = r.id, image = photo['image_id'] as String;
-            await widget.store.removeImage(id, image);
+  }) {
+    final style = IconButton.styleFrom(
+      minimumSize: const Size(40, 40),
+      padding: EdgeInsets.zero,
+      foregroundColor: floating ? Colors.white : AppPalette.muted(context),
+      shape: const CircleBorder(),
+      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+    );
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        IconButton(
+          style: style,
+          tooltip: context.tr("向前移动"),
+          icon: const Icon(Icons.chevron_left),
+          color: floating ? Colors.white : null,
+          disabledColor: floating ? Colors.white38 : null,
+          onPressed: i == 0
+              ? null
+              : () => act(() async {
+                  final ids = images
+                      .map((p) => p['image_id'] as String)
+                      .toList();
+                  final old = ids.removeAt(i);
+                  ids.insert(i - 1, old);
+                  final id = r.id;
+                  await widget.store.reorderImages(id, ids);
+                  await refreshImages();
+                }),
+        ),
+        IconButton(
+          style: style,
+          tooltip: context.tr("旋转 90°"),
+          icon: const Icon(Icons.rotate_right),
+          color: floating ? Colors.white : null,
+          onPressed: () => act(() async {
+            final image = photo['image_id'] as String;
+            await widget.store.rotateImage(r.id, image);
             for (final l in r.lines) {
-              l.evidence.removeWhere((e) => e['imageId'] == image);
+              for (final e in l.evidence.where((e) => e['imageId'] == image)) {
+                final x0 = e['x0'], y0 = e['y0'], x1 = e['x1'], y1 = e['y1'];
+                e['x0'] = 1 - y1;
+                e['y0'] = x0;
+                e['x1'] = 1 - y0;
+                e['y1'] = x1;
+              }
             }
             await refreshImages();
-          });
-        },
-      ),
-    ],
-  );
+          }),
+        ),
+        IconButton(
+          style: style,
+          tooltip: context.tr("删除此段"),
+          icon: const Icon(Icons.close),
+          color: floating ? Colors.white : null,
+          onPressed: () async {
+            if (!await confirm(
+              context,
+              context.tr("删除这张收据照片？"),
+              context.tr("照片会从服务器删除，无法恢复。"),
+            )) {
+              return;
+            }
+            await act(() async {
+              final id = r.id, image = photo['image_id'] as String;
+              await widget.store.removeImage(id, image);
+              for (final l in r.lines) {
+                l.evidence.removeWhere((e) => e['imageId'] == image);
+              }
+              await refreshImages();
+            });
+          },
+        ),
+      ],
+    );
+  }
 
   Future<void> leave() async {
     if (!dirty) {
@@ -1049,6 +1074,10 @@ class _EditorPageState extends State<EditorPage> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final scheme = theme.colorScheme;
+    final textTheme = theme.textTheme;
+    final tokens = context.tokens;
     final r = draft;
     if (r == null) {
       return Scaffold(
@@ -1072,7 +1101,7 @@ class _EditorPageState extends State<EditorPage> {
       );
     }
     Widget text(String key, String label) => Padding(
-      padding: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.only(bottom: Space.lg),
       child: TextField(
         controller: fields[key],
         enabled: !busy,
@@ -1092,6 +1121,7 @@ class _EditorPageState extends State<EditorPage> {
         extendBody: true,
         extendBodyBehindAppBar: true,
         appBar: AppBar(
+          backgroundColor: Colors.transparent,
           flexibleSpace: const FrostedBar(child: SizedBox.expand()),
           title: Text(r.posted ? context.tr("编辑收据") : context.tr("收据草稿")),
           actions: [
@@ -1104,7 +1134,7 @@ class _EditorPageState extends State<EditorPage> {
             ),
             IconButton(
               tooltip: context.tr("永久删除"),
-              icon: const Icon(Icons.delete_outline),
+              icon: Icon(Icons.delete_outline, color: scheme.error),
               onPressed: busy
                   ? null
                   : () async {
@@ -1112,6 +1142,7 @@ class _EditorPageState extends State<EditorPage> {
                         context,
                         context.tr("永久删除收据？"),
                         context.tr("收据、照片和识别记录将从服务器删除，无法恢复。"),
+                        destructive: true,
                       )) {
                         await act(() async {
                           await widget.store.purge(r.id);
@@ -1132,7 +1163,7 @@ class _EditorPageState extends State<EditorPage> {
                 key: const ValueKey('receipt-edit-form'),
                 padding: EdgeInsets.fromLTRB(
                   wide ? 20 : 18,
-                  MediaQuery.paddingOf(context).top + 70,
+                  MediaQuery.paddingOf(context).top + Space.lg,
                   wide ? 20 : 18,
                   125,
                 ),
@@ -1143,6 +1174,7 @@ class _EditorPageState extends State<EditorPage> {
                       context.tr("草稿尚未保存：{0}", [
                         context.translatedMessage(error!),
                       ]),
+                      tone: NoticeTone.error,
                     ),
                   Text(
                     context.tr("核对这张收据"),
@@ -1151,12 +1183,11 @@ class _EditorPageState extends State<EditorPage> {
                   const SizedBox(height: 5),
                   Text(
                     context.tr("查看原图，确认关键金额，再保存记录。"),
-                    style: TextStyle(
-                      color: AppPalette.muted(context),
-                      fontSize: 13,
+                    style: textTheme.bodyMedium?.copyWith(
+                      color: scheme.onSurfaceVariant,
                     ),
                   ),
-                  const SizedBox(height: 17),
+                  const SizedBox(height: Space.lg),
                   if (!wide && images.isNotEmpty) photoStrip(r),
                   for (final photo in images.where(
                     (p) => p['quality_warning'] != null,
@@ -1164,9 +1195,11 @@ class _EditorPageState extends State<EditorPage> {
                     Notice(photo['quality_warning']),
                   const SizedBox(height: 16),
                   if (images.isNotEmpty && fields['store']!.text.isEmpty)
-                    Notice(context.tr("尚未匹配店名，请确认 Logo 并设置店铺名称。")),
+                    Notice(
+                      context.tr("尚未匹配店名，请确认 Logo 并设置店铺名称。"),
+                      tone: NoticeTone.info,
+                    ),
                   text('store', context.tr("店名 / 连锁店")),
-                  const SizedBox(height: 12),
                   DropdownButtonFormField<String>(
                     key: ValueKey('receipt-type-${r.receiptTypeId}'),
                     initialValue: r.receiptTypeId,
@@ -1208,92 +1241,108 @@ class _EditorPageState extends State<EditorPage> {
                         }
                       }),
                     ),
-                  ExpansionTile(
-                    tilePadding: EdgeInsets.zero,
-                    title: Text(context.tr("更多票据信息")),
-                    subtitle: Text(
-                      context.tr("分店、地址、国家和票面币种"),
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: AppPalette.muted(context),
+                  const SizedBox(height: Space.lg),
+                  Card(
+                    child: ExpansionTile(
+                      title: Text(context.tr("更多票据信息")),
+                      subtitle: Text(
+                        context.tr("分店、地址、国家和票面币种"),
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: AppPalette.muted(context),
+                        ),
                       ),
-                    ),
-                    children: [
-                      text('branch', context.tr("分店名")),
-                      text('address', context.tr("票面地址")),
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Expanded(child: text('country', context.tr("国家代码"))),
-                          const SizedBox(width: 12),
-                          Expanded(
-                            child: DropdownButtonFormField<String>(
-                              key: ValueKey(
-                                '$currencyPickerVersion-${r.currency}',
-                              ),
-                              initialValue: r.currency,
-                              decoration: InputDecoration(
-                                labelText: context.tr("币种"),
-                              ),
-                              items: currencies.keys
-                                  .map(
-                                    (c) => DropdownMenuItem(
-                                      value: c,
-                                      child: Text(c),
-                                    ),
-                                  )
-                                  .toList(),
-                              onChanged: (value) async {
-                                try {
-                                  await syncFields();
-                                  final revised = await editReceipt(
-                                    'currency',
-                                    {'currency': value!},
-                                  );
-                                  if (!context.mounted) return;
-                                  if ((r.lines.isNotEmpty ||
-                                          r.totalMinor != null) &&
-                                      !await confirm(
-                                        context,
-                                        context.tr("修正票面币种？"),
-                                        context.tr("金额数字保持不变，仅修正币种标记，不进行汇率换算。"),
-                                      )) {
-                                    if (mounted) {
+                      children: [
+                        text('branch', context.tr("分店名")),
+                        text('address', context.tr("票面地址")),
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Expanded(
+                              child: text('country', context.tr("国家代码")),
+                            ),
+                            const SizedBox(width: Space.lg),
+                            Expanded(
+                              child: DropdownButtonFormField<String>(
+                                key: ValueKey(
+                                  '$currencyPickerVersion-${r.currency}',
+                                ),
+                                initialValue: r.currency,
+                                decoration: InputDecoration(
+                                  labelText: context.tr("币种"),
+                                ),
+                                items: currencies.keys
+                                    .map(
+                                      (c) => DropdownMenuItem(
+                                        value: c,
+                                        child: Text(c),
+                                      ),
+                                    )
+                                    .toList(),
+                                onChanged: (value) async {
+                                  try {
+                                    await syncFields();
+                                    final revised = await editReceipt(
+                                      'currency',
+                                      {'currency': value!},
+                                    );
+                                    if (!context.mounted) return;
+                                    if ((r.lines.isNotEmpty ||
+                                            r.totalMinor != null) &&
+                                        !await confirm(
+                                          context,
+                                          context.tr("修正票面币种？"),
+                                          context.tr(
+                                            "金额数字保持不变，仅修正币种标记，不进行汇率换算。",
+                                          ),
+                                        )) {
+                                      if (mounted) {
+                                        setState(() {
+                                          currencyPickerVersion++;
+                                        });
+                                      }
+                                      return;
+                                    }
+                                    if (!mounted) return;
+                                    setState(() {
+                                      currencyPickerVersion++;
+                                      draft = revised;
+                                      populate();
+                                    });
+                                    changed();
+                                  } catch (e) {
+                                    if (context.mounted) {
+                                      showError(context, e);
                                       setState(() {
                                         currencyPickerVersion++;
                                       });
                                     }
-                                    return;
                                   }
-                                  if (!mounted) return;
-                                  setState(() {
-                                    currencyPickerVersion++;
-                                    draft = revised;
-                                    populate();
-                                  });
-                                  changed();
-                                } catch (e) {
-                                  if (context.mounted) {
-                                    showError(context, e);
-                                    setState(() {
-                                      currencyPickerVersion++;
-                                    });
-                                  }
-                                }
-                              },
+                                },
+                              ),
                             ),
-                          ),
-                        ],
-                      ),
-                    ],
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
+                  const SizedBox(height: Space.lg),
                   Card(
-                    elevation: 0,
                     color: r.timeSource.startsWith('estimated')
                         ? AppPalette.warningSurface(context)
-                        : Theme.of(context).colorScheme.surfaceContainerLow,
+                        : null,
+                    shape: r.timeSource.startsWith('estimated')
+                        ? RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            side: BorderSide(color: tokens.warningBorder),
+                          )
+                        : null,
                     child: ListTile(
-                      title: Text(dateText(r.occurredAt, widget.zone)),
+                      leading: const Icon(Icons.schedule),
+                      title: Text(
+                        dateText(r.occurredAt, widget.zone),
+                        style: textTheme.titleSmall,
+                      ),
                       subtitle: Text(
                         '${widget.zone}${r.timeSource.startsWith('estimated') ? context.tr(" · 时间含估计值") : ''}',
                       ),
@@ -1301,7 +1350,7 @@ class _EditorPageState extends State<EditorPage> {
                       onTap: changeTime,
                     ),
                   ),
-                  const SizedBox(height: 12),
+                  const SizedBox(height: Space.lg),
                   text('total', context.tr("收据总额")),
                   TextButton(
                     onPressed: () => act(() async {
@@ -1319,26 +1368,32 @@ class _EditorPageState extends State<EditorPage> {
                     contentPadding: EdgeInsets.zero,
                     title: Text(
                       context.tr("商品与调整"),
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.w700,
-                      ),
+                      style: textTheme.titleLarge,
                     ),
                     trailing: IconButton(
                       tooltip: context.tr("添加明细"),
                       onPressed: () => editLine(null),
-                      icon: const Icon(Icons.add_circle_outline),
+                      icon: Icon(
+                        Icons.add_circle_outline,
+                        color: scheme.primary,
+                      ),
                     ),
                   ),
                   if (selected.isNotEmpty)
                     Wrap(
                       spacing: 8,
                       children: [
-                        TextButton(
+                        OutlinedButton(
+                          style: OutlinedButton.styleFrom(
+                            minimumSize: const Size(48, 40),
+                          ),
                           onPressed: () => act(split),
                           child: Text(context.tr("拆分所选行")),
                         ),
-                        TextButton(
+                        OutlinedButton(
+                          style: OutlinedButton.styleFrom(
+                            minimumSize: const Size(48, 40),
+                          ),
                           onPressed: () => act(merge),
                           child: Text(context.tr("合并所选行")),
                         ),
@@ -1352,12 +1407,22 @@ class _EditorPageState extends State<EditorPage> {
                     ),
                   for (final l in r.lines)
                     Card(
+                      margin: const EdgeInsets.only(bottom: Space.sm),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        side: BorderSide(
+                          color: l.missingProductName
+                              ? tokens.dangerBorder
+                              : l.warnings.isNotEmpty
+                              ? tokens.warningBorder
+                              : scheme.outlineVariant,
+                        ),
+                      ),
                       color: l.missingProductName
                           ? AppPalette.errorSurface(context)
                           : l.warnings.isNotEmpty
                           ? AppPalette.warningSurface(context)
-                          : Theme.of(context).colorScheme.surfaceContainerLow,
-                      elevation: 0,
+                          : scheme.surfaceContainerLowest,
                       child: ListTile(
                         leading: Checkbox(
                           value: selected.contains(l.id),
@@ -1384,6 +1449,12 @@ class _EditorPageState extends State<EditorPage> {
                               l.amountMinor == null
                                   ? context.tr("缺少金额")
                                   : money(l.amountMinor, r.currency),
+                              style: textTheme.titleSmall?.copyWith(
+                                fontWeight: FontWeight.w700,
+                                color: l.amountMinor == null
+                                    ? scheme.error
+                                    : scheme.onSurface,
+                              ),
                             ),
                             IconButton(
                               tooltip: context.tr("删除明细"),
@@ -1398,7 +1469,12 @@ class _EditorPageState extends State<EditorPage> {
                   if (r.lines.isEmpty)
                     Padding(
                       padding: EdgeInsets.all(16),
-                      child: Text(context.tr("还没有明细，可手工添加。")),
+                      child: Text(
+                        context.tr("还没有明细，可手工添加。"),
+                        style: textTheme.bodyMedium?.copyWith(
+                          color: scheme.onSurfaceVariant,
+                        ),
+                      ),
                     ),
                   if (r.totalMinor != null)
                     Notice(
@@ -1406,13 +1482,13 @@ class _EditorPageState extends State<EditorPage> {
                         money(r.knownTotal, r.currency),
                         money(r.difference, r.currency),
                       ]),
+                      tone: r.difference == 0
+                          ? NoticeTone.success
+                          : NoticeTone.warning,
                     ),
                   Text(
                     context.tr("追溯编号：{0}", [r.id]),
-                    style: TextStyle(
-                      fontSize: 11,
-                      color: AppPalette.muted(context),
-                    ),
+                    style: textTheme.bodySmall?.copyWith(color: tokens.text3),
                   ),
                 ],
               );
@@ -1429,55 +1505,84 @@ class _EditorPageState extends State<EditorPage> {
           ),
         ),
         floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
-        floatingActionButton: Builder(
-          builder: (context) {
-            final scheme = Theme.of(context).colorScheme;
-            return Material(
-              key: const ValueKey('receipt-save-actions'),
-              color: scheme.surfaceContainerHigh,
-              elevation: 12,
-              shadowColor: Colors.black.withValues(alpha: .36),
+        floatingActionButton: LayoutBuilder(
+          builder: (context, constraints) {
+            final width = MediaQuery.sizeOf(context).width;
+            final photoWidth = width >= 600 && images.isNotEmpty
+                ? (width - 1) * (width < 800 ? 9 / 20 : .5)
+                : 0.0;
+            final maxWidth = (width - photoWidth - 24).clamp(0.0, 336.0);
+            final shape = StadiumBorder(
+              side: BorderSide(color: scheme.outlineVariant),
+            );
+            const label = TextStyle(fontSize: 13, fontWeight: FontWeight.w600);
+            final button = TextButton.styleFrom(
+              minimumSize: const Size(0, 44),
               shape: const StadiumBorder(),
-              child: Padding(
-                padding: const EdgeInsets.all(5),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    TextButton(
-                      style: TextButton.styleFrom(
-                        foregroundColor: scheme.error,
-                        minimumSize: const Size(0, 46),
-                        shape: const StadiumBorder(),
-                        padding: const EdgeInsets.symmetric(horizontal: 8),
-                      ),
-                      onPressed: busy ? null : discardChanges,
-                      child: Text(context.tr("放弃改动")),
-                    ),
-                    const SizedBox(width: 2),
-                    if (!r.posted) ...[
-                      TextButton(
-                        style: TextButton.styleFrom(
-                          minimumSize: const Size(0, 46),
-                          shape: const StadiumBorder(),
-                          padding: const EdgeInsets.symmetric(horizontal: 8),
+              padding: const EdgeInsets.symmetric(horizontal: 14),
+              textStyle: label,
+            );
+            return ConstrainedBox(
+              constraints: BoxConstraints(maxWidth: maxWidth),
+              child: DecoratedBox(
+                decoration: ShapeDecoration(
+                  shape: const StadiumBorder(),
+                  shadows: [receiptShadow(theme.brightness, strong: true)],
+                ),
+                child: Material(
+                  key: const ValueKey('receipt-save-actions'),
+                  color: scheme.surfaceContainerLowest,
+                  shape: shape,
+                  child: Padding(
+                    padding: const EdgeInsets.all(6),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Flexible(
+                          child: TextButton(
+                            style: button.copyWith(
+                              foregroundColor: WidgetStatePropertyAll(
+                                scheme.error,
+                              ),
+                            ),
+                            onPressed: busy ? null : discardChanges,
+                            child: Text(
+                              context.tr("放弃改动"),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
                         ),
-                        onPressed: busy ? null : saveDraftAndExit,
-                        child: Text(context.tr("保存草稿")),
-                      ),
-                      const SizedBox(width: 2),
-                    ],
-                    FilledButton(
-                      style: FilledButton.styleFrom(
-                        minimumSize: const Size(0, 46),
-                        shape: const StadiumBorder(),
-                        padding: const EdgeInsets.symmetric(horizontal: 12),
-                      ),
-                      onPressed: busy ? null : save,
-                      child: Text(
-                        busy ? context.tr("处理中…") : context.tr("录入并退出"),
-                      ),
+                        if (!r.posted)
+                          Flexible(
+                            child: TextButton(
+                              style: button,
+                              onPressed: busy ? null : saveDraftAndExit,
+                              child: Text(
+                                context.tr("保存草稿"),
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                          ),
+                        Flexible(
+                          child: FilledButton(
+                            style: FilledButton.styleFrom(
+                              minimumSize: const Size(0, 44),
+                              shape: const StadiumBorder(),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 14,
+                              ),
+                              textStyle: label,
+                            ),
+                            onPressed: busy ? null : save,
+                            child: Text(
+                              busy ? context.tr("处理中…") : context.tr("录入并退出"),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
-                  ],
+                  ),
                 ),
               ),
             );

@@ -3,6 +3,7 @@ import '../l10n/strings.dart';
 import 'package:flutter/material.dart';
 
 import '../data/store.dart';
+import 'app_theme.dart';
 import 'catalog_search.dart';
 
 class CategoryEditorDialog extends StatefulWidget {
@@ -89,49 +90,54 @@ class _CategoryEditorDialogState extends State<CategoryEditorDialog> {
       widget.category == null ? context.tr("添加商品种类") : context.tr("编辑商品种类"),
     ),
     scrollable: true,
-    content: Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        CatalogSearchField(
-          store: widget.store,
-          component: 'categories',
-          controller: name,
-          label: context.tr("商品种类"),
-          enabled: !submitting,
-          rejectExistingName: true,
-          currentId: widget.category?['category_id'],
-          onChanged: (_) => setState(() => error = null),
-          onSelected: (_) => setState(() => error = null),
-        ),
-        if (error != null)
-          Text(
-            context.translatedMessage(error!),
-            style: TextStyle(color: Theme.of(context).colorScheme.error),
+    content: SizedBox(
+      width: 420,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        spacing: Space.md,
+        children: [
+          CatalogSearchField(
+            store: widget.store,
+            component: 'categories',
+            controller: name,
+            label: context.tr("商品种类"),
+            enabled: !submitting,
+            rejectExistingName: true,
+            currentId: widget.category?['category_id'],
+            onChanged: (_) => setState(() => error = null),
+            onSelected: (_) => setState(() => error = null),
           ),
-        DropdownButtonFormField<String>(
-          initialValue: parent ?? '',
-          decoration: InputDecoration(labelText: context.tr("父类")),
-          items: [
-            DropdownMenuItem(value: '', child: Text(context.tr("顶层"))),
-            for (final c in widget.categories)
-              if (!excluded.contains(c['category_id']))
-                DropdownMenuItem(
-                  value: c['category_id'],
-                  child: Text(c['path']),
-                ),
-          ],
-          onChanged: submitting
-              ? null
-              : (v) => setState(() => parent = v == '' ? null : v),
-        ),
-      ],
+          if (error != null)
+            Text(
+              context.translatedMessage(error!),
+              style: Theme.of(context).textTheme.bodySmall
+                  ?.copyWith(color: Theme.of(context).colorScheme.error),
+            ),
+          DropdownButtonFormField<String>(
+            initialValue: parent ?? '',
+            decoration: InputDecoration(labelText: context.tr("父类")),
+            items: [
+              DropdownMenuItem(value: '', child: Text(context.tr("顶层"))),
+              for (final c in widget.categories)
+                if (!excluded.contains(c['category_id']))
+                  DropdownMenuItem(
+                    value: c['category_id'],
+                    child: Text(c['path']),
+                  ),
+            ],
+            onChanged: submitting
+                ? null
+                : (v) => setState(() => parent = v == '' ? null : v),
+          ),
+        ],
+      ),
     ),
     actions: [
       TextButton(
         onPressed: submitting ? null : () => Navigator.pop(context),
         child: Text(context.tr("取消")),
       ),
-      TextButton(
+      FilledButton(
         onPressed: submitting ? null : save,
         child: Text(context.tr("保存")),
       ),

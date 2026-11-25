@@ -3,6 +3,7 @@ import '../l10n/strings.dart';
 import 'package:flutter/material.dart';
 
 import '../data/store.dart';
+import 'app_theme.dart';
 
 // The API supplies exact_match after Unicode normalization. This immediate
 // check handles ASCII case and whitespace while database suggestions arrive.
@@ -45,6 +46,7 @@ class CatalogSearchField extends StatefulWidget {
 
 class _CatalogSearchFieldState extends State<CatalogSearchField> {
   final focus = FocusNode();
+  final fieldKey = GlobalKey();
   int generation = 0;
   String? error;
   String? existingName;
@@ -99,6 +101,7 @@ class _CatalogSearchFieldState extends State<CatalogSearchField> {
       widget.onSelected?.call(row);
     },
     fieldViewBuilder: (context, controller, node, submit) => TextField(
+      key: fieldKey,
       controller: controller,
       focusNode: node,
       enabled: widget.enabled,
@@ -127,31 +130,56 @@ class _CatalogSearchFieldState extends State<CatalogSearchField> {
             : null,
       ),
     ),
-    optionsViewBuilder: (context, select, options) => Align(
-      alignment: Alignment.topLeft,
-      child: Material(
-        elevation: 6,
-        borderRadius: BorderRadius.circular(12),
-        child: SizedBox(
-          width: 300,
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(maxHeight: 240),
-            child: ListView.builder(
-              padding: EdgeInsets.zero,
-              shrinkWrap: true,
-              itemCount: options.length,
-              itemBuilder: (context, index) {
-                final row = options.elementAt(index);
-                return ListTile(
-                  title: Text(row[widget.labelField]),
-                  selected: AutocompleteHighlightedOption.of(context) == index,
-                  onTap: () => select(row),
-                );
-              },
+    optionsViewBuilder: (context, select, options) {
+      final theme = Theme.of(context);
+      final scheme = theme.colorScheme;
+      final field = fieldKey.currentContext?.findRenderObject();
+      final width = field is RenderBox && field.hasSize
+          ? field.size.width.clamp(0.0, 420.0)
+          : 420.0;
+      const radius = BorderRadius.all(Radius.circular(12));
+      return Align(
+        alignment: AlignmentDirectional.topStart,
+        child: DecoratedBox(
+          decoration: BoxDecoration(
+            borderRadius: radius,
+            boxShadow: [receiptShadow(theme.brightness)],
+          ),
+          child: Material(
+            color: scheme.surfaceContainerLowest,
+            shape: RoundedRectangleBorder(
+              borderRadius: radius,
+              side: BorderSide(color: scheme.outlineVariant),
+            ),
+            clipBehavior: Clip.antiAlias,
+            child: SizedBox(
+              width: width,
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxHeight: 240),
+                child: ListView.builder(
+                  padding: EdgeInsets.zero,
+                  shrinkWrap: true,
+                  itemCount: options.length,
+                  itemBuilder: (context, index) {
+                    final row = options.elementAt(index);
+                    return ListTile(
+                      minTileHeight: 48,
+                      title: Text(
+                        row[widget.labelField],
+                        style: theme.textTheme.bodyMedium,
+                      ),
+                      selected:
+                          AutocompleteHighlightedOption.of(context) == index,
+                      selectedTileColor: scheme.surfaceContainer,
+                      onTap: () => select(row),
+                    );
+                  },
+                ),
+              ),
             ),
           ),
         ),
-      ),
-    ),
+      );
+    },
   );
 }

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 
 import '../data/store.dart';
 import 'common.dart';
+import 'app_theme.dart';
 
 class ReceiptTypesManager extends StatefulWidget {
   final AppStore store;
@@ -107,9 +108,14 @@ class _ReceiptTypesManagerState extends State<ReceiptTypesManager> {
   Widget build(BuildContext context) => Column(
     crossAxisAlignment: CrossAxisAlignment.stretch,
     children: [
-      Text(context.tr("店铺类别与商品种类独立。店铺类别用于新识别收据，修改店铺不会改变历史消费。")),
+      Text(
+        context.tr("店铺类别与商品种类独立。店铺类别用于新识别收据，修改店铺不会改变历史消费。"),
+        style: Theme.of(context).textTheme.bodyMedium
+            ?.copyWith(color: AppPalette.muted(context)),
+      ),
+      const SizedBox(height: Space.md),
       if (busy) const LinearProgressIndicator(),
-      if (error != null) Notice(error!),
+      if (error != null) Notice(error!, tone: NoticeTone.error),
       Wrap(
         spacing: 8,
         runSpacing: 8,
@@ -144,44 +150,71 @@ class _ReceiptTypesManagerState extends State<ReceiptTypesManager> {
           label: Text(context.tr("添加店铺类别")),
         ),
       ),
-      const SizedBox(height: 16),
+      const SizedBox(height: Space.x2l),
       Text(
         context.tr("店铺类别设置"),
         style: Theme.of(context).textTheme.titleMedium,
       ),
-      for (final m in merchants)
-        Padding(
-          padding: const EdgeInsets.symmetric(vertical: 8),
-          child: Row(
+      const SizedBox(height: Space.sm),
+      if (merchants.isNotEmpty)
+        Card(
+          child: Column(
             children: [
-              Expanded(child: Text(m['name'])),
-              const SizedBox(width: 12),
-              Expanded(
-                child: DropdownButtonFormField<String>(
-                  key: ValueKey('${m['merchant_id']}-${m['receipt_type_id']}'),
-                  initialValue: m['receipt_type_id'],
-                  decoration: InputDecoration(labelText: context.tr("店铺类别")),
-                  items: [
-                    for (final t in types)
-                      DropdownMenuItem(
-                        value: t['receipt_type_id'] as String,
-                        child: Text(t['name']),
+              for (final (i, m) in merchants.indexed) ...[
+                if (i > 0) const Divider(),
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                    vertical: Space.sm,
+                    horizontal: Space.lg,
+                  ),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          m['name'],
+                          style: Theme.of(context).textTheme.bodyLarge,
+                        ),
                       ),
-                  ],
-                  onChanged: busy
-                      ? null
-                      : (value) {
-                          if (value != null) {
-                            run(
-                              () => widget.store.classifyMerchant(
-                                m['merchant_id'],
-                                value,
+                      const SizedBox(width: Space.md),
+                      SizedBox(
+                        width: 160,
+                        child: DropdownButtonFormField<String>(
+                          isExpanded: true,
+                          key: ValueKey(
+                            '${m['merchant_id']}-${m['receipt_type_id']}',
+                          ),
+                          initialValue: m['receipt_type_id'],
+                          decoration: InputDecoration(
+                            labelText: context.tr("店铺类别"),
+                          ),
+                          items: [
+                            for (final t in types)
+                              DropdownMenuItem(
+                                value: t['receipt_type_id'] as String,
+                                child: Text(
+                                  t['name'],
+                                  overflow: TextOverflow.ellipsis,
+                                ),
                               ),
-                            );
-                          }
-                        },
+                          ],
+                          onChanged: busy
+                              ? null
+                              : (value) {
+                                  if (value != null) {
+                                    run(
+                                      () => widget.store.classifyMerchant(
+                                        m['merchant_id'],
+                                        value,
+                                      ),
+                                    );
+                                  }
+                                },
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
+              ],
             ],
           ),
         ),

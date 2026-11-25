@@ -34,14 +34,14 @@ export function ReceiptTypesManager() {
     }
   }
   return (
-    <section aria-label={tr("店铺类别管理")}>
+    <section className="receipt-types" aria-label={tr("店铺类别管理")}>
       <p className="muted">
         {tr(
           "店铺类别与商品种类独立；店铺类别用来填充新识别收据的默认值，修改店铺不会改变历史消费。",
         )}
       </p>
       {error && (
-        <p className="notice" role="alert">
+        <p className="notice error" role="alert">
           {message(error)}
         </p>
       )}
@@ -59,6 +59,7 @@ export function ReceiptTypesManager() {
             </button>
             {!t.system_key && (
               <button
+                className="icon-button delete-button"
                 aria-label={tr("删除店铺类别 {0}", [t.name])}
                 disabled={busy}
                 onClick={() => {
@@ -94,6 +95,7 @@ export function ReceiptTypesManager() {
       </button>
       {edit && (
         <form
+          className="card type-form"
           onSubmit={(e) => {
             e.preventDefault();
             void action(async () => {
@@ -106,7 +108,7 @@ export function ReceiptTypesManager() {
             });
           }}
         >
-          <label>
+          <label className="field">
             {tr("店铺类别名称")}
             <input
               aria-label={tr("店铺类别名称")}
@@ -119,7 +121,7 @@ export function ReceiptTypesManager() {
           <button type="button" onClick={() => setEdit(null)}>
             {tr("取消")}
           </button>
-          <button disabled={busy} type="submit">
+          <button className="primary" disabled={busy} type="submit">
             {tr("保存类别")}
           </button>
         </form>

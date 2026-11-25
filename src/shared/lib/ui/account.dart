@@ -158,7 +158,7 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) => Scaffold(
     body: Center(
       child: ConstrainedBox(
-        constraints: const BoxConstraints(maxWidth: 440),
+        constraints: const BoxConstraints(maxWidth: 400),
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(28),
           child: Form(
@@ -168,16 +168,35 @@ class _LoginPageState extends State<LoginPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  const Icon(Icons.receipt_long_outlined, size: 48),
-                  const SizedBox(height: 20),
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: Container(
+                      width: 56,
+                      height: 56,
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).colorScheme.primary,
+                        borderRadius: BorderRadius.circular(14),
+                      ),
+                      child: Icon(
+                        Icons.receipt_long,
+                        size: 30,
+                        color: Theme.of(context).colorScheme.onPrimary,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: Space.x2l),
                   Text(
                     'Receipt Master',
                     style: Theme.of(context).textTheme.headlineLarge,
                   ),
-                  const SizedBox(height: 8),
-                  Text(context.tr("登录，继续整理你的生活账目。")),
-                  const SizedBox(height: 28),
-                  if (error != null) Notice(error!),
+                  const SizedBox(height: 6),
+                  Text(
+                    context.tr("登录，继续整理你的生活账目。"),
+                    style: Theme.of(context).textTheme.bodyLarge
+                        ?.copyWith(color: AppPalette.muted(context)),
+                  ),
+                  const SizedBox(height: Space.x3l),
+                  if (error != null) Notice(error!, tone: NoticeTone.error),
                   TextFormField(
                     controller: endpoint,
                     decoration: InputDecoration(labelText: context.tr("服务地址")),
@@ -185,7 +204,7 @@ class _LoginPageState extends State<LoginPage> {
                     validator: (v) =>
                         v!.trim().isEmpty ? context.tr("请填写服务地址") : null,
                   ),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: Space.xl),
                   TextFormField(
                     controller: username,
                     decoration: InputDecoration(labelText: context.tr("用户名")),
@@ -196,7 +215,7 @@ class _LoginPageState extends State<LoginPage> {
                     validator: (v) =>
                         v!.trim().isEmpty ? context.tr("请填写用户名") : null,
                   ),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: Space.xl),
                   TextFormField(
                     controller: password,
                     decoration: InputDecoration(labelText: context.tr("密码")),
@@ -210,6 +229,9 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                   const SizedBox(height: 24),
                   FilledButton(
+                    style: FilledButton.styleFrom(
+                      minimumSize: const Size(0, 52),
+                    ),
                     onPressed: busy ? null : submit,
                     child: Text(busy ? context.tr("正在登录…") : context.tr("登录")),
                   ),
@@ -290,7 +312,7 @@ class _PasswordPageState extends State<PasswordPage> {
             children: [
               if (widget.requiredChange)
                 Notice(context.tr("首次登录或管理员重置后，必须修改密码才能使用。")),
-              if (error != null) Notice(error!),
+              if (error != null) Notice(error!, tone: NoticeTone.error),
               Form(
                 key: form,
                 child: AutofillGroup(
@@ -305,7 +327,7 @@ class _PasswordPageState extends State<PasswordPage> {
                           labelText: context.tr("用户名"),
                         ),
                       ),
-                      const SizedBox(height: 16),
+                      const SizedBox(height: Space.xl),
                       TextFormField(
                         controller: old,
                         obscureText: true,
@@ -319,7 +341,7 @@ class _PasswordPageState extends State<PasswordPage> {
                         validator: (v) =>
                             v!.isEmpty ? context.tr("请填写当前密码") : null,
                       ),
-                      const SizedBox(height: 16),
+                      const SizedBox(height: Space.xl),
                       TextFormField(
                         controller: password,
                         obscureText: true,
@@ -334,7 +356,7 @@ class _PasswordPageState extends State<PasswordPage> {
                             ? context.tr("至少 12 个字符")
                             : null,
                       ),
-                      const SizedBox(height: 16),
+                      const SizedBox(height: Space.xl),
                       TextFormField(
                         controller: repeat,
                         obscureText: true,
@@ -355,13 +377,19 @@ class _PasswordPageState extends State<PasswordPage> {
               ),
               const SizedBox(height: 24),
               FilledButton(
+                style: FilledButton.styleFrom(minimumSize: const Size(0, 52)),
                 onPressed: busy ? null : submit,
                 child: Text(busy ? context.tr("正在保存…") : context.tr("修改密码")),
               ),
               if (widget.requiredChange)
-                TextButton(
-                  onPressed: busy ? null : widget.session.logout,
-                  child: Text(context.tr("退出登录")),
+                Center(
+                  child: TextButton(
+                    style: TextButton.styleFrom(
+                      foregroundColor: AppPalette.muted(context),
+                    ),
+                    onPressed: busy ? null : widget.session.logout,
+                    child: Text(context.tr("退出登录")),
+                  ),
                 ),
             ],
           ),
@@ -403,6 +431,7 @@ class _UsersPageState extends State<UsersPage> {
       context: context,
       builder: (c) => AlertDialog(
         title: Text(context.tr("创建用户")),
+        scrollable: true,
         content: AutofillGroup(
           onDisposeAction: AutofillContextAction.cancel,
           child: Column(
@@ -415,6 +444,7 @@ class _UsersPageState extends State<UsersPage> {
                 enableSuggestions: false,
                 decoration: InputDecoration(labelText: context.tr("用户名")),
               ),
+              const SizedBox(height: Space.lg),
               TextField(
                 controller: password,
                 obscureText: true,
@@ -473,40 +503,84 @@ class _UsersPageState extends State<UsersPage> {
       ],
     ),
     body: ListView(
+      padding: const EdgeInsets.all(Space.lg),
       children: [
-        if (error != null) Notice(error!),
+        if (error != null) Notice(error!, tone: NoticeTone.error),
         if (users == null) const LinearProgressIndicator(),
-        for (final u in users ?? [])
-          ListTile(
-            title: Text(u['username']),
-            subtitle: Text(
-              u['is_admin'] == true
-                  ? context.tr("元用户 · 不可删除")
-                  : u['must_change_password'] == true
-                  ? context.tr("首次登录需要改密")
-                  : context.tr("普通用户"),
+        if (users case final rows? when rows.isNotEmpty)
+          Card(
+            child: Column(
+              children: [
+                for (final (index, user) in rows.indexed) ...[
+                  if (index > 0) const Divider(),
+                  userTile(context, user),
+                ],
+              ],
             ),
-            trailing: u['is_admin'] == true
-                ? const Icon(Icons.shield_outlined)
-                : IconButton(
-                    tooltip: context.tr("删除用户"),
-                    icon: const Icon(Icons.delete_outline),
-                    onPressed: busy
-                        ? null
-                        : () async {
-                            if (await confirm(
-                              context,
-                              context.tr("删除用户？"),
-                              context.tr("该用户的会话会被撤销，收据和照片会删除。"),
-                            )) {
-                              await action(
-                                () => widget.session.deleteUser(u['user_id']),
-                              );
-                            }
-                          },
-                  ),
           ),
       ],
     ),
   );
+
+  Widget userTile(BuildContext context, Map<String, dynamic> user) {
+    final scheme = Theme.of(context).colorScheme;
+    final username = user['username'] as String;
+    final admin = user['is_admin'] == true;
+    return ListTile(
+      leading: CircleAvatar(
+        radius: 18,
+        backgroundColor: scheme.surfaceContainerHigh,
+        foregroundColor: scheme.onSurface,
+        child: Text(
+          username.isEmpty
+              ? ''
+              : String.fromCharCode(username.runes.first).toUpperCase(),
+        ),
+      ),
+      title: Text(username, style: Theme.of(context).textTheme.titleSmall),
+      subtitle: admin
+          ? Semantics(
+              label: context.tr("元用户 · 不可删除"),
+              excludeSemantics: true,
+              child: Wrap(
+                crossAxisAlignment: WrapCrossAlignment.center,
+                spacing: Space.sm,
+                runSpacing: Space.xs,
+                children: [
+                  StatusBadge(label: context.tr("元用户"), tone: NoticeTone.info),
+                  Text(context.tr("不可删除")),
+                ],
+              ),
+            )
+          : user['must_change_password'] == true
+          ? Align(
+              alignment: Alignment.centerLeft,
+              child: StatusBadge(
+                label: context.tr("首次登录需要改密"),
+                tone: NoticeTone.warning,
+              ),
+            )
+          : Text(context.tr("普通用户")),
+      trailing: admin
+          ? const Icon(Icons.shield_outlined)
+          : IconButton(
+              tooltip: context.tr("删除用户"),
+              icon: Icon(Icons.delete_outline, color: scheme.error),
+              onPressed: busy
+                  ? null
+                  : () async {
+                      if (await confirm(
+                        context,
+                        context.tr("删除用户？"),
+                        context.tr("该用户的会话会被撤销，收据和照片会删除。"),
+                        destructive: true,
+                      )) {
+                        await action(
+                          () => widget.session.deleteUser(user['user_id']),
+                        );
+                      }
+                    },
+            ),
+    );
+  }
 }

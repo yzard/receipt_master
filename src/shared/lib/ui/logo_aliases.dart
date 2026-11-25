@@ -70,13 +70,8 @@ class _LogoAliasesPageState extends State<LogoAliasesPage> {
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              SizedBox(
-                height: 100,
-                child: widget.store.image(
-                  Map<String, dynamic>.from(logo),
-                  fit: BoxFit.contain,
-                ),
-              ),
+              logoPreview(logo, 100),
+              const SizedBox(height: Space.md),
               TextFormField(
                 initialValue: name,
                 onChanged: (v) => setDialogState(() => name = v),
@@ -143,14 +138,29 @@ class _LogoAliasesPageState extends State<LogoAliasesPage> {
     ],
   );
 
+  Widget logoPreview(Map logo, double height) => Container(
+    height: height,
+    width: double.infinity,
+    padding: const EdgeInsets.all(Space.md),
+    decoration: BoxDecoration(
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(8),
+    ),
+    child: widget.store.image(
+      Map<String, dynamic>.from(logo),
+      fit: BoxFit.contain,
+    ),
+  );
+
   Widget buildTab(BuildContext context, int tab) {
+    final theme = Theme.of(context);
     final body = AbsorbPointer(
       absorbing: busy,
       child: ListView(
         padding: EdgeInsets.fromLTRB(
-          18,
-          widget.embedded ? 8 : MediaQuery.paddingOf(context).top + 72,
-          18,
+          Space.lg,
+          widget.embedded ? 8 : 12,
+          Space.lg,
           widget.embedded ? 110 : 32,
         ),
         children: [
@@ -161,7 +171,8 @@ class _LogoAliasesPageState extends State<LogoAliasesPage> {
             ),
           if (widget.receiptId == null) ...[
             Wrap(
-              spacing: 8,
+              spacing: Space.sm,
+              runSpacing: Space.sm,
               children: [
                 for (final (index, label) in [
                   context.tr("店铺名称"),
@@ -201,17 +212,22 @@ class _LogoAliasesPageState extends State<LogoAliasesPage> {
               Text(context.tr("尚无 Logo 样本。新收据识别完成后会提取顶部候选图；确认店名后加入别名库。")),
             for (final logo in logos ?? [])
               Card(
+                margin: const EdgeInsets.only(bottom: Space.md),
                 child: Column(
                   children: [
-                    SizedBox(
-                      height: 140,
-                      child: widget.store.image(
-                        Map<String, dynamic>.from(logo),
-                        fit: BoxFit.contain,
-                      ),
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(12, 12, 12, 0),
+                      child: logoPreview(logo, 140),
                     ),
                     ListTile(
-                      title: Text(logo['name'] ?? context.tr("尚未设置店名")),
+                      title: Text(
+                        logo['name'] ?? context.tr("尚未设置店名"),
+                        style: theme.textTheme.titleSmall?.copyWith(
+                          color: logo['name'] == null
+                              ? context.tokens.text3
+                              : null,
+                        ),
+                      ),
                       subtitle: Text(
                         logo['detection'] == 'header_candidate'
                             ? context.tr("顶部候选区域，请确认是否为 Logo")
@@ -219,10 +235,13 @@ class _LogoAliasesPageState extends State<LogoAliasesPage> {
                       ),
                       onTap: () => edit(logo as Map),
                       trailing: logo['name'] == null
-                          ? const Icon(Icons.edit)
+                          ? const Icon(Icons.edit_outlined)
                           : IconButton(
                               tooltip: context.tr("删除店铺名称样本"),
-                              icon: const Icon(Icons.delete_outline),
+                              icon: Icon(
+                                Icons.delete_outline,
+                                color: theme.colorScheme.error,
+                              ),
                               onPressed: () async {
                                 if (!await confirm(
                                   context,
@@ -255,9 +274,7 @@ class _LogoAliasesPageState extends State<LogoAliasesPage> {
     );
     if (widget.embedded) return body;
     return Scaffold(
-      extendBodyBehindAppBar: true,
       appBar: AppBar(
-        flexibleSpace: const FrostedBar(child: SizedBox.expand()),
         title: Text(
           widget.receiptId == null ? context.tr("店铺") : context.tr("收据 Logo"),
         ),

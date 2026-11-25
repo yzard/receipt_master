@@ -10,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_timezone/flutter_timezone.dart';
 import 'package:image_picker/image_picker.dart';
 
+import '../data/auth_session.dart';
 import '../data/store.dart';
 import '../domain/models.dart';
 import 'common.dart';
@@ -296,6 +297,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
       context,
       context.tr("永久删除这张收据？"),
       context.tr("收据、照片和识别记录会从服务器删除，无法恢复。"),
+      destructive: true,
     )) {
       return;
     }
@@ -352,15 +354,47 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     final navigation = NavigationDrawer(
       backgroundColor: ios ? Colors.transparent : null,
       elevation: ios ? 0 : null,
-      indicatorColor: ios ? scheme.primary.withValues(alpha: .16) : null,
       selectedIndex: page,
       onDestinationSelected: choosePage,
       children: [
         Padding(
-          padding: EdgeInsets.fromLTRB(28, 48, 20, 24),
-          child: Text(
-            'Receipt Master',
-            style: TextStyle(fontSize: 26, fontWeight: FontWeight.w800),
+          padding: const EdgeInsets.fromLTRB(28, 40, 16, 20),
+          child: Row(
+            children: [
+              Container(
+                width: 40,
+                height: 40,
+                decoration: BoxDecoration(
+                  color: scheme.primary,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Icon(
+                  Icons.receipt_long,
+                  size: 22,
+                  color: scheme.onPrimary,
+                ),
+              ),
+              const SizedBox(width: Space.md),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Receipt Master',
+                      style: Theme.of(context).textTheme.titleLarge
+                          ?.copyWith(fontWeight: FontWeight.w700),
+                    ),
+                    if (AuthSession.instance.user?['username']
+                        case final String username)
+                      Text(
+                        username,
+                        style: Theme.of(context).textTheme.bodySmall
+                            ?.copyWith(color: context.tokens.text3),
+                      ),
+                  ],
+                ),
+              ),
+            ],
           ),
         ),
         NavigationDrawerDestination(
@@ -390,10 +424,15 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
         ),
       ],
     );
+    final uploadFailed = widget.store.submissionStates.values.any(
+      (v) => v.startsWith('上传失败'),
+    );
     return Scaffold(
       key: scaffoldKey,
-      backgroundColor: Colors.transparent,
-      drawerScrimColor: ios ? Colors.black.withValues(alpha: .18) : null,
+      backgroundColor: scheme.surface,
+      drawerScrimColor: scheme.scrim.withValues(
+        alpha: Theme.of(context).brightness == Brightness.dark ? .60 : .45,
+      ),
       drawer: ios
           ? SafeArea(
               child: Padding(
@@ -407,27 +446,14 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                 ),
               ),
             )
-          : navigation,
+          : ClipRRect(
+              borderRadius: const BorderRadius.horizontal(
+                right: Radius.circular(16),
+              ),
+              child: navigation,
+            ),
       body: Stack(
         children: [
-          Positioned.fill(
-            child: DecoratedBox(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [
-                    scheme.surface,
-                    ios
-                        ? scheme.surfaceContainerLow
-                        : scheme.primaryContainer.withValues(alpha: .24),
-                    scheme.surface,
-                  ],
-                  stops: const [0, .48, 1],
-                ),
-              ),
-            ),
-          ),
           Positioned.fill(
             child: Padding(
               padding: EdgeInsets.only(top: topInset),
@@ -435,24 +461,34 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                 children: [
                   if (importing && page == 0) const LinearProgressIndicator(),
                   if (widget.store.submissionStates.isNotEmpty)
-                    Material(
-                      color: scheme.primaryContainer.withValues(alpha: .65),
-                      child: ListTile(
-                        dense: true,
-                        leading: const Icon(Icons.cloud_upload_outlined),
-                        title: Text(
-                          context.tr("后台提交 {0} 张收据", [
-                            widget.store.submissionStates.length,
-                          ]),
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
+                      child: Material(
+                        color: uploadFailed
+                            ? context.tokens.warningSoft
+                            : context.tokens.infoSoft,
+                        borderRadius: BorderRadius.circular(12),
+                        child: ListTile(
+                          dense: true,
+                          leading: Icon(
+                            Icons.cloud_upload_outlined,
+                            color: uploadFailed
+                                ? context.tokens.warning
+                                : context.tokens.info,
+                          ),
+                          title: Text(
+                            context.tr("后台提交 {0} 张收据", [
+                              widget.store.submissionStates.length,
+                            ]),
+                            style: Theme.of(context).textTheme.titleSmall,
+                          ),
+                          subtitle: Text(
+                            uploadFailed
+                                ? context.tr("部分上传失败，点击重试；照片已保留")
+                                : context.tr("上传中，可以继续使用其他页面"),
+                          ),
+                          onTap: () => widget.store.retrySubmissions(),
                         ),
-                        subtitle: Text(
-                          widget.store.submissionStates.values.any(
-                                (v) => v.startsWith('上传失败'),
-                              )
-                              ? context.tr("部分上传失败，点击重试；照片已保留")
-                              : context.tr("上传中，可以继续使用其他页面"),
-                        ),
-                        onTap: () => widget.store.retrySubmissions(),
                       ),
                     ),
                   Expanded(
@@ -488,18 +524,19 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                 : Row(
                     children: [
                       FrostedBar(
-                        radius: BorderRadius.circular(25),
-                        child: Padding(
-                          padding: const EdgeInsets.all(5),
-                          child: GestureDetector(
-                            onLongPress: openMenu,
-                            child: SizedBox(
-                              width: 58,
-                              height: 58,
-                              child: IconButton(
-                                tooltip: context.tr("打开导航菜单"),
-                                onPressed: openMenu,
-                                icon: const Icon(Icons.menu_rounded, size: 28),
+                        radius: BorderRadius.circular(20),
+                        child: GestureDetector(
+                          onLongPress: openMenu,
+                          child: SizedBox(
+                            width: 58,
+                            height: 58,
+                            child: IconButton(
+                              tooltip: context.tr("打开导航菜单"),
+                              onPressed: openMenu,
+                              icon: Icon(
+                                Icons.menu_rounded,
+                                size: 26,
+                                color: scheme.onSurface,
                               ),
                             ),
                           ),
@@ -508,43 +545,38 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                       const Spacer(),
                       if (page == 0)
                         FrostedBar(
-                          radius: BorderRadius.circular(25),
-                          child: Padding(
-                            padding: const EdgeInsets.all(5),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                SizedBox(
-                                  width: 58,
-                                  child: _QuickAction(
-                                    label: context.tr("拍照"),
-                                    icon: Icons.camera_alt_outlined,
-                                    primary: true,
-                                    onTap: importing
-                                        ? null
-                                        : () => capture(true),
-                                  ),
+                          radius: BorderRadius.circular(20),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              SizedBox(
+                                width: 58,
+                                child: _QuickAction(
+                                  label: context.tr("拍照"),
+                                  icon: Icons.camera_alt_outlined,
+                                  primary: true,
+                                  onTap: importing ? null : () => capture(true),
                                 ),
-                                SizedBox(
-                                  width: 58,
-                                  child: _QuickAction(
-                                    label: context.tr("上传照片"),
-                                    icon: Icons.photo_library_outlined,
-                                    onTap: importing
-                                        ? null
-                                        : () => capture(false),
-                                  ),
+                              ),
+                              SizedBox(
+                                width: 58,
+                                child: _QuickAction(
+                                  label: context.tr("上传照片"),
+                                  icon: Icons.photo_library_outlined,
+                                  onTap: importing
+                                      ? null
+                                      : () => capture(false),
                                 ),
-                                SizedBox(
-                                  width: 58,
-                                  child: _QuickAction(
-                                    label: context.tr("手动"),
-                                    icon: Icons.edit_note_outlined,
-                                    onTap: importing ? null : () => open(null),
-                                  ),
+                              ),
+                              SizedBox(
+                                width: 58,
+                                child: _QuickAction(
+                                  label: context.tr("手动"),
+                                  icon: Icons.edit_note_outlined,
+                                  onTap: importing ? null : () => open(null),
                                 ),
-                              ],
-                            ),
+                              ),
+                            ],
                           ),
                         ),
                     ],
@@ -562,8 +594,8 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
         FrostedBar(
           radius: BorderRadius.circular(32),
           child: SizedBox(
-            width: 62,
-            height: 62,
+            width: 58,
+            height: 58,
             child: IconButton(
               tooltip: context.tr("打开导航菜单"),
               onPressed: openMenu,
@@ -575,35 +607,32 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
           const SizedBox(width: 16),
           Expanded(
             child: FrostedBar(
-              radius: BorderRadius.circular(34),
-              child: Padding(
-                padding: const EdgeInsets.all(4),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: _QuickAction(
-                        label: context.tr("拍照"),
-                        icon: CupertinoIcons.camera,
-                        primary: true,
-                        onTap: importing ? null : () => capture(true),
-                      ),
+              radius: BorderRadius.circular(24),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: _QuickAction(
+                      label: context.tr("拍照"),
+                      icon: CupertinoIcons.camera,
+                      primary: true,
+                      onTap: importing ? null : () => capture(true),
                     ),
-                    Expanded(
-                      child: _QuickAction(
-                        label: context.tr("上传照片"),
-                        icon: CupertinoIcons.photo_on_rectangle,
-                        onTap: importing ? null : () => capture(false),
-                      ),
+                  ),
+                  Expanded(
+                    child: _QuickAction(
+                      label: context.tr("上传照片"),
+                      icon: CupertinoIcons.photo_on_rectangle,
+                      onTap: importing ? null : () => capture(false),
                     ),
-                    Expanded(
-                      child: _QuickAction(
-                        label: context.tr("手动"),
-                        icon: CupertinoIcons.square_pencil,
-                        onTap: importing ? null : () => open(null),
-                      ),
+                  ),
+                  Expanded(
+                    child: _QuickAction(
+                      label: context.tr("手动"),
+                      icon: CupertinoIcons.square_pencil,
+                      onTap: importing ? null : () => open(null),
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
           ),
@@ -623,10 +652,9 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
         : null;
     final subtitle = receipts == null
         ? status ?? context.tr('正在加载…')
-        : [
-            context.tr('共 {0} 张收据', [rows.length]),
-            ?status,
-          ].join('\n');
+        : context.tr('共 {0} 张收据', [rows.length]);
+    final scheme = Theme.of(context).colorScheme;
+    final edge = BorderSide(color: scheme.outlineVariant);
     return RefreshIndicator(
       onRefresh: refresh,
       child: ListView.separated(
@@ -634,12 +662,15 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
         physics: const AlwaysScrollableScrollPhysics(),
         padding: const EdgeInsets.fromLTRB(16, 8, 16, 112),
         itemCount: receipts == null || rows.isEmpty ? 2 : rows.length + 2,
-        separatorBuilder: (_, i) => const Divider(height: 1),
+        separatorBuilder: (_, i) =>
+            i == 0 ? const SizedBox.shrink() : const Divider(height: 1),
         itemBuilder: (context, i) {
           if (i == 0) {
             return PageHeading(
               title: context.tr("收据"),
               subtitle: subtitle,
+              status: receipts == null ? null : status,
+              statusColor: error == null ? context.tokens.info : scheme.error,
               trailing: IconButton(
                 tooltip: context.tr("刷新收据"),
                 onPressed: refresh,
@@ -650,8 +681,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
           if (i == 1 && error != null && rows.isEmpty) {
             return Column(
               children: [
-                Text(context.tr("数据加载失败")),
-                const SizedBox(height: 8),
+                Notice(context.tr("数据加载失败"), tone: NoticeTone.error),
                 SelectableText(
                   context.translatedMessage(error.toString()),
                   textAlign: TextAlign.center,
@@ -661,7 +691,15 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
             );
           }
           if (i == 1 && receipts == null) {
-            return const Center(child: CircularProgressIndicator());
+            return const Padding(
+              padding: EdgeInsets.only(top: 48),
+              child: Center(
+                child: SizedBox.square(
+                  dimension: 28,
+                  child: CircularProgressIndicator(strokeWidth: 2.5),
+                ),
+              ),
+            );
           }
           if (i == 1 && rows.isEmpty) {
             return EmptyState(
@@ -686,19 +724,35 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
             );
           }
           final r = rows[i - 2];
-          return ReceiptRow(
+          final last = i == rows.length + 1;
+          return ClipRRect(
             key: ValueKey(r['receipt_id']),
-            name:
-                '${r['status'] == 'posted' ? '' : jobLabel(r['recognition_status'])}${(r['raw_store'] as String?)?.isNotEmpty == true ? r['raw_store'] : context.tr("未填写店铺")}',
-            date: dateText(r['created_at_utc_ms'], zone),
-            receiptDate: dateText(r['occurred_at_utc_ms'], zone),
-            failed: r['recognition_status'] == 'failed',
-            draft: r['status'] == 'draft',
-            amount: r['total_minor'] == null
-                ? context.tr("待填写")
-                : money(r['total_minor'], r['currency_code']),
-            onOpen: () => open(r['receipt_id']),
-            onDelete: () => deleteReceipt(r['receipt_id']),
+            borderRadius: last
+                ? const BorderRadius.vertical(bottom: Radius.circular(12))
+                : BorderRadius.zero,
+            child: DecoratedBox(
+              position: DecorationPosition.foreground,
+              decoration: BoxDecoration(
+                border: Border(
+                  left: edge,
+                  right: edge,
+                  bottom: last ? edge : BorderSide.none,
+                ),
+              ),
+              child: ReceiptRow(
+                name:
+                    '${r['status'] == 'posted' ? '' : jobLabel(r['recognition_status'])}${(r['raw_store'] as String?)?.isNotEmpty == true ? r['raw_store'] : context.tr("未填写店铺")}',
+                date: dateText(r['created_at_utc_ms'], zone),
+                receiptDate: dateText(r['occurred_at_utc_ms'], zone),
+                failed: r['recognition_status'] == 'failed',
+                draft: r['status'] == 'draft',
+                amount: r['total_minor'] == null
+                    ? context.tr("待填写")
+                    : money(r['total_minor'], r['currency_code']),
+                onOpen: () => open(r['receipt_id']),
+                onDelete: () => deleteReceipt(r['receipt_id']),
+              ),
+            ),
           );
         },
       ),
@@ -722,22 +776,30 @@ class _QuickAction extends StatelessWidget {
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
     final ios = Theme.of(context).platform == TargetPlatform.iOS;
-    return Material(
-      color: primary
-          ? (ios ? scheme.primary.withValues(alpha: .16) : scheme.primary)
-          : Colors.transparent,
-      borderRadius: BorderRadius.circular(ios ? 30 : 19),
-      child: SizedBox(
-        height: 58,
-        child: IconButton(
-          tooltip: label,
-          onPressed: onTap,
-          icon: Icon(
-            icon,
-            size: 25,
+    return SizedBox(
+      height: 58,
+      child: IconButton(
+        tooltip: label,
+        onPressed: onTap,
+        style: IconButton.styleFrom(
+          foregroundColor: scheme.onSurface,
+          highlightColor: scheme.onSurface.withValues(alpha: .08),
+          padding: EdgeInsets.zero,
+        ),
+        icon: Container(
+          width: 48,
+          height: 48,
+          alignment: Alignment.center,
+          decoration: BoxDecoration(
             color: primary
-                ? (ios ? scheme.primary : scheme.onPrimary)
-                : scheme.onSurface,
+                ? (onTap == null ? scheme.surfaceContainerHigh : scheme.primary)
+                : Colors.transparent,
+            borderRadius: BorderRadius.circular(ios ? 18 : 14),
+          ),
+          child: Icon(
+            icon,
+            size: 24,
+            color: primary && onTap != null ? scheme.onPrimary : null,
           ),
         ),
       ),

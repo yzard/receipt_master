@@ -143,6 +143,7 @@ class _SettingsPageState extends State<SettingsPage> {
       context,
       context.tr("整体恢复备份"),
       context.tr("当前收据、商品和照片会被备份替换，不合并。替换前会在后端保留一份恢复点。此操作影响登录同一账户的所有设备。"),
+      destructive: true,
     )) {
       return;
     }
@@ -170,6 +171,16 @@ class _SettingsPageState extends State<SettingsPage> {
   @override
   Widget build(BuildContext context) {
     if (!loaded) return const Center(child: CircularProgressIndicator());
+    final theme = Theme.of(context);
+    final scheme = theme.colorScheme;
+    final preferenceAction = OutlinedButton.styleFrom(
+      alignment: Alignment.centerLeft,
+      padding: const EdgeInsets.symmetric(horizontal: Space.lg),
+    );
+    Widget sectionTitle(String title) => Padding(
+      padding: const EdgeInsets.fromLTRB(4, 24, 0, 8),
+      child: Text(title, style: theme.textTheme.titleMedium),
+    );
     return AbsorbPointer(
       absorbing: busy,
       child: ListView(
@@ -180,70 +191,80 @@ class _SettingsPageState extends State<SettingsPage> {
             subtitle: context.tr("让记录方式适合你"),
           ),
           if (busy) const LinearProgressIndicator(),
-          if (message != null) Notice(message!),
-          Text(context.tr("账户"), style: Theme.of(context).textTheme.titleLarge),
-          const SizedBox(height: 12),
-          Row(
-            children: [
-              Expanded(
-                child: Text(
-                  AuthSession.instance.user?['username'] ?? '',
-                  key: const ValueKey('settings-username'),
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                  style: Theme.of(context).textTheme.headlineSmall,
-                ),
-              ),
-              const SizedBox(width: 8),
-              IconButton.filledTonal(
-                tooltip: context.tr("修改密码"),
-                onPressed: () => openPageOverlay<void>(
-                  context,
-                  PasswordPage(
-                    session: AuthSession.instance,
-                    requiredChange: false,
+          if (message != null)
+            Notice(
+              message!,
+              tone: message!.startsWith('无法读取服务器偏好')
+                  ? NoticeTone.error
+                  : NoticeTone.info,
+            ),
+          sectionTitle(context.tr("账户")),
+          Card(
+            child: Padding(
+              padding: const EdgeInsets.all(Space.lg),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          AuthSession.instance.user?['username'] ?? '',
+                          key: const ValueKey('settings-username'),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: Theme.of(context).textTheme.headlineSmall,
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      IconButton.filledTonal(
+                        tooltip: context.tr("修改密码"),
+                        onPressed: () => openPageOverlay<void>(
+                          context,
+                          PasswordPage(
+                            session: AuthSession.instance,
+                            requiredChange: false,
+                          ),
+                        ),
+                        icon: const Icon(Icons.password_outlined),
+                      ),
+                      const SizedBox(width: 8),
+                      IconButton.filledTonal(
+                        tooltip: context.tr("退出登录"),
+                        onPressed: () => action(AuthSession.instance.logout),
+                        icon: const Icon(Icons.logout),
+                      ),
+                    ],
                   ),
-                ),
-                icon: const Icon(Icons.password_outlined),
-              ),
-              const SizedBox(width: 8),
-              IconButton.filledTonal(
-                tooltip: context.tr("退出登录"),
-                onPressed: () => action(AuthSession.instance.logout),
-                icon: const Icon(Icons.logout),
-              ),
-            ],
-          ),
-          const SizedBox(height: 8),
-          Text(
-            AuthSession.instance.endpoint,
-            style: Theme.of(context).textTheme.bodySmall
-                ?.copyWith(color: AppPalette.muted(context)),
-          ),
-          if (AuthSession.instance.user?['is_admin'] == true) ...[
-            const SizedBox(height: 12),
-            ListTile(
-              contentPadding: EdgeInsets.zero,
-              leading: const Icon(Icons.manage_accounts_outlined),
-              title: Text(context.tr("用户管理")),
-              trailing: const Icon(Icons.chevron_right),
-              onTap: () => openPageOverlay<void>(
-                context,
-                UsersPage(session: AuthSession.instance),
+                  const SizedBox(height: 8),
+                  Text(
+                    AuthSession.instance.endpoint,
+                    style: Theme.of(context).textTheme.bodySmall
+                        ?.copyWith(color: context.tokens.text3),
+                  ),
+                ],
               ),
             ),
-          ],
-          const SizedBox(height: 20),
-          const Divider(),
-          const SizedBox(height: 20),
-          Text(
-            context.tr("外观"),
-            style: Theme.of(context).textTheme.headlineSmall,
           ),
-          const SizedBox(height: 6),
+          if (AuthSession.instance.user?['is_admin'] == true)
+            Card(
+              margin: const EdgeInsets.only(top: Space.sm),
+              child: ListTile(
+                leading: const Icon(Icons.people_outline),
+                title: Text(context.tr("用户管理")),
+                trailing: const Icon(Icons.chevron_right),
+                onTap: () => openPageOverlay<void>(
+                  context,
+                  UsersPage(session: AuthSession.instance),
+                ),
+              ),
+            ),
+          sectionTitle(context.tr("外观")),
           Text(
             context.tr("选择适合当前环境的显示方式。"),
-            style: TextStyle(color: AppPalette.muted(context)),
+            style: theme.textTheme.bodySmall?.copyWith(
+              color: scheme.onSurfaceVariant,
+            ),
           ),
           const SizedBox(height: 14),
           AppearancePicker(
@@ -290,26 +311,23 @@ class _SettingsPageState extends State<SettingsPage> {
               ),
             ),
           _PreferenceHint(context.tr('界面语言仅保存在此设备，不改变收据内容。')),
-          const SizedBox(height: 28),
-          Text(
-            context.tr("偏好设置"),
-            style: Theme.of(context).textTheme.titleLarge,
-          ),
-          const SizedBox(height: 12),
+          sectionTitle(context.tr("偏好设置")),
           if (Platform.isAndroid) ...[
             OutlinedButton.icon(
+              style: preferenceAction,
               onPressed: busy ? null : checkAndroidUpdate,
               icon: const Icon(Icons.system_update),
               label: Text(context.tr("检查客户端更新")),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: Space.sm),
           ],
           OutlinedButton.icon(
+            style: preferenceAction,
             onPressed: () => action(widget.store.retryUploads),
             icon: const Icon(Icons.cloud_upload_outlined),
             label: Text(context.tr("重试未完成的照片上传")),
           ),
-          const SizedBox(height: 24),
+          SizedBox(height: MediaQuery.textScalerOf(context).scale(Space.lg)),
           DropdownButtonFormField<String>(
             initialValue: widget.store.weightUnit,
             decoration: InputDecoration(labelText: context.tr("全局重量显示单位")),
@@ -344,31 +362,42 @@ class _SettingsPageState extends State<SettingsPage> {
                   },
           ),
           _PreferenceHint(context.tr("所有已确认收据按交易日汇率换算后统一统计。")),
-          const SizedBox(height: 24),
-          Text(
-            context.tr("后端数据"),
-            style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-          ),
-          ListTile(
-            leading: const Icon(Icons.backup_outlined),
-            title: Text(context.tr("导出完整备份")),
-            subtitle: Text(context.tr("包含照片和草稿；不含密钥")),
-            onTap: () => action(backupData),
-          ),
-          ListTile(
-            leading: const Icon(Icons.restore),
-            title: Text(context.tr("从备份整体恢复")),
-            onTap: () => action(restoreData),
-          ),
-          ListTile(
-            leading: const Icon(Icons.history),
-            title: Text(context.tr("导出最近一次后端备份")),
-            onTap: () => action(exportRecovery),
-          ),
-          ListTile(
-            leading: const Icon(Icons.table_view_outlined),
-            title: Text(context.tr("导出明细 CSV")),
-            onTap: () => action(csv),
+          sectionTitle(context.tr("后端数据")),
+          Card(
+            child: Column(
+              children: [
+                ListTile(
+                  leading: const Icon(Icons.backup_outlined),
+                  title: Text(context.tr("导出完整备份")),
+                  subtitle: Text(context.tr("包含照片和草稿；不含密钥")),
+                  onTap: () => action(backupData),
+                ),
+                const Divider(),
+                ListTile(
+                  leading: Icon(
+                    Icons.settings_backup_restore,
+                    color: scheme.error,
+                  ),
+                  title: Text(
+                    context.tr("从备份整体恢复"),
+                    style: TextStyle(color: scheme.error),
+                  ),
+                  onTap: () => action(restoreData),
+                ),
+                const Divider(),
+                ListTile(
+                  leading: const Icon(Icons.history),
+                  title: Text(context.tr("导出最近一次后端备份")),
+                  onTap: () => action(exportRecovery),
+                ),
+                const Divider(),
+                ListTile(
+                  leading: const Icon(Icons.table_view_outlined),
+                  title: Text(context.tr("导出明细 CSV")),
+                  onTap: () => action(csv),
+                ),
+              ],
+            ),
           ),
           const SizedBox(height: 24),
           const SizedBox(height: 30),
@@ -385,7 +414,7 @@ class _PreferenceHint extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Padding(
-    padding: const EdgeInsets.fromLTRB(18, 8, 18, 0),
+    padding: const EdgeInsets.fromLTRB(16, 6, 16, 0),
     child: Text(
       text,
       style: Theme.of(context).textTheme.bodySmall

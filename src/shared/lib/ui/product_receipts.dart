@@ -92,11 +92,7 @@ class _ProductReceiptsPageState extends State<ProductReceiptsPage> {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-    extendBodyBehindAppBar: true,
-    appBar: AppBar(
-      flexibleSpace: const FrostedBar(child: SizedBox.expand()),
-      title: Text(widget.name),
-    ),
+    appBar: AppBar(title: Text(widget.name)),
     body: error != null
         ? Center(
             child: TextButton(
@@ -110,9 +106,11 @@ class _ProductReceiptsPageState extends State<ProductReceiptsPage> {
             onRefresh: load,
             child: ListView(
               physics: const AlwaysScrollableScrollPhysics(),
-              padding: EdgeInsets.only(
-                top: MediaQuery.paddingOf(context).top + 72,
-                bottom: 24,
+              padding: const EdgeInsets.fromLTRB(
+                Space.lg,
+                Space.sm,
+                Space.lg,
+                Space.x2l,
               ),
               children: [
                 if (receipts!.isEmpty)
@@ -120,34 +118,85 @@ class _ProductReceiptsPageState extends State<ProductReceiptsPage> {
                     padding: EdgeInsets.all(24),
                     child: Text(context.tr("没有包含此商品名称的收据")),
                   ),
-                for (final r in receipts!)
-                  ListTile(
-                    key: ValueKey(r['receipt_id']),
-                    tileColor: r['recognition_status'] == 'failed'
-                        ? AppPalette.errorSurface(context)
-                        : r['status'] == 'draft'
-                        ? AppPalette.warningSurface(context)
-                        : null,
-                    title: Text(
-                      (r['raw_store'] as String?)?.isNotEmpty == true
-                          ? r['raw_store']
-                          : context.tr("未填写店铺"),
+                if (receipts!.isNotEmpty)
+                  Card(
+                    child: Column(
+                      children: [
+                        for (final (index, r) in receipts!.indexed) ...[
+                          if (index > 0) const Divider(),
+                          receiptTile(context, r),
+                        ],
+                      ],
                     ),
-                    subtitle: Text(
-                      context.tr("录入 {0}\n收据 {1}", [
-                        dateText(r['created_at_utc_ms'], widget.zone),
-                        dateText(r['occurred_at_utc_ms'], widget.zone),
-                      ]),
-                    ),
-                    trailing: Text(
-                      r['total_minor'] == null
-                          ? context.tr("待填写")
-                          : money(r['total_minor'], r['currency_code']),
-                    ),
-                    onTap: () => open(r['receipt_id']),
                   ),
               ],
             ),
           ),
   );
+
+  Widget receiptTile(BuildContext context, Map<String, dynamic> receipt) {
+    final theme = Theme.of(context);
+    final scheme = theme.colorScheme;
+    final failed = receipt['recognition_status'] == 'failed';
+    final draft = receipt['status'] == 'draft';
+    final statusColor = failed
+        ? scheme.error
+        : draft
+        ? context.tokens.warning
+        : context.tokens.text3;
+    return ListTile(
+      key: ValueKey(receipt['receipt_id']),
+      tileColor: failed
+          ? AppPalette.errorSurface(context)
+          : draft
+          ? AppPalette.warningSurface(context)
+          : null,
+      leading: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            width: 3,
+            height: 40,
+            color: failed || draft ? statusColor : Colors.transparent,
+          ),
+          const SizedBox(width: Space.xs),
+          Icon(
+            failed
+                ? Icons.error_outline
+                : draft
+                ? Icons.edit_note
+                : Icons.receipt_outlined,
+            color: statusColor,
+            size: 18,
+            semanticLabel: failed
+                ? context.tr("识别失败")
+                : draft
+                ? context.tr("草稿待确认")
+                : context.tr("已确认"),
+          ),
+        ],
+      ),
+      title: Text(
+        (receipt['raw_store'] as String?)?.isNotEmpty == true
+            ? receipt['raw_store']
+            : context.tr("未填写店铺"),
+        style: theme.textTheme.titleSmall,
+      ),
+      subtitle: Text(
+        context.tr("录入 {0}\n收据 {1}", [
+          dateText(receipt['created_at_utc_ms'], widget.zone),
+          dateText(receipt['occurred_at_utc_ms'], widget.zone),
+        ]),
+      ),
+      trailing: Text(
+        receipt['total_minor'] == null
+            ? context.tr("待填写")
+            : money(receipt['total_minor'], receipt['currency_code']),
+        style: theme.textTheme.titleSmall?.copyWith(
+          fontWeight: FontWeight.w700,
+        ),
+      ),
+      onTap: () => open(receipt['receipt_id']),
+    );
+  }
 }

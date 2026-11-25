@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 
 import '../data/capture_session.dart';
 import 'common.dart';
+import 'app_theme.dart';
 
 class CapturePage extends StatefulWidget {
   final String cacheRoot;
@@ -183,7 +184,12 @@ class _CapturePageState extends State<CapturePage> with WidgetsBindingObserver {
                           textAlign: TextAlign.center,
                           style: const TextStyle(color: Colors.white),
                         ),
-                        TextButton(
+                        const SizedBox(height: Space.md),
+                        OutlinedButton(
+                          style: OutlinedButton.styleFrom(
+                            foregroundColor: Colors.white,
+                            side: const BorderSide(color: Colors.white54),
+                          ),
                           onPressed: scheduleCamera,
                           child: Text(context.tr("重试相机")),
                         ),
@@ -218,8 +224,8 @@ class _CapturePageState extends State<CapturePage> with WidgetsBindingObserver {
                         context.tr("拍摄收据 · {0} 张", [session.pages.length]),
                         style: const TextStyle(
                           color: Colors.white,
-                          fontSize: 19,
-                          fontWeight: FontWeight.w700,
+                          fontSize: 18,
+                          fontWeight: FontWeight.w600,
                         ),
                       ),
                     ),
@@ -233,23 +239,29 @@ class _CapturePageState extends State<CapturePage> with WidgetsBindingObserver {
             right: 0,
             bottom: 0,
             child: Container(
-              padding: const EdgeInsets.fromLTRB(14, 28, 14, 0),
+              padding: const EdgeInsets.fromLTRB(16, 24, 16, 24),
               decoration: const BoxDecoration(
                 gradient: LinearGradient(
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
-                  colors: [Colors.transparent, Color(0xE9000000)],
+                  colors: [Colors.transparent, Color(0xE6000000)],
+                  stops: [0, .30],
                 ),
               ),
               child: SafeArea(
                 top: false,
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
+                  spacing: Space.md,
                   children: [
                     if (busy) const LinearProgressIndicator(),
                     Text(
                       context.tr("分段拍摄时，让相邻照片保留重叠区域"),
-                      style: TextStyle(color: Colors.white70, fontSize: 12),
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(
+                        color: Colors.white70,
+                        fontSize: 12,
+                      ),
                     ),
                     if (session.pages.isNotEmpty)
                       SizedBox(
@@ -265,16 +277,16 @@ class _CapturePageState extends State<CapturePage> with WidgetsBindingObserver {
                                     ? null
                                     : () => setState(() => selected = i),
                                 child: Container(
-                                  width: 76,
+                                  width: 66,
                                   height: 80,
                                   margin: const EdgeInsets.all(5),
                                   padding: const EdgeInsets.all(2),
                                   decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(9),
+                                    borderRadius: BorderRadius.circular(10),
                                     border: Border.all(
                                       color: selected == i
-                                          ? const Color(0xFFADC2FF)
-                                          : Colors.white54,
+                                          ? AppPalette.cameraAccent
+                                          : const Color(0x66FFFFFF),
                                       width: selected == i ? 3 : 1,
                                     ),
                                   ),
@@ -303,10 +315,16 @@ class _CapturePageState extends State<CapturePage> with WidgetsBindingObserver {
                                     child: const SizedBox(
                                       width: 44,
                                       height: 44,
-                                      child: Icon(
-                                        Icons.cancel,
-                                        size: 22,
-                                        color: Colors.white,
+                                      child: Center(
+                                        child: CircleAvatar(
+                                          radius: 11,
+                                          backgroundColor: Colors.white,
+                                          child: Icon(
+                                            Icons.close,
+                                            size: 15,
+                                            color: Color(0xFF111111),
+                                          ),
+                                        ),
                                       ),
                                     ),
                                   ),
@@ -320,7 +338,8 @@ class _CapturePageState extends State<CapturePage> with WidgetsBindingObserver {
                                     '${i + 1}',
                                     style: const TextStyle(
                                       color: Colors.white,
-                                      fontWeight: FontWeight.w800,
+                                      fontWeight: FontWeight.w700,
+                                      fontSize: 12,
                                       shadows: [Shadow(blurRadius: 5)],
                                     ),
                                   ),
@@ -338,14 +357,17 @@ class _CapturePageState extends State<CapturePage> with WidgetsBindingObserver {
                           fontSize: 12,
                         ),
                       ),
-                    const SizedBox(height: 12),
                     Row(
                       children: [
                         Expanded(
+                          flex: 10,
                           child: OutlinedButton(
                             style: OutlinedButton.styleFrom(
                               foregroundColor: Colors.white,
                               side: const BorderSide(color: Colors.white54),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 4,
+                              ),
                             ),
                             onPressed: busy || selected < 0 || camera == null
                                 ? null
@@ -355,7 +377,25 @@ class _CapturePageState extends State<CapturePage> with WidgetsBindingObserver {
                         ),
                         const SizedBox(width: 10),
                         Expanded(
+                          flex: 13,
                           child: FilledButton(
+                            style: FilledButton.styleFrom(
+                              backgroundColor: AppPalette.cameraAccent,
+                              foregroundColor: const Color(0xFF04201D),
+                              disabledBackgroundColor: Colors.white12,
+                              disabledForegroundColor: Colors.white38,
+                              minimumSize: const Size(0, 56),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 4,
+                              ),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(16),
+                              ),
+                              textStyle: const TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
                             onPressed: busy || camera == null
                                 ? null
                                 : () => shoot(false),
@@ -364,7 +404,17 @@ class _CapturePageState extends State<CapturePage> with WidgetsBindingObserver {
                         ),
                         const SizedBox(width: 10),
                         Expanded(
+                          flex: 10,
                           child: FilledButton.tonal(
+                            style: FilledButton.styleFrom(
+                              backgroundColor: const Color(0x26FFFFFF),
+                              foregroundColor: Colors.white,
+                              disabledBackgroundColor: Colors.white12,
+                              disabledForegroundColor: Colors.white38,
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 4,
+                              ),
+                            ),
                             onPressed: busy || session.pages.isEmpty
                                 ? null
                                 : finish,
@@ -373,7 +423,6 @@ class _CapturePageState extends State<CapturePage> with WidgetsBindingObserver {
                         ),
                       ],
                     ),
-                    const SizedBox(height: 12),
                   ],
                 ),
               ),

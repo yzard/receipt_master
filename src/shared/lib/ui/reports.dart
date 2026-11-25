@@ -235,7 +235,10 @@ class _ReportsPageState extends State<ReportsPage> with WidgetsBindingObserver {
               child: ListView(
                 children: [
                   ListTile(
-                    title: Text(context.tr("趋势曲线")),
+                    title: Text(
+                      context.tr("趋势曲线"),
+                      style: Theme.of(ctx).textTheme.titleLarge,
+                    ),
                     subtitle: Text(
                       context.tr("分类默认折叠，点击箭头展开商品；分类与商品可独立勾选。无消费选项灰显，总金额始终显示。"),
                     ),
@@ -271,13 +274,7 @@ class _ReportsPageState extends State<ReportsPage> with WidgetsBindingObserver {
           controller: controller,
           children: [
             ListTile(
-              title: Text(
-                title,
-                style: const TextStyle(
-                  fontSize: 22,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
+              title: Text(title, style: Theme.of(ctx).textTheme.titleLarge),
             ),
             for (final l in lines)
               ListTile(
@@ -292,7 +289,10 @@ class _ReportsPageState extends State<ReportsPage> with WidgetsBindingObserver {
                 subtitle: Text(
                   '${l['raw_store']} · ${dateText(l['occurred_at_utc_ms'], widget.zone)}',
                 ),
-                trailing: Text(money(l['amount_minor'], currency)),
+                trailing: Text(
+                  money(l['amount_minor'], currency),
+                  style: Theme.of(ctx).textTheme.titleSmall,
+                ),
                 onTap: () async {
                   await widget.onReceipt(l['receipt_id']);
                 },
@@ -305,7 +305,10 @@ class _ReportsPageState extends State<ReportsPage> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
+    final theme = Theme.of(context);
+    final scheme = theme.colorScheme;
+    final text = theme.textTheme;
+    final tokens = context.tokens;
     final entries = report == null
         ? <Map<String, dynamic>>[]
         : (report!['entries'] as List).cast<Map<String, dynamic>>();
@@ -339,18 +342,12 @@ class _ReportsPageState extends State<ReportsPage> with WidgetsBindingObserver {
       onRefresh: () => load(keepCurrent: true),
       child: ListView(
         physics: const AlwaysScrollableScrollPhysics(),
-        padding: const EdgeInsets.fromLTRB(20, 12, 20, 116),
+        padding: const EdgeInsets.fromLTRB(16, 12, 16, 116),
         children: [
-          Text(
-            context.tr("报表"),
-            style: Theme.of(context).textTheme.headlineLarge,
+          PageHeading(
+            title: context.tr("报表"),
+            subtitle: context.tr("按交易日期汇总所有已确认收据"),
           ),
-          const SizedBox(height: 4),
-          Text(
-            context.tr("按交易日期汇总所有已确认收据"),
-            style: TextStyle(color: scheme.onSurfaceVariant, fontSize: 13),
-          ),
-          const SizedBox(height: 20),
           DropdownButtonFormField<String>(
             key: ValueKey('report-receipt-type-$receiptType'),
             initialValue:
@@ -376,30 +373,44 @@ class _ReportsPageState extends State<ReportsPage> with WidgetsBindingObserver {
             },
           ),
           const SizedBox(height: 16),
-          if (trendPoints.isNotEmpty) ...[
-            Text(
-              context.tr("消费趋势"),
-              style: Theme.of(context).textTheme.titleLarge,
+          if (trendPoints.isNotEmpty)
+            Card(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(16, 14, 16, 0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(context.tr("消费趋势"), style: text.titleMedium),
+                        const SizedBox(height: Space.xs),
+                        Text(
+                          context.tr("纵轴 {0} · 横轴 时间 · 点击数据点查看明细", [currency]),
+                          style: text.bodySmall?.copyWith(color: tokens.text3),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(8, 12, 8, 8),
+                    child: ReportTrendChart(
+                      points: trendPoints,
+                      series: trendSeries,
+                      visibleSeries: visibleSeries,
+                      currency: currency,
+                      selectedIndex: selectedIndex < 0
+                          ? trendPoints.length - 1
+                          : selectedIndex,
+                      onSelect: selectPoint,
+                      onOlder: () => changeWindow(-1),
+                      onNewer: () => changeWindow(1),
+                    ),
+                  ),
+                ],
+              ),
             ),
-            const SizedBox(height: 8),
-            Text(
-              context.tr("纵轴 {0} · 横轴 时间 · 点击数据点查看明细", [currency]),
-              style: TextStyle(fontSize: 12, color: AppPalette.muted(context)),
-            ),
-            const SizedBox(height: 8),
-            ReportTrendChart(
-              points: trendPoints,
-              series: trendSeries,
-              visibleSeries: visibleSeries,
-              currency: currency,
-              selectedIndex: selectedIndex < 0
-                  ? trendPoints.length - 1
-                  : selectedIndex,
-              onSelect: selectPoint,
-              onOlder: () => changeWindow(-1),
-              onNewer: () => changeWindow(1),
-            ),
-          ],
+          const SizedBox(height: Space.md),
           Wrap(
             spacing: 8,
             runSpacing: 8,
@@ -425,6 +436,12 @@ class _ReportsPageState extends State<ReportsPage> with WidgetsBindingObserver {
                 ),
               if (trendPoints.isNotEmpty)
                 OutlinedButton.icon(
+                  style: OutlinedButton.styleFrom(
+                    minimumSize: const Size(48, 32),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
                   onPressed: choosingLines ? null : chooseLines,
                   icon: const Icon(Icons.tune, size: 18),
                   label: Text(
@@ -435,32 +452,7 @@ class _ReportsPageState extends State<ReportsPage> with WidgetsBindingObserver {
                 ),
             ],
           ),
-          const SizedBox(height: 20),
-          DropdownButtonFormField<String>(
-            key: ValueKey('report-receipt-type-$receiptType'),
-            initialValue:
-                trendSeries.any((t) => t['key'] == 'receipt_type:$receiptType')
-                ? receiptType
-                : '',
-            decoration: InputDecoration(labelText: context.tr("店铺类别统计范围")),
-            items: [
-              DropdownMenuItem(value: '', child: Text(context.tr("全部店铺类别"))),
-              for (final t in trendSeries.where(
-                (r) => r['group'] == 'receipt_type',
-              ))
-                DropdownMenuItem(
-                  value: (t['key'] as String).substring(13),
-                  child: Text(t['label']),
-                ),
-            ],
-            onChanged: (value) {
-              setState(() {
-                receiptType = value == '' ? null : value;
-              });
-              load(keepCurrent: false);
-            },
-          ),
-          const SizedBox(height: 16),
+          const SizedBox(height: Space.md),
           if (trendPoints.isNotEmpty) ...[
             Row(
               children: [
@@ -483,15 +475,12 @@ class _ReportsPageState extends State<ReportsPage> with WidgetsBindingObserver {
                 bounds?['label'] ?? '',
                 bounds?['unfinished'] == true ? context.tr(" · 当前周期未结束") : '',
               ]),
-              style: TextStyle(
-                fontWeight: FontWeight.w700,
-                color: scheme.primary,
-              ),
+              style: text.labelLarge?.copyWith(color: scheme.primary),
             ),
             const SizedBox(height: 4),
             Text(
               widget.zone,
-              style: TextStyle(fontSize: 12, color: AppPalette.muted(context)),
+              style: text.bodySmall?.copyWith(color: tokens.text3),
             ),
             const SizedBox(height: 16),
           ],
@@ -499,48 +488,53 @@ class _ReportsPageState extends State<ReportsPage> with WidgetsBindingObserver {
             padding: const EdgeInsets.symmetric(vertical: 8),
             child: Row(
               children: [
-                Icon(Icons.currency_exchange, size: 16, color: scheme.primary),
+                Icon(
+                  Icons.currency_exchange,
+                  size: 16,
+                  color: scheme.onSurfaceVariant,
+                ),
                 const SizedBox(width: 7),
                 Expanded(
                   child: Text(
                     context.tr("统一显示 {0} · 交易日汇率由后端获取", [currency]),
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: AppPalette.muted(context),
+                    style: text.bodySmall?.copyWith(
+                      color: scheme.onSurfaceVariant,
                     ),
                   ),
                 ),
               ],
             ),
           ),
-          ListTile(
-            contentPadding: EdgeInsets.zero,
-            title: Text(context.tr("统计范围")),
-            subtitle: Text(
-              category == null
-                  ? context.tr("全部分类")
-                  : categories
-                            .where((c) => c['category_id'] == category)
-                            .firstOrNull?['path'] ??
-                        context.tr("分类"),
+          Card(
+            child: ListTile(
+              title: Text(context.tr("统计范围")),
+              subtitle: Text(
+                category == null
+                    ? context.tr("全部分类")
+                    : categories
+                              .where((c) => c['category_id'] == category)
+                              .firstOrNull?['path'] ??
+                          context.tr("分类"),
+              ),
+              trailing: const Icon(Icons.filter_list),
+              onTap: () async {
+                final id = await chooseCategory(context, [
+                  {'category_id': 'all', 'path': context.tr("全部分类")},
+                  ...categories,
+                ], category ?? 'all');
+                if (id != null) {
+                  category = id == 'all' ? null : id;
+                  load(keepCurrent: false);
+                }
+              },
             ),
-            trailing: const Icon(Icons.filter_list),
-            onTap: () async {
-              final id = await chooseCategory(context, [
-                {'category_id': 'all', 'path': context.tr("全部分类")},
-                ...categories,
-              ], category ?? 'all');
-              if (id != null) {
-                category = id == 'all' ? null : id;
-                load(keepCurrent: false);
-              }
-            },
           ),
           if (error != null) ...[
             Notice(
               context.tr("报表更新失败：{0}\n当前显示的可能是上次结果。", [
                 context.translatedMessage(error!),
               ]),
+              tone: NoticeTone.error,
             ),
             Align(
               alignment: Alignment.centerLeft,
@@ -554,58 +548,48 @@ class _ReportsPageState extends State<ReportsPage> with WidgetsBindingObserver {
           if (report == null && error == null)
             const Center(child: CircularProgressIndicator()),
           if (report != null) ...[
+            const SizedBox(height: Space.lg),
             Container(
-              padding: const EdgeInsets.all(26),
+              padding: const EdgeInsets.all(Space.xl),
               decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [
-                    scheme.primary,
-                    scheme.primary.withValues(alpha: .78),
-                  ],
-                ),
-                borderRadius: BorderRadius.circular(28),
+                color: scheme.primaryContainer,
+                borderRadius: BorderRadius.circular(16),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     context.tr("本期净支出"),
-                    style: TextStyle(
-                      color: Theme.of(context).colorScheme.onPrimary
-                          .withValues(alpha: .8),
+                    style: text.labelLarge?.copyWith(
+                      color: scheme.onPrimaryContainer,
                     ),
                   ),
-                  const SizedBox(height: 8),
+                  const SizedBox(height: Space.sm),
                   Text(
                     money(report!['net'], currency),
-                    style: TextStyle(
-                      color: Theme.of(context).colorScheme.onPrimary,
-                      fontSize: 38,
-                      fontWeight: FontWeight.w800,
-                      letterSpacing: -1.1,
-                    ),
+                    style: text.displaySmall,
                   ),
-                  const SizedBox(height: 8),
+                  const SizedBox(height: Space.sm),
                   Text(
                     context.tr("上期 {0}", [money(previous!['net'], currency)]),
-                    style: TextStyle(
-                      color: Theme.of(context).colorScheme.onPrimary
-                          .withValues(alpha: .8),
+                    style: text.bodyMedium?.copyWith(
+                      color: scheme.onPrimaryContainer,
                     ),
                   ),
                 ],
               ),
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: Space.md),
             Wrap(
-              spacing: 16,
-              runSpacing: 8,
+              spacing: Space.sm,
+              runSpacing: Space.sm,
               children: [
-                Text(context.tr("支出 {0}", [money(spend, currency)])),
-                Text(context.tr("优惠 {0}", [money(discounts, currency)])),
-                Text(context.tr("商品退款 {0}", [money(refunds, currency)])),
+                for (final label in [
+                  context.tr("支出 {0}", [money(spend, currency)]),
+                  context.tr("优惠 {0}", [money(discounts, currency)]),
+                  context.tr("商品退款 {0}", [money(refunds, currency)]),
+                ])
+                  Chip(label: Text(label), labelStyle: text.labelMedium),
               ],
             ),
             if (report!['difference'] != null && report!['difference'] != 0)
@@ -622,19 +606,14 @@ class _ReportsPageState extends State<ReportsPage> with WidgetsBindingObserver {
                   context.tr("逐项换算舍入差额 {0}", [
                     money(report!['rounding_adjustment'], currency),
                   ]),
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: AppPalette.muted(context),
-                  ),
+                  style: text.bodySmall?.copyWith(color: tokens.text3),
                 ),
               ),
             const SizedBox(height: 20),
-            Text(
-              context.tr("支出去向"),
-              style: Theme.of(context).textTheme.titleLarge,
-            ),
-            const SizedBox(height: 12),
+            Text(context.tr("支出去向"), style: text.titleMedium),
+            const SizedBox(height: Space.md),
             SegmentedButton<String>(
+              showSelectedIcon: false,
               segments: [
                 ButtonSegment(
                   value: 'receipt_type',
@@ -650,54 +629,65 @@ class _ReportsPageState extends State<ReportsPage> with WidgetsBindingObserver {
               onSelectionChanged: (g) => setState(() => group = g.first),
             ),
             const SizedBox(height: 12),
-            if (ordered.isEmpty)
-              Padding(
-                padding: EdgeInsets.all(24),
-                child: Text(
-                  context.tr("这个周期还没有可统计的明细。"),
-                  textAlign: TextAlign.center,
-                ),
+            Card(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  if (ordered.isEmpty)
+                    Padding(
+                      padding: EdgeInsets.all(24),
+                      child: Text(
+                        context.tr("这个周期还没有可统计的明细。"),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  for (final (index, entry) in ordered.indexed) ...[
+                    if (index > 0) const Divider(),
+                    _SpendRow(
+                      label: entry['label'],
+                      amount: money(entry['amount'], currency),
+                      proportion: spend > 0
+                          ? ((entry['amount'] as int).abs() / spend).clamp(
+                              0.0,
+                              1.0,
+                            )
+                          : 0,
+                      detail: group == 'product'
+                          ? (entry['quantity_labels'] as List).join(' / ')
+                          : null,
+                      onTap: () {
+                        if (group == 'receipt_type') {
+                          setState(() {
+                            receiptType = (entry['key'] as String).substring(
+                              13,
+                            );
+                            category = null;
+                            group = 'category';
+                          });
+                          load(keepCurrent: false);
+                          return;
+                        }
+                        drill(
+                          entry['label'],
+                          entries
+                              .where(
+                                (l) => (entry['line_ids'] as List).contains(
+                                  l['line_id'],
+                                ),
+                              )
+                              .toList(),
+                        );
+                      },
+                    ),
+                  ],
+                ],
               ),
-            for (final entry in ordered)
-              _SpendRow(
-                label: entry['label'],
-                amount: money(entry['amount'], currency),
-                proportion: spend > 0
-                    ? ((entry['amount'] as int).abs() / spend).clamp(0.0, 1.0)
-                    : 0,
-                detail: group == 'product'
-                    ? (entry['quantity_labels'] as List).join(' / ')
-                    : null,
-                onTap: () {
-                  if (group == 'receipt_type') {
-                    setState(() {
-                      receiptType = (entry['key'] as String).substring(13);
-                      category = null;
-                      group = 'category';
-                    });
-                    load(keepCurrent: false);
-                    return;
-                  }
-                  drill(
-                    entry['label'],
-                    entries
-                        .where(
-                          (l) => (entry['line_ids'] as List).contains(
-                            l['line_id'],
-                          ),
-                        )
-                        .toList(),
-                  );
-                },
-              ),
+            ),
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 12),
               child: Text(
                 context.tr("点击汇总查看原始明细。整单优惠、税费和差额不分摊到商品。"),
-                style: TextStyle(
-                  fontSize: 12,
-                  color: AppPalette.muted(context),
-                ),
+                style: text.bodySmall?.copyWith(color: tokens.text3),
               ),
             ),
           ],
@@ -721,12 +711,13 @@ class _SpendRow extends StatelessWidget {
   final VoidCallback onTap;
   @override
   Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
+    final theme = Theme.of(context);
+    final scheme = theme.colorScheme;
+    final text = theme.textTheme;
     return InkWell(
-      borderRadius: BorderRadius.circular(18),
       onTap: onTap,
       child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 13, horizontal: 2),
+        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -737,23 +728,20 @@ class _SpendRow extends StatelessWidget {
                     label,
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                    ),
+                    style: text.titleSmall?.copyWith(fontSize: 15),
                   ),
                 ),
                 const SizedBox(width: 8),
                 Text(
                   amount,
-                  style: const TextStyle(
-                    fontSize: 15,
-                    fontWeight: FontWeight.w700,
-                    fontFeatures: [FontFeature.tabularFigures()],
-                  ),
+                  style: text.titleSmall?.copyWith(fontWeight: FontWeight.w700),
                 ),
                 const SizedBox(width: 4),
-                const Icon(Icons.chevron_right, size: 19),
+                Icon(
+                  Icons.chevron_right,
+                  size: 18,
+                  color: context.tokens.text3,
+                ),
               ],
             ),
             if (detail?.isNotEmpty == true)
@@ -761,19 +749,18 @@ class _SpendRow extends StatelessWidget {
                 padding: const EdgeInsets.only(top: 3),
                 child: Text(
                   detail!,
-                  style: TextStyle(
-                    fontSize: 12,
+                  style: text.bodySmall?.copyWith(
                     color: scheme.onSurfaceVariant,
                   ),
                 ),
               ),
             const SizedBox(height: 9),
             ClipRRect(
-              borderRadius: BorderRadius.circular(4),
+              borderRadius: BorderRadius.circular(3),
               child: LinearProgressIndicator(
                 value: proportion,
                 minHeight: 5,
-                backgroundColor: scheme.primary.withValues(alpha: .1),
+                backgroundColor: scheme.surfaceContainer,
               ),
             ),
           ],

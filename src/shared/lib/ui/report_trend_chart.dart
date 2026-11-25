@@ -5,6 +5,7 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 
 import '../domain/models.dart';
+import 'app_theme.dart';
 
 /// Draws the report amounts supplied by the API. All currency conversion and
 /// aggregation have already happened on the server.
@@ -29,25 +30,18 @@ class ReportTrendChart extends StatelessWidget {
   final ValueChanged<int> onSelect;
   final VoidCallback onOlder, onNewer;
 
-  static Color seriesColor(String key, Color tertiary, Color secondary) {
+  static Color _seriesColor(String key, List<Color> chart) {
     var hash = 0;
     for (final code in key.codeUnits) {
       hash = (hash * 31 + code) & 0x7fffffff;
     }
-    return [
-      tertiary,
-      secondary,
-      const Color(0xFFD17B24),
-      const Color(0xFF008F85),
-      const Color(0xFFBE4D86),
-      const Color(0xFF6C66C8),
-      const Color(0xFF70972F),
-    ][hash % 7];
+    return chart[1 + hash % (chart.length - 1)];
   }
 
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
+    final tokens = context.tokens;
     return Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -80,37 +74,39 @@ class ReportTrendChart extends StatelessWidget {
                     selectedIndex: selectedIndex,
                     scale: math.pow(10, currencies[currency] ?? 2).toInt(),
                     primary: scheme.primary,
-                    tertiary: scheme.tertiary,
-                    secondary: scheme.secondary,
-                    foreground: scheme.onSurfaceVariant,
-                    grid: scheme.outlineVariant.withValues(alpha: .6),
+                    chart: tokens.chart,
+                    foreground: tokens.text3,
+                    grid: scheme.outlineVariant,
+                    dotFill: scheme.surfaceContainerLowest,
                   ),
                 ),
               ),
             ),
           ),
         ),
-        const SizedBox(height: 8),
-        Semantics(
-          label: context.tr("图例"),
-          child: Wrap(
-            spacing: 12,
-            runSpacing: 8,
-            children: [
-              _TrendLegend(context.tr("总金额"), scheme.primary),
-              for (final row in series)
-                if (visibleSeries.contains(row['key']) &&
-                    (row['has_activity'] as bool? ??
-                        (row['values'] as List).any((value) => value != 0)))
-                  _TrendLegend(
-                    '${row['group'] == 'category'
-                        ? context.tr("商品分类")
-                        : row['group'] == 'receipt_type'
-                        ? context.tr("店铺类别")
-                        : context.tr("商品")} · ${row['label']}',
-                    seriesColor(row['key'], scheme.tertiary, scheme.secondary),
-                  ),
-            ],
+        Padding(
+          padding: const EdgeInsets.fromLTRB(4, 8, 4, 4),
+          child: Semantics(
+            label: context.tr("图例"),
+            child: Wrap(
+              spacing: 14,
+              runSpacing: 6,
+              children: [
+                _TrendLegend(context.tr("总金额"), scheme.primary),
+                for (final row in series)
+                  if (visibleSeries.contains(row['key']) &&
+                      (row['has_activity'] as bool? ??
+                          (row['values'] as List).any((value) => value != 0)))
+                    _TrendLegend(
+                      '${row['group'] == 'category'
+                          ? context.tr("商品分类")
+                          : row['group'] == 'receipt_type'
+                          ? context.tr("店铺类别")
+                          : context.tr("商品")} · ${row['label']}',
+                      _seriesColor(row['key'], tokens.chart),
+                    ),
+              ],
+            ),
           ),
         ),
       ],
@@ -126,8 +122,8 @@ class _TrendPainter extends CustomPainter {
     required this.selectedIndex,
     required this.scale,
     required this.primary,
-    required this.tertiary,
-    required this.secondary,
+    required this.chart,
+    required this.dotFill,
     required this.foreground,
     required this.grid,
   });
@@ -136,7 +132,8 @@ class _TrendPainter extends CustomPainter {
   final Set<String> visibleSeries;
   final int selectedIndex;
   final int scale;
-  final Color primary, tertiary, secondary, foreground, grid;
+  final List<Color> chart;
+  final Color primary, foreground, grid, dotFill;
 
   int amount(dynamic value) => (value as num?)?.toInt() ?? 0;
 
@@ -152,7 +149,7 @@ class _TrendPainter extends CustomPainter {
                 (row['values'] as List).any((value) => value != 0)))
           (
             (row['values'] as List).map(amount).toList(),
-            ReportTrendChart.seriesColor(row['key'], tertiary, secondary),
+            ReportTrendChart._seriesColor(row['key'], chart),
             false,
           ),
     ];
@@ -167,16 +164,25 @@ class _TrendPainter extends CustomPainter {
     double y(int value) =>
         plot.bottom - plot.height * (value - minValue) / (maxValue - minValue);
 
+    final gridPaint = Paint()..color = grid;
     for (var step = 0; step <= 4; step++) {
       final level = minValue + (maxValue - minValue) * step / 4;
       final yy = plot.bottom - plot.height * step / 4;
-      canvas.drawLine(
-        Offset(plot.left, yy),
-        Offset(plot.right, yy),
-        Paint()
-          ..color = grid
-          ..strokeWidth = 1,
-      );
+      if (step == 0) {
+        canvas.drawLine(
+          Offset(plot.left, yy),
+          Offset(plot.right, yy),
+          gridPaint,
+        );
+      } else {
+        for (var start = plot.left; start < plot.right; start += 7) {
+          canvas.drawLine(
+            Offset(start, yy),
+            Offset(math.min(start + 3, plot.right), yy),
+            gridPaint,
+          );
+        }
+      }
       final label = _label(level / scale, maxValue / scale);
       _text(canvas, label, Offset(0, yy - 7), foreground, 10);
     }
@@ -225,7 +231,7 @@ class _TrendPainter extends CustomPainter {
       canvas.drawCircle(
         Offset(selectedX, y(values[index])),
         2,
-        Paint()..color = Colors.white,
+        Paint()..color = dotFill,
       );
     }
   }
@@ -246,7 +252,11 @@ class _TrendPainter extends CustomPainter {
     final painter = TextPainter(
       text: TextSpan(
         text: value,
-        style: TextStyle(color: color, fontSize: size),
+        style: TextStyle(
+          color: color,
+          fontSize: size,
+          fontFeatures: const [FontFeature.tabularFigures()],
+        ),
       ),
       textDirection: TextDirection.ltr,
       maxLines: 1,
@@ -269,11 +279,11 @@ class _TrendLegend extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         Container(
-          width: 24,
+          width: 16,
           height: 3,
           decoration: BoxDecoration(
             color: color,
-            borderRadius: BorderRadius.circular(3),
+            borderRadius: BorderRadius.circular(2),
           ),
         ),
         const SizedBox(width: 6),
@@ -285,7 +295,8 @@ class _TrendLegend extends StatelessWidget {
             label,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
-            style: Theme.of(context).textTheme.labelMedium,
+            style: Theme.of(context).textTheme.labelMedium
+                ?.copyWith(color: AppPalette.muted(context)),
           ),
         ),
       ],

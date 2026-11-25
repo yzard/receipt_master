@@ -43,13 +43,15 @@ class ReceiptItemName extends StatelessWidget {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Flexible(child: Text(name)),
+        Flexible(
+          child: Text(name, style: Theme.of(context).textTheme.titleSmall),
+        ),
         if (printedName.trim().isNotEmpty && printedName.trim() != name) ...[
           const SizedBox(width: 8),
           Flexible(
             child: Text(
               printedName,
-              style: TextStyle(fontSize: 12, color: AppPalette.muted(context)),
+              style: TextStyle(fontSize: 12, color: context.tokens.text3),
             ),
           ),
         ],
@@ -90,7 +92,12 @@ Future<T?> openPageOverlay<T>(BuildContext context, Widget page) =>
       builder: (_) => Dialog.fullscreen(child: page),
     );
 
-Future<bool> confirm(BuildContext context, String title, String body) async =>
+Future<bool> confirm(
+  BuildContext context,
+  String title,
+  String body, {
+  bool destructive = false,
+}) async =>
     await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
@@ -102,6 +109,12 @@ Future<bool> confirm(BuildContext context, String title, String body) async =>
             child: Text(context.tr("取消")),
           ),
           FilledButton(
+            style: destructive
+                ? FilledButton.styleFrom(
+                    backgroundColor: Theme.of(ctx).colorScheme.error,
+                    foregroundColor: Theme.of(ctx).colorScheme.onError,
+                  )
+                : null,
             onPressed: () => Navigator.pop(ctx, true),
             child: Text(context.tr("确认")),
           ),
@@ -157,6 +170,9 @@ Future<String?> chooseCategory(
               c['category_id'] == current
                   ? Icons.radio_button_checked
                   : Icons.radio_button_off,
+              color: c['category_id'] == current
+                  ? Theme.of(ctx).colorScheme.primary
+                  : null,
             ),
             onTap: () => Navigator.pop(ctx, c['category_id']),
           ),
@@ -177,18 +193,27 @@ class EmptyState extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Center(
     child: Padding(
-      padding: const EdgeInsets.all(36),
+      padding: const EdgeInsets.all(Space.x4l),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, size: 56, color: Theme.of(context).colorScheme.primary),
-          const SizedBox(height: 20),
-          Text(title, style: Theme.of(context).textTheme.titleLarge),
+          CircleAvatar(
+            radius: 32,
+            backgroundColor: Theme.of(context).colorScheme.surfaceContainer,
+            foregroundColor: AppPalette.muted(context),
+            child: Icon(icon, size: 28),
+          ),
+          const SizedBox(height: Space.lg),
+          Text(
+            title,
+            textAlign: TextAlign.center,
+            style: Theme.of(context).textTheme.titleMedium,
+          ),
           const SizedBox(height: 8),
           Text(
             detail,
             textAlign: TextAlign.center,
-            style: TextStyle(color: AppPalette.muted(context), height: 1.6),
+            style: TextStyle(color: AppPalette.muted(context), height: 1.5),
           ),
         ],
       ),
@@ -196,25 +221,110 @@ class EmptyState extends StatelessWidget {
   );
 }
 
+enum NoticeTone {
+  warning,
+  error,
+  info,
+  success;
+
+  (Color, Color, Color, IconData) _appearance(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+    final tokens = context.tokens;
+    return switch (this) {
+      warning => (
+        tokens.warning,
+        tokens.warningSoft,
+        tokens.warningBorder,
+        Icons.warning_amber_rounded,
+      ),
+      error => (
+        scheme.error,
+        scheme.errorContainer,
+        tokens.dangerBorder,
+        Icons.error_outline,
+      ),
+      info => (
+        tokens.info,
+        tokens.infoSoft,
+        Colors.transparent,
+        Icons.info_outline,
+      ),
+      success => (
+        tokens.success,
+        tokens.successSoft,
+        Colors.transparent,
+        Icons.check_circle_outline,
+      ),
+    };
+  }
+}
+
 class Notice extends StatelessWidget {
+  const Notice(this.text, {super.key, this.tone = NoticeTone.warning});
+
   final String text;
-  const Notice(this.text, {super.key});
+  final NoticeTone tone;
+
   @override
-  Widget build(BuildContext context) => Container(
-    width: double.infinity,
-    padding: const EdgeInsets.all(12),
-    margin: const EdgeInsets.symmetric(vertical: 8),
-    decoration: BoxDecoration(
-      color: AppPalette.warningSurface(context),
-      borderRadius: BorderRadius.circular(14),
-    ),
-    child: Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Icon(Icons.info_outline, size: 20),
-        const SizedBox(width: 8),
-        Expanded(child: Text(context.translatedMessage(text))),
-      ],
-    ),
-  );
+  Widget build(BuildContext context) {
+    final (foreground, background, border, icon) = tone._appearance(context);
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(Space.md),
+      margin: const EdgeInsets.symmetric(vertical: Space.sm),
+      decoration: BoxDecoration(
+        color: background,
+        border: Border.all(color: border),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(icon, color: foreground, size: 20),
+          const SizedBox(width: Space.sm),
+          Expanded(child: Text(context.translatedMessage(text))),
+        ],
+      ),
+    );
+  }
+}
+
+class StatusBadge extends StatelessWidget {
+  const StatusBadge({super.key, required this.label, required this.tone});
+
+  final String label;
+  final NoticeTone tone;
+
+  @override
+  Widget build(BuildContext context) {
+    final (foreground, background, _, _) = tone._appearance(context);
+    return Container(
+      constraints: const BoxConstraints(minHeight: 20),
+      padding: const EdgeInsets.symmetric(horizontal: Space.sm, vertical: 2),
+      decoration: BoxDecoration(
+        color: background,
+        borderRadius: BorderRadius.circular(999),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          DecoratedBox(
+            decoration: BoxDecoration(
+              color: foreground,
+              shape: BoxShape.circle,
+            ),
+            child: const SizedBox.square(dimension: 6),
+          ),
+          const SizedBox(width: Space.xs),
+          Flexible(
+            child: Text(
+              label,
+              style: Theme.of(context).textTheme.labelSmall
+                  ?.copyWith(color: foreground),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 }

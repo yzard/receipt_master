@@ -121,15 +121,33 @@ class _CatalogPageState extends State<CatalogPage> {
   ) {
     final pending = rows.where(isPending).toList();
     final completed = rows.where((row) => !isPending(row)).toList();
+    final band = Theme.of(context).colorScheme.surfaceContainer;
     return [
-      ...pending.map(buildRow),
-      if (pending.isNotEmpty && completed.isNotEmpty)
-        const Divider(
-          key: ValueKey('catalog-completion-divider'),
-          thickness: 0.5,
-          height: 24,
+      if (rows.isNotEmpty)
+        Card(
+          child: Column(
+            children: [
+              for (final (i, row) in pending.indexed) ...[
+                if (i > 0) const Divider(),
+                buildRow(row),
+              ],
+              if (pending.isNotEmpty && completed.isNotEmpty)
+                ColoredBox(
+                  color: band,
+                  child: Divider(
+                    key: const ValueKey('catalog-completion-divider'),
+                    color: band,
+                    thickness: .5,
+                    height: 8,
+                  ),
+                ),
+              for (final (i, row) in completed.indexed) ...[
+                if (i > 0) const Divider(),
+                buildRow(row),
+              ],
+            ],
+          ),
         ),
-      ...completed.map(buildRow),
     ];
   }
 
@@ -160,6 +178,7 @@ class _CatalogPageState extends State<CatalogPage> {
       );
     }
     if (loading) return const Center(child: CircularProgressIndicator());
+    final scheme = Theme.of(context).colorScheme;
     final uncategorizedId = categories
         .where((c) => c['system_key'] == 'uncategorized')
         .firstOrNull?['category_id'];
@@ -192,7 +211,7 @@ class _CatalogPageState extends State<CatalogPage> {
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
             child: Wrap(
               spacing: 8,
-              runSpacing: 4,
+              runSpacing: Space.sm,
               children: [
                 for (final (index, label) in [
                   context.tr("票据名称"),
@@ -209,7 +228,10 @@ class _CatalogPageState extends State<CatalogPage> {
                         Icons.account_tree_outlined,
                         Icons.category_outlined,
                       ][index],
-                      size: 17,
+                      size: 16,
+                      color: tab == index
+                          ? scheme.onPrimaryContainer
+                          : scheme.onSurfaceVariant,
                     ),
                     selected: tab == index,
                     onSelected: (_) => setState(() {
@@ -279,7 +301,7 @@ class _CatalogPageState extends State<CatalogPage> {
                                     ),
                                   );
                                 },
-                          deleteIcon: const Icon(Icons.close, size: 18),
+                          deleteIcon: const Icon(Icons.close, size: 16),
                           deleteButtonTooltipMessage: context.tr("删除商品名称"),
                           onDeleted: saving
                               ? null
@@ -297,14 +319,14 @@ class _CatalogPageState extends State<CatalogPage> {
                         InputChip(
                           label: Text(c['path']),
                           onPressed: saving ? null : () => editCategory(c),
-                          deleteIcon: const Icon(Icons.close, size: 18),
+                          deleteIcon: const Icon(Icons.close, size: 16),
                           deleteButtonTooltipMessage: context.tr("删除商品种类"),
                           onDeleted: saving || c['system_key'] != null
                               ? null
                               : () => action(() => removeCategory(c)),
                         ),
                       ActionChip(
-                        avatar: const Icon(Icons.add, size: 18),
+                        avatar: const Icon(Icons.add, size: 16),
                         label: Text(context.tr("添加种类")),
                         onPressed: saving ? null : () => editCategory(null),
                       ),
@@ -360,14 +382,22 @@ class _Headings extends StatelessWidget {
   const _Headings(this.left, this.right);
   @override
   Widget build(BuildContext context) => Padding(
-    padding: const EdgeInsets.only(bottom: 12),
+    padding: const EdgeInsets.fromLTRB(Space.lg, 0, Space.lg, Space.md),
     child: Row(
       children: [
         Expanded(
-          child: Text(left, style: Theme.of(context).textTheme.titleSmall),
+          child: Text(
+            left,
+            style: Theme.of(context).textTheme.labelMedium
+                ?.copyWith(color: AppPalette.muted(context)),
+          ),
         ),
         Expanded(
-          child: Text(right, style: Theme.of(context).textTheme.titleSmall),
+          child: Text(
+            right,
+            style: Theme.of(context).textTheme.labelMedium
+                ?.copyWith(color: AppPalette.muted(context)),
+          ),
         ),
       ],
     ),
@@ -475,7 +505,10 @@ class _ChoiceRowState extends State<_ChoiceRow> {
         ),
       );
       return Padding(
-        padding: const EdgeInsets.symmetric(vertical: 9),
+        padding: const EdgeInsets.symmetric(
+          vertical: Space.md,
+          horizontal: Space.lg,
+        ),
         child: compact
             ? Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
